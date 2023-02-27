@@ -26,8 +26,7 @@ jobs:
         poetry install --no-root
 
     - name: Run Pylint
-      run: poetry run pylint src --fail-under=8.0
+      run: poetry run pylint src --fail-under=8.5
 
     - name: Run tests
-      run: | 
-        poetry run pytest
+      run: poetry run pytest
