@@ -1,4 +1,4 @@
-name: Tests
+name: Python Application
 
 on:
   - push
@@ -24,6 +24,9 @@ jobs:
       run: |
         curl -sSL https://install.python-poetry.org | python3 -
         poetry install --no-root
+
+    - name: Run PyLint
+      run: poetry run pylint src --fail-under=9.0
 
     - name: Run tests
       run: | 
