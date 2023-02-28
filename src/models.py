@@ -120,8 +120,8 @@ class UserBase(Base):
     password = Column("password", String, nullable=False)
     first_name = Column("first_name", String(50), nullable=False)
     last_name = Column("last_name", String(50), nullable=False)
-    gender = Column("gender", Enum(Gender), nullable=False)  # type: ignore
-    type = Column("type", Enum(Type), nullable=False)  # type: ignore
+    gender: Column = Column("gender", Enum(Gender), nullable=False)
+    type: Column = Column("type", Enum(Type), nullable=False)
 
     def __repr__(self):
         return self.username
