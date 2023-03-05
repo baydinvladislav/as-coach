@@ -14,17 +14,9 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-import os
-import sys
 
-
-current_path = os.path.dirname(os.path.abspath(__file__))
-ROOT_PATH = os.path.join(current_path, "..")
-sys.path.append(ROOT_PATH)
-
-from src.base import (
-    engine, Base, User
-)
+from src.database import engine, Base
+from src.auth.models import User
 
 target_metadata = Base.metadata
 
