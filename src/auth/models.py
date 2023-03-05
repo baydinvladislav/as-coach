@@ -1,3 +1,23 @@
 """
 Auth models folder.
 """
+
+from sqlalchemy import Column, String, Enum
+from sqlalchemy.orm import relationship
+
+from src.models import BaseModel, Gender
+
+
+class User(BaseModel):
+    """
+    Application user model.
+    """
+    __tablename__ = "user"
+
+    username = Column("username", String(100), nullable=False)
+    password = Column("password", String, nullable=False)
+    first_name = Column("first_name", String(50), nullable=False)
+    last_name = Column("last_name", String(50), nullable=False)
+    gender: Column = Column("gender", Enum(Gender), nullable=False)
+    customers = relationship("Customer", cascade="all,delete-orphan", back_populates="user")
+    exercises = relationship("Exercise", cascade="all,delete-orphan", back_populates="user")
