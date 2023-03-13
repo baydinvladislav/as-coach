@@ -1,21 +1,13 @@
 from pydantic import BaseModel
-from typing import NewType
-
-from src.models import Gender
 
 
-class UserAuth(BaseModel):
+class UserRegisterIn(BaseModel):
     username: str
     password: str
-    first_name: str
-    last_name: str
-    gender: NewType('Gender', Gender)
 
 
-class UserOut(BaseModel):
+class UserRegisterOut(BaseModel):
     id: str
-    first_name: str
-    last_name: str
     username: str
 
 

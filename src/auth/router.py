@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from src.auth.models import User
-from src.auth.schemas import UserAuth, UserOut, TokenSchema
+from src.auth.schemas import UserRegisterIn, UserRegisterOut, TokenSchema
 from src.auth.utils import (
     get_hashed_password, verify_password,
     create_access_token, create_refresh_token
@@ -17,12 +17,12 @@ auth_router = APIRouter()
     "/signup",
     summary="Create new user",
     status_code=status.HTTP_201_CREATED,
-    response_model=UserOut)
+    response_model=UserRegisterOut)
 async def create_user(
-        data: UserAuth,
+        data: UserRegisterIn,
         db: Session = Depends(get_db)):
 
-    user = db.query(User).get(data.username)
+    user = db.query(User).filter(User.username == data.username).first()
     if user is not None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -31,16 +31,16 @@ async def create_user(
 
     user = User(
         username=data.username,
-        password=get_hashed_password(data.password),
-        first_name=data.first_name,
-        last_name=data.last_name,
-        gender=data.gender
+        password=get_hashed_password(data.password)
     )
 
     db.add(user)
     db.commit()
 
-    return user
+    return {
+        "id": str(user.id),
+        "username": user.username
+    }
 
 
 @auth_router.post(
