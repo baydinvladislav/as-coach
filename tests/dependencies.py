@@ -1,4 +1,4 @@
-from database import engine
+from src.database import engine
 
 from sqlalchemy.orm import sessionmaker
 
