@@ -1,3 +1,7 @@
+"""
+Schemas for auth service
+"""
+
 from pydantic import BaseModel, validator
 
 

@@ -6,12 +6,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-from src.auth.dependencies import get_current_user
-from src.auth.models import User
-from src.auth.schemas import TokenSchema, UserRegisterIn, UserRegisterOut
-from src.auth.utils import (create_access_token, create_refresh_token,
+from auth.dependencies import get_current_user
+from auth.models import User
+from auth.schemas import TokenSchema, UserRegisterIn, UserRegisterOut
+from auth.utils import (create_access_token, create_refresh_token,
                             get_hashed_password, verify_password)
-from src.dependencies import get_db
+from dependencies import get_db
 
 auth_router = APIRouter()
 
@@ -23,19 +23,19 @@ auth_router = APIRouter()
     response_model=UserRegisterOut)
 async def create_user(
         data: UserRegisterIn,
-        db: Session = Depends(get_db)):
+        database: Session = Depends(get_db)):
     """
     Registration endpoint, creates new user in database
 
     Args:
         data: data schema for user registration
-        db: dependency injection for access to database
+        database: dependency injection for access to database
     Raises:
         400 in case if user with the phone number already created
     Returns:
         dictionary with just created user, id and username as keys
     """
-    user = db.query(User).filter(User.username == data.username).first()
+    user = database.query(User).filter(User.username == data.username).first()
     if user is not None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -47,8 +47,8 @@ async def create_user(
         password=get_hashed_password(data.password)
     )
 
-    db.add(user)
-    db.commit()
+    database.add(user)
+    database.commit()
 
     return {
         "id": str(user.id),
@@ -63,20 +63,20 @@ async def create_user(
     response_model=TokenSchema)
 async def login(
         form_data: OAuth2PasswordRequestForm = Depends(),
-        db: Session = Depends(get_db)):
+        database: Session = Depends(get_db)):
     """
     Login endpoint authenticates user
 
     Args:
         form_data: data schema for user login
-        db: dependency injection for access to database
+        database: dependency injection for access to database
     Raises:
         404 if specified user was not found
         400 in case if user is found but password does not match
     Returns:
         access_token and refresh_token inside dictionary
     """
-    user = db.query(User).filter(User.username == form_data.username).first()
+    user = database.query(User).filter(User.username == form_data.username).first()
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

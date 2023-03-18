@@ -29,6 +29,9 @@ def get_hashed_password(password: str) -> str:
 
 
 def verify_password(password: str, hashed_pass: str) -> bool:
+    """
+    Checks that string is hashed string
+    """
     return password_context.verify(password, hashed_pass)
 
 
