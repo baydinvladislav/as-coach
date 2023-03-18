@@ -1,18 +1,30 @@
-from passlib.context import CryptContext
+"""
+Module for auth utils
+"""
+
 from datetime import datetime, timedelta
-from typing import Union, Any
+from typing import Any, Union
+
 from jose import jwt
+from passlib.context import CryptContext
 
-from src.auth.config import (
-    ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_MINUTES,
-    ALGORITHM, JWT_SECRET_KEY, JWT_REFRESH_SECRET_KEY
-)
-
+from src.auth.config import (ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM,
+                             JWT_REFRESH_SECRET_KEY, JWT_SECRET_KEY,
+                             REFRESH_TOKEN_EXPIRE_MINUTES)
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def get_hashed_password(password: str) -> str:
+    """
+    Hashes password
+
+    Args:
+        password: string which will be hashed
+
+    Returns:
+        hashed password
+    """
     return password_context.hash(password)
 
 
@@ -21,6 +33,9 @@ def verify_password(password: str, hashed_pass: str) -> bool:
 
 
 def create_access_token(subject: Union[str, Any], expires_delta: int = None) -> str:
+    """
+    Creates access token
+    """
     if expires_delta is not None:
         expires_delta = datetime.utcnow() + expires_delta
     else:
@@ -32,6 +47,9 @@ def create_access_token(subject: Union[str, Any], expires_delta: int = None) -> 
 
 
 def create_refresh_token(subject: Union[str, Any], expires_delta: int = None) -> str:
+    """
+    Creates refresh token
+    """
     if expires_delta is not None:
         expires_delta = datetime.utcnow() + expires_delta
     else:
