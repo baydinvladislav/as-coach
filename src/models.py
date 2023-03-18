@@ -13,8 +13,8 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
 
-@as_declarative()
-class Base:
+
+class BaseModel:
     """
     Base model class with common column.
     """
