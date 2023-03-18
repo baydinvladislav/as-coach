@@ -4,7 +4,7 @@ Auth models folder.
 
 from sqlalchemy import Column, Enum, String
 
-from models import Base, BaseModel, Gender
+from src.models import Base, BaseModel, Gender
 
 
 class User(Base, BaseModel):
