@@ -1,3 +1,7 @@
+"""
+Contains routes for auth service.
+"""
+
 from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -22,7 +26,17 @@ auth_router = APIRouter()
 async def create_user(
         data: UserRegisterIn,
         db: Session = Depends(get_db)):
+    """
+    Registration endpoint, creates new user in database
 
+    Args:
+        data: data schema for user registration
+        db: dependency injection for access to database
+    Raises:
+        400 in case if user with the phone number already created
+    Returns:
+        dictionary with just created user, id and username as keys
+    """
     user = db.query(User).filter(User.username == data.username).first()
     if user is not None:
         raise HTTPException(
@@ -52,7 +66,18 @@ async def create_user(
 async def login(
         form_data: OAuth2PasswordRequestForm = Depends(),
         db: Session = Depends(get_db)):
+    """
+    Login endpoint authenticates user
 
+    Args:
+        form_data: data schema for user login
+        db: dependency injection for access to database
+    Raises:
+        404 if specified user was not found
+        400 in case if user is found but password does not match
+    Returns:
+        access_token and refresh_token inside dictionary
+    """
     user = db.query(User).filter(User.username == form_data.username).first()
     if user is None:
         raise HTTPException(
@@ -71,3 +96,14 @@ async def login(
         "access_token": create_access_token(user.username),
         "refresh_token": create_refresh_token(user.username)
     }
+
+
+@auth_router.get(
+    "/me",
+    summary='Get details of currently logged in user',
+    response_model=UserRegisterOut)
+async def get_me(user: User = Depends(get_current_user)):
+    """
+    Returns current user
+    """
+    return user
