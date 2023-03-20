@@ -52,5 +52,5 @@ class TokenPayload(BaseModel):
     """
     Validates token payload
     """
-    sub: str = None
-    exp: int = None
+    sub: str
+    exp: int
