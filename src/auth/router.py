@@ -98,10 +98,15 @@ async def login(
 
 @auth_router.get(
     "/me",
-    summary='Get details of currently logged in user',
-    response_model=UserRegisterOut)
+    summary='Get details of currently logged in user')
 async def get_me(user: User = Depends(get_current_user)):
     """
-    Returns current user
+    Returns info about current user
+
+    Args:
+        user: user object from get_current_user dependency
+
+    Returns:
+        dictionary with id and username as keys
     """
-    return user
+    return {"id": str(user.id), "username": user.username}

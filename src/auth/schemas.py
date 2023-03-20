@@ -18,7 +18,7 @@ class UserRegisterIn(BaseModel):
         We have to get: +79xxxxxxxxx
         Phone number contains 9 numbers
         """
-        if value.startswith("+7") and len(value) == 9:
+        if value.startswith("+7") and len(value) == 12:
             return value
         raise ValueError("Specify correct phone number")
 
@@ -41,14 +41,16 @@ class UserRegisterOut(BaseModel):
 
 
 class TokenSchema(BaseModel):
+    """
+    Validates token schema
+    """
     access_token: str
     refresh_token: str
 
 
 class TokenPayload(BaseModel):
+    """
+    Validates token payload
+    """
     sub: str = None
     exp: int = None
-
-
-class SystemUser(UserRegisterOut):
-    password: str

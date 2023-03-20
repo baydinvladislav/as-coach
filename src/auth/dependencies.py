@@ -1,13 +1,20 @@
+"""
+Dependencies for auth service
+"""
+
 from datetime import datetime
-from typing import Any, Union
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy.orm import Session
 from jose import jwt
 from pydantic import ValidationError
 
-from src.auth.schemas import SystemUser, TokenPayload
+from src.auth.schemas import TokenPayload
+from src.auth.models import User
 from src.auth.utils import ALGORITHM, JWT_SECRET_KEY
+from src.dependencies import get_db
+
 
 reuseable_oauth = OAuth2PasswordBearer(
     tokenUrl="/login",
@@ -15,7 +22,13 @@ reuseable_oauth = OAuth2PasswordBearer(
 )
 
 
-async def get_current_user(token: str = Depends(reuseable_oauth)) -> SystemUser:
+async def get_current_user(
+        token: str = Depends(reuseable_oauth),
+        database: Session = Depends(get_db)) -> User:
+    """
+    Extracts username from client token,
+    provides current user
+    """
     try:
         payload = jwt.decode(
             token, JWT_SECRET_KEY, algorithms=[ALGORITHM]
@@ -36,9 +49,8 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> SystemUser:
             headers={"WWW-Authenticate": "Bearer"}
         )
 
-    user = token_data.sub
-
-    # user: Union[dict[str, Any], None] = db.get(token_data.sub, None)
+    token_username = token_data.sub
+    user = database.query(User).filter(User.username == token_username).first()
 
     if user is None:
         raise HTTPException(
@@ -46,4 +58,4 @@ async def get_current_user(token: str = Depends(reuseable_oauth)) -> SystemUser:
             detail="Could not find user"
         )
 
-    return SystemUser(**user)
+    return user
