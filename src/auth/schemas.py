@@ -13,7 +13,7 @@ class UserRegisterIn(BaseModel):
     password: str
 
     @validator("username")
-    def validate_phone_number(cls, value):
+    def validate_phone_number(cls, value):  # pylint: enable=no-self-argument
         """
         We have to get: +79xxxxxxxxx
         Phone number contains 9 numbers
@@ -23,7 +23,7 @@ class UserRegisterIn(BaseModel):
         raise ValueError("Specify correct phone number")
 
     @validator("password")
-    def validate_password(cls, value):
+    def validate_password(cls, value):  # pylint: enable=no-self-argument
         """
         Simple password
         """
