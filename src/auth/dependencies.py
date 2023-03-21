@@ -31,7 +31,7 @@ async def get_current_user(
     """
     try:
         payload = jwt.decode(
-            token, JWT_SECRET_KEY, algorithms=[ALGORITHM]
+            token, str(JWT_SECRET_KEY), algorithms=[str(ALGORITHM)]
         )
         token_data = TokenPayload(**payload)
 
@@ -42,7 +42,7 @@ async def get_current_user(
                 headers={"WWW-Authenticate": "Bearer"}
             )
 
-    except (jwt.JWTError, ValidationError):
+    except (jwt.JWTError, ValidationError):  # type: ignore
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
