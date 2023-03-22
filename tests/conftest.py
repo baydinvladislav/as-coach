@@ -15,14 +15,14 @@ def db() -> Generator:
 
 @pytest.fixture()
 def create_user(db):
-    test_user_name = "79857994488"
+    test_user_name = "+79857994488"
     test_user = db.query(User).filter(User.username == test_user_name).first()
     if test_user:
         return test_user
 
     test_user = User(
         username=test_user_name,
-        password=get_hashed_password("my_pswd")
+        password=get_hashed_password("my_test_pswd")
     )
 
     db.add(test_user)

@@ -9,7 +9,7 @@ def test_login(db, create_user):
             "/login",
             data={
                 "username": create_user.username,
-                "password": "my_pswd"
+                "password": "my_test_pswd"
             },
             headers={"content-type": "application/x-www-form-urlencoded"}
         )

@@ -7,7 +7,7 @@ def test_signup_new_user():
     with TestClient(app) as client:
         body = {
             "username": "+79857994488",
-            "password": "my_pswd"
+            "password": "my_test_pswd"
         }
 
         response = client.post("/signup", json=body)
