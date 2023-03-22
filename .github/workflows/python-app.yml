@@ -56,3 +56,4 @@ jobs:
       run: poetry run pytest
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/as_coach
+        ACCESS_TOKEN_EXPIRE_MINUTES: 30

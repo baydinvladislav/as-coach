@@ -6,7 +6,7 @@ from src.main import app
 def test_signup_new_user():
     with TestClient(app) as client:
         body = {
-            "username": "79857994488",
+            "username": "+79857994488",
             "password": "my_pswd"
         }
 
