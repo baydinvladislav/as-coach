@@ -47,6 +47,9 @@ jobs:
     - name: Run Mypy
       run: poetry run mypy src
 
+    - name: Apply migrations
+      run: poetry run alembic upgrade head
+
     - name: Run tests
       run: poetry run pytest
       env:
