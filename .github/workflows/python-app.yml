@@ -16,6 +16,11 @@ jobs:
     services:
       postgres:
         image: postgres:latest
+        env:
+          POSTGRES_DB: ${{ vars.POSTGRES_DB }}
+          POSTGRES_PASSWORD: ${{ vars.POSTGRES_PASSWORD }}
+          POSTGRES_USER: ${{ vars.POSTGRES_USER }}
+          DATABASE_URL: ${{ vars.DATABASE_URL }}
         ports:
           - 5432:5432
         options: >-
