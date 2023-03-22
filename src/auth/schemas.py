@@ -27,7 +27,7 @@ class UserRegisterIn(BaseModel):
         """
         Simple password
         """
-        if 8 <= len(value) <= 128:
+        if 7 < len(value) < 129:
             return value
         raise ValueError("Password must be greater than 7 symbols and less than 129 symbols")
 
