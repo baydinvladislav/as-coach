@@ -14,6 +14,7 @@ def test_signup_new_user():
 
         response = client.post("/signup", json=body)
         print(response.json())
+        print(TEST_SIGNUP_USER_LOGIN)
         assert response.status_code == status.HTTP_201_CREATED
 
         assert "id" in response.json()
