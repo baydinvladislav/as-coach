@@ -10,9 +10,9 @@ from src.dependencies import get_db
 from tests.dependencies import override_get_db, TestingSessionLocal
 
 
-TEST_USER_PASSWORD = os.environ.get("TEST_USER_PASSWORD")
-TEST_FIXTURE_USER_LOGIN = os.environ.get("TEST_FIXTURE_USER_LOGIN")
 TEST_SIGNUP_USER_LOGIN = os.environ.get("TEST_SIGNUP_USER_LOGIN")
+TEST_FIXTURE_USER_LOGIN = os.environ.get("TEST_FIXTURE_USER_LOGIN")
+TEST_USER_PASSWORD = os.environ.get("TEST_USER_PASSWORD")
 
 
 @pytest.fixture(scope="session")
@@ -25,14 +25,14 @@ def create_user(db):
     """
     Fixture for creating new application user
     """
-    test_user_name = str(TEST_FIXTURE_USER_LOGIN)
-    test_user = db.query(User).filter(User.username == test_user_name).first()
+    test_user_login = str(TEST_FIXTURE_USER_LOGIN)
+    test_user = db.query(User).filter(User.username == test_user_login).first()
     if test_user:
         return test_user
 
     test_user = User(
-        username=test_user_name,
-        password=get_hashed_password(str(TEST_USER_PASSWORD))
+        username=test_user_login,
+        password=get_hashed_password(TEST_USER_PASSWORD)
     )
 
     db.add(test_user)

@@ -7,6 +7,9 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engin
 
 
 def override_get_db():
+    """
+    Creates new database session with no saving changes
+    """
     connection = engine.connect()
     transaction = connection.begin()
     db = TestingSessionLocal(bind=connection)
