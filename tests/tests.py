@@ -13,9 +13,7 @@ from src.auth.models import User
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-engine = create_engine(
-    DATABASE_URL, connect_args={"check_same_thread": False}
-)
+engine = create_engine(DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
@@ -44,6 +42,11 @@ async def test_root(override_get_db):
 
 @pytest.mark.anyio
 async def test_successfully_signup(override_get_db):
+    user = override_get_db.query(User).filter(User.username == "+79857914688").first()
+    if user:
+        override_get_db.delete(user)
+        override_get_db.commit()
+
     body = {"username": "+79857914688", "password": "my_test_pswd"}
     async with AsyncClient(app=app, base_url="http://test") as ac:
         response = await ac.post("/signup", json=body)
