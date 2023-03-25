@@ -1,12 +1,11 @@
 import os
-import pytest
 
+import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from src.dependencies import get_db
 from src.main import app
-
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 TEST_USER_USERNAME = os.getenv("TEST_USER_USERNAME")

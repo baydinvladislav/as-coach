@@ -4,7 +4,6 @@ Auth service config
 
 import os
 
-
 ACCESS_TOKEN_EXPIRE_MINUTES = os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES")
 REFRESH_TOKEN_EXPIRE_MINUTES = os.environ.get("REFRESH_TOKEN_EXPIRE_MINUTES")
 ALGORITHM = os.environ.get("ALGORITHM")

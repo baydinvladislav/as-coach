@@ -6,15 +6,14 @@ from datetime import datetime
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session
 from jose import jwt
 from pydantic import ValidationError
+from sqlalchemy.orm import Session
 
-from src.auth.schemas import TokenPayload
 from src.auth.models import User
+from src.auth.schemas import TokenPayload
 from src.auth.utils import ALGORITHM, JWT_SECRET_KEY
 from src.dependencies import get_db
-
 
 reuseable_oauth = OAuth2PasswordBearer(
     tokenUrl="/login",

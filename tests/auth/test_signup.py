@@ -1,0 +1,27 @@
+import pytest
+from httpx import AsyncClient
+
+from auth.models import User
+from main import app
+from tests.conftest import TEST_USER_PASSWORD, TEST_USER_USERNAME
+
+
+@pytest.mark.anyio
+async def test_successfully_signup(override_get_db):
+    user = override_get_db.query(User).filter(
+        User.username == TEST_USER_USERNAME
+    ).first()
+
+    if user:
+        override_get_db.delete(user)
+        override_get_db.commit()
+
+    body = {
+        "username": TEST_USER_USERNAME,
+        "password": TEST_USER_PASSWORD
+    }
+
+    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
+        response = await ac.post("/signup", json=body)
+
+    assert response.status_code == 201
