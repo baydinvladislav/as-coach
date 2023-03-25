@@ -1,9 +1,12 @@
-from fastapi.testclient import TestClient
+import pytest
+from httpx import AsyncClient
 
 from src.main import app
 
 
-def test_create_and_delete_customer():
-    with TestClient(app) as client:
-        response = client.get("/")
-        assert response.status_code == 200
+@pytest.mark.anyio
+async def test_root(override_get_db):
+    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
+        response = await ac.get("/")
+
+    assert response.status_code == 200
