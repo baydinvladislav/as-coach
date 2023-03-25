@@ -24,6 +24,9 @@ async def test_signup_successfully(override_get_db):
         "password": TEST_USER_PASSWORD
     }
 
+    print(TEST_USER_USERNAME)
+    print(TEST_USER_PASSWORD)
+
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
         response = await ac.post("/signup", json=body)
 
