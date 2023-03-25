@@ -16,7 +16,7 @@ class UserRegisterIn(BaseModel):
     def validate_phone_number(cls, value):  # pylint: disable=no-self-argument
         """
         We have to get: +79xxxxxxxxx
-        Phone number contains 9 numbers
+        Phone number must contain 12 numbers
         """
         if value.startswith("+7") and len(value) == 12:
             return value
