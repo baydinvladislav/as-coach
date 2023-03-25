@@ -5,7 +5,7 @@ from src.main import app
 from tests.conftest import TEST_USER_PASSWORD
 
 
-def test_login(db, create_user):
+def test_login(create_user):
     with TestClient(app) as client:
         response = client.post(
             "/login",
