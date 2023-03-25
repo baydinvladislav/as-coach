@@ -11,7 +11,7 @@ app.include_router(auth_router)
 
 
 @app.get("/")
-def root():
+async def root():
     """
     Test endpoint.
     """
