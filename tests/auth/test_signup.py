@@ -71,13 +71,29 @@ async def test_signup_too_short_password(override_get_db):
         override_get_db.delete(user)
         override_get_db.commit()
 
-    body = {
+    signup_data = {
         "username": TEST_USER_USERNAME,
         # password is less 8 symbols
         "password": "1234567"
     }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        response = await ac.post("/signup", json=body)
+        response = await ac.post("/signup", json=signup_data)
 
     assert response.status_code == 422
+
+
+@pytest.mark.anyio
+async def test_signup_failed_username_already_registered(create_user):
+    """
+    Failed because username already registered
+    """
+    signup_data = {
+        "username": TEST_USER_USERNAME,
+        "password": TEST_USER_PASSWORD
+    }
+
+    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
+        response = await ac.post("/signup", json=signup_data)
+
+    assert response.status_code == 400
