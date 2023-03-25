@@ -12,7 +12,7 @@ from tests.conftest import (
 
 @pytest.mark.anyio
 async def test_root(override_get_db):
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
         response = await ac.get("/")
 
     assert response.status_code == 200
@@ -33,7 +33,7 @@ async def test_successfully_signup(override_get_db):
         "password": TEST_USER_PASSWORD
     }
 
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
         response = await ac.post("/signup", json=body)
 
     assert response.status_code == 201
