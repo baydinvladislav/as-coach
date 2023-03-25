@@ -1,5 +1,12 @@
-from dependencies import get_db
-from main import app
+import os
+
+from src.dependencies import get_db
+from src.main import app
+
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+TEST_USER_USERNAME = "+79856352655"
+TEST_USER_PASSWORD = "my_test_pswd"
 
 
 @app.on_event("startup")

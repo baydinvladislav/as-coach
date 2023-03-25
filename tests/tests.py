@@ -1,4 +1,3 @@
-import os
 import pytest
 
 from httpx import AsyncClient
@@ -7,11 +6,12 @@ from sqlalchemy.orm import sessionmaker
 
 from src.main import app
 from src.auth.models import User
+from tests.conftest import (
+    DATABASE_URL,
+    TEST_USER_PASSWORD,
+    TEST_USER_USERNAME
+)
 
-
-DATABASE_URL = os.getenv("DATABASE_URL")
-TEST_USER_USERNAME = "+79856352655"
-TEST_USER_PASSWORD = "my_test_pswd"
 
 engine = create_engine(DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
