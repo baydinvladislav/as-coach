@@ -55,12 +55,12 @@ jobs:
     - name: Run tests
       run: poetry run pytest
       env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/as_coach
         ACCESS_TOKEN_EXPIRE_MINUTES: 30
-        REFRESH_TOKEN_EXPIRE_MINUTES: 10080
         ALGORITHM: HS256
-        JWT_SECRET_KEY: c326217ecb811596444303fcdd6c17633915e84871db1bd4555097aba62849f0
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/as_coach_test
         JWT_REFRESH_SECRET_KEY: c326217ecb811596444303fcdd6c17633915e84871db1bd4555097aba62849f0
-        TEST_FIXTURE_USER_LOGIN: +79857914688
-        TEST_SIGNUP_USER_LOGIN: +79856352655
+        JWT_SECRET_KEY: c326217ecb811596444303fcdd6c17633915e84871db1bd4555097aba62849f0
+        REFRESH_TOKEN_EXPIRE_MINUTES: 10080
+        TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/as_coach_test
+        TEST_USER_USERNAME: +79857914688
         TEST_USER_PASSWORD: my_test_pswd
