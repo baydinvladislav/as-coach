@@ -50,7 +50,7 @@ jobs:
     - name: Apply migrations
       run: poetry run alembic upgrade head
       env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/as_coach
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/as_coach_test
 
     - name: Run tests
       run: poetry run pytest
