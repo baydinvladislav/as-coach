@@ -1,29 +1,13 @@
 import pytest
 
 from httpx import AsyncClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
 from src.main import app
 from src.auth.models import User
 from tests.conftest import (
-    DATABASE_URL,
     TEST_USER_PASSWORD,
     TEST_USER_USERNAME
 )
-
-
-engine = create_engine(DATABASE_URL)
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-
-@pytest.fixture()
-def override_get_db():
-    try:
-        db = TestingSessionLocal()
-        yield db
-    finally:
-        db.close()
 
 
 @pytest.mark.anyio
