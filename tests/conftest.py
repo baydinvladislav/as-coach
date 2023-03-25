@@ -9,8 +9,8 @@ from src.main import app
 
 
 DATABASE_URL = os.getenv("DATABASE_URL")
-TEST_USER_USERNAME = "+79856352655"
-TEST_USER_PASSWORD = "my_test_pswd"
+TEST_USER_USERNAME = os.getenv("TEST_USER_USERNAME")
+TEST_USER_PASSWORD = os.getenv("TEST_USER_PASSWORD")
 
 engine = create_engine(DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
