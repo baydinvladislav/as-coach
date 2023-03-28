@@ -5,18 +5,14 @@ import styled from 'styled-components';
 
 import { colors, normVert } from '@theme';
 
+import { ButtonType } from '~types';
+
 import { Text } from './text';
 
 type TProps = {
   children: React.ReactNode;
   type: ButtonType;
 } & TouchableOpacityProps;
-
-export enum ButtonType {
-  PRIMARY = 'primary',
-  SECONDARY = 'secondary',
-  TEXT = 'text',
-}
 
 export const Button = ({ children, ...props }: TProps) => (
   <ButtonStyled {...props}>

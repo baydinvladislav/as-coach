@@ -4,16 +4,27 @@ import { Image, SafeAreaView, StyleProp, View, ViewStyle } from 'react-native';
 import styled from 'styled-components';
 
 import { BackgroundImage } from '@assets';
-import { normHor } from '@theme';
+import { normHor, normVert } from '@theme';
 
 type TProps = {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
+  backgroundBlurRadius?: number;
+  backgroundOpacity?: number;
 };
 
-export const Layout = ({ children, style }: TProps) => (
+export const Layout = ({
+  children,
+  style,
+  backgroundBlurRadius = 0,
+  backgroundOpacity = 1,
+}: TProps) => (
   <SafeAreaView style={style}>
-    <Background source={BackgroundImage} opacity={1} blurRadius={0} />
+    <Background
+      source={BackgroundImage}
+      opacity={backgroundOpacity}
+      blurRadius={backgroundBlurRadius}
+    />
     <Container>{children}</Container>
   </SafeAreaView>
 );
@@ -26,5 +37,6 @@ const Background = styled(Image)<{ opacity: number }>`
 `;
 
 const Container = styled(View)`
+  padding-top: ${normVert(60)}px;
   padding-horizontal: ${normHor(16)}px;
 `;

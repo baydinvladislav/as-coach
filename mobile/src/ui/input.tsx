@@ -1,5 +1,11 @@
 import React from 'react';
-import { TextInput, TextInputProps, View } from 'react-native';
+import {
+  StyleProp,
+  TextInput,
+  TextInputProps,
+  View,
+  ViewStyle,
+} from 'react-native';
 
 import styled from 'styled-components';
 
@@ -14,6 +20,7 @@ type TProps = {
   width?: string;
   height?: number;
   isTextarea?: boolean;
+  style?: StyleProp<ViewStyle>;
 } & TextInputProps;
 
 export const Input = ({
@@ -23,9 +30,15 @@ export const Input = ({
   width = '100%',
   height = normVert(48),
   isTextarea = false,
+  style,
   ...props
 }: TProps) => (
-  <InputContainer isTextarea={isTextarea} height={height} width={width}>
+  <InputContainer
+    style={style}
+    isTextarea={isTextarea}
+    height={height}
+    width={width}
+  >
     {leftIcon}
     <InputRN {...props} placeholder={placeholder} isTextarea={isTextarea} />
     {rightIcon}
@@ -37,15 +50,14 @@ const InputContainer = styled(View)<{
   height: number;
   isTextarea: boolean;
 }>`
-  height: ${p => p.height}px;
-  width: ${p => p.width};
+  height: ${({ height }) => height}px;
+  width: ${({ width }) => width};
   padding-horizontal: ${normHor(20)}px;
-  border: 1px solid ${colors.black};
-  background-color: ${colors.white};
-  border-radius: 16px;
+  background-color: ${colors.black3};
+  border-radius: 12px;
   flex-direction: row;
   align-items: center;
-  ${p => p.isTextarea && `padding-top: ${normVert(16)}px`};
+  ${({ isTextarea }) => isTextarea && `padding-top: ${normVert(16)}px`};
 `;
 
 const InputRN = styled(TextInput)<{ isTextarea: boolean }>`

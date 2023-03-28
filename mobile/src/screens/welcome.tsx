@@ -5,18 +5,34 @@ import { t } from 'src/i18n';
 import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
+import { Screens, useNavigation } from '@navigation';
 import { normVert } from '@theme';
-import { Button, ButtonType, Layout } from '@ui';
+import { Button, Layout } from '@ui';
 
-export const WelcomeScreen = () => (
-  <Layout style={styles.layout}>
-    <Logo />
-    <Button style={styles.button} type={ButtonType.PRIMARY}>
-      {t('auth.login')}
-    </Button>
-    <Button type={ButtonType.SECONDARY}>{t('auth.registration')}</Button>
-  </Layout>
-);
+import { ButtonType } from '~types';
+
+export const WelcomeScreen = () => {
+  const { navigate } = useNavigation();
+
+  return (
+    <Layout style={styles.layout}>
+      <Logo />
+      <Button
+        style={styles.button}
+        type={ButtonType.PRIMARY}
+        onPress={() => navigate(Screens.LoginScreen)}
+      >
+        {t('auth.login')}
+      </Button>
+      <Button
+        type={ButtonType.SECONDARY}
+        onPress={() => navigate(Screens.RegistrationScreen)}
+      >
+        {t('auth.registration')}
+      </Button>
+    </Layout>
+  );
+};
 
 const styles = StyleSheet.create({
   layout: { flex: 1, justifyContent: 'flex-end' },

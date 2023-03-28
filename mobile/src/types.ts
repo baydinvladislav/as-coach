@@ -3,9 +3,12 @@ export enum FontWeight {
   'Medium' = 'Ubuntu Medium',
 }
 export enum FontSize {
+  'S24' = '24px',
   'S17' = '17px',
 }
 
-export type RootStackParamList = {
-  WelcomeScreen: undefined;
-};
+export enum ButtonType {
+  PRIMARY = 'primary',
+  SECONDARY = 'secondary',
+  TEXT = 'text',
+}
