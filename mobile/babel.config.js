@@ -24,6 +24,8 @@ module.exports = {
           '@navigation': './src/navigation',
           '@assets': './src/assets',
           '@data': './src/data',
+          '@utils': './src/utils',
+          '@i18n': './src/i18n',
           '~types': './src/types.ts',
         },
       },
