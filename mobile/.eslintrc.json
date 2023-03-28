@@ -1,0 +1,104 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "react-hooks"],
+  "env": {
+    "browser": true,
+    "jest": true,
+    "node": true
+  },
+  "settings": {
+    "import/ignore": ["react-native"]
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/errors",
+    "plugin:import/typescript",
+    "plugin:import/warnings",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:react/recommended",
+    "prettier/@typescript-eslint",
+    "plugin:prettier/recommended"
+  ],
+  "ignorePatterns": ["**/public/calcma.js"],
+  "rules": {
+    "object-shorthand": ["error", "always"],
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "format": ["PascalCase"],
+        "prefix": ["I"],
+        "selector": "interface"
+      }
+    ],
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-var-requires": 0,
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "args": "none",
+        "vars": "all"
+      }
+    ],
+    "@typescript-eslint/no-invalid-this": "error",
+    "import/no-duplicates": "error",
+    "import/first": "error",
+    "import/no-anonymous-default-export": [
+      "error",
+      {
+        "allowArray": false,
+        "allowArrowFunction": false,
+        "allowAnonymousClass": false,
+        "allowAnonymousFunction": false,
+        "allowCallExpression": true,
+        "allowLiteral": false,
+        "allowObject": false
+      }
+    ],
+    "react/jsx-boolean-value": ["error", "always"],
+    "react/jsx-key": "error",
+    "react/prop-types": "off",
+    "react/display-name": "off",
+    "react/self-closing-comp": [
+      "error",
+      {
+        "component": true,
+        "html": true
+      }
+    ],
+    "react/jsx-tag-spacing": [
+      "error",
+      {
+        "afterOpening": "allow-multiline",
+        "beforeSelfClosing": "always",
+        "closingSlash": "never"
+      }
+    ],
+    "react/jsx-wrap-multilines": [
+      "error",
+      {
+        "arrow": "parens-new-line",
+        "assignment": "parens-new-line",
+        "condition": "parens-new-line",
+        "declaration": "parens-new-line",
+        "logical": "parens-new-line",
+        "prop": "ignore",
+        "return": "parens-new-line"
+      }
+    ],
+    "arrow-body-style": ["error", "as-needed"],
+    "import/no-unresolved": "off",
+    "no-restricted-imports": [
+      "error",
+      {
+        "name": "react-router",
+        "message": "Use react-router-dom package"
+      }
+    ],
+    "react-hooks/rules-of-hooks": "error", // Проверяем правила хуков
+    "react-hooks/exhaustive-deps": "warn" // Проверяем зависимости эффекта
+  }
+}
