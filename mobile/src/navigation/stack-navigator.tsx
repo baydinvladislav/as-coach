@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { SmsScreen } from 'src/screens/sms';
+
 import { Screens } from '@navigation';
 import { createStackNavigator } from '@react-navigation/stack';
 import { LoginScreen, RegistrationScreen, WelcomeScreen } from '@screens';
@@ -17,5 +19,6 @@ export const StackNavigator = () => (
       component={RegistrationScreen}
     />
     <Stack.Screen name={Screens.LoginScreen} component={LoginScreen} />
+    <Stack.Screen name={Screens.SmsScreen} component={SmsScreen} />
   </Stack.Navigator>
 );

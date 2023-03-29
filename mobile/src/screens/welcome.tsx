@@ -22,7 +22,7 @@ export const WelcomeScreen = () => {
         type={ButtonType.PRIMARY}
         onPress={() => navigate(Screens.LoginScreen)}
       >
-        {t('auth.login')}
+        {t('buttons.login')}
       </Button>
       <Button
         type={ButtonType.SECONDARY}

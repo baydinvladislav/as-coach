@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
+import { PasswordInput } from '@components';
 import { t } from '@i18n';
 import { colors, normVert } from '@theme';
 import { Button, Input, Layout, Text } from '@ui';
@@ -27,14 +28,14 @@ export const LoginScreen = () => (
     </Text>
     <InputsContainer>
       <Input style={styles.input} placeholder={t('inputs.phone')} />
-      <Input placeholder={t('inputs.password')} />
+      <PasswordInput placeholder={t('inputs.password')} />
     </InputsContainer>
     <Button
       style={styles.button}
       type={ButtonType.PRIMARY}
       onPress={() => null}
     >
-      {t('auth.login')}
+      {t('buttons.login')}
     </Button>
     <Flex>
       <Text fontSize={FontSize.S17} color={colors.white}>
@@ -45,7 +46,7 @@ export const LoginScreen = () => (
         type={ButtonType.TEXT}
         onPress={() => null}
       >
-        {t('auth.registration')}
+        {t('buttons.registration')}
       </Button>
     </Flex>
   </Layout>
