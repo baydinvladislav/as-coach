@@ -8,7 +8,10 @@ from starlette.middleware.cors import CORSMiddleware
 from src.auth.router import auth_router
 
 
-def get_application():
+def get_application() -> FastAPI:
+    """
+    Initialises the application
+    """
     as_coach = FastAPI(title="As Coach")
 
     as_coach.add_middleware(
