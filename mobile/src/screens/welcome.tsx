@@ -1,10 +1,10 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 
-import { t } from 'src/i18n';
 import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
+import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { normVert } from '@theme';
 import { Button, Layout } from '@ui';
@@ -28,7 +28,7 @@ export const WelcomeScreen = () => {
         type={ButtonType.SECONDARY}
         onPress={() => navigate(Screens.RegistrationScreen)}
       >
-        {t('auth.registration')}
+        {t('buttons.registration')}
       </Button>
     </Layout>
   );

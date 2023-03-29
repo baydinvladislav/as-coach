@@ -11,15 +11,18 @@ import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
 import { t } from '@i18n';
+import { Screens } from '@navigation';
+import { useNavigation } from '@react-navigation/native';
 import { colors, normHor, normVert } from '@theme';
 import { Button, Layout, Text } from '@ui';
 
 import { ButtonType, FontSize } from '~types';
 
 const CELL_COUNT = 4;
+const PHONE = '+7 (985) 000-00-00';
 
 export const SmsScreen = () => {
-  const phone = '+7 (985) 000-00-00';
+  const { navigate } = useNavigation();
 
   const [value, setValue] = useState('');
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
@@ -57,7 +60,7 @@ export const SmsScreen = () => {
         fontSize={FontSize.S17}
         color={colors.black5}
       >
-        {phone}
+        {PHONE}
       </Text>
       <Text
         style={styles.title}
@@ -89,7 +92,7 @@ export const SmsScreen = () => {
       <Button
         style={styles.button}
         type={ButtonType.PRIMARY}
-        onPress={() => null}
+        onPress={() => navigate(Screens.LoginScreen)}
       >
         {t('buttons.confirm')}
       </Button>

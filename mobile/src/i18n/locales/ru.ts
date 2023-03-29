@@ -8,6 +8,11 @@ export const ru = {
     smsText1: 'На твой номер телефона',
     smsText2: 'был отправлен',
   },
+  lk: {
+    welcome: 'Привет, {name}!',
+    hereClients: 'Здесь будут ваши клиенты',
+    hereCanAdd: 'В этом разделе можно\nдобавлять клиентов',
+  },
   inputs: {
     phone: 'Номер телефона',
     password: 'Пароль',
@@ -19,5 +24,6 @@ export const ru = {
     continue: 'Продолжить',
     confirm: 'Подтвердить',
     getCode: 'Получить новый код',
+    addClient: 'Добавить клиента',
   },
 };

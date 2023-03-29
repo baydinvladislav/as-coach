@@ -5,52 +5,57 @@ import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
 import { t } from '@i18n';
+import { Screens, useNavigation } from '@navigation';
 import { colors, normVert } from '@theme';
 import { Button, Input, Layout, Text } from '@ui';
 
 import { ButtonType, FontSize } from '~types';
 
-export const RegistrationScreen = () => (
-  <Layout
-    backgroundBlurRadius={10}
-    backgroundOpacity={0.3}
-    style={styles.layout}
-  >
-    <Logo />
-    <Text
-      style={styles.title}
-      align="center"
-      fontSize={FontSize.S24}
-      color={colors.white}
+export const RegistrationScreen = () => {
+  const { navigate } = useNavigation();
+
+  return (
+    <Layout
+      backgroundBlurRadius={10}
+      backgroundOpacity={0.3}
+      style={styles.layout}
     >
-      {t('auth.registrationTitle')}
-    </Text>
-    <InputsContainer>
-      <Input style={styles.input} placeholder={t('inputs.firstName')} />
-      <Input style={styles.input} placeholder={t('inputs.phone')} />
-      <Input placeholder={t('inputs.password')} />
-    </InputsContainer>
-    <Button
-      style={styles.button}
-      type={ButtonType.PRIMARY}
-      onPress={() => null}
-    >
-      {t('buttons.continue')}
-    </Button>
-    <Flex>
-      <Text fontSize={FontSize.S17} color={colors.white}>
-        {t('auth.hasAccount')}
-      </Text>
-      <Button
-        style={styles.button2}
-        type={ButtonType.TEXT}
-        onPress={() => null}
+      <Logo />
+      <Text
+        style={styles.title}
+        align="center"
+        fontSize={FontSize.S24}
+        color={colors.white}
       >
-        {t('buttons.login')}
+        {t('auth.registrationTitle')}
+      </Text>
+      <InputsContainer>
+        <Input style={styles.input} placeholder={t('inputs.firstName')} />
+        <Input style={styles.input} placeholder={t('inputs.phone')} />
+        <Input placeholder={t('inputs.password')} />
+      </InputsContainer>
+      <Button
+        style={styles.button}
+        type={ButtonType.PRIMARY}
+        onPress={() => navigate(Screens.SmsScreen)}
+      >
+        {t('buttons.continue')}
       </Button>
-    </Flex>
-  </Layout>
-);
+      <Flex>
+        <Text fontSize={FontSize.S17} color={colors.white}>
+          {t('auth.hasAccount')}
+        </Text>
+        <Button
+          style={styles.button2}
+          type={ButtonType.TEXT}
+          onPress={() => navigate(Screens.LoginScreen)}
+        >
+          {t('buttons.login')}
+        </Button>
+      </Flex>
+    </Layout>
+  );
+};
 
 const styles = StyleSheet.create({
   title: {

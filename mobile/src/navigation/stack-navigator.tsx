@@ -4,13 +4,18 @@ import { SmsScreen } from 'src/screens/sms';
 
 import { Screens } from '@navigation';
 import { createStackNavigator } from '@react-navigation/stack';
-import { LoginScreen, RegistrationScreen, WelcomeScreen } from '@screens';
+import {
+  LkScreen,
+  LoginScreen,
+  RegistrationScreen,
+  WelcomeScreen,
+} from '@screens';
 
 const Stack = createStackNavigator();
 
 export const StackNavigator = () => (
   <Stack.Navigator
-    initialRouteName={Screens.LoginScreen}
+    initialRouteName={Screens.WelcomeScreen}
     screenOptions={{ headerShown: false, animationEnabled: false }}
   >
     <Stack.Screen name={Screens.WelcomeScreen} component={WelcomeScreen} />
@@ -20,5 +25,6 @@ export const StackNavigator = () => (
     />
     <Stack.Screen name={Screens.LoginScreen} component={LoginScreen} />
     <Stack.Screen name={Screens.SmsScreen} component={SmsScreen} />
+    <Stack.Screen name={Screens.LkScreen} component={LkScreen} />
   </Stack.Navigator>
 );

@@ -1,6 +1,7 @@
 export enum FontWeight {
   'Regular' = 'Ubuntu Regular',
   'Medium' = 'Ubuntu Medium',
+  'Bold' = 'Ubuntu Bold',
 }
 export enum FontSize {
   'S24' = '24px',
@@ -8,6 +9,7 @@ export enum FontSize {
   'S17' = '17px',
   'S16' = '16px',
   'S12' = '12px',
+  'S10' = '10px',
 }
 
 export enum ButtonType {

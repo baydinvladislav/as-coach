@@ -7,6 +7,7 @@ export enum Screens {
   RegistrationScreen = 'RegistrationScreen',
   LoginScreen = 'LoginScreen',
   SmsScreen = 'SmsScreen',
+  LkScreen = 'LkScreen',
 }
 
 type Routes = Screens;

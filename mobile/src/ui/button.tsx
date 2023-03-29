@@ -1,9 +1,9 @@
 import React from 'react';
-import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
+import { TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
 
 import styled from 'styled-components';
 
-import { colors, normVert } from '@theme';
+import { colors, normHor, normVert } from '@theme';
 
 import { ButtonType } from '~types';
 
@@ -12,10 +12,12 @@ import { Text } from './text';
 type TProps = {
   children: React.ReactNode;
   type: ButtonType;
+  leftIcon?: JSX.Element;
 } & TouchableOpacityProps;
 
-export const Button = ({ children, ...props }: TProps) => (
-  <ButtonStyled {...props}>
+export const Button = ({ children, leftIcon, ...props }: TProps) => (
+  <ButtonStyled {...props} activeOpacity={0.5}>
+    {leftIcon && <View style={{ marginRight: normHor(12) }}>{leftIcon}</View>}
     <Text color={switchFontColor(props.type)}>{children}</Text>
   </ButtonStyled>
 );
