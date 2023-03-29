@@ -32,7 +32,7 @@ async def test_login_successfully(override_get_db):
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
         response = await ac.post(
-            "/login",
+            "/api/login",
             data=login_data,
             headers={"content-type": "application/x-www-form-urlencoded"}
         )
@@ -52,7 +52,7 @@ async def test_login_failed():
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
         response = await ac.post(
-            "/login",
+            "/api/login",
             data=login_data,
             headers={"content-type": "application/x-www-form-urlencoded"}
         )

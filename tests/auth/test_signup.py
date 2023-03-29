@@ -28,7 +28,7 @@ async def test_signup_successfully(override_get_db):
     print(TEST_USER_PASSWORD)
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        response = await ac.post("/signup", json=body)
+        response = await ac.post("/api/signup", json=body)
 
     assert response.status_code == 201
 
@@ -53,7 +53,7 @@ async def test_signup_validation_error(override_get_db):
     }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        response = await ac.post("/signup", json=body)
+        response = await ac.post("/api/signup", json=body)
 
     assert response.status_code == 422
 
@@ -78,7 +78,7 @@ async def test_signup_too_short_password(override_get_db):
     }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        response = await ac.post("/signup", json=signup_data)
+        response = await ac.post("/api/signup", json=signup_data)
 
     assert response.status_code == 422
 
@@ -94,6 +94,6 @@ async def test_signup_failed_username_already_registered(create_user):
     }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        response = await ac.post("/signup", json=signup_data)
+        response = await ac.post("/api/signup", json=signup_data)
 
     assert response.status_code == 400
