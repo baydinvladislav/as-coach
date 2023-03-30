@@ -62,7 +62,7 @@ jobs:
     - name: Run tests
       run: |
         cd backend
-        poetry run pytest backend/tests
+        poetry run pytest tests
       env:
         ACCESS_TOKEN_EXPIRE_MINUTES: 30
         ALGORITHM: "HS256"
