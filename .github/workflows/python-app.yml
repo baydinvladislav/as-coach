@@ -42,10 +42,10 @@ jobs:
         poetry install --no-root
 
     - name: Run Pylint
-      run: poetry run pylint src --fail-under=8.5
+      run: poetry run pylint backend/src --fail-under=8.5
 
     - name: Run Mypy
-      run: poetry run mypy src
+      run: poetry run mypy backend/src
 
     - name: Apply migrations
       run: poetry run alembic upgrade head
@@ -53,7 +53,7 @@ jobs:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/as_coach_test
 
     - name: Run tests
-      run: poetry run pytest
+      run: poetry run pytest backend/tests
       env:
         ACCESS_TOKEN_EXPIRE_MINUTES: 30
         ALGORITHM: "HS256"
