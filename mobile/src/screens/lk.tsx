@@ -5,59 +5,58 @@ import styled from 'styled-components';
 
 import { AddIcon, BicepsImage, DefaultAvatarImage } from '@assets';
 import { t } from '@i18n';
+import { Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
 import { Button, Layout, Text } from '@ui';
 
 import { ButtonType, FontSize, FontWeight } from '~types';
 
-export const LkScreen = () => (
-  <Layout
-    backgroundBlurRadius={10}
-    backgroundOpacity={0.3}
-    style={styles.layout}
-  >
-    <DateText>Четверг, 29 Дек</DateText>
-    <Flex>
+export const LkScreen = () => {
+  const { navigate } = useNavigation();
+  return (
+    <Layout backgroundBlurRadius={10} backgroundOpacity={0.3}>
+      <DateText>Четверг, 29 Дек</DateText>
       <Flex>
-        <WelcomeText>{t('lk.welcome', { name: 'Александр' })}</WelcomeText>
-        <Biceps source={BicepsImage} />
+        <Flex>
+          <WelcomeText>{t('lk.welcome', { name: 'Александр' })}</WelcomeText>
+          <Biceps source={BicepsImage} />
+        </Flex>
+        <TouchableOpacity onPress={() => navigate(Screens.ProfileScreen)}>
+          <Avatar source={DefaultAvatarImage} />
+        </TouchableOpacity>
       </Flex>
-      <TouchableOpacity>
-        <Avatar source={DefaultAvatarImage} />
-      </TouchableOpacity>
-    </Flex>
 
-    <View style={styles.text}>
-      <Text
-        align="center"
-        style={{ lineHeight: 24, marginBottom: normVert(16) }}
-        fontSize={FontSize.S24}
-        color={colors.black5}
-      >
-        {t('lk.hereClients')}
-      </Text>
-      <Text
-        align="center"
-        style={{ lineHeight: 24 }}
-        fontSize={FontSize.S17}
-        color={colors.black4}
-      >
-        {t('lk.hereCanAdd')}
-      </Text>
-    </View>
+      <View style={styles.text}>
+        <Text
+          align="center"
+          style={{ lineHeight: 24, marginBottom: normVert(16) }}
+          fontSize={FontSize.S24}
+          color={colors.black5}
+        >
+          {t('lk.hereClients')}
+        </Text>
+        <Text
+          align="center"
+          style={{ lineHeight: 24 }}
+          fontSize={FontSize.S17}
+          color={colors.black4}
+        >
+          {t('lk.hereCanAdd')}
+        </Text>
+      </View>
 
-    <Button
-      type={ButtonType.TEXT}
-      onPress={() => null}
-      leftIcon={<AddIcon stroke={colors.green} />}
-    >
-      {t('buttons.addClient')}
-    </Button>
-  </Layout>
-);
+      <Button
+        type={ButtonType.TEXT}
+        onPress={() => null}
+        leftIcon={<AddIcon stroke={colors.green} />}
+      >
+        {t('buttons.addClient')}
+      </Button>
+    </Layout>
+  );
+};
 
 const styles = StyleSheet.create({
-  layout: { flex: 1 },
   text: { marginTop: normVert(213), marginBottom: normVert(24) },
 });
 

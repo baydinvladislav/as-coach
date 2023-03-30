@@ -35,7 +35,7 @@ export const WelcomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  layout: { flex: 1, justifyContent: 'flex-end' },
+  layout: { justifyContent: 'flex-end' },
   button: {
     marginBottom: normVert(20),
   },

@@ -1,3 +1,5 @@
+import { Dimensions } from 'react-native';
+
 import { isString } from 'lodash';
 
 export * from './constants';
@@ -22,3 +24,6 @@ export const flattenMessages = (nestedMessages: INestedMessages, prefix = '') =>
     },
     {},
   );
+
+export const windowWidth = Dimensions.get('window').width;
+export const windowHeight = Dimensions.get('window').height;

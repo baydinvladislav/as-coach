@@ -1,6 +1,9 @@
 import { useNavigation as useNativeNavigation } from '@react-navigation/native';
 import type { ParamListBase } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from '@react-navigation/native-stack';
 
 export enum Screens {
   WelcomeScreen = 'WelcomeScreen',
@@ -8,9 +11,15 @@ export enum Screens {
   LoginScreen = 'LoginScreen',
   SmsScreen = 'SmsScreen',
   LkScreen = 'LkScreen',
+  ProfileScreen = 'ProfileScreen',
+  ProfileEditScreen = 'ProfileEditScreen',
+  ChangePasswordScreen = 'ChangePasswordScreen',
+  NewChangePasswordScreen = 'NewChangePasswordScreen',
 }
 
 type Routes = Screens;
+
+export type RoutesProps = NativeStackScreenProps<ParamListBase, Routes>;
 
 export const useNavigation = () =>
   useNativeNavigation<NativeStackNavigationProp<ParamListBase, Routes>>();

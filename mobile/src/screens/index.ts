@@ -1,4 +1,4 @@
 export * from './welcome';
-export * from './registration';
-export * from './login';
+export * from './auth';
 export * from './lk';
+export * from './profile';
