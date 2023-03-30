@@ -38,6 +38,7 @@ jobs:
 
     - name: Install application dependencies
       run: |
+        cd backend
         curl -sSL https://install.python-poetry.org | python3 -
         poetry install --no-root
 
