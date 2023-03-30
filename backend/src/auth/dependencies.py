@@ -10,10 +10,10 @@ from jose import jwt
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
-from backend.src.auth.models import User
-from backend.src.auth.schemas import TokenPayload
-from backend.src.auth.config import ALGORITHM, JWT_SECRET_KEY
-from backend.src.dependencies import get_db
+from src.auth.models import User
+from src.auth.schemas import TokenPayload
+from src.auth.config import ALGORITHM, JWT_SECRET_KEY
+from src.dependencies import get_db
 
 reuseable_oauth = OAuth2PasswordBearer(
     tokenUrl="/login",

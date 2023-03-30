@@ -1,28 +1,24 @@
 FROM python:3.10
 
-# Сборка зависимостей
-ARG BUILD_DEPS="curl"
-RUN apt-get update && apt-get install -y $BUILD_DEPS
+ENV PYTHONFAULTHANDLER=1 \
+  PYTHONUNBUFFERED=1 \
+  PYTHONHASHSEED=random \
+  PIP_NO_CACHE_DIR=off \
+  PIP_DISABLE_PIP_VERSION_CHECK=on \
+  PIP_DEFAULT_TIMEOUT=100 \
+  POETRY_VERSION=1.3.2
 
-# Установка poetry
-RUN curl -sSL https://install.python-poetry.org | POETRY_VERSION=1.3.2 POETRY_HOME=/root/poetry python3 -
+# System deps:
+RUN pip install "poetry==$POETRY_VERSION"
 
-ENV PATH="${PATH}:/root/poetry/bin"
-ENV PYTHONPATH "${PYTHONPATH}:/backend"
-
+# Copy only requirements to cache them in docker layer
 WORKDIR /code
+COPY poetry.lock pyproject.toml /code/
 
-ENTRYPOINT ["uvicorn", "src.main:app", "--reload", "--port", "8000"]
+# Project initialization:
+RUN poetry config virtualenvs.create false && poetry install --no-interaction --no-ansi
 
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONBUFFERED 1
-
-# Установка питонячьих библиотек
-COPY poetry.lock pyproject.toml /
-RUN poetry config virtualenvs.create false && \
-    poetry install --no-interaction --no-ansi
-
-# Копирование в контейнер папок и файлов.
+# Creating folders, and files for a project:
 COPY . /code
-COPY ./docker-entrypoint.sh /code
-RUN chmod u+x ./docker-entrypoint.sh
+
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "80"]
