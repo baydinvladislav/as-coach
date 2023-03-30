@@ -4,10 +4,10 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from src.auth.utils import get_hashed_password
-from src.dependencies import get_db
-from src.main import app
-from src.auth.models import User
+from auth.utils import get_hashed_password
+from dependencies import get_db
+from main import app
+from auth.models import User
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 TEST_USER_USERNAME = os.getenv("TEST_USER_USERNAME")
