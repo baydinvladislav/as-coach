@@ -4,19 +4,18 @@ version = "0.1.0"
 description = ""
 authors = ["v.baydin <v.baydin@samolet.ru>"]
 readme = "README.md"
-packages = [{include = "as-coach"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
 fastapi = "^0.92.0"
 uvicorn = "^0.20.0"
 gunicorn = "^20.1.0"
-alembic = "^1.9.4"
 psycopg2 = "^2.9.5"
 httpx = "^0.23.3"
 passlib = "^1.7.4"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 sqlalchemy = "^2.0.4"
+alembic = "^1.10.2"
 
 
 [tool.poetry.group.dev.dependencies]

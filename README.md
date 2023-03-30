@@ -1,3 +1,9 @@
+alembic revision --autogenerate -m "nullable fields"
+alembic upgrade head
+
+docker-compose build
+docker-compose up
+
 The application is a highly specialized CRM for maintaining a client base of fitness trainers.
 
 In a few simple steps, the user can build a training plan and send the file to the client on a mobile device, as well as create new training plans based on the finished one.

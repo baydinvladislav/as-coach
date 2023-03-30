@@ -8,8 +8,8 @@ from jose import jwt
 from passlib.context import CryptContext
 
 from src.auth.config import (ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM,
-                             JWT_REFRESH_SECRET_KEY, JWT_SECRET_KEY,
-                             REFRESH_TOKEN_EXPIRE_MINUTES)
+                         JWT_REFRESH_SECRET_KEY, JWT_SECRET_KEY,
+                         REFRESH_TOKEN_EXPIRE_MINUTES)
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

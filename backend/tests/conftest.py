@@ -56,7 +56,7 @@ async def startup_event():
     In the beginning on each test creates database schema,
     also changes production db to testing db
     """
-    from database import Base
+    from src.database import Base
 
     Base.metadata.create_all(bind=engine)
     app.dependency_overrides[get_db] = override_get_db

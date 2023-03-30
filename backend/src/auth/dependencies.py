@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 
 from src.auth.models import User
 from src.auth.schemas import TokenPayload
-from src.auth.utils import ALGORITHM, JWT_SECRET_KEY
+from src.auth.config import ALGORITHM, JWT_SECRET_KEY
 from src.dependencies import get_db
 
 reuseable_oauth = OAuth2PasswordBearer(

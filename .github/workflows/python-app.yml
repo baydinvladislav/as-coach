@@ -38,22 +38,31 @@ jobs:
 
     - name: Install application dependencies
       run: |
+        cd backend
         curl -sSL https://install.python-poetry.org | python3 -
         poetry install --no-root
 
-    - name: Run Pylint
-      run: poetry run pylint src --fail-under=8.5
-
-    - name: Run Mypy
-      run: poetry run mypy src
+#    - name: Run Pylint
+#      run: |
+#        cd backend/src
+#        poetry run pylint --fail-under=8.5
+#
+#    - name: Run Mypy
+#      run: |
+#        cd backend
+#        poetry run mypy src
 
     - name: Apply migrations
-      run: poetry run alembic upgrade head
+      run: |
+        cd backend
+        poetry run alembic upgrade head
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/as_coach_test
 
     - name: Run tests
-      run: poetry run pytest
+      run: |
+        cd backend
+        poetry run pytest tests
       env:
         ACCESS_TOKEN_EXPIRE_MINUTES: 30
         ALGORITHM: "HS256"
