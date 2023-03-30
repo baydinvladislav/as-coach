@@ -53,12 +53,16 @@ jobs:
         poetry run mypy src
 
     - name: Apply migrations
-      run: poetry run alembic upgrade head
+      run: |
+        cd backend
+        poetry run alembic upgrade head
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/as_coach_test
 
     - name: Run tests
-      run: poetry run pytest backend/tests
+      run: |
+        cd backend
+        poetry run pytest backend/tests
       env:
         ACCESS_TOKEN_EXPIRE_MINUTES: 30
         ALGORITHM: "HS256"
