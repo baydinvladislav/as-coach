@@ -4,7 +4,6 @@ import { StyleSheet, View } from 'react-native';
 import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
-import { PasswordInput } from '@components';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normVert } from '@theme';
@@ -12,15 +11,11 @@ import { Button, Input, Layout, Text } from '@ui';
 
 import { ButtonType, FontSize } from '~types';
 
-export const LoginScreen = () => {
+export const RegistrationScreen = () => {
   const { navigate } = useNavigation();
 
   return (
-    <Layout
-      backgroundBlurRadius={10}
-      backgroundOpacity={0.3}
-      style={styles.layout}
-    >
+    <Layout backgroundBlurRadius={10} backgroundOpacity={0.3}>
       <Logo />
       <Text
         style={styles.title}
@@ -28,29 +23,32 @@ export const LoginScreen = () => {
         fontSize={FontSize.S24}
         color={colors.white}
       >
-        {t('auth.loginTitle')}
+        {t('auth.registrationTitle')}
       </Text>
       <InputsContainer>
+        <Input style={styles.input} placeholder={t('inputs.firstName')} />
         <Input style={styles.input} placeholder={t('inputs.phone')} />
-        <PasswordInput placeholder={t('inputs.password')} />
+        <Input placeholder={t('inputs.password')} />
       </InputsContainer>
       <Button
         style={styles.button}
         type={ButtonType.PRIMARY}
-        onPress={() => navigate(Screens.LkScreen)}
+        onPress={() =>
+          navigate(Screens.SmsScreen, { from: Screens.RegistrationScreen })
+        }
       >
-        {t('buttons.login')}
+        {t('buttons.continue')}
       </Button>
       <Flex>
         <Text fontSize={FontSize.S17} color={colors.white}>
-          {t('auth.noAccount')}
+          {t('auth.hasAccount')}
         </Text>
         <Button
           style={styles.button2}
           type={ButtonType.TEXT}
-          onPress={() => navigate(Screens.RegistrationScreen)}
+          onPress={() => navigate(Screens.LoginScreen)}
         >
-          {t('buttons.registration')}
+          {t('buttons.login')}
         </Button>
       </Flex>
     </Layout>
@@ -61,7 +59,6 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: normVert(32),
   },
-  layout: { flex: 1 },
   button: {
     marginBottom: normVert(20),
   },
@@ -74,8 +71,7 @@ const styles = StyleSheet.create({
 });
 
 const InputsContainer = styled(View)`
-  margin-bottom: auto;
-  height: 100%;
+  flex: 1;
 `;
 
 const Flex = styled(View)`

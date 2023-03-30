@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
+import { PasswordInput } from '@components';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normVert } from '@theme';
@@ -11,15 +12,11 @@ import { Button, Input, Layout, Text } from '@ui';
 
 import { ButtonType, FontSize } from '~types';
 
-export const RegistrationScreen = () => {
+export const NewChangePasswordScreen = () => {
   const { navigate } = useNavigation();
 
   return (
-    <Layout
-      backgroundBlurRadius={10}
-      backgroundOpacity={0.3}
-      style={styles.layout}
-    >
+    <Layout backgroundBlurRadius={10} backgroundOpacity={0.3}>
       <Logo />
       <Text
         style={styles.title}
@@ -27,41 +24,48 @@ export const RegistrationScreen = () => {
         fontSize={FontSize.S24}
         color={colors.white}
       >
-        {t('auth.registrationTitle')}
+        {t('changePassword.changeNewPasswordTitle')}
+      </Text>
+      <Text
+        align="center"
+        style={{ lineHeight: 22 }}
+        fontSize={FontSize.S17}
+        color={colors.black4}
+      >
+        {t('changePassword.changePasswordDescription')}
       </Text>
       <InputsContainer>
-        <Input style={styles.input} placeholder={t('inputs.firstName')} />
-        <Input style={styles.input} placeholder={t('inputs.phone')} />
-        <Input placeholder={t('inputs.password')} />
+        <PasswordInput
+          style={styles.input}
+          placeholder={t('inputs.password')}
+        />
+        <PasswordInput
+          style={styles.input}
+          placeholder={t('inputs.newPassword')}
+        />
       </InputsContainer>
       <Button
         style={styles.button}
         type={ButtonType.PRIMARY}
-        onPress={() => navigate(Screens.SmsScreen)}
+        onPress={() => navigate(Screens.ProfileScreen)}
       >
-        {t('buttons.continue')}
+        {t('buttons.save')}
       </Button>
-      <Flex>
-        <Text fontSize={FontSize.S17} color={colors.white}>
-          {t('auth.hasAccount')}
-        </Text>
-        <Button
-          style={styles.button2}
-          type={ButtonType.TEXT}
-          onPress={() => navigate(Screens.LoginScreen)}
-        >
-          {t('buttons.login')}
-        </Button>
-      </Flex>
+      <Button
+        style={styles.button2}
+        type={ButtonType.TEXT}
+        onPress={() => navigate(Screens.ProfileScreen)}
+      >
+        {t('buttons.cancel')}
+      </Button>
     </Layout>
   );
 };
 
 const styles = StyleSheet.create({
   title: {
-    marginBottom: normVert(32),
+    marginBottom: normVert(16),
   },
-  layout: { flex: 1 },
   button: {
     marginBottom: normVert(20),
   },
@@ -74,14 +78,8 @@ const styles = StyleSheet.create({
 });
 
 const InputsContainer = styled(View)`
-  margin-bottom: auto;
-  height: 100%;
-`;
-
-const Flex = styled(View)`
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
+  margin-top: ${normVert(32)}px;
+  flex: 1;
 `;
 
 const Logo = styled(LogoIcon)`

@@ -11,8 +11,7 @@ import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
 import { t } from '@i18n';
-import { Screens } from '@navigation';
-import { useNavigation } from '@react-navigation/native';
+import { RoutesProps, Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
 import { Button, Layout, Text } from '@ui';
 
@@ -21,8 +20,9 @@ import { ButtonType, FontSize } from '~types';
 const CELL_COUNT = 4;
 const PHONE = '+7 (985) 000-00-00';
 
-export const SmsScreen = () => {
+export const SmsScreen = ({ route }: RoutesProps) => {
   const { navigate } = useNavigation();
+  const currentScreen = (route.params as { from: Screens }).from;
 
   const [value, setValue] = useState('');
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
@@ -32,11 +32,7 @@ export const SmsScreen = () => {
   });
 
   return (
-    <Layout
-      backgroundBlurRadius={10}
-      backgroundOpacity={0.3}
-      style={styles.layout}
-    >
+    <Layout backgroundBlurRadius={10} backgroundOpacity={0.3}>
       <Logo />
       <Text
         style={styles.title}
@@ -92,7 +88,11 @@ export const SmsScreen = () => {
       <Button
         style={styles.button}
         type={ButtonType.PRIMARY}
-        onPress={() => navigate(Screens.LoginScreen)}
+        onPress={() =>
+          currentScreen === Screens.RegistrationScreen
+            ? navigate(Screens.LoginScreen)
+            : navigate(Screens.ChangePasswordScreen)
+        }
       >
         {t('buttons.confirm')}
       </Button>
@@ -111,7 +111,6 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: normVert(32),
   },
-  layout: { flex: 1 },
   button: {
     marginBottom: normVert(20),
   },
@@ -141,8 +140,7 @@ const CellText = styled(Text)`
 `;
 
 const InputsContainer = styled(View)`
-  margin-bottom: auto;
-  height: 100%;
+  flex: 1;
 `;
 
 const Logo = styled(LogoIcon)`

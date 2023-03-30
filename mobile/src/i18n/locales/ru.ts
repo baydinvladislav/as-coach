@@ -13,10 +13,30 @@ export const ru = {
     hereClients: 'Здесь будут ваши клиенты',
     hereCanAdd: 'В этом разделе можно\nдобавлять клиентов',
   },
+  profile: {
+    profileTitle: 'Профиль',
+    nav1: 'Личные данные',
+    nav2: 'Смена пароля',
+    nav3: 'Уведомления',
+    nav4: 'Выйти из аккаунта',
+  },
+  edit: {
+    editTitle: 'Личные данные',
+  },
+  changePassword: {
+    changePasswordTitle: 'Введи текущий пароль',
+    changeNewPasswordTitle: 'Придумай новый пароль',
+    changePasswordDescription: 'Пароль должен содержать\nминимум 8 символов',
+  },
   inputs: {
     phone: 'Номер телефона',
     password: 'Пароль',
+    newPassword: 'Повтори пароль',
     firstName: 'Имя',
+    lastName: 'Фамилия',
+    sex: 'Пол',
+    birthday: 'Дата рождения',
+    email: 'E-mail',
   },
   buttons: {
     login: 'Войти',
@@ -25,5 +45,8 @@ export const ru = {
     confirm: 'Подтвердить',
     getCode: 'Получить новый код',
     addClient: 'Добавить клиента',
+    save: 'Сохранить',
+    cancel: 'Отменить',
+    forgotPassword: 'Забыл (-а) пароль',
   },
 };

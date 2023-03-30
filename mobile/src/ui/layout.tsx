@@ -11,6 +11,7 @@ type TProps = {
   style?: StyleProp<ViewStyle>;
   backgroundBlurRadius?: number;
   backgroundOpacity?: number;
+  topOffset?: number;
 };
 
 export const Layout = ({
@@ -18,14 +19,17 @@ export const Layout = ({
   style,
   backgroundBlurRadius = 0,
   backgroundOpacity = 1,
+  topOffset = 60,
 }: TProps) => (
-  <SafeAreaView style={style}>
+  <SafeAreaView style={{ flex: 1 }}>
     <Background
       source={BackgroundImage}
       opacity={backgroundOpacity}
       blurRadius={backgroundBlurRadius}
     />
-    <Container>{children}</Container>
+    <Container style={style} topOffset={topOffset}>
+      {children}
+    </Container>
   </SafeAreaView>
 );
 
@@ -36,7 +40,8 @@ const Background = styled(Image)<{ opacity: number }>`
   top: 0;
 `;
 
-const Container = styled(View)`
-  padding-top: ${normVert(60)}px;
+const Container = styled(View)<{ topOffset: number }>`
+  padding-top: ${({ topOffset }) => normVert(topOffset)}px;
   padding-horizontal: ${normHor(16)}px;
+  flex: 1;
 `;

@@ -10,9 +10,10 @@ import {
 import styled from 'styled-components';
 
 import { colors, normHor, normVert } from '@theme';
-import { Text } from '@ui';
 
 import { FontSize } from '~types';
+
+import { Text } from './text';
 
 export type TInputProps = {
   placeholder?: string;
@@ -27,7 +28,7 @@ export const Input = ({
   placeholder,
   rightIcon,
   width = '100%',
-  height = normVert(48),
+  height = 48,
   isTextarea = false,
   style,
   ...props
@@ -57,6 +58,7 @@ export const Input = ({
       <Placeholder isActive={isActive}>{placeholder}</Placeholder>
       <InputRN
         {...props}
+        style={{ paddingVertical: 0 }}
         isTextarea={isTextarea}
         clearTextOnFocus={false}
         placeholderTextColor={colors.white}
@@ -73,7 +75,7 @@ const InputContainer = styled(View)<{
   height: number;
   isTextarea: boolean;
 }>`
-  height: ${({ height }) => height}px;
+  height: ${({ height }) => normVert(height)}px;
   width: ${({ width }) => width};
   padding-horizontal: ${normHor(16)}px;
   background-color: ${colors.black3};
@@ -81,7 +83,7 @@ const InputContainer = styled(View)<{
   flex-direction: row;
   align-items: center;
   ${({ isTextarea }) => isTextarea && `padding-top: ${normVert(16)}px`};
-  padding-top: ${normVert(14)}px;
+  padding-top: ${normVert(18)}px;
 `;
 
 const Icon = styled(View)`
@@ -100,6 +102,6 @@ const Placeholder = styled(Text)<{ isActive: boolean }>`
   position: absolute;
   color: ${colors.black5};
   left: ${normHor(16)}px;
-  top: ${({ isActive }) => (isActive ? normVert(6) : normVert(15))}px;
+  ${({ isActive }) => isActive && `top:${normVert(6)}px;`}
   font-size: ${({ isActive }) => (isActive ? FontSize.S12 : FontSize.S17)};
 `;
