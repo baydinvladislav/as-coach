@@ -1,9 +1,9 @@
 import pytest
 from httpx import AsyncClient
 
-from auth.utils import get_hashed_password
-from auth.models import User
-from main import app
+from src.auth.utils import get_hashed_password
+from src.auth.models import User
+from src.main import app
 from backend.tests.conftest import TEST_USER_PASSWORD, TEST_USER_USERNAME
 
 
