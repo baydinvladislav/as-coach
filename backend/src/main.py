@@ -5,7 +5,7 @@ Application entrypoint.
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
-from src.auth.router import auth_router
+from backend.src.auth.router import auth_router
 
 
 def get_application() -> FastAPI:
