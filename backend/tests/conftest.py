@@ -4,10 +4,10 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from auth.utils import get_hashed_password
-from dependencies import get_db
-from main import app
-from auth.models import User
+from src.auth.utils import get_hashed_password
+from src.dependencies import get_db
+from src.main import app
+from src.auth.models import User
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 TEST_USER_USERNAME = os.getenv("TEST_USER_USERNAME")
@@ -56,7 +56,7 @@ async def startup_event():
     In the beginning on each test creates database schema,
     also changes production db to testing db
     """
-    from database import Base
+    from src.database import Base
 
     Base.metadata.create_all(bind=engine)
     app.dependency_overrides[get_db] = override_get_db
