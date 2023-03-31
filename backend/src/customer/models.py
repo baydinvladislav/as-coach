@@ -21,8 +21,8 @@ class Customer(Base, BaseModel):
     password = Column("password", String, nullable=True)
     first_name = Column("first_name", String(50), nullable=False)
     last_name = Column("last_name", String(50), nullable=False)
-    gender: Column = Column("gender", Enum(Gender), nullable=False)
-    user_id = Column(UUID, ForeignKey("user.id"))
+    gender: Column = Column("gender", Enum(Gender), nullable=True)
+    user_id = Column(UUID, ForeignKey("user.id"), nullable=False)
     user = relationship("User", back_populates="customers")
 
     def __repr__(self):
