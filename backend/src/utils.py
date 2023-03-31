@@ -16,6 +16,9 @@ def validate_phone_number(phone_number: str):
 
 
 def validate_uuid(uuid_value: str):
+    """
+    Validates passed uuid
+    """
     try:
         uuid.UUID(str(uuid_value))
         return True
