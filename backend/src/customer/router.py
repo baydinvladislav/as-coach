@@ -1,10 +1,13 @@
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from src.customer.schemas import CustomerCreateIn, CustomerCreateOut
+from src.customer.schemas import CustomerCreateIn, CustomerOut
 from src.dependencies import get_db
 from src.auth.dependencies import get_current_user
 from src.customer.models import Customer
+from src.utils import validate_uuid
 
 customer_router = APIRouter()
 
@@ -13,11 +16,11 @@ customer_router = APIRouter()
     "/customers",
     summary="Create new customer",
     status_code=status.HTTP_201_CREATED,
-    response_model=CustomerCreateOut)
-async def create_user(
+    response_model=CustomerOut)
+async def create_customer(
         customer_data: CustomerCreateIn,
         database: Session = Depends(get_db),
-        current_user: Session = Depends(get_current_user)):
+        current_user: Session = Depends(get_current_user)) -> dict:
     """
     Creates new customer for user
 
@@ -27,8 +30,10 @@ async def create_user(
         current_user: returns current application user
     Raises:
         400 in case if customer with the phone number already created
+        400 in case if couple last name and first name already exist
     Returns:
-        dictionary with just created user, id and username as keys
+        dictionary with just created customer
+        id, first_name, last_name and phone_number are keys
     """
     if customer_data.phone_number:
         customer = database.query(Customer).filter(
@@ -61,6 +66,85 @@ async def create_user(
 
     database.add(customer)
     database.commit()
+
+    return {
+        "id": str(customer.id),
+        "first_name": customer.first_name,
+        "last_name": customer.last_name,
+        "phone_number": customer.phone_number
+    }
+
+
+@customer_router.get(
+    "/customers",
+    summary="Gets all user's customers",
+    status_code=status.HTTP_200_OK)
+async def get_customers(
+        current_user: Session = Depends(get_current_user)
+) -> list[Optional[CustomerOut]]:
+    """
+    Gets all customer for current user
+
+    Args:
+        current_user: returns current application user
+
+    Returns:
+        list of customers
+    """
+    customers = []
+
+    for customer in current_user.customers:
+        customers.append({
+            "id": str(customer.id),
+            "first_name": customer.first_name,
+            "last_name": customer.last_name,
+            "phone_number": customer.phone_number
+        })
+
+    return customers
+
+
+@customer_router.get(
+    "/customers/{customer_id}",
+    status_code=status.HTTP_200_OK)
+async def get_customer(
+        customer_id: str,
+        database: Session = Depends(get_db),
+        current_user: Session = Depends(get_current_user)
+) -> CustomerOut:
+    """
+    Gets specific customer by ID.
+
+    Args:
+        customer_id: str(UUID) of specified customer.
+        database: dependency injection for access to database.
+        current_user: returns current application user
+
+    Raise:
+        HTTPException: 404 when customers not found.
+        HTTPException: 400 when specified customer does not belong to the current user.
+    """
+    if not validate_uuid(customer_id):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Passed customer_id is not correct UUID value"
+        )
+
+    customer = database.query(Customer).filter(
+        Customer.id == customer_id
+    ).first()
+
+    if not customer:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Customer with id {customer_id} not found"
+        )
+
+    if str(customer.user_id) != str(current_user.id):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="The client belong to another user"
+        )
 
     return {
         "id": str(customer.id),

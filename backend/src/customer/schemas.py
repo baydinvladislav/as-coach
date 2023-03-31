@@ -1,5 +1,5 @@
 """
-
+Schemas for customer service
 """
 
 from typing import Optional
@@ -11,6 +11,7 @@ from src.utils import validate_phone_number
 
 class CustomerCreateIn(BaseModel):
     """
+    Schema to create new customer
     """
     first_name: str
     last_name: str
@@ -18,10 +19,12 @@ class CustomerCreateIn(BaseModel):
 
     @validator("phone_number")
     def validate_phone_number(cls, value):  # pylint: disable=no-self-argument
-        return validate_phone_number(value)
+        if value is not None:
+            return validate_phone_number(value)
 
 
-class CustomerCreateOut(CustomerCreateIn, BaseModel):
+class CustomerOut(CustomerCreateIn, BaseModel):
     """
+    Schema to response after successfully customer creation
     """
     id: str
