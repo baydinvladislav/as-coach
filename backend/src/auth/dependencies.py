@@ -16,7 +16,7 @@ from src.auth.config import ALGORITHM, JWT_SECRET_KEY
 from src.dependencies import get_db
 
 reuseable_oauth = OAuth2PasswordBearer(
-    tokenUrl="/login",
+    tokenUrl="/api/login",
     scheme_name="JWT"
 )
 
