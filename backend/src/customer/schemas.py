@@ -25,6 +25,6 @@ class CustomerCreateIn(BaseModel):
 
 class CustomerOut(CustomerCreateIn, BaseModel):
     """
-    Schema to response after successfully customer creation
+    Schema represents Customer in response
     """
     id: str

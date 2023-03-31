@@ -121,7 +121,8 @@ async def get_customer(
         current_user: returns current application user
 
     Raise:
-        HTTPException: 404 when customers not found.
+        HTTPException: 400 when passed is not correct UUID as customer_id.
+        HTTPException: 404 when customer not found.
         HTTPException: 400 when specified customer does not belong to the current user.
     """
     if not validate_uuid(customer_id):
