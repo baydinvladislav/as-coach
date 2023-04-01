@@ -6,7 +6,8 @@ ENV PYTHONFAULTHANDLER=1 \
   PIP_NO_CACHE_DIR=off \
   PIP_DISABLE_PIP_VERSION_CHECK=on \
   PIP_DEFAULT_TIMEOUT=100 \
-  POETRY_VERSION=1.3.2
+  POETRY_VERSION=1.3.2 \
+  DATABASE_URL=postgresql://postgres:postgres@0.0.0.0:5432/as_coach
 
 # System deps:
 RUN pip install "poetry==$POETRY_VERSION"
@@ -21,4 +22,5 @@ RUN poetry config virtualenvs.create false && poetry install --no-interaction --
 # Creating folders, and files for a project:
 COPY . /code
 
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+ENTRYPOINT alembic upgrade head
+ENTRYPOINT uvicorn src.main:app --host 0.0.0.0 --port 8000
