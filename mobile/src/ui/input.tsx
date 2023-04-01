@@ -7,6 +7,7 @@ import {
   ViewStyle,
 } from 'react-native';
 
+import { useMaskedInputProps } from 'react-native-mask-input';
 import styled from 'styled-components';
 
 import { colors, normHor, normVert } from '@theme';
@@ -22,6 +23,7 @@ export type TInputProps = {
   height?: number;
   isTextarea?: boolean;
   style?: StyleProp<ViewStyle>;
+  mask?: any;
 } & TextInputProps;
 
 export const Input = ({
@@ -31,6 +33,7 @@ export const Input = ({
   height = 48,
   isTextarea = false,
   style,
+  mask,
   ...props
 }: TInputProps) => {
   const [state, setState] = useState({
@@ -46,7 +49,13 @@ export const Input = ({
     setState(state => ({ ...state, isFocused: !state.isFocused }));
   };
 
-  const isActive = state.value !== '' || state.isFocused;
+  const isActive = props.value || state.value !== '' || state.isFocused;
+
+  const maskedInputProps = useMaskedInputProps({
+    value: props.value,
+    onChangeText: props.onChangeText ?? handleChange,
+    mask,
+  });
 
   return (
     <InputContainer
@@ -58,13 +67,15 @@ export const Input = ({
       <Placeholder isActive={isActive}>{placeholder}</Placeholder>
       <InputRN
         {...props}
+        {...maskedInputProps}
+        placeholder=""
         style={{ paddingVertical: 0 }}
         isTextarea={isTextarea}
         clearTextOnFocus={false}
         placeholderTextColor={colors.white}
-        onChangeText={handleChange}
         onFocus={handleFocus}
         onBlur={handleFocus}
+        value={props.value ?? state.value}
       />
       <Icon>{rightIcon}</Icon>
     </InputContainer>

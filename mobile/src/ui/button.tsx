@@ -13,12 +13,23 @@ type TProps = {
   children: React.ReactNode;
   type: ButtonType;
   leftIcon?: JSX.Element;
+  isDisabled?: boolean;
 } & TouchableOpacityProps;
 
-export const Button = ({ children, leftIcon, ...props }: TProps) => (
-  <ButtonStyled {...props} activeOpacity={0.5}>
+export const Button = ({
+  children,
+  leftIcon,
+  isDisabled = false,
+  ...props
+}: TProps) => (
+  <ButtonStyled {...props} activeOpacity={0.5} disabled={isDisabled}>
     {leftIcon && <View style={{ marginRight: normHor(12) }}>{leftIcon}</View>}
-    <Text color={switchFontColor(props.type)}>{children}</Text>
+    <Text
+      style={{ opacity: isDisabled ? 0.4 : 1 }}
+      color={switchFontColor(props.type)}
+    >
+      {children}
+    </Text>
   </ButtonStyled>
 );
 

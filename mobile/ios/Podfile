@@ -19,7 +19,7 @@ target 'ReactNative' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
-  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
+  pod 'react-native-mmkv', :path => '../node_modules/react-native-mmkv'
 
   target 'ReactNativeTests' do
     inherit! :complete

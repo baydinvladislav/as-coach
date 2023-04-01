@@ -3,6 +3,7 @@ import { Dimensions } from 'react-native';
 import { isString } from 'lodash';
 
 export * from './constants';
+export * from './storage';
 
 interface INestedMessages {
   [key: string]: string | INestedMessages;

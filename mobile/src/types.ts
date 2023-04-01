@@ -17,3 +17,11 @@ export enum ButtonType {
   SECONDARY = 'secondary',
   TEXT = 'text',
 }
+
+export type TResponseError = {
+  detail?: {
+    loc?: string[];
+    msg: string;
+    type: string;
+  }[];
+};
