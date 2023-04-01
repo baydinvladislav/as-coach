@@ -10,7 +10,6 @@ import { StatusBar } from 'react-native';
 
 import 'react-native-gesture-handler';
 
-import { Node } from '@babel/core';
 import { StackNavigator } from '@navigation';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { colors } from '@theme';
@@ -23,7 +22,7 @@ const MyTheme = {
   },
 };
 
-const App: () => Node = () => (
+const App = () => (
   <NavigationContainer theme={MyTheme}>
     <StatusBar barStyle="light-content" />
     <StackNavigator />

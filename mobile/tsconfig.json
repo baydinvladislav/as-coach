@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
+      "experimentalDecorators": true,
+      "useDefineForClassFields": true,
       "allowJs": true,
       "allowSyntheticDefaultImports": true,
       "esModuleInterop": true,
@@ -21,6 +23,9 @@
         "@data": ["./src/data"],
         "@utils": ["./src/utils"],
         "@i18n": ["./src/i18n"],
+        "@hooks": ["./src/hooks"],
+        "@constants": ["./src/constants"],
+        "@api": ["./src/api"],
         "~types": ["./src/types.ts"]
       }
     },
