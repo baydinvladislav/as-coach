@@ -3,6 +3,7 @@ Auth models folder.
 """
 
 from sqlalchemy import Column, Enum, String
+from sqlalchemy.orm import relationship
 
 from src.database import Base
 from src.models import BaseModel, Gender
@@ -20,3 +21,7 @@ class User(Base, BaseModel):
     first_name = Column("first_name", String(50), nullable=True)
     last_name = Column("last_name", String(50), nullable=True)
     gender: Column = Column("gender", Enum(Gender), nullable=True)
+    customers = relationship("Customer", cascade="all,delete-orphan", back_populates="user")
+
+    def __repr__(self):
+        return self.username

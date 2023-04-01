@@ -4,6 +4,8 @@ Schemas for auth service
 
 from pydantic import BaseModel, validator
 
+from src.utils import validate_phone_number
+
 
 class UserRegisterIn(BaseModel):
     """
@@ -14,13 +16,7 @@ class UserRegisterIn(BaseModel):
 
     @validator("username")
     def validate_phone_number(cls, value):  # pylint: disable=no-self-argument
-        """
-        We have to get: +79xxxxxxxxx
-        Phone number must contain 12 numbers
-        """
-        if value.startswith("+7") and len(value) == 12:
-            return value
-        raise ValueError("Specify correct phone number")
+        return validate_phone_number(value)
 
     @validator("password")
     def validate_password(cls, value):  # pylint: disable=no-self-argument
