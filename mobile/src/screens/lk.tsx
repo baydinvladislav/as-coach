@@ -1,24 +1,30 @@
 import React from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
 import { AddIcon, BicepsImage, DefaultAvatarImage } from '@assets';
+import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
-import { Button, Layout, Text } from '@ui';
+import { Button, Text } from '@ui';
 
 import { ButtonType, FontSize, FontWeight } from '~types';
 
-export const LkScreen = () => {
+export const LkScreen = observer(() => {
+  const { user } = useStore();
+
   const { navigate } = useNavigation();
   return (
-    <Layout backgroundBlurRadius={10} backgroundOpacity={0.3}>
+    <>
       <DateText>Четверг, 29 Дек</DateText>
       <Flex>
         <Flex>
-          <WelcomeText>{t('lk.welcome', { name: 'Александр' })}</WelcomeText>
+          <WelcomeText>
+            {t('lk.welcome', { name: user.me.username })}
+          </WelcomeText>
           <Biceps source={BicepsImage} />
         </Flex>
         <TouchableOpacity onPress={() => navigate(Screens.ProfileScreen)}>
@@ -52,9 +58,9 @@ export const LkScreen = () => {
       >
         {t('buttons.addClient')}
       </Button>
-    </Layout>
+    </>
   );
-};
+});
 
 const styles = StyleSheet.create({
   text: { marginTop: normVert(213), marginBottom: normVert(24) },

@@ -7,13 +7,14 @@ export const login = (username: string, password: string) =>
     isJson: false,
   });
 
-export const registration = (username: string, password: string) =>
-  axiosBase.post(
-    '/signup',
-    JSON.stringify({
-      password,
-      username,
-    }),
-  );
+export const registration = (
+  username: string,
+  phone: string,
+  password: string,
+) =>
+  axiosBase.post('/signup', {
+    password,
+    username,
+  });
 
 export const me = () => axiosBase.get('/me');

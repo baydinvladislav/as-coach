@@ -2,28 +2,42 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { Formik } from 'formik';
+import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
+import { PasswordInput } from '@components';
+import { PHONE_MASK } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normVert } from '@theme';
-import { Button, Input, Layout, Text } from '@ui';
+import { Button, Input, Text } from '@ui';
+import { transformPhone } from '@utils';
 
 import { ButtonType, FontSize } from '~types';
 
-export const RegistrationScreen = () => {
+export const RegistrationScreen = observer(() => {
   const { navigate } = useNavigation();
 
-  const { user } = useStore();
+  const { user, loading } = useStore();
+  const isDisabled = loading.isLoading;
 
-  const handleRegister = (values: { username: string; password: string }) => {
-    user.register({ username: '+79991899544', password: '123123123' });
+  const handleRegister = (values: {
+    phone: string;
+    username: string;
+    password: string;
+  }) => {
+    user
+      .register({
+        ...values,
+        phone: transformPhone(values.phone),
+      })
+      .then(() => navigate(Screens.LoginScreen));
   };
 
   return (
-    <Layout backgroundBlurRadius={10} backgroundOpacity={0.3}>
+    <>
       <Logo />
       <Text
         style={styles.title}
@@ -34,25 +48,36 @@ export const RegistrationScreen = () => {
         {t('auth.registrationTitle')}
       </Text>
       <Formik
-        initialValues={{ username: '', password: '' }}
+        initialValues={{ username: '', phone: '', password: '' }}
         onSubmit={handleRegister}
       >
         {({ handleChange, handleSubmit, values }) => (
           <>
             <InputsContainer>
-              <Input style={styles.input} placeholder={t('inputs.firstName')} />
-              <Input style={styles.input} placeholder={t('inputs.phone')} />
-              <Input placeholder={t('inputs.password')} />
+              <Input
+                style={styles.input}
+                placeholder={t('inputs.firstName')}
+                value={values.username}
+                onChangeText={handleChange('username')}
+              />
+              <Input
+                mask={PHONE_MASK}
+                style={styles.input}
+                placeholder={t('inputs.phone')}
+                value={values.phone}
+                onChangeText={handleChange('phone')}
+              />
+              <PasswordInput
+                placeholder={t('inputs.password')}
+                value={values.password}
+                onChangeText={handleChange('password')}
+              />
             </InputsContainer>
             <Button
               style={styles.button}
               type={ButtonType.PRIMARY}
-              onPress={() => {
-                handleSubmit();
-                // navigate(Screens.SmsScreen, {
-                //   from: Screens.RegistrationScreen,
-                // })
-              }}
+              onPress={() => handleSubmit()}
+              isDisabled={isDisabled}
             >
               {t('buttons.continue')}
             </Button>
@@ -71,9 +96,9 @@ export const RegistrationScreen = () => {
           </>
         )}
       </Formik>
-    </Layout>
+    </>
   );
-};
+});
 
 const styles = StyleSheet.create({
   title: {

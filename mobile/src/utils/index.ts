@@ -9,6 +9,9 @@ interface INestedMessages {
   [key: string]: string | INestedMessages;
 }
 
+export const transformPhone = (phone: string) =>
+  '+' + phone.replace(/[^0-9]/g, '');
+
 export const flattenMessages = (nestedMessages: INestedMessages, prefix = '') =>
   Object.keys(nestedMessages).reduce(
     (acc: Record<string, string>, key: string): Record<string, string> => {

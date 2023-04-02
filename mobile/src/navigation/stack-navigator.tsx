@@ -14,6 +14,7 @@ import {
   RegistrationScreen,
   WelcomeScreen,
 } from '@screens';
+import { Layout } from '@ui';
 
 const Stack = createStackNavigator();
 

@@ -8,7 +8,7 @@ import { PasswordInput } from '@components';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normVert } from '@theme';
-import { Button, Input, Layout, Text } from '@ui';
+import { Button, Text } from '@ui';
 
 import { ButtonType, FontSize } from '~types';
 
@@ -16,7 +16,7 @@ export const ChangePasswordScreen = () => {
   const { navigate } = useNavigation();
 
   return (
-    <Layout backgroundBlurRadius={10} backgroundOpacity={0.3}>
+    <>
       <Logo />
       <Text
         style={styles.title}
@@ -48,7 +48,7 @@ export const ChangePasswordScreen = () => {
       >
         {t('buttons.forgotPassword')}
       </Button>
-    </Layout>
+    </>
   );
 };
 

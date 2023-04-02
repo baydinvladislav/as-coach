@@ -9,7 +9,6 @@ import { actionLoading } from './action-loading';
 
 type UserProps = {
   username: string;
-  phone: string;
 };
 
 export default class UserStore {
@@ -23,7 +22,6 @@ export default class UserStore {
   @observable isSignedIn = true;
   @observable me: UserProps = {
     username: '',
-    phone: '',
   };
 
   @action
@@ -35,24 +33,24 @@ export default class UserStore {
     return this.isSignedIn;
   }
 
-  @actionLoading()
   @action
+  @actionLoading()
   async login({ phone, password }: { phone: string; password: string }) {
     try {
-      const {
-        data: { access_token },
-      } = await login(phone, password);
       await new Promise(resolve =>
         setTimeout(() => {
           resolve({});
         }, 1000),
       );
+      const {
+        data: { access_token },
+      } = await login(phone, password);
       await storage.setItem(TOKEN, access_token);
 
       const { data } = await me();
 
       this.setHasAccess(true);
-      this.me = data.me;
+      this.me = data;
       return data.me;
     } catch (e) {
       console.warn(e);
@@ -61,12 +59,25 @@ export default class UserStore {
   }
 
   @action
-  async register({ username, password }: any) {
+  @actionLoading()
+  async register({
+    username,
+    phone,
+    password,
+  }: {
+    username: string;
+    phone: string;
+    password: string;
+  }) {
     try {
-      const { data } = await registration(username, password);
+      await new Promise(resolve =>
+        setTimeout(() => {
+          resolve({});
+        }, 1000),
+      );
+      const { data } = await registration(phone, username, password);
 
-      this.setHasAccess(true);
-      this.me = data.me;
+      return data;
     } catch (e) {
       console.warn(e);
       throw e;
@@ -74,7 +85,12 @@ export default class UserStore {
   }
 
   @action
-  logout() {
-    this.isSignedIn = false;
+  async logout() {
+    try {
+      storage.removeItem(TOKEN);
+      this.isSignedIn = false;
+    } catch (e) {
+      console.warn(e);
+    }
   }
 }
