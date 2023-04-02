@@ -1,5 +1,5 @@
 """
-Contains every model relates to the gym
+Contains every model related to the gym
 """
 
 from sqlalchemy import Column, String, ForeignKey, Date, Integer, JSON
