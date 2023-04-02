@@ -26,4 +26,4 @@ class Customer(Base, BaseModel):
     user = relationship("User", back_populates="customers")
 
     def __repr__(self):
-        return f"{self.last_name} {self.first_name}"
+        return f"customer: {self.last_name} {self.first_name}"

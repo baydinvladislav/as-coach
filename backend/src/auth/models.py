@@ -24,4 +24,4 @@ class User(Base, BaseModel):
     customers = relationship("Customer", cascade="all,delete-orphan", back_populates="user")
 
     def __repr__(self):
-        return self.username
+        return f"user: {self.username}"
