@@ -13,7 +13,7 @@ import { LogoIcon } from '@assets';
 import { t } from '@i18n';
 import { RoutesProps, Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
-import { Button, Layout, Text } from '@ui';
+import { Button, Text } from '@ui';
 
 import { ButtonType, FontSize } from '~types';
 
@@ -32,7 +32,7 @@ export const SmsScreen = ({ route }: RoutesProps) => {
   });
 
   return (
-    <Layout backgroundBlurRadius={10} backgroundOpacity={0.3}>
+    <>
       <Logo />
       <Text
         style={styles.title}
@@ -103,7 +103,7 @@ export const SmsScreen = ({ route }: RoutesProps) => {
       >
         {t('buttons.getCode')}
       </Button>
-    </Layout>
+    </>
   );
 };
 

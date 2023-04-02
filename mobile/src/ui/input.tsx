@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   StyleProp,
   TextInput,
   TextInputProps,
@@ -7,14 +8,13 @@ import {
   ViewStyle,
 } from 'react-native';
 
+import { withAnchorPoint } from 'react-native-anchor-point';
 import { useMaskedInputProps } from 'react-native-mask-input';
 import styled from 'styled-components';
 
 import { colors, normHor, normVert } from '@theme';
 
 import { FontSize } from '~types';
-
-import { Text } from './text';
 
 export type TInputProps = {
   placeholder?: string;
@@ -57,6 +57,76 @@ export const Input = ({
     mask,
   });
 
+  const [placeholderWidth, setPlaceholderWidth] = useState(0);
+  const [placeholderHeight, setPlaceholderHeight] = useState(0);
+
+  const placeholderAnimY = useRef(new Animated.Value(0)).current;
+  const placeholderAnimSize = useRef(new Animated.Value(1)).current;
+
+  const movePlaceholderYIn = () => {
+    Animated.timing(placeholderAnimY, {
+      toValue: -normVert(12),
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const movePlaceholderYOut = () => {
+    Animated.timing(placeholderAnimY, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const sizePlaceholderIn = () => {
+    Animated.timing(placeholderAnimSize, {
+      toValue: 0.8,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const sizePlaceholderOut = () => {
+    Animated.timing(placeholderAnimSize, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  useEffect(() => {
+    if (isActive) {
+      movePlaceholderYIn();
+      sizePlaceholderIn();
+    } else {
+      movePlaceholderYOut();
+      sizePlaceholderOut();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isActive]);
+
+  const getTransform = () => {
+    const transform = {
+      transform: [
+        {
+          translateY: placeholderAnimY as unknown as number,
+        },
+        {
+          translateX: normHor(16),
+        },
+        {
+          scale: placeholderAnimSize as unknown as number,
+        },
+      ],
+    };
+    return withAnchorPoint(
+      transform,
+      { x: 0, y: 0 },
+      { width: placeholderWidth, height: placeholderHeight },
+    );
+  };
+
   return (
     <InputContainer
       style={style}
@@ -64,7 +134,16 @@ export const Input = ({
       height={height}
       width={width}
     >
-      <Placeholder isActive={isActive}>{placeholder}</Placeholder>
+      <Placeholder
+        isActive={Boolean(isActive)}
+        onLayout={event => {
+          setPlaceholderWidth(event.nativeEvent.layout.width);
+          setPlaceholderHeight(event.nativeEvent.layout.height);
+        }}
+        style={getTransform()}
+      >
+        {placeholder}
+      </Placeholder>
       <InputRN
         {...props}
         {...maskedInputProps}
@@ -109,10 +188,8 @@ const InputRN = styled(TextInput)<{ isTextarea: boolean }>`
   color: ${colors.white};
 `;
 
-const Placeholder = styled(Text)<{ isActive: boolean }>`
+const Placeholder = styled(Animated.Text)<{ isActive: boolean }>`
   position: absolute;
   color: ${colors.black5};
-  left: ${normHor(16)}px;
-  ${({ isActive }) => isActive && `top:${normVert(6)}px;`}
-  font-size: ${({ isActive }) => (isActive ? FontSize.S12 : FontSize.S17)};
+  font-size: ${FontSize.S17};
 `;

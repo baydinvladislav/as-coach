@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { Formik } from 'formik';
@@ -12,7 +12,8 @@ import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normVert } from '@theme';
-import { Button, Input, Layout, Text } from '@ui';
+import { Button, Input, Text } from '@ui';
+import { transformPhone } from '@utils';
 
 import { ButtonType, FontSize } from '~types';
 
@@ -20,19 +21,19 @@ export const LoginScreen = observer(() => {
   const { navigate } = useNavigation();
 
   const { user, loading } = useStore();
-  const idDisabled = loading.isLoading;
+  const isDisabled = loading.isLoading;
 
-  const handleLogin = (value: { phone: string; password: string }) => {
+  const handleLogin = (values: { phone: string; password: string }) => {
     user
       .login({
-        phone: '+' + value.phone.replace(/[^0-9]/g, ''),
-        password: value.password,
+        ...values,
+        phone: transformPhone(values.phone),
       })
       .then(data => navigate(Screens.LkScreen));
   };
 
   return (
-    <Layout backgroundBlurRadius={10} backgroundOpacity={0.3}>
+    <>
       <Logo />
       <Text
         style={styles.title}
@@ -66,7 +67,7 @@ export const LoginScreen = observer(() => {
               style={styles.button}
               type={ButtonType.PRIMARY}
               onPress={() => handleSubmit()}
-              isDisabled={idDisabled}
+              isDisabled={isDisabled}
             >
               {t('buttons.login')}
             </Button>
@@ -85,7 +86,7 @@ export const LoginScreen = observer(() => {
           </>
         )}
       </Formik>
-    </Layout>
+    </>
   );
 });
 

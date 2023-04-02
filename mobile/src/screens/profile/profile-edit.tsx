@@ -7,14 +7,14 @@ import { ArrowLeftIcon, DefaultAvatarImage } from '@assets';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
-import { Input, Layout, ScrollContainer, Text } from '@ui';
+import { Input, ScrollContainer, Text } from '@ui';
 
 import { FontSize } from '~types';
 
 export const ProfileEditScreen = () => {
   const { navigate } = useNavigation();
   return (
-    <Layout backgroundBlurRadius={10} backgroundOpacity={0.3} topOffset={0}>
+    <>
       <ScrollContainer
         onCancel={() => navigate(Screens.ProfileScreen)}
         onConfirm={() => navigate(Screens.ProfileScreen)}
@@ -31,7 +31,7 @@ export const ProfileEditScreen = () => {
         <Input style={styles.input} placeholder={t('inputs.email')} />
         <Input placeholder={t('inputs.phone')} />
       </ScrollContainer>
-    </Layout>
+    </>
   );
 };
 
