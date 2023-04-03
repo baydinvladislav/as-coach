@@ -2,7 +2,11 @@
 Contains routes for auth service.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status
+import shutil
+import datetime
+from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Body
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -10,7 +14,7 @@ from src.dependencies import get_db
 
 from .dependencies import get_current_user
 from .models import User
-from .schemas import TokenSchema, UserRegisterIn, UserRegisterOut
+from .schemas import TokenSchema, UserRegisterIn, UserRegisterOut, UserProfile
 from .utils import (create_access_token, create_refresh_token,
                     get_hashed_password, verify_password)
 
@@ -99,7 +103,8 @@ async def login(
 
 @auth_router.get(
     "/me",
-    summary='Get details of currently logged in user')
+    status_code=status.HTTP_200_OK,
+    summary="Get details of currently logged in user")
 async def get_me(user: User = Depends(get_current_user)):
     """
     Returns info about current user
@@ -110,4 +115,67 @@ async def get_me(user: User = Depends(get_current_user)):
     Returns:
         dictionary with id and username as keys
     """
-    return {"id": str(user.id), "username": user.username}
+    return {
+        "id": str(user.id),
+        "username": user.username,
+        "first_name": user.first_name
+    }
+
+
+@auth_router.get(
+    "/profiles",
+    status_code=status.HTTP_200_OK,
+    summary="Get user profile")
+async def get_profile(user: User = Depends(get_current_user)):
+    """
+
+    """
+    return {
+        "id": str(user.id),
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "gender": user.gender,
+        "birthday": user.birthday,
+        "email": user.email,
+        "username": user.username,
+        "photo_path": user.photo_path
+    }
+
+
+@auth_router.post(
+    "/profiles",
+    summary="Update user profile",
+    status_code=status.HTTP_200_OK)
+async def update_profile(
+        profile_data: UserProfile,
+        # photo: Optional[UploadFile] = File(None),
+        database: Session = Depends(get_db),
+        user: User = Depends(get_current_user)
+) -> dict:
+    """
+
+    """
+    # if photo is not None:
+    #     saving_time = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    #     photo_path = f"static/user_avatar/{user.username}_{saving_time}"
+    #     with open(photo_path, 'wb') as buffer:
+    #         shutil.copyfileobj(photo.file, buffer)
+    #     user.photo_path = photo_path
+
+    user.modified = datetime.datetime.now()
+
+    database.query(User).filter(User.id == str(user.id)).update(profile_data.dict())
+
+    database.commit()
+    database.refresh(user)
+
+    return {
+        "id": str(user.id),
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "gender": user.gender,
+        "birthday": user.birthday,
+        "email": user.email,
+        "username": user.username,
+        "photo_path": user.photo_path
+    }
