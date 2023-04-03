@@ -4,13 +4,14 @@ Contains routes for auth service.
 
 import shutil
 import datetime
-from typing import Optional
+from typing import Optional, NewType
 
-from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Body
+from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Body, Form
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from src.dependencies import get_db
+from src.models import Gender
 
 from .dependencies import get_current_user
 from .models import User
@@ -147,24 +148,30 @@ async def get_profile(user: User = Depends(get_current_user)):
     summary="Update user profile",
     status_code=status.HTTP_200_OK)
 async def update_profile(
-        profile_data: UserProfile,
-        # photo: Optional[UploadFile] = File(None),
+        first_name: str = Form(...),
+        last_name: str = Form(None),
+        photo: UploadFile = File(...),
+
+        # add all fields
         database: Session = Depends(get_db),
         user: User = Depends(get_current_user)
 ) -> dict:
     """
 
     """
-    # if photo is not None:
-    #     saving_time = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    #     photo_path = f"static/user_avatar/{user.username}_{saving_time}"
-    #     with open(photo_path, 'wb') as buffer:
-    #         shutil.copyfileobj(photo.file, buffer)
-    #     user.photo_path = photo_path
+    if photo is not None:
+        saving_time = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        photo_path = f"static/user_avatar/{user.username}_{saving_time}"
+        with open(photo_path, 'wb') as buffer:
+            shutil.copyfileobj(photo.file, buffer)
+        user.photo_path = photo_path
 
     user.modified = datetime.datetime.now()
 
-    database.query(User).filter(User.id == str(user.id)).update(profile_data.dict())
+    database.query(User).filter(User.id == str(user.id)).update({
+        "first_name": first_name,
+        "last_name": last_name
+    })
 
     database.commit()
     database.refresh(user)
