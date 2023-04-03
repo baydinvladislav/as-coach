@@ -10,10 +10,11 @@ import {
 import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
+import { TOP_PADDING } from '@constants';
 import { t } from '@i18n';
 import { RoutesProps, Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
-import { Button, Text } from '@ui';
+import { Button, Keyboard, Text } from '@ui';
 
 import { ButtonType, FontSize } from '~types';
 
@@ -32,7 +33,7 @@ export const SmsScreen = ({ route }: RoutesProps) => {
   });
 
   return (
-    <>
+    <Keyboard style={{ flex: 1, paddingTop: TOP_PADDING }}>
       <Logo />
       <Text
         style={styles.title}
@@ -66,7 +67,7 @@ export const SmsScreen = ({ route }: RoutesProps) => {
       >
         {t('auth.smsText2')}
       </Text>
-      <InputsContainer>
+      <Inputs>
         <CodeField
           value={value}
           onChangeText={setValue}
@@ -84,7 +85,7 @@ export const SmsScreen = ({ route }: RoutesProps) => {
             </Cell>
           )}
         />
-      </InputsContainer>
+      </Inputs>
       <Button
         style={styles.button}
         type={ButtonType.PRIMARY}
@@ -103,7 +104,7 @@ export const SmsScreen = ({ route }: RoutesProps) => {
       >
         {t('buttons.getCode')}
       </Button>
-    </>
+    </Keyboard>
   );
 };
 
@@ -139,7 +140,7 @@ const CellText = styled(Text)`
   color: ${colors.white};
 `;
 
-const InputsContainer = styled(View)`
+const Inputs = styled(View)`
   flex: 1;
 `;
 

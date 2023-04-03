@@ -11,5 +11,6 @@ export const colors = {
   white: '#FFFFFF',
   orange: '#FCC46F',
   red: '#E3051E',
+  red2: 'rgba(236, 71, 70, 0.1)',
   transparent: 'transparent',
 };

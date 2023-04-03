@@ -5,6 +5,7 @@ import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
 import { AddIcon, BicepsImage, DefaultAvatarImage } from '@assets';
+import { TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
@@ -18,7 +19,7 @@ export const LkScreen = observer(() => {
 
   const { navigate } = useNavigation();
   return (
-    <>
+    <View style={{ paddingTop: TOP_PADDING }}>
       <DateText>Четверг, 29 Дек</DateText>
       <Flex>
         <Flex>
@@ -58,7 +59,7 @@ export const LkScreen = observer(() => {
       >
         {t('buttons.addClient')}
       </Button>
-    </>
+    </View>
   );
 });
 

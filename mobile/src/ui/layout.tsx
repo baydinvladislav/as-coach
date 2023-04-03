@@ -1,25 +1,19 @@
 import React, { useEffect, useRef } from 'react';
-import {
-  Animated,
-  Easing,
-  Image,
-  SafeAreaView,
-  StyleProp,
-  View,
-  ViewStyle,
-} from 'react-native';
+import { Animated, Easing, StyleProp, View, ViewStyle } from 'react-native';
 
+import { Edge, SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components';
 
 import { BackgroundImage } from '@assets';
-import { colors, normHor, normVert } from '@theme';
+import { colors, normHor } from '@theme';
+import { windowHeight, windowWidth } from '@utils';
 
 type TProps = {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   backgroundBlurRadius?: number;
   backgroundOpacity?: number;
-  topOffset?: number;
+  edges?: Edge[];
 };
 
 export const Layout = ({
@@ -27,7 +21,7 @@ export const Layout = ({
   style,
   backgroundBlurRadius = 0,
   backgroundOpacity = 1,
-  topOffset = 60,
+  edges,
 }: TProps) => {
   const opacityAnim = useRef(new Animated.Value(backgroundOpacity)).current;
 
@@ -46,39 +40,34 @@ export const Layout = ({
   }, [backgroundOpacity]);
 
   return (
-    <>
+    <SafeAreaView style={{ flex: 1 }} edges={edges}>
       <BackgroundColor />
       <Background
         blurRadius={backgroundBlurRadius}
         source={BackgroundImage}
         style={{ opacity: opacityAnim }}
       />
-      <SafeAreaView style={{ flex: 1 }}>
-        <Container style={style} topOffset={topOffset}>
-          {children}
-        </Container>
-      </SafeAreaView>
-    </>
+      <Container style={style}>{children}</Container>
+    </SafeAreaView>
   );
 };
 
 const Background = styled(Animated.Image)`
   position: absolute;
-  width: 100%;
-  height: 100%;
+  width: ${windowWidth}px;
+  height: ${windowHeight}px;
   top: 0;
 `;
 
 const BackgroundColor = styled(Animated.View)`
   position: absolute;
-  width: 100%;
-  height: 100%;
+  width: ${windowWidth}px;
+  height: ${windowHeight}px;
   top: 0;
   background-color: ${colors.black};
 `;
 
-const Container = styled(View)<{ topOffset: number }>`
-  padding-top: ${({ topOffset }) => normVert(topOffset)}px;
+const Container = styled(View)`
   padding-horizontal: ${normHor(16)}px;
   flex: 1;
 `;

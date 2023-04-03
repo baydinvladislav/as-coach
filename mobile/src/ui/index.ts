@@ -5,4 +5,5 @@ export * from './top-panel';
 export * from './input';
 export * from './textarea';
 export * from './switch';
-export * from './scroll-container';
+export * from './view-with-buttons';
+export * from './keyboard';

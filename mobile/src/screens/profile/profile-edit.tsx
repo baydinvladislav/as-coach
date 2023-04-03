@@ -1,21 +1,21 @@
 import React from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 
 import styled from 'styled-components';
 
-import { ArrowLeftIcon, DefaultAvatarImage } from '@assets';
+import { DefaultAvatarImage } from '@assets';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
-import { Input, ScrollContainer, Text } from '@ui';
+import { Input, Keyboard, Text, ViewWithButtons } from '@ui';
 
 import { FontSize } from '~types';
 
 export const ProfileEditScreen = () => {
   const { navigate } = useNavigation();
   return (
-    <>
-      <ScrollContainer
+    <Keyboard>
+      <ViewWithButtons
         onCancel={() => navigate(Screens.ProfileScreen)}
         onConfirm={() => navigate(Screens.ProfileScreen)}
         style={{ paddingTop: normVert(80) }}
@@ -24,14 +24,18 @@ export const ProfileEditScreen = () => {
           {t('edit.editTitle')}
         </Text>
         <Avatar source={DefaultAvatarImage} />
-        <Input style={styles.input} placeholder={t('inputs.firstName')} />
+        <Input
+          error={'Некорректный номер телефона'}
+          style={styles.input}
+          placeholder={t('inputs.firstName')}
+        />
         <Input style={styles.input} placeholder={t('inputs.lastName')} />
         <Input style={styles.input} placeholder={t('inputs.sex')} />
         <Input style={styles.input} placeholder={t('inputs.birthday')} />
         <Input style={styles.input} placeholder={t('inputs.email')} />
         <Input placeholder={t('inputs.phone')} />
-      </ScrollContainer>
-    </>
+      </ViewWithButtons>
+    </Keyboard>
   );
 };
 

@@ -14,13 +14,12 @@ import {
   RegistrationScreen,
   WelcomeScreen,
 } from '@screens';
-import { Layout } from '@ui';
 
 const Stack = createStackNavigator();
 
 export const StackNavigator = () => (
   <Stack.Navigator
-    initialRouteName={Screens.WelcomeScreen}
+    initialRouteName={Screens.ProfileScreen}
     screenOptions={{ headerShown: false, animationEnabled: false }}
   >
     <Stack.Screen name={Screens.WelcomeScreen} component={WelcomeScreen} />

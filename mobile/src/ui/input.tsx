@@ -13,6 +13,7 @@ import { useMaskedInputProps } from 'react-native-mask-input';
 import styled from 'styled-components';
 
 import { colors, normHor, normVert } from '@theme';
+import { Text } from '@ui';
 
 import { FontSize } from '~types';
 
@@ -24,6 +25,7 @@ export type TInputProps = {
   isTextarea?: boolean;
   style?: StyleProp<ViewStyle>;
   mask?: any;
+  error?: string;
 } & TextInputProps;
 
 export const Input = ({
@@ -34,6 +36,7 @@ export const Input = ({
   isTextarea = false,
   style,
   mask,
+  error,
   ...props
 }: TInputProps) => {
   const [state, setState] = useState({
@@ -128,52 +131,69 @@ export const Input = ({
   };
 
   return (
-    <InputContainer
-      style={style}
-      isTextarea={isTextarea}
-      height={height}
-      width={width}
-    >
-      <Placeholder
-        isActive={Boolean(isActive)}
-        onLayout={event => {
-          setPlaceholderWidth(event.nativeEvent.layout.width);
-          setPlaceholderHeight(event.nativeEvent.layout.height);
-        }}
-        style={getTransform()}
-      >
-        {placeholder}
-      </Placeholder>
-      <InputRN
-        {...props}
-        {...maskedInputProps}
-        placeholder=""
-        style={{ paddingVertical: 0 }}
+    <View style={style}>
+      <InputContainer
+        error={error}
         isTextarea={isTextarea}
-        clearTextOnFocus={false}
-        placeholderTextColor={colors.white}
-        onFocus={handleFocus}
-        onBlur={handleFocus}
-        value={props.value ?? state.value}
-      />
-      <Icon>{rightIcon}</Icon>
-    </InputContainer>
+        height={height}
+        width={width}
+      >
+        <Placeholder
+          isActive={Boolean(isActive)}
+          onLayout={event => {
+            setPlaceholderWidth(event.nativeEvent.layout.width);
+            setPlaceholderHeight(event.nativeEvent.layout.height);
+          }}
+          style={getTransform()}
+        >
+          {placeholder}
+        </Placeholder>
+        <InputRN
+          {...props}
+          {...maskedInputProps}
+          placeholder=""
+          style={{ paddingVertical: 0 }}
+          isTextarea={isTextarea}
+          clearTextOnFocus={false}
+          placeholderTextColor={colors.white}
+          onFocus={handleFocus}
+          onBlur={handleFocus}
+          value={props.value ?? state.value}
+        />
+        <Icon>{rightIcon}</Icon>
+      </InputContainer>
+      {error && (
+        <ErrorText fontSize={FontSize.S12} color={colors.red}>
+          {error}
+        </ErrorText>
+      )}
+    </View>
   );
 };
 const InputContainer = styled(View)<{
   width: string;
   height: number;
   isTextarea: boolean;
+  error: string;
 }>`
   height: ${({ height }) => normVert(height)}px;
   width: ${({ width }) => width};
   padding-horizontal: ${normHor(16)}px;
-  background-color: ${colors.black3};
+  background-color: ${({ error }) => (error ? colors.red2 : colors.black3)};
+  ${({ error }) =>
+    error &&
+    `border-width: 1px;
+     border-color: ${colors.red};`};
   border-radius: 12px;
   flex-direction: row;
   align-items: center;
   ${({ isTextarea }) => isTextarea && `padding-top: ${normVert(16)}px`};
   padding-top: ${normVert(18)}px;
+`;
+
+const ErrorText = styled(Text)`
+  margin-top: ${4}px;
+  margin-left: ${normHor(16)}px;
 `;
 
 const Icon = styled(View)`
