@@ -7,12 +7,12 @@ import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
 import { PasswordInput } from '@components';
-import { PHONE_MASK } from '@constants';
+import { PHONE_MASK, TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normVert } from '@theme';
-import { Button, Input, Text } from '@ui';
+import { Button, Input, Keyboard, Text } from '@ui';
 import { transformPhone } from '@utils';
 
 import { ButtonType, FontSize } from '~types';
@@ -37,42 +37,45 @@ export const RegistrationScreen = observer(() => {
   };
 
   return (
-    <>
-      <Logo />
-      <Text
-        style={styles.title}
-        align="center"
-        fontSize={FontSize.S24}
-        color={colors.white}
-      >
-        {t('auth.registrationTitle')}
-      </Text>
+    <View style={{ flex: 1 }}>
       <Formik
         initialValues={{ username: '', phone: '', password: '' }}
         onSubmit={handleRegister}
       >
         {({ handleChange, handleSubmit, values }) => (
           <>
-            <InputsContainer>
-              <Input
-                style={styles.input}
-                placeholder={t('inputs.firstName')}
-                value={values.username}
-                onChangeText={handleChange('username')}
-              />
-              <Input
-                mask={PHONE_MASK}
-                style={styles.input}
-                placeholder={t('inputs.phone')}
-                value={values.phone}
-                onChangeText={handleChange('phone')}
-              />
-              <PasswordInput
-                placeholder={t('inputs.password')}
-                value={values.password}
-                onChangeText={handleChange('password')}
-              />
-            </InputsContainer>
+            <Keyboard style={{ paddingTop: TOP_PADDING }}>
+              <Logo />
+              <Text
+                style={styles.title}
+                align="center"
+                fontSize={FontSize.S24}
+                color={colors.white}
+              >
+                {t('auth.registrationTitle')}
+              </Text>
+              <Inputs>
+                <Input
+                  style={styles.input}
+                  placeholder={t('inputs.firstName')}
+                  value={values.username}
+                  onChangeText={handleChange('username')}
+                />
+                <Input
+                  keyboardType={'phone-pad'}
+                  mask={PHONE_MASK}
+                  style={styles.input}
+                  placeholder={t('inputs.phone')}
+                  value={values.phone}
+                  onChangeText={handleChange('phone')}
+                />
+                <PasswordInput
+                  placeholder={t('inputs.password')}
+                  value={values.password}
+                  onChangeText={handleChange('password')}
+                />
+              </Inputs>
+            </Keyboard>
             <Button
               style={styles.button}
               type={ButtonType.PRIMARY}
@@ -96,7 +99,7 @@ export const RegistrationScreen = observer(() => {
           </>
         )}
       </Formik>
-    </>
+    </View>
   );
 });
 
@@ -115,7 +118,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const InputsContainer = styled(View)`
+const Inputs = styled(View)`
   flex: 1;
 `;
 

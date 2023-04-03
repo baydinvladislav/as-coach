@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
@@ -14,6 +14,7 @@ import {
   UserEditIcon,
 } from '@assets';
 import { ProfileListItem } from '@components';
+import { TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
@@ -76,8 +77,11 @@ export const ProfileScreen = observer(() => {
   };
 
   return (
-    <>
-      <BackButton onPress={() => navigate(Screens.LkScreen)}>
+    <View style={{ paddingTop: TOP_PADDING }}>
+      <BackButton
+        style={{ width: normHor(20) }}
+        onPress={() => navigate(Screens.LkScreen)}
+      >
         <ArrowLeftIcon />
       </BackButton>
       <Text align="center" fontSize={FontSize.S17} color={colors.white}>
@@ -105,7 +109,7 @@ export const ProfileScreen = observer(() => {
           />
         ),
       )}
-    </>
+    </View>
   );
 });
 

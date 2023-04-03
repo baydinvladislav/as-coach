@@ -6,15 +6,15 @@
  * @flow strict-local
  */
 import React, { useRef, useState } from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, View } from 'react-native';
 
 import 'react-native-gesture-handler';
+import { Edge, SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { Screens, StackNavigator } from '@navigation';
 import {
   DefaultTheme,
   NavigationContainer,
-  NavigationContainerRef,
   useNavigationContainerRef,
 } from '@react-navigation/native';
 import { colors } from '@theme';
@@ -34,41 +34,46 @@ const App = () => {
     Screens.WelcomeScreen,
   );
   const routeNameRef = useRef();
-
   return (
-    <Layout {...ATTR(currentScreen)}>
-      <NavigationContainer
-        theme={MyTheme}
-        ref={navigationRef}
-        onReady={() => {
-          routeNameRef.current = navigationRef.getCurrentRoute().name;
-        }}
-        onStateChange={async () => {
-          const previousRouteName = routeNameRef.current;
-          const currentRouteName = navigationRef.getCurrentRoute().name;
-
-          if (previousRouteName !== currentRouteName) {
+    <SafeAreaProvider>
+      <Layout {...ATTR(currentScreen)}>
+        <NavigationContainer
+          theme={MyTheme}
+          ref={navigationRef}
+          onReady={() => {
+            routeNameRef.current = navigationRef.getCurrentRoute().name;
+          }}
+          onStateChange={async () => {
+            const currentRouteName = navigationRef.getCurrentRoute().name;
             setCurrentScreen(currentRouteName);
-          }
-        }}
-      >
-        <StatusBar barStyle="light-content" />
-        <StackNavigator />
-      </NavigationContainer>
-    </Layout>
+          }}
+        >
+          <StackNavigator />
+        </NavigationContainer>
+      </Layout>
+    </SafeAreaProvider>
   );
 };
 
 const ATTR = (screen: string) => {
   switch (screen) {
     case Screens.WelcomeScreen:
-      return {};
+      return { edges: ['right', 'left', 'top', 'bottom'] as Edge[] };
 
     case Screens.ProfileEditScreen:
-      return { backgroundBlurRadius: 10, backgroundOpacity: 0.3, topOffset: 0 };
+      return {
+        backgroundBlurRadius: 10,
+        backgroundOpacity: 0.3,
+        edges: ['right', 'left'] as Edge[],
+        style: { paddingHorizontal: 0 },
+      };
 
     default:
-      return { backgroundBlurRadius: 10, backgroundOpacity: 0.3 };
+      return {
+        backgroundBlurRadius: 10,
+        backgroundOpacity: 0.3,
+        edges: ['right', 'left', 'top', 'bottom'] as Edge[],
+      };
   }
 };
 

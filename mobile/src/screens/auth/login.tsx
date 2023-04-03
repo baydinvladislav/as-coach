@@ -7,12 +7,12 @@ import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
 import { PasswordInput } from '@components';
-import { PHONE_MASK } from '@constants';
+import { PHONE_MASK, TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normVert } from '@theme';
-import { Button, Input, Text } from '@ui';
+import { Button, Input, Keyboard, Text } from '@ui';
 import { transformPhone } from '@utils';
 
 import { ButtonType, FontSize } from '~types';
@@ -33,36 +33,39 @@ export const LoginScreen = observer(() => {
   };
 
   return (
-    <>
-      <Logo />
-      <Text
-        style={styles.title}
-        align="center"
-        fontSize={FontSize.S24}
-        color={colors.white}
-      >
-        {t('auth.loginTitle')}
-      </Text>
+    <View style={{ flex: 1 }}>
       <Formik
         initialValues={{ phone: '', password: '' }}
         onSubmit={handleLogin}
       >
         {({ handleChange, handleSubmit, values }) => (
           <>
-            <InputsContainer>
-              <Input
-                mask={PHONE_MASK}
-                style={styles.input}
-                placeholder={t('inputs.phone')}
-                value={values.phone}
-                onChangeText={handleChange('phone')}
-              />
-              <PasswordInput
-                value={values.password}
-                placeholder={t('inputs.password')}
-                onChangeText={handleChange('password')}
-              />
-            </InputsContainer>
+            <Keyboard style={{ paddingTop: TOP_PADDING }}>
+              <Logo />
+              <Text
+                style={styles.title}
+                align="center"
+                fontSize={FontSize.S24}
+                color={colors.white}
+              >
+                {t('auth.loginTitle')}
+              </Text>
+              <Inputs>
+                <Input
+                  keyboardType={'phone-pad'}
+                  mask={PHONE_MASK}
+                  style={styles.input}
+                  placeholder={t('inputs.phone')}
+                  value={values.phone}
+                  onChangeText={handleChange('phone')}
+                />
+                <PasswordInput
+                  value={values.password}
+                  placeholder={t('inputs.password')}
+                  onChangeText={handleChange('password')}
+                />
+              </Inputs>
+            </Keyboard>
             <Button
               style={styles.button}
               type={ButtonType.PRIMARY}
@@ -86,7 +89,7 @@ export const LoginScreen = observer(() => {
           </>
         )}
       </Formik>
-    </>
+    </View>
   );
 });
 
@@ -105,7 +108,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const InputsContainer = styled(View)`
+const Inputs = styled(View)`
   flex: 1;
 `;
 
