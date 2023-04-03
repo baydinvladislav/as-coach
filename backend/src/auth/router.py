@@ -4,7 +4,7 @@ Contains routes for auth service.
 
 import shutil
 import datetime
-from typing import Optional, NewType
+from typing import NewType
 
 from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Body, Form
 from fastapi.security import OAuth2PasswordRequestForm
@@ -15,7 +15,7 @@ from src.models import Gender
 
 from .dependencies import get_current_user
 from .models import User
-from .schemas import TokenSchema, UserRegisterIn, UserRegisterOut, UserProfile
+from .schemas import TokenSchema, UserRegisterIn, UserRegisterOut
 from .utils import (create_access_token, create_refresh_token,
                     get_hashed_password, verify_password)
 
@@ -149,10 +149,12 @@ async def get_profile(user: User = Depends(get_current_user)):
     status_code=status.HTTP_200_OK)
 async def update_profile(
         first_name: str = Form(...),
+        username: str = Form(...),
         last_name: str = Form(None),
-        photo: UploadFile = File(...),
-
-        # add all fields
+        photo: UploadFile = File(None),
+        gender: NewType('Gender', Gender) = Form(None),
+        birthday: str = Form(None),
+        email: str = Form(None),
         database: Session = Depends(get_db),
         user: User = Depends(get_current_user)
 ) -> dict:
@@ -160,8 +162,8 @@ async def update_profile(
 
     """
     if photo is not None:
-        saving_time = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        photo_path = f"static/user_avatar/{user.username}_{saving_time}"
+        saving_time = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
+        photo_path = f"/home/baydinvladislav/Desktop/as-coach/backend/static/user_avatar/{user.username}_{saving_time}.jpeg"
         with open(photo_path, 'wb') as buffer:
             shutil.copyfileobj(photo.file, buffer)
         user.photo_path = photo_path
@@ -170,7 +172,11 @@ async def update_profile(
 
     database.query(User).filter(User.id == str(user.id)).update({
         "first_name": first_name,
-        "last_name": last_name
+        "username": username,
+        "last_name": last_name,
+        "gender": gender,
+        "birthday": birthday,
+        "email": email,
     })
 
     database.commit()
