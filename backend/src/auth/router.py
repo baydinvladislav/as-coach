@@ -2,11 +2,18 @@
 Contains routes for auth service.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status
+import os
+import shutil
+import datetime
+from typing import NewType
+
+from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Form
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from src.dependencies import get_db
+from src.models import Gender
+from src.auth.schemas import UserProfile
 
 from .dependencies import get_current_user
 from .models import User
@@ -99,7 +106,8 @@ async def login(
 
 @auth_router.get(
     "/me",
-    summary='Get details of currently logged in user')
+    status_code=status.HTTP_200_OK,
+    summary="Get details of currently logged in user")
 async def get_me(user: User = Depends(get_current_user)):
     """
     Returns info about current user
@@ -110,4 +118,103 @@ async def get_me(user: User = Depends(get_current_user)):
     Returns:
         dictionary with id and username as keys
     """
-    return {"id": str(user.id), "username": user.username}
+    return {
+        "id": str(user.id),
+        "username": user.username,
+        "first_name": user.first_name
+    }
+
+
+@auth_router.get(
+    "/profiles",
+    status_code=status.HTTP_200_OK,
+    response_model=UserProfile,
+    summary="Get user profile")
+async def get_profile(user: User = Depends(get_current_user)):
+    """
+    Returns full info about user
+
+    Args:
+        user: user object from get_current_user dependency
+
+    Returns:
+        dictionary with full user info
+    """
+    return {
+        "id": str(user.id),
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "gender": user.gender,
+        "birthday": user.birthday,
+        "email": user.email,
+        "username": user.username,
+        "photo_path": user.photo_path
+    }
+
+
+@auth_router.post(
+    "/profiles",
+    summary="Update user profile",
+    response_model=UserProfile,
+    status_code=status.HTTP_200_OK)
+async def update_profile(
+        first_name: str = Form(...),
+        username: str = Form(...),
+        last_name: str = Form(None),
+        photo: UploadFile = File(None),
+        gender: NewType('Gender', Gender) = Form(None),
+        birthday: str = Form(None),
+        email: str = Form(None),
+        database: Session = Depends(get_db),
+        user: User = Depends(get_current_user)
+) -> dict:
+    """
+    Updated full info about user
+
+    Args:
+        first_name: client value from body
+        username: client value from body
+        last_name: client value from body
+        photo: client file from body
+        gender: client value from body
+        birthday: client value from body
+        email: client value from body
+        database: dependency injection for access to database
+        user: user object from get_current_user dependency
+
+    Returns:
+        dictionary with updated full user info
+    """
+    static_dir = os.path.join(os.getcwd(), "static", "user_avatar")
+    if photo is not None:
+        saving_time = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
+        file_name = f"{user.username}_{saving_time}.jpeg"
+        photo_path = f"{static_dir}/{file_name}"
+        with open(photo_path, 'wb') as buffer:
+            shutil.copyfileobj(photo.file, buffer)
+        user.photo_path = photo_path
+
+    user.modified = datetime.datetime.now()
+
+    database.query(User).filter(User.id == str(user.id)).update({
+        "first_name": first_name,
+        "username": username,
+        "last_name": last_name,
+        "gender": gender,
+        "birthday": birthday,
+        "email": email,
+    })
+
+    database.commit()
+    database.refresh(user)
+
+    return {
+        "id": str(user.id),
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "gender": user.gender,
+        "birthday": user.birthday,
+        "email": user.email,
+        "username": user.username,
+        "photo_path": user.photo_path
+    }
