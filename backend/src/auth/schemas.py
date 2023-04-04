@@ -2,7 +2,7 @@
 Schemas for auth service
 """
 
-from typing import Optional, NewType
+from typing import NewType, Optional
 
 from pydantic import BaseModel, validator
 
@@ -43,12 +43,14 @@ class UserProfile(BaseModel):
     """
     Full user data for profile
     """
+    id: str
     first_name: str
     last_name: Optional[str]
     gender: Optional[NewType('Gender', Gender)]
     birthday: Optional[str]
     email: Optional[str]
     username: str
+    photo_path: Optional[str]
 
 
 class TokenSchema(BaseModel):

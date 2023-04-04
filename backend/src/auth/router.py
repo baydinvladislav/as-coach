@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 
 from src.dependencies import get_db
 from src.models import Gender
+from src.auth.schemas import UserProfile
 
 from .dependencies import get_current_user
 from .models import User
@@ -127,6 +128,7 @@ async def get_me(user: User = Depends(get_current_user)):
 @auth_router.get(
     "/profiles",
     status_code=status.HTTP_200_OK,
+    response_model=UserProfile,
     summary="Get user profile")
 async def get_profile(user: User = Depends(get_current_user)):
     """
@@ -153,6 +155,7 @@ async def get_profile(user: User = Depends(get_current_user)):
 @auth_router.post(
     "/profiles",
     summary="Update user profile",
+    response_model=UserProfile,
     status_code=status.HTTP_200_OK)
 async def update_profile(
         first_name: str = Form(...),
@@ -169,6 +172,13 @@ async def update_profile(
     Updated full info about user
 
     Args:
+        first_name: client value from body
+        username: client value from body
+        last_name: client value from body
+        photo: client file from body
+        gender: client value from body
+        birthday: client value from body
+        email: client value from body
         database: dependency injection for access to database
         user: user object from get_current_user dependency
 
