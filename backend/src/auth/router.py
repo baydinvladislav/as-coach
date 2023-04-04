@@ -2,6 +2,7 @@
 Contains routes for auth service.
 """
 
+import os
 import shutil
 import datetime
 from typing import NewType
@@ -174,9 +175,11 @@ async def update_profile(
     Returns:
         dictionary with updated full user info
     """
+    static_dir = os.path.join(os.getcwd(), "static", "user_avatar")
     if photo is not None:
         saving_time = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
-        photo_path = f"/home/baydinvladislav/Desktop/as-coach/backend/static/user_avatar/{user.username}_{saving_time}.jpeg"
+        file_name = f"{user.username}_{saving_time}.jpeg"
+        photo_path = f"{static_dir}/{file_name}"
         with open(photo_path, 'wb') as buffer:
             shutil.copyfileobj(photo.file, buffer)
         user.photo_path = photo_path
