@@ -21,7 +21,8 @@ async def test_signup_successfully(override_get_db):
 
     body = {
         "username": TEST_USER_USERNAME,
-        "password": TEST_USER_PASSWORD
+        "password": TEST_USER_PASSWORD,
+        "first_name": "Владислав"
     }
 
     print(TEST_USER_USERNAME)
@@ -49,7 +50,8 @@ async def test_signup_validation_error(override_get_db):
     body = {
         # without "+"
         "username": "79850002233",
-        "password": TEST_USER_PASSWORD
+        "password": TEST_USER_PASSWORD,
+        "first_name": "Владислав"
     }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
@@ -74,7 +76,8 @@ async def test_signup_too_short_password(override_get_db):
     signup_data = {
         "username": TEST_USER_USERNAME,
         # password is less 8 symbols
-        "password": "1234567"
+        "password": "1234567",
+        "first_name": "Владислав"
     }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
@@ -90,7 +93,8 @@ async def test_signup_failed_username_already_registered(create_user):
     """
     signup_data = {
         "username": TEST_USER_USERNAME,
-        "password": TEST_USER_PASSWORD
+        "password": TEST_USER_PASSWORD,
+        "first_name": "Владислав"
     }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:

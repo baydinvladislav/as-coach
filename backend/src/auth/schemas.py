@@ -16,6 +16,7 @@ class UserRegisterIn(BaseModel):
     """
     username: str
     password: str
+    first_name: str
 
     @validator("username")
     def validate_phone_number(cls, value):  # pylint: disable=no-self-argument
@@ -37,6 +38,7 @@ class UserRegisterOut(BaseModel):
     """
     id: str
     username: str
+    first_name: str
 
 
 class UserProfile(BaseModel):

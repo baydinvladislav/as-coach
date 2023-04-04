@@ -30,20 +30,21 @@ auth_router = APIRouter()
     status_code=status.HTTP_201_CREATED,
     response_model=UserRegisterOut)
 async def create_user(
-        data: UserRegisterIn,
+        user_data: UserRegisterIn,
         database: Session = Depends(get_db)):
     """
     Registration endpoint, creates new user in database
 
     Args:
-        data: data schema for user registration
+        user_data: data schema for user registration
         database: dependency injection for access to database
     Raises:
         400 in case if user with the phone number already created
     Returns:
-        dictionary with just created user, id and username as keys
+        dictionary with just created user,
+        id, first_name and username as keys
     """
-    user = database.query(User).filter(User.username == data.username).first()
+    user = database.query(User).filter(User.username == user_data.username).first()
     if user is not None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -51,8 +52,9 @@ async def create_user(
         )
 
     user = User(
-        username=data.username,
-        password=get_hashed_password(data.password)
+        username=user_data.username,
+        first_name=user_data.first_name,
+        password=get_hashed_password(user_data.password)
     )
 
     database.add(user)
@@ -60,6 +62,7 @@ async def create_user(
 
     return {
         "id": str(user.id),
+        "first_name": user.first_name,
         "username": user.username
     }
 
