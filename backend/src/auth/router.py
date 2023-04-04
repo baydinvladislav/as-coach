@@ -6,7 +6,7 @@ import shutil
 import datetime
 from typing import NewType
 
-from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Body, Form
+from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Form
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -129,7 +129,13 @@ async def get_me(user: User = Depends(get_current_user)):
     summary="Get user profile")
 async def get_profile(user: User = Depends(get_current_user)):
     """
+    Returns full info about user
 
+    Args:
+        user: user object from get_current_user dependency
+
+    Returns:
+        dictionary with full user info
     """
     return {
         "id": str(user.id),
@@ -159,7 +165,14 @@ async def update_profile(
         user: User = Depends(get_current_user)
 ) -> dict:
     """
+    Updated full info about user
 
+    Args:
+        database: dependency injection for access to database
+        user: user object from get_current_user dependency
+
+    Returns:
+        dictionary with updated full user info
     """
     if photo is not None:
         saving_time = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")

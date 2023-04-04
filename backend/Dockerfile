@@ -22,5 +22,6 @@ RUN poetry config virtualenvs.create false && poetry install --no-interaction --
 # Creating folders, and files for a project:
 COPY . /code
 
-ENTRYPOINT alembic upgrade head
-ENTRYPOINT uvicorn src.main:app --host 0.0.0.0 --port 8000
+# Start entrypoint
+RUN chmod +x ./run.sh
+ENTRYPOINT ["./run.sh"]
