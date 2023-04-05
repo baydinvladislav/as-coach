@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
-import { initialWindowMetrics } from 'react-native-safe-area-context';
 import styled from 'styled-components';
 
 import { t } from '@i18n';
@@ -16,6 +15,7 @@ type TProps = {
   style?: StyleProp<ViewStyle>;
   onCancel: () => void;
   onConfirm: () => void;
+  isDisabled?: boolean;
 };
 
 export const ViewWithButtons = ({
@@ -23,6 +23,7 @@ export const ViewWithButtons = ({
   style,
   onCancel,
   onConfirm,
+  isDisabled,
 }: TProps) => (
   <ChildrenContainer style={style}>
     {children}
@@ -31,6 +32,7 @@ export const ViewWithButtons = ({
         style={styles.button}
         type={ButtonType.PRIMARY}
         onPress={onConfirm}
+        isDisabled={isDisabled}
       >
         {t('buttons.save')}
       </Button>

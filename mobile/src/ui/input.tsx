@@ -133,10 +133,11 @@ export const Input = ({
   return (
     <View style={style}>
       <InputContainer
-        error={error}
+        error={error ?? ''}
         isTextarea={isTextarea}
         height={height}
         width={width}
+        isFocused={state.isFocused}
       >
         <Placeholder
           isActive={Boolean(isActive)}
@@ -175,7 +176,10 @@ const InputContainer = styled(View)<{
   height: number;
   isTextarea: boolean;
   error: string;
+  isFocused: boolean;
 }>`
+  border-width: 1px;
+  border-color: ${colors.transparent};
   height: ${({ height }) => normVert(height)}px;
   width: ${({ width }) => width};
   padding-horizontal: ${normHor(16)}px;
@@ -189,10 +193,15 @@ const InputContainer = styled(View)<{
   align-items: center;
   ${({ isTextarea }) => isTextarea && `padding-top: ${normVert(16)}px`};
   padding-top: ${normVert(18)}px;
+  ${({ isFocused, error }) =>
+    isFocused &&
+    !error &&
+    `border-width: 1px;
+     border-color: ${colors.green};`}
 `;
 
 const ErrorText = styled(Text)`
-  margin-top: ${4}px;
+  margin-top: ${normVert(4)}px;
   margin-left: ${normHor(16)}px;
 `;
 

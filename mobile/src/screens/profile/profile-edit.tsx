@@ -1,43 +1,116 @@
 import React from 'react';
 import { Image, StyleSheet } from 'react-native';
 
+import { useFormik } from 'formik';
+import { observer } from 'mobx-react';
+import { formatWithMask } from 'react-native-mask-input';
 import styled from 'styled-components';
 
 import { DefaultAvatarImage } from '@assets';
+import { PHONE_MASK } from '@constants';
+import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
 import { Input, Keyboard, Text, ViewWithButtons } from '@ui';
+import { profileEditValidationSchema, transformPhone } from '@utils';
 
 import { FontSize } from '~types';
 
-export const ProfileEditScreen = () => {
+export const ProfileEditScreen = observer(() => {
   const { navigate } = useNavigation();
+
+  const { user, loading } = useStore();
+
+  const isDisabled = loading.isLoading;
+
+  const handleEdit = (values: {
+    first_name: string;
+    last_name: string;
+    username: string;
+    password: string;
+    gender: string;
+    birthday: string;
+    email: string;
+  }) => {
+    user
+      .profileEdit({ ...values, username: transformPhone(values.username) })
+      .then(() => {
+        navigate(Screens.ProfileScreen);
+      });
+  };
+
+  const { errors, handleChange, handleSubmit, values } = useFormik({
+    initialValues: {
+      ...user.me,
+      username: formatWithMask({ text: user.me.username, mask: PHONE_MASK })
+        .masked,
+      gender: 'male',
+    },
+    onSubmit: handleEdit,
+    validationSchema: profileEditValidationSchema,
+    validateOnChange: false,
+    validateOnBlur: false,
+  });
+
   return (
     <Keyboard>
       <ViewWithButtons
         onCancel={() => navigate(Screens.ProfileScreen)}
-        onConfirm={() => navigate(Screens.ProfileScreen)}
+        onConfirm={() => handleSubmit()}
         style={{ paddingTop: normVert(80) }}
+        isDisabled={isDisabled}
       >
         <Text align="center" fontSize={FontSize.S17} color={colors.white}>
           {t('edit.editTitle')}
         </Text>
         <Avatar source={DefaultAvatarImage} />
         <Input
-          error={'Некорректный номер телефона'}
           style={styles.input}
           placeholder={t('inputs.firstName')}
+          value={values.first_name}
+          onChangeText={handleChange('first_name')}
+          error={errors.first_name}
         />
-        <Input style={styles.input} placeholder={t('inputs.lastName')} />
-        <Input style={styles.input} placeholder={t('inputs.sex')} />
-        <Input style={styles.input} placeholder={t('inputs.birthday')} />
-        <Input style={styles.input} placeholder={t('inputs.email')} />
-        <Input placeholder={t('inputs.phone')} />
+        <Input
+          style={styles.input}
+          placeholder={t('inputs.lastName')}
+          value={values.last_name}
+          onChangeText={handleChange('last_name')}
+          error={errors.last_name}
+        />
+        <Input
+          style={styles.input}
+          placeholder={t('inputs.gender')}
+          value={values.gender}
+          onChangeText={handleChange('gender')}
+          error={errors.gender}
+        />
+        <Input
+          style={styles.input}
+          placeholder={t('inputs.birthday')}
+          value={values.birthday}
+          onChangeText={handleChange('birthday')}
+          error={errors.birthday}
+        />
+        <Input
+          style={styles.input}
+          placeholder={t('inputs.email')}
+          value={values.email}
+          onChangeText={handleChange('email')}
+          error={errors.email}
+        />
+        <Input
+          mask={PHONE_MASK}
+          placeholder={t('inputs.phone')}
+          value={values.username}
+          onChangeText={handleChange('username')}
+          error={errors.username}
+        />
       </ViewWithButtons>
     </Keyboard>
   );
-};
+});
 
 const styles = StyleSheet.create({
   text: { marginBottom: normVert(62) },
