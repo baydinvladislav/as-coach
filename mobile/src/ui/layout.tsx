@@ -56,7 +56,6 @@ const Background = styled(Animated.Image)`
   position: absolute;
   width: ${windowWidth}px;
   height: ${windowHeight}px;
-  top: 0;
 `;
 
 const BackgroundColor = styled(Animated.View)`

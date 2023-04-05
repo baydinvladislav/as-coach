@@ -24,7 +24,7 @@ export const LkScreen = observer(() => {
       <Flex>
         <Flex>
           <WelcomeText>
-            {t('lk.welcome', { name: user.me.username })}
+            {t('lk.welcome', { name: user.me.first_name })}
           </WelcomeText>
           <Biceps source={BicepsImage} />
         </Flex>

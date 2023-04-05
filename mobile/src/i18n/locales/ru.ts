@@ -34,7 +34,7 @@ export const ru = {
     newPassword: 'Повтори пароль',
     firstName: 'Имя',
     lastName: 'Фамилия',
-    sex: 'Пол',
+    gender: 'Пол',
     birthday: 'Дата рождения',
     email: 'E-mail',
   },
@@ -48,5 +48,9 @@ export const ru = {
     save: 'Сохранить',
     cancel: 'Отменить',
     forgotPassword: 'Забыл (-а) пароль',
+  },
+  errors: {
+    required: 'Заполните обязательное поле',
+    phoneError: 'Некорректный номер телефона',
   },
 };

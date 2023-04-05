@@ -73,7 +73,7 @@ export const ProfileScreen = observer(() => {
   };
 
   const handleLogout = () => {
-    user.logout();
+    user.logout().then(() => navigate(Screens.WelcomeScreen));
   };
 
   return (
@@ -94,7 +94,7 @@ export const ProfileScreen = observer(() => {
         fontSize={FontSize.S24}
         color={colors.white}
       >
-        {user.me.username}
+        {user.me.first_name}
       </Text>
       {DATA(handleGoEdit, handleGoChangePassword, () => null, handleLogout).map(
         (item, key) => (

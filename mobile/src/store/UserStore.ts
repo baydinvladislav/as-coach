@@ -1,6 +1,6 @@
 import { action, computed, makeObservable, observable } from 'mobx';
 
-import { login, me, registration } from '@api';
+import { login, me, profileEdit, registration } from '@api';
 import { TOKEN } from '@constants';
 import { storage } from '@utils';
 
@@ -8,7 +8,13 @@ import { RootStore } from './RootStore';
 import { actionLoading } from './action-loading';
 
 type UserProps = {
+  first_name: string;
+  last_name: string;
   username: string;
+  password: string;
+  gender: string;
+  birthday: string;
+  email: string;
 };
 
 export default class UserStore {
@@ -19,9 +25,15 @@ export default class UserStore {
     makeObservable(this);
   }
 
-  @observable isSignedIn = true;
+  @observable isSignedIn = false;
   @observable me: UserProps = {
+    first_name: '',
+    last_name: '',
     username: '',
+    password: '',
+    gender: '',
+    birthday: '',
+    email: '',
   };
 
   @action
@@ -35,23 +47,19 @@ export default class UserStore {
 
   @action
   @actionLoading()
-  async login({ phone, password }: { phone: string; password: string }) {
+  async login(values: { username: string; password: string }) {
     try {
-      await new Promise(resolve =>
-        setTimeout(() => {
-          resolve({});
-        }, 1000),
-      );
       const {
         data: { access_token },
-      } = await login(phone, password);
-      await storage.setItem(TOKEN, access_token);
+      } = await login(values);
+
+      await storage.setItem(TOKEN, access_token ?? '');
+
+      this.setHasAccess(true);
 
       const { data } = await me();
 
-      this.setHasAccess(true);
       this.me = data;
-      return data.me;
     } catch (e) {
       console.warn(e);
       throw e;
@@ -60,24 +68,33 @@ export default class UserStore {
 
   @action
   @actionLoading()
-  async register({
-    username,
-    phone,
-    password,
-  }: {
+  async register(values: {
+    first_name: string;
     username: string;
-    phone: string;
     password: string;
   }) {
     try {
-      await new Promise(resolve =>
-        setTimeout(() => {
-          resolve({});
-        }, 1000),
-      );
-      const { data } = await registration(phone, username, password);
+      await registration(values);
+    } catch (e) {
+      console.warn(e);
+      throw e;
+    }
+  }
 
-      return data;
+  @action
+  @actionLoading()
+  async profileEdit(values: {
+    first_name?: string;
+    last_name?: string;
+    username?: string;
+    password?: string;
+    gender?: string;
+    birthday?: string;
+    email?: string;
+  }) {
+    try {
+      const { data } = await profileEdit(values);
+      this.me = data;
     } catch (e) {
       console.warn(e);
       throw e;
@@ -91,6 +108,7 @@ export default class UserStore {
       this.isSignedIn = false;
     } catch (e) {
       console.warn(e);
+      throw e;
     }
   }
 }

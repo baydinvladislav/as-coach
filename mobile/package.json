@@ -34,7 +34,8 @@
     "react-native-screens": "3.13.1",
     "react-native-snap-carousel": "3.9.1",
     "react-native-svg": "12.3.0",
-    "styled-components": "5.3.5"
+    "styled-components": "5.3.5",
+    "yup": "1.0.2"
   },
   "devDependencies": {
     "@babel/core": "7.12.9",
