@@ -13,6 +13,10 @@ export const ru = {
     hereClients: 'Здесь будут ваши клиенты',
     hereCanAdd: 'В этом разделе можно\nдобавлять клиентов',
   },
+  addClient: {
+    title: 'Новый клиент',
+    phoneDescription: 'Отправим на него приглашение клиента в приложение',
+  },
   profile: {
     profileTitle: 'Профиль',
     nav1: 'Личные данные',
@@ -45,6 +49,7 @@ export const ru = {
     confirm: 'Подтвердить',
     getCode: 'Получить новый код',
     addClient: 'Добавить клиента',
+    add: 'Добавить',
     save: 'Сохранить',
     cancel: 'Отменить',
     forgotPassword: 'Забыл (-а) пароль',

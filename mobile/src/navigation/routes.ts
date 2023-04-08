@@ -15,6 +15,7 @@ export enum Screens {
   ProfileEditScreen = 'ProfileEditScreen',
   ChangePasswordScreen = 'ChangePasswordScreen',
   NewChangePasswordScreen = 'NewChangePasswordScreen',
+  AddClientScreen = 'AddClientScreen',
 }
 
 type Routes = Screens;

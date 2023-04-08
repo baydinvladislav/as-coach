@@ -16,6 +16,7 @@ type TProps = {
   onCancel: () => void;
   onConfirm: () => void;
   isDisabled?: boolean;
+  confirmText?: string;
 };
 
 export const ViewWithButtons = ({
@@ -23,6 +24,7 @@ export const ViewWithButtons = ({
   style,
   onCancel,
   onConfirm,
+  confirmText = t('buttons.save'),
   isDisabled,
 }: TProps) => (
   <ChildrenContainer style={style}>
@@ -34,7 +36,7 @@ export const ViewWithButtons = ({
         onPress={onConfirm}
         isDisabled={isDisabled}
       >
-        {t('buttons.save')}
+        {confirmText}
       </Button>
       <Button type={ButtonType.SECONDARY} onPress={onCancel}>
         {t('buttons.cancel')}

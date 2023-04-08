@@ -20,20 +20,19 @@ import {
 import { colors } from '@theme';
 import { Layout } from '@ui';
 
-const MyTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    background: colors.transparent,
-  },
-};
-
 const App = () => {
   const navigationRef = useNavigationContainerRef();
-  const [currentScreen, setCurrentScreen] = useState<string>(
-    Screens.WelcomeScreen,
-  );
+  const [currentScreen, setCurrentScreen] = useState<string>(Screens.LkScreen);
   const routeNameRef = useRef();
+
+  const MyTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: colors.transparent,
+    },
+  };
+
   return (
     <SafeAreaProvider>
       <Layout {...ATTR(currentScreen)}>
@@ -61,6 +60,15 @@ const ATTR = (screen: string) => {
       return { edges: ['right', 'left', 'top', 'bottom'] as Edge[] };
 
     case Screens.ProfileEditScreen:
+      return {
+        backgroundBlurRadius: 10,
+        backgroundOpacity: 0.3,
+        edges: ['right', 'left'] as Edge[],
+        style: { paddingHorizontal: 0 },
+      };
+
+    case Screens.LkScreen:
+    case Screens.AddClientScreen:
       return {
         backgroundBlurRadius: 10,
         backgroundOpacity: 0.3,
