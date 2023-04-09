@@ -2,30 +2,49 @@ import React from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { observer } from 'mobx-react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components';
 
-import { AddIcon, BicepsImage, DefaultAvatarImage } from '@assets';
+import {
+  AddIcon,
+  BackgroundImage,
+  BicepsImage,
+  DefaultAvatarImage,
+} from '@assets';
 import { TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
 import { Button, Text } from '@ui';
+import { windowHeight, windowWidth } from '@utils';
 
 import { ButtonType, FontSize, FontWeight } from '~types';
 
 export const LkScreen = observer(() => {
   const { user } = useStore();
+  const { top } = useSafeAreaInsets();
 
   const { navigate } = useNavigation();
   return (
-    <View style={{ paddingTop: TOP_PADDING }}>
+    <LkBackground
+      style={{
+        paddingTop: TOP_PADDING + top,
+      }}
+    >
+      <BackgroundColor />
+      <Background
+        blurRadius={10}
+        source={BackgroundImage}
+        style={{ opacity: 0.3 }}
+      />
+
       <DateText>Четверг, 29 Дек</DateText>
       <Flex>
         <Flex>
-          <WelcomeText>
+          <Text color={colors.white} fontSize={FontSize.S24}>
             {t('lk.welcome', { name: user.me.first_name })}
-          </WelcomeText>
+          </Text>
           <Biceps source={BicepsImage} />
         </Flex>
         <TouchableOpacity onPress={() => navigate(Screens.ProfileScreen)}>
@@ -54,18 +73,22 @@ export const LkScreen = observer(() => {
 
       <Button
         type={ButtonType.TEXT}
-        onPress={() => null}
+        onPress={() => navigate(Screens.AddClientScreen)}
         leftIcon={<AddIcon stroke={colors.green} />}
       >
         {t('buttons.addClient')}
       </Button>
-    </View>
+    </LkBackground>
   );
 });
 
 const styles = StyleSheet.create({
   text: { marginTop: normVert(213), marginBottom: normVert(24) },
 });
+
+const LkBackground = styled(View)`
+  padding-horizontal: ${normVert(16)}px;
+`;
 
 const Avatar = styled(Image)`
   width: ${normHor(44)}px;
@@ -93,7 +116,15 @@ const DateText = styled(Text)`
   font-family: ${FontWeight.Bold};
 `;
 
-const WelcomeText = styled(Text)`
-  color: ${colors.white};
-  font-size: ${FontSize.S24};
+const Background = styled(Image)`
+  position: absolute;
+  width: ${windowWidth}px;
+  height: ${windowHeight}px;
+`;
+
+const BackgroundColor = styled(View)`
+  position: absolute;
+  width: ${windowWidth}px;
+  height: ${windowHeight}px;
+  background-color: ${colors.black};
 `;
