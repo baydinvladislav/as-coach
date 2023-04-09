@@ -6,26 +6,42 @@ import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
 import { PHONE_MASK, TOP_PADDING } from '@constants';
+import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
+import { CustomerProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
-import { Input, Text, ViewWithButtons } from '@ui';
-import { isIOS } from '@utils';
+import { Input, Keyboard, Text, ViewWithButtons } from '@ui';
+import { addClientValidationSchema, isIOS, transformPhone } from '@utils';
 
 import { FontSize } from '~types';
 
 export const AddClientScreen = observer(() => {
+  const { customer, loading } = useStore();
+
+  const isDisabled = loading.isLoading;
+
   const { navigate } = useNavigation();
 
-  const { errors, handleChange, values } = useFormik({
-    initialValues: { username: '', firstName: '', lastName: '' },
-    onSubmit: () => console.log(123),
-    validationSchema: () => console.log(123),
+  const handleAddClient = (values: Partial<CustomerProps>) => {
+    customer
+      .createCustomer({
+        ...values,
+        phone_number: transformPhone(values.phone_number),
+      })
+      .then(() => navigate(Screens.LkScreen));
+  };
+
+  const { errors, handleChange, values, handleSubmit } = useFormik({
+    initialValues: { phone_number: '', first_name: '', last_name: '' },
+    onSubmit: handleAddClient,
+    validationSchema: addClientValidationSchema,
     validateOnChange: false,
     validateOnBlur: false,
   });
+
   return (
-    <View style={{ flex: 1, paddingTop: isIOS ? TOP_PADDING : 0 }}>
+    <Keyboard style={{ flex: 1, paddingTop: isIOS ? TOP_PADDING : 0 }}>
       {isIOS && (
         <TopBackground>
           <Line />
@@ -38,38 +54,39 @@ export const AddClientScreen = observer(() => {
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
           onCancel={() => navigate(Screens.LkScreen)}
-          onConfirm={() => navigate(Screens.LkScreen)}
+          onConfirm={handleSubmit}
           confirmText={t('buttons.add')}
+          isDisabled={isDisabled}
         >
           <View>
             <Input
-              keyboardType={'phone-pad'}
               style={styles.input}
               placeholder={t('inputs.firstName')}
-              value={values.firstName}
-              onChangeText={handleChange('firstName')}
-              error={errors.firstName}
+              value={values.first_name}
+              onChangeText={handleChange('first_name')}
+              error={errors.first_name}
             />
             <Input
               style={styles.input}
               placeholder={t('inputs.lastName')}
-              value={values.lastName}
-              onChangeText={handleChange('lastName')}
-              error={errors.lastName}
+              value={values.last_name}
+              onChangeText={handleChange('last_name')}
+              error={errors.last_name}
             />
             <Input
+              keyboardType={'phone-pad'}
+              mask={PHONE_MASK}
               style={styles.input}
               placeholder={t('inputs.phone')}
-              mask={PHONE_MASK}
-              value={values.username}
-              onChangeText={handleChange('username')}
-              error={errors.username}
+              value={values.phone_number}
+              onChangeText={handleChange('phone_number')}
+              error={errors.phone_number}
               description={t('addClient.phoneDescription')}
             />
           </View>
         </ViewWithButtons>
       </Background>
-    </View>
+    </Keyboard>
   );
 });
 

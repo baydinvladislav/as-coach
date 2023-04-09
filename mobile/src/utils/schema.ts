@@ -30,3 +30,13 @@ export const profileEditValidationSchema = () =>
     birthday: yup.string().nullable().default(null),
     email: yup.string().nullable().default(null),
   });
+
+export const addClientValidationSchema = () =>
+  yup.object().shape({
+    first_name: yup.string().required(t('errors.required')),
+    last_name: yup.string().required(t('errors.required')),
+    phone_number: yup
+      .string()
+      .length(18, t('errors.phoneError'))
+      .required(t('errors.required')),
+  });

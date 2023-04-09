@@ -6,8 +6,8 @@
  * @flow strict-local
  */
 import React, { useRef, useState } from 'react';
-import { StatusBar, View } from 'react-native';
 
+import 'moment/locale/ru';
 import 'react-native-gesture-handler';
 import { Edge, SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -22,7 +22,9 @@ import { Layout } from '@ui';
 
 const App = () => {
   const navigationRef = useNavigationContainerRef();
-  const [currentScreen, setCurrentScreen] = useState<string>(Screens.LkScreen);
+  const [currentScreen, setCurrentScreen] = useState<string>(
+    Screens.WelcomeScreen,
+  );
   const routeNameRef = useRef();
 
   const MyTheme = {
