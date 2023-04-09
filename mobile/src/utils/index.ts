@@ -12,7 +12,7 @@ interface INestedMessages {
 
 export const removeNulls = (obj: any) => omitBy(obj, isNil);
 
-export const transformPhone = (phone: string) =>
+export const transformPhone = (phone?: string) =>
   phone ? '+' + phone.replace(/[^0-9]/g, '') : '';
 
 export const flattenMessages = (nestedMessages: INestedMessages, prefix = '') =>

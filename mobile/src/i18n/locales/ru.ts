@@ -13,6 +13,10 @@ export const ru = {
     hereClients: 'Здесь будут ваши клиенты',
     hereCanAdd: 'В этом разделе можно\nдобавлять клиентов',
   },
+  detailCustomer: {
+    herePlans: 'Здесь будут планы клиента',
+    hereCanAdd: 'В этом разделе можно создавать\nтренировочные планы клиентам',
+  },
   addClient: {
     title: 'Новый клиент',
     phoneDescription: 'Отправим на него приглашение клиента в приложение',
@@ -53,9 +57,13 @@ export const ru = {
     save: 'Сохранить',
     cancel: 'Отменить',
     forgotPassword: 'Забыл (-а) пароль',
+    createPlan: 'Создать план',
   },
   errors: {
     required: 'Заполните обязательное поле',
     phoneError: 'Некорректный номер телефона',
+  },
+  common: {
+    nonePlan: 'Нет плана',
   },
 };

@@ -12,6 +12,7 @@ import { PHONE_MASK, TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
+import { UserProps } from '@store';
 import { colors, normVert } from '@theme';
 import { Button, Input, Keyboard, Text } from '@ui';
 import { registrationValidationSchema, transformPhone } from '@utils';
@@ -24,11 +25,7 @@ export const RegistrationScreen = observer(() => {
   const { user, loading } = useStore();
   const isDisabled = loading.isLoading;
 
-  const handleRegister = (values: {
-    first_name: string;
-    username: string;
-    password: string;
-  }) => {
+  const handleRegister = (values: Partial<UserProps>) => {
     user
       .register({
         ...values,

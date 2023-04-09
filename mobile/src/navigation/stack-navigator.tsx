@@ -9,6 +9,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import {
   AddClientScreen,
   ChangePasswordScreen,
+  DetailClient,
   LkScreen,
   LoginScreen,
   NewChangePasswordScreen,
@@ -24,7 +25,7 @@ const UserStack = createStackNavigator();
 export const StackNavigator = observer(() => {
   const { user } = useStore();
 
-  const isGuest = !!user.hasAccess; // меняем !user.hasAccess на !!!user.hasAccess для разработки. Чтобы открывался сразу лк
+  const isGuest = !user.hasAccess; // меняем !user.hasAccess на !!!user.hasAccess для разработки. Чтобы открывался сразу лк
 
   return isGuest ? (
     <GuestStack.Navigator
@@ -51,6 +52,7 @@ export const StackNavigator = observer(() => {
       screenOptions={{ headerShown: false, animationEnabled: false }}
     >
       <UserStack.Screen name={Screens.LkScreen} component={LkScreen} />
+      <UserStack.Screen name={Screens.DetailClient} component={DetailClient} />
       <UserStack.Screen
         options={{
           presentation: 'modal',

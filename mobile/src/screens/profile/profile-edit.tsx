@@ -11,6 +11,7 @@ import { PHONE_MASK } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
+import { UserProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
 import { Input, Keyboard, Text, ViewWithButtons } from '@ui';
 import { profileEditValidationSchema, transformPhone } from '@utils';
@@ -24,17 +25,9 @@ export const ProfileEditScreen = observer(() => {
 
   const isDisabled = loading.isLoading;
 
-  const handleEdit = (values: {
-    first_name: string;
-    last_name: string;
-    username: string;
-    password: string;
-    gender: string;
-    birthday: string;
-    email: string;
-  }) => {
+  const handleEdit = (values: Partial<UserProps>) => {
     user
-      .profileEdit({ ...values, username: transformPhone(values.username) })
+      .profileEdit({ ...values, username: transformPhone(values?.username) })
       .then(() => {
         navigate(Screens.ProfileScreen);
       });
@@ -102,6 +95,7 @@ export const ProfileEditScreen = observer(() => {
         />
         <Input
           mask={PHONE_MASK}
+          keyboardType={'phone-pad'}
           placeholder={t('inputs.phone')}
           value={values.username}
           onChangeText={handleChange('username')}

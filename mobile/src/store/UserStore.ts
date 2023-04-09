@@ -7,7 +7,7 @@ import { storage } from '@utils';
 import { RootStore } from './RootStore';
 import { actionLoading } from './action-loading';
 
-type UserProps = {
+export type UserProps = {
   first_name: string;
   last_name: string;
   username: string;
@@ -47,7 +47,7 @@ export default class UserStore {
 
   @action
   @actionLoading()
-  async login(values: { username: string; password: string }) {
+  async login(values: Partial<UserProps>) {
     try {
       const {
         data: { access_token },
@@ -68,11 +68,7 @@ export default class UserStore {
 
   @action
   @actionLoading()
-  async register(values: {
-    first_name: string;
-    username: string;
-    password: string;
-  }) {
+  async register(values: Partial<UserProps>) {
     try {
       await registration(values);
     } catch (e) {
@@ -83,15 +79,7 @@ export default class UserStore {
 
   @action
   @actionLoading()
-  async profileEdit(values: {
-    first_name?: string;
-    last_name?: string;
-    username?: string;
-    password?: string;
-    gender?: string;
-    birthday?: string;
-    email?: string;
-  }) {
+  async profileEdit(values: Partial<UserProps>) {
     try {
       const { data } = await profileEdit(values);
       this.me = data;

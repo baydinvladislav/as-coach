@@ -1,31 +1,38 @@
-import React from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import React, { useEffect } from 'react';
+import { Image, TouchableOpacity, View } from 'react-native';
 
 import { observer } from 'mobx-react';
+import moment from 'moment';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components';
 
-import {
-  AddIcon,
-  BackgroundImage,
-  BicepsImage,
-  DefaultAvatarImage,
-} from '@assets';
+import { BackgroundImage, BicepsImage, DefaultAvatarImage } from '@assets';
+import { LkEmpty } from '@components';
 import { TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
-import { Button, Text } from '@ui';
+import { Text } from '@ui';
 import { windowHeight, windowWidth } from '@utils';
 
-import { ButtonType, FontSize, FontWeight } from '~types';
+import { FontSize, FontWeight } from '~types';
+
+moment.locale('ru');
 
 export const LkScreen = observer(() => {
-  const { user } = useStore();
+  const { user, customer } = useStore();
   const { top } = useSafeAreaInsets();
 
   const { navigate } = useNavigation();
+
+  useEffect(() => {
+    customer.getCustomers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const customers = customer.customers;
+
   return (
     <LkBackground
       style={{
@@ -39,7 +46,7 @@ export const LkScreen = observer(() => {
         style={{ opacity: 0.3 }}
       />
 
-      <DateText>Четверг, 29 Дек</DateText>
+      <DateText>{moment().format('dddd, D MMM')}</DateText>
       <Flex>
         <Flex>
           <Text color={colors.white} fontSize={FontSize.S24}>
@@ -52,38 +59,27 @@ export const LkScreen = observer(() => {
         </TouchableOpacity>
       </Flex>
 
-      <View style={styles.text}>
-        <Text
-          align="center"
-          style={{ lineHeight: 24, marginBottom: normVert(16) }}
-          fontSize={FontSize.S24}
-          color={colors.black5}
-        >
-          {t('lk.hereClients')}
-        </Text>
-        <Text
-          align="center"
-          style={{ lineHeight: 24 }}
-          fontSize={FontSize.S17}
-          color={colors.black4}
-        >
-          {t('lk.hereCanAdd')}
-        </Text>
-      </View>
-
-      <Button
-        type={ButtonType.TEXT}
-        onPress={() => navigate(Screens.AddClientScreen)}
-        leftIcon={<AddIcon stroke={colors.green} />}
-      >
-        {t('buttons.addClient')}
-      </Button>
+      {customers.length ? (
+        customers.map(customer => (
+          <TouchableOpacity // TODO: Заместо всего блока TouchableOpacity должны быть стилизованые плашки с клиентом типа <ClientCard key={} firstName={} lastName={} onPress={} /> (нужно создать компонент src/components/client-card.tsx)
+            onPress={() => navigate(Screens.DetailClient, { id: customer.id })}
+            key={customer.id}
+          >
+            <Text color={colors.white} fontSize={FontSize.S24}>
+              {customer.first_name}
+            </Text>
+          </TouchableOpacity>
+        ))
+      ) : (
+        <LkEmpty
+          title={t('lk.hereClients')}
+          description={t('lk.hereCanAdd')}
+          onPress={() => navigate(Screens.AddClientScreen)}
+          buttonText={t('buttons.addClient')}
+        />
+      )}
     </LkBackground>
   );
-});
-
-const styles = StyleSheet.create({
-  text: { marginTop: normVert(213), marginBottom: normVert(24) },
 });
 
 const LkBackground = styled(View)`

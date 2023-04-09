@@ -12,6 +12,7 @@ import { PHONE_MASK, TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
+import { UserProps } from '@store';
 import { colors, normVert } from '@theme';
 import { Button, Input, Keyboard, Text } from '@ui';
 import { loginValidationSchema, transformPhone } from '@utils';
@@ -24,7 +25,7 @@ export const LoginScreen = observer(() => {
   const { user, loading } = useStore();
   const isDisabled = loading.isLoading;
 
-  const handleLogin = (values: { username: string; password: string }) => {
+  const handleLogin = (values: Partial<UserProps>) => {
     user
       .login({
         ...values,
