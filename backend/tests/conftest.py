@@ -29,6 +29,7 @@ def create_user(override_get_db):
     if not test_user:
         test_user = User(
             username=TEST_USER_USERNAME,
+            first_name='Владислав',
             password=get_hashed_password(TEST_USER_PASSWORD)
         )
 
