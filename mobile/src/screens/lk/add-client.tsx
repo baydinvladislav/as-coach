@@ -44,7 +44,6 @@ export const AddClientScreen = observer(() => {
           <View>
             <Input
               keyboardType={'phone-pad'}
-              mask={PHONE_MASK}
               style={styles.input}
               placeholder={t('inputs.firstName')}
               value={values.firstName}
@@ -61,6 +60,7 @@ export const AddClientScreen = observer(() => {
             <Input
               style={styles.input}
               placeholder={t('inputs.phone')}
+              mask={PHONE_MASK}
               value={values.username}
               onChangeText={handleChange('username')}
               error={errors.username}
