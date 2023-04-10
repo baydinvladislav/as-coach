@@ -24,6 +24,7 @@ class Customer(Base, BaseModel):
     gender: Column = Column("gender", Enum(Gender), nullable=True)
     user_id = Column(UUID, ForeignKey("user.id"), nullable=False)
     user = relationship("User", back_populates="customers")
+    training_plans = relationship("TrainingPlan", cascade="all,delete-orphan", back_populates="customer")
 
     def __repr__(self):
         return f"customer: {self.last_name} {self.first_name}"

@@ -40,7 +40,7 @@ class TrainingPlan(Base, BaseModel):
 
     start_date = Column("start_date", Date)
     end_date = Column("end_date", Date)
-    diets = relationship("Diet", secondary="dietontrainingplan", back_populates="trainingplans")
+    diets = relationship("Diet", secondary="dietontrainingplan", back_populates="training_plans")
     customer_id = Column(UUID, ForeignKey("customer.id"), nullable=False)
     customer = relationship("Customer", back_populates="training_plans")
     trainings = relationship("Training", cascade="all,delete-orphan", back_populates="training_plan")
@@ -57,7 +57,7 @@ class Training(Base, BaseModel):
 
     name = Column("name", String(50), nullable=False)
     training_plan_id = Column(UUID, ForeignKey("trainingplan.id", ondelete="CASCADE"), nullable=False)
-    week_plan = relationship("TrainingPlan", back_populates="trainings")
+    training_plan = relationship("TrainingPlan", back_populates="trainings")
     exercises = relationship("Exercise", secondary="exercisesontraining", back_populates="trainings")
 
     def __repr__(self):
