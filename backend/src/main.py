@@ -2,15 +2,15 @@
 Application entrypoint.
 """
 
+import os
+
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 
 from src.auth.router import auth_router
+from src.config import STATIC_DIR
 from src.customer.router import customer_router
-
-APP_ROUTERS = (
-    auth_router, customer_router
-)
 
 
 def get_application() -> FastAPI:
@@ -27,7 +27,19 @@ def get_application() -> FastAPI:
         allow_headers=["*"]
     )
 
-    for router in APP_ROUTERS:
+    if not os.path.exists(STATIC_DIR):
+        os.makedirs(STATIC_DIR)
+
+    as_coach.mount(
+        "/static",
+        StaticFiles(directory=STATIC_DIR),
+        name="static"
+    )
+
+    app_routers = (
+        auth_router, customer_router
+    )
+    for router in app_routers:
         as_coach.include_router(router, prefix="/api")
 
     return as_coach
