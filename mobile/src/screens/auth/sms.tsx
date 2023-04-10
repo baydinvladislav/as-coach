@@ -10,10 +10,11 @@ import {
 import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
+import { TOP_PADDING } from '@constants';
 import { t } from '@i18n';
 import { RoutesProps, Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
-import { Button, Layout, Text } from '@ui';
+import { Button, Keyboard, Text } from '@ui';
 
 import { ButtonType, FontSize } from '~types';
 
@@ -22,7 +23,7 @@ const PHONE = '+7 (985) 000-00-00';
 
 export const SmsScreen = ({ route }: RoutesProps) => {
   const { navigate } = useNavigation();
-  const currentScreen = (route.params as { from: Screens }).from;
+  const currentScreen = (route.params as { from: Screens })?.from;
 
   const [value, setValue] = useState('');
   const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
@@ -32,7 +33,7 @@ export const SmsScreen = ({ route }: RoutesProps) => {
   });
 
   return (
-    <Layout backgroundBlurRadius={10} backgroundOpacity={0.3}>
+    <Keyboard style={{ flex: 1, paddingTop: TOP_PADDING }}>
       <Logo />
       <Text
         style={styles.title}
@@ -66,7 +67,7 @@ export const SmsScreen = ({ route }: RoutesProps) => {
       >
         {t('auth.smsText2')}
       </Text>
-      <InputsContainer>
+      <Inputs>
         <CodeField
           value={value}
           onChangeText={setValue}
@@ -76,6 +77,7 @@ export const SmsScreen = ({ route }: RoutesProps) => {
           textContentType="oneTimeCode"
           renderCell={({ index, symbol, isFocused }) => (
             <Cell
+              isError={true}
               index={index}
               key={index}
               onLayout={getCellOnLayoutHandler(index)}
@@ -84,7 +86,10 @@ export const SmsScreen = ({ route }: RoutesProps) => {
             </Cell>
           )}
         />
-      </InputsContainer>
+        <ErrorText fontSize={FontSize.S12} color={colors.red}>
+          Неправильный код, попробуйте ещё раз
+        </ErrorText>
+      </Inputs>
       <Button
         style={styles.button}
         type={ButtonType.PRIMARY}
@@ -103,7 +108,7 @@ export const SmsScreen = ({ route }: RoutesProps) => {
       >
         {t('buttons.getCode')}
       </Button>
-    </Layout>
+    </Keyboard>
   );
 };
 
@@ -123,14 +128,18 @@ const styles = StyleSheet.create({
   codeFieldRoot: { marginTop: 20, justifyContent: 'center' },
 });
 
-const Cell = styled(View)<{ index: number }>`
+const Cell = styled(View)<{ index: number; isError?: boolean }>`
   width: ${normHor(41)}px;
   height: ${normVert(48)}px;
-  background-color: ${colors.black3};
+  background-color: ${({ isError }) => (isError ? colors.red2 : colors.black3)};
   border-radius: 12px;
   margin-left: ${({ index }) => (index !== 0 ? normHor(6) : 0)}px;
   align-items: center;
   justify-content: center;
+  ${({ isError }) =>
+    isError &&
+    `border-width: 1px;
+     border-color: ${colors.red};`}
 `;
 
 const CellText = styled(Text)`
@@ -139,7 +148,7 @@ const CellText = styled(Text)`
   color: ${colors.white};
 `;
 
-const InputsContainer = styled(View)`
+const Inputs = styled(View)`
   flex: 1;
 `;
 
@@ -147,4 +156,10 @@ const Logo = styled(LogoIcon)`
   margin-left: auto;
   margin-right: auto;
   margin-bottom: ${normVert(119)}px;
+`;
+
+const ErrorText = styled(Text)`
+  margin-top: ${normVert(4)}px;
+  margin-left: auto;
+  margin-right: auto;
 `;

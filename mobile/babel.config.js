@@ -29,6 +29,7 @@ module.exports = {
           '@hooks': './src/hooks',
           '@constants': './src/constants',
           '@api': './src/api',
+          '@store': './src/store',
           '~types': './src/types.ts',
         },
       },

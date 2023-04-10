@@ -1,6 +1,7 @@
 import React from 'react';
-import { Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
 import {
@@ -13,45 +14,54 @@ import {
   UserEditIcon,
 } from '@assets';
 import { ProfileListItem } from '@components';
+import { TOP_PADDING } from '@constants';
+import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
-import { Layout, Switch, Text } from '@ui';
+import { Switch, Text } from '@ui';
 
 import { FontSize } from '~types';
 
-const DATA = (onClick1: () => void, onClick2: () => void) => [
+const DATA = (
+  onPress1: () => void,
+  onPress2: () => void,
+  onPress3: () => void,
+  onPress4: () => void,
+) => [
   {
     id: 1,
     name: t('profile.nav1'),
     icon: <UserEditIcon stroke={colors.green} />,
     rightIcon: <ArrowRightIcon />,
-    onPress: onClick1,
+    onPress: onPress1,
   },
   {
     id: 2,
     name: t('profile.nav2'),
     icon: <LockIcon stroke={colors.green} />,
     rightIcon: <ArrowRightIcon />,
-    onPress: onClick2,
+    onPress: onPress2,
   },
   {
     id: 3,
     name: t('profile.nav3'),
     icon: <NotificationIcon stroke={colors.green} />,
     rightIcon: <Switch />,
-    onPress: () => console.log(123),
+    onPress: onPress3,
   },
   {
     id: 4,
     color: colors.red,
     name: t('profile.nav4'),
     icon: <LogoutIcon stroke={colors.red} />,
-    onPress: () => console.log(123),
+    onPress: onPress4,
   },
 ];
 
-export const ProfileScreen = () => {
+export const ProfileScreen = observer(() => {
+  const { user } = useStore();
+
   const { navigate } = useNavigation();
 
   const handleGoEdit = () => {
@@ -62,9 +72,16 @@ export const ProfileScreen = () => {
     navigate(Screens.ChangePasswordScreen);
   };
 
+  const handleLogout = () => {
+    user.logout().then(() => navigate(Screens.WelcomeScreen));
+  };
+
   return (
-    <Layout backgroundBlurRadius={10} backgroundOpacity={0.3}>
-      <BackButton onPress={() => navigate(Screens.LkScreen)}>
+    <View style={{ paddingTop: TOP_PADDING }}>
+      <BackButton
+        style={{ width: normHor(20) }}
+        onPress={() => navigate(Screens.LkScreen)}
+      >
         <ArrowLeftIcon />
       </BackButton>
       <Text align="center" fontSize={FontSize.S17} color={colors.white}>
@@ -77,22 +94,24 @@ export const ProfileScreen = () => {
         fontSize={FontSize.S24}
         color={colors.white}
       >
-        {'Александр'}
+        {user.me.first_name}
       </Text>
-      {DATA(handleGoEdit, handleGoChangePassword).map((item, key) => (
-        <ProfileListItem
-          index={key}
-          color={item.color}
-          icon={item.icon}
-          name={item.name}
-          key={item.id}
-          rightIcon={item.rightIcon}
-          handlePress={item.onPress}
-        />
-      ))}
-    </Layout>
+      {DATA(handleGoEdit, handleGoChangePassword, () => null, handleLogout).map(
+        (item, key) => (
+          <ProfileListItem
+            index={key}
+            color={item.color}
+            icon={item.icon}
+            name={item.name}
+            key={item.id}
+            rightIcon={item.rightIcon}
+            handlePress={item.onPress}
+          />
+        ),
+      )}
+    </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   text: { marginBottom: normVert(62) },

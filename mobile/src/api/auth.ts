@@ -1,19 +1,17 @@
 import { axiosBase } from '@api';
+import { UserProps } from '@store';
+import { removeNulls } from '@utils';
 
-export const login = (username: string, password: string) =>
+export const login = (values: Partial<UserProps>) =>
   axiosBase.post('/login', {
-    username,
-    password,
+    ...values,
     isJson: false,
   });
 
-export const registration = (username: string, password: string) =>
-  axiosBase.post(
-    '/signup',
-    JSON.stringify({
-      password,
-      username,
-    }),
-  );
+export const registration = (values: Partial<UserProps>) =>
+  axiosBase.post('/signup', values);
 
-export const me = () => axiosBase.get('/me');
+export const profileEdit = (values: Partial<UserProps>) =>
+  axiosBase.post('/profiles', { ...removeNulls(values), isJson: false });
+
+export const me = () => axiosBase.get('/profiles');

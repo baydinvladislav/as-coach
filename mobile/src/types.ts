@@ -19,9 +19,7 @@ export enum ButtonType {
 }
 
 export type TResponseError = {
-  detail?: {
-    loc?: string[];
-    msg: string;
-    type: string;
-  }[];
-};
+  loc?: string[];
+  msg: string;
+  type: string;
+}[];

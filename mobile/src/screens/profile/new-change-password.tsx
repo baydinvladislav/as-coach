@@ -5,10 +5,11 @@ import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
 import { PasswordInput } from '@components';
+import { TOP_PADDING } from '@constants';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normVert } from '@theme';
-import { Button, Input, Layout, Text } from '@ui';
+import { Button, Keyboard, Text } from '@ui';
 
 import { ButtonType, FontSize } from '~types';
 
@@ -16,7 +17,7 @@ export const NewChangePasswordScreen = () => {
   const { navigate } = useNavigation();
 
   return (
-    <Layout backgroundBlurRadius={10} backgroundOpacity={0.3}>
+    <Keyboard style={{ flex: 1, paddingTop: TOP_PADDING }}>
       <Logo />
       <Text
         style={styles.title}
@@ -34,7 +35,7 @@ export const NewChangePasswordScreen = () => {
       >
         {t('changePassword.changePasswordDescription')}
       </Text>
-      <InputsContainer>
+      <Inputs>
         <PasswordInput
           style={styles.input}
           placeholder={t('inputs.password')}
@@ -43,7 +44,7 @@ export const NewChangePasswordScreen = () => {
           style={styles.input}
           placeholder={t('inputs.newPassword')}
         />
-      </InputsContainer>
+      </Inputs>
       <Button
         style={styles.button}
         type={ButtonType.PRIMARY}
@@ -58,7 +59,7 @@ export const NewChangePasswordScreen = () => {
       >
         {t('buttons.cancel')}
       </Button>
-    </Layout>
+    </Keyboard>
   );
 };
 
@@ -77,9 +78,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const InputsContainer = styled(View)`
-  margin-top: ${normVert(32)}px;
+const Inputs = styled(View)`
   flex: 1;
+  margin-top: ${normVert(32)}px;
 `;
 
 const Logo = styled(LogoIcon)`

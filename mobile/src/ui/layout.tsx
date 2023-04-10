@@ -1,17 +1,19 @@
-import React from 'react';
-import { Image, SafeAreaView, StyleProp, View, ViewStyle } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Easing, StyleProp, View, ViewStyle } from 'react-native';
 
+import { Edge, SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components';
 
 import { BackgroundImage } from '@assets';
-import { normHor, normVert } from '@theme';
+import { colors, normHor } from '@theme';
+import { windowHeight, windowWidth } from '@utils';
 
 type TProps = {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   backgroundBlurRadius?: number;
   backgroundOpacity?: number;
-  topOffset?: number;
+  edges?: Edge[];
 };
 
 export const Layout = ({
@@ -19,29 +21,52 @@ export const Layout = ({
   style,
   backgroundBlurRadius = 0,
   backgroundOpacity = 1,
-  topOffset = 60,
-}: TProps) => (
-  <SafeAreaView style={{ flex: 1 }}>
-    <Background
-      source={BackgroundImage}
-      opacity={backgroundOpacity}
-      blurRadius={backgroundBlurRadius}
-    />
-    <Container style={style} topOffset={topOffset}>
-      {children}
-    </Container>
-  </SafeAreaView>
-);
+  edges,
+}: TProps) => {
+  const opacityAnim = useRef(new Animated.Value(backgroundOpacity)).current;
 
-const Background = styled(Image)<{ opacity: number }>`
+  const changeOpacityUp = () => {
+    Animated.timing(opacityAnim, {
+      toValue: backgroundOpacity,
+      duration: 100,
+      useNativeDriver: true,
+      easing: Easing.linear,
+    }).start();
+  };
+
+  useEffect(() => {
+    changeOpacityUp();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [backgroundOpacity]);
+
+  return (
+    <SafeAreaView style={{ flex: 1 }} edges={edges}>
+      <BackgroundColor />
+      <Background
+        blurRadius={backgroundBlurRadius}
+        source={BackgroundImage}
+        style={{ opacity: opacityAnim }}
+      />
+      <Container style={style}>{children}</Container>
+    </SafeAreaView>
+  );
+};
+
+const Background = styled(Animated.Image)`
   position: absolute;
-  width: 100%;
-  opacity: ${({ opacity }) => opacity};
-  top: 0;
+  width: ${windowWidth}px;
+  height: ${windowHeight}px;
 `;
 
-const Container = styled(View)<{ topOffset: number }>`
-  padding-top: ${({ topOffset }) => normVert(topOffset)}px;
+const BackgroundColor = styled(Animated.View)`
+  position: absolute;
+  width: ${windowWidth}px;
+  height: ${windowHeight}px;
+  top: 0;
+  background-color: ${colors.black};
+`;
+
+const Container = styled(View)`
   padding-horizontal: ${normHor(16)}px;
   flex: 1;
 `;

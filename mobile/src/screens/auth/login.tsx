@@ -1,18 +1,21 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { Formik } from 'formik';
+import { AxiosError } from 'axios';
+import { useFormik } from 'formik';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
 import { PasswordInput } from '@components';
-import { PHONE_MASK } from '@constants';
+import { PHONE_MASK, TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
+import { UserProps } from '@store';
 import { colors, normVert } from '@theme';
-import { Button, Input, Layout, Text } from '@ui';
+import { Button, Input, Keyboard, Text } from '@ui';
+import { loginValidationSchema, transformPhone } from '@utils';
 
 import { ButtonType, FontSize } from '~types';
 
@@ -20,72 +23,79 @@ export const LoginScreen = observer(() => {
   const { navigate } = useNavigation();
 
   const { user, loading } = useStore();
-  const idDisabled = loading.isLoading;
+  const isDisabled = loading.isLoading;
 
-  const handleLogin = (value: { phone: string; password: string }) => {
+  const handleLogin = (values: Partial<UserProps>) => {
     user
       .login({
-        phone: '+' + value.phone.replace(/[^0-9]/g, ''),
-        password: value.password,
+        ...values,
+        username: transformPhone(values.username),
       })
-      .then(data => navigate(Screens.LkScreen));
+      .then(() => navigate(Screens.LkScreen))
+      .catch((e: AxiosError<{ detail: string }>) => {
+        setErrors({ password: e.response?.data.detail });
+      });
   };
 
+  const { setErrors, errors, handleChange, handleSubmit, values } = useFormik({
+    initialValues: { username: '', password: '' },
+    onSubmit: handleLogin,
+    validationSchema: loginValidationSchema,
+    validateOnChange: false,
+    validateOnBlur: false,
+  });
+
   return (
-    <Layout backgroundBlurRadius={10} backgroundOpacity={0.3}>
-      <Logo />
-      <Text
-        style={styles.title}
-        align="center"
-        fontSize={FontSize.S24}
-        color={colors.white}
+    <View style={{ flex: 1 }}>
+      <Keyboard style={{ paddingTop: TOP_PADDING }}>
+        <Logo />
+        <Text
+          style={styles.title}
+          align="center"
+          fontSize={FontSize.S24}
+          color={colors.white}
+        >
+          {t('auth.loginTitle')}
+        </Text>
+        <Inputs>
+          <Input
+            keyboardType={'phone-pad'}
+            mask={PHONE_MASK}
+            style={styles.input}
+            placeholder={t('inputs.phone')}
+            value={values.username}
+            onChangeText={handleChange('username')}
+            error={errors.username}
+          />
+          <PasswordInput
+            value={values.password}
+            placeholder={t('inputs.password')}
+            onChangeText={handleChange('password')}
+            error={errors.password}
+          />
+        </Inputs>
+      </Keyboard>
+      <Button
+        style={styles.button}
+        type={ButtonType.PRIMARY}
+        onPress={() => handleSubmit()}
+        isDisabled={isDisabled}
       >
-        {t('auth.loginTitle')}
-      </Text>
-      <Formik
-        initialValues={{ phone: '', password: '' }}
-        onSubmit={handleLogin}
-      >
-        {({ handleChange, handleSubmit, values }) => (
-          <>
-            <InputsContainer>
-              <Input
-                mask={PHONE_MASK}
-                style={styles.input}
-                placeholder={t('inputs.phone')}
-                value={values.phone}
-                onChangeText={handleChange('phone')}
-              />
-              <PasswordInput
-                value={values.password}
-                placeholder={t('inputs.password')}
-                onChangeText={handleChange('password')}
-              />
-            </InputsContainer>
-            <Button
-              style={styles.button}
-              type={ButtonType.PRIMARY}
-              onPress={() => handleSubmit()}
-              isDisabled={idDisabled}
-            >
-              {t('buttons.login')}
-            </Button>
-            <Flex>
-              <Text fontSize={FontSize.S17} color={colors.white}>
-                {t('auth.noAccount')}
-              </Text>
-              <Button
-                style={styles.button2}
-                type={ButtonType.TEXT}
-                onPress={() => navigate(Screens.RegistrationScreen)}
-              >
-                {t('buttons.registration')}
-              </Button>
-            </Flex>
-          </>
-        )}
-      </Formik>
-    </Layout>
+        {t('buttons.login')}
+      </Button>
+      <Flex>
+        <Text fontSize={FontSize.S17} color={colors.white}>
+          {t('auth.noAccount')}
+        </Text>
+        <Button
+          style={styles.button2}
+          type={ButtonType.TEXT}
+          onPress={() => navigate(Screens.RegistrationScreen)}
+        >
+          {t('buttons.registration')}
+        </Button>
+      </Flex>
+    </View>
   );
 });
 
@@ -104,7 +114,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const InputsContainer = styled(View)`
+const Inputs = styled(View)`
   flex: 1;
 `;
 

@@ -1,13 +1,19 @@
 import { Dimensions } from 'react-native';
 
-import { isString } from 'lodash';
+import { isNil, isString, omitBy } from 'lodash';
 
 export * from './constants';
 export * from './storage';
+export * from './schema';
 
 interface INestedMessages {
   [key: string]: string | INestedMessages;
 }
+
+export const removeNulls = (obj: any) => omitBy(obj, isNil);
+
+export const transformPhone = (phone?: string) =>
+  phone ? '+' + phone.replace(/[^0-9]/g, '') : '';
 
 export const flattenMessages = (nestedMessages: INestedMessages, prefix = '') =>
   Object.keys(nestedMessages).reduce(

@@ -19,6 +19,7 @@ async def test_login_successfully(override_get_db):
     if not user:
         user = User(
             username=TEST_USER_USERNAME,
+            first_name='Владислав',
             password=get_hashed_password(TEST_USER_PASSWORD)
         )
 
@@ -47,6 +48,7 @@ async def test_login_failed():
     """
     login_data = {
         "username": "username_do_not_exist",
+        "first_name": "Владислав",
         "password": TEST_USER_PASSWORD
     }
 

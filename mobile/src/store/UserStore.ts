@@ -1,15 +1,20 @@
 import { action, computed, makeObservable, observable } from 'mobx';
 
-import { login, me, registration } from '@api';
+import { login, me, profileEdit, registration } from '@api';
 import { TOKEN } from '@constants';
 import { storage } from '@utils';
 
 import { RootStore } from './RootStore';
 import { actionLoading } from './action-loading';
 
-type UserProps = {
+export type UserProps = {
+  first_name: string;
+  last_name: string;
   username: string;
-  phone: string;
+  password: string;
+  gender: string;
+  birthday: string;
+  email: string;
 };
 
 export default class UserStore {
@@ -20,10 +25,15 @@ export default class UserStore {
     makeObservable(this);
   }
 
-  @observable isSignedIn = true;
+  @observable isSignedIn = false;
   @observable me: UserProps = {
+    first_name: '',
+    last_name: '',
     username: '',
-    phone: '',
+    password: '',
+    gender: '',
+    birthday: '',
+    email: '',
   };
 
   @action
@@ -35,25 +45,21 @@ export default class UserStore {
     return this.isSignedIn;
   }
 
-  @actionLoading()
   @action
-  async login({ phone, password }: { phone: string; password: string }) {
+  @actionLoading()
+  async login(values: Partial<UserProps>) {
     try {
       const {
         data: { access_token },
-      } = await login(phone, password);
-      await new Promise(resolve =>
-        setTimeout(() => {
-          resolve({});
-        }, 1000),
-      );
-      await storage.setItem(TOKEN, access_token);
+      } = await login(values);
+
+      await storage.setItem(TOKEN, access_token ?? '');
+
+      this.setHasAccess(true);
 
       const { data } = await me();
 
-      this.setHasAccess(true);
-      this.me = data.me;
-      return data.me;
+      this.me = data;
     } catch (e) {
       console.warn(e);
       throw e;
@@ -61,12 +67,10 @@ export default class UserStore {
   }
 
   @action
-  async register({ username, password }: any) {
+  @actionLoading()
+  async register(values: Partial<UserProps>) {
     try {
-      const { data } = await registration(username, password);
-
-      this.setHasAccess(true);
-      this.me = data.me;
+      await registration(values);
     } catch (e) {
       console.warn(e);
       throw e;
@@ -74,7 +78,25 @@ export default class UserStore {
   }
 
   @action
-  logout() {
-    this.isSignedIn = false;
+  @actionLoading()
+  async profileEdit(values: Partial<UserProps>) {
+    try {
+      const { data } = await profileEdit(values);
+      this.me = data;
+    } catch (e) {
+      console.warn(e);
+      throw e;
+    }
+  }
+
+  @action
+  async logout() {
+    try {
+      storage.removeItem(TOKEN);
+      this.isSignedIn = false;
+    } catch (e) {
+      console.warn(e);
+      throw e;
+    }
   }
 }
