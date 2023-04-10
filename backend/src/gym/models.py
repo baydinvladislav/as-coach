@@ -20,6 +20,9 @@ class Diet(Base, BaseModel):
     fats = Column("fats", Integer, nullable=False)
     carbs = Column("carbs", Integer, nullable=False)
     training_plans = relationship("TrainingPlan", secondary="dietontrainingplan", back_populates="diets")
+    
+    def __repr__(self):
+        return f"diet: {self.proteins}/{self.fats}/{self.carbs}"
 
 
 class DietOnTrainingPlan(Base, BaseModel):
@@ -30,6 +33,9 @@ class DietOnTrainingPlan(Base, BaseModel):
 
     nutrition_id = Column(UUID, ForeignKey("diet.id"), nullable=False)
     training_plan_id = Column(UUID, ForeignKey("trainingplan.id"), nullable=False)
+
+    def __repr__(self):
+        return f"diet on training plan: {self.id}"
 
 
 class TrainingPlan(Base, BaseModel):
