@@ -7,7 +7,7 @@ import {
 } from 'mobx';
 
 export class LoadingStore {
-  @observable loadingStatus = false;
+  @observable loadingStatus = 0;
 
   constructor() {
     makeObservable(this);
@@ -15,16 +15,16 @@ export class LoadingStore {
 
   @computed
   get isLoading(): boolean {
-    return this.loadingStatus;
+    return !!this.loadingStatus;
   }
 
   @action
   increaseLoadingStatus() {
-    this.loadingStatus = true;
+    this.loadingStatus = this.loadingStatus + 1;
   }
 
   @action
   decreaseLoadingStatus() {
-    this.loadingStatus = false;
+    this.loadingStatus = this.loadingStatus - 1;
   }
 }

@@ -1,26 +1,35 @@
-import React, { useEffect } from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import { debounce } from 'lodash';
 import { observer } from 'mobx-react';
 import moment from 'moment';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components';
 
-import { BackgroundImage, BicepsImage, DefaultAvatarImage } from '@assets';
-import { LkEmpty } from '@components';
+import {
+  AddIcon,
+  BackgroundImage,
+  BicepsImage,
+  DefaultAvatarImage,
+} from '@assets';
+import { LkEmpty, SearchInput } from '@components';
 import { TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
-import { Text } from '@ui';
+import { Button, Keyboard, Text } from '@ui';
 import { windowHeight, windowWidth } from '@utils';
 
-import { FontSize, FontWeight } from '~types';
+import { ButtonType, FontSize, FontWeight } from '~types';
 
 moment.locale('ru');
 
 export const LkScreen = observer(() => {
+  const [searchValue, setSearchValue] = useState<string | undefined>();
+
+  const [update, setUpdate] = useState(0);
   const { user, customer } = useStore();
   const { top } = useSafeAreaInsets();
 
@@ -29,13 +38,27 @@ export const LkScreen = observer(() => {
   useEffect(() => {
     customer.getCustomers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [update]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const search = useCallback(
+    debounce(() => {
+      customer.searchCustomerByName(searchValue);
+    }, 200),
+    [searchValue],
+  );
+
+  useEffect(() => {
+    search();
+  }, [customer, search, searchValue]);
 
   const customers = customer.customers;
+  const searchCustomers = customer.searchCustomers;
 
   return (
-    <LkBackground
+    <View
       style={{
+        paddingHorizontal: normHor(16),
         paddingTop: TOP_PADDING + top,
       }}
     >
@@ -46,7 +69,9 @@ export const LkScreen = observer(() => {
         style={{ opacity: 0.3 }}
       />
 
-      <DateText>{moment().format('dddd, D MMM')}</DateText>
+      <TouchableOpacity onPress={() => setUpdate(update => update + 1)}>
+        <DateText>{moment().format('dddd, D MMM')}</DateText>
+      </TouchableOpacity>
       <Flex>
         <Flex>
           <Text color={colors.white} fontSize={FontSize.S24}>
@@ -60,16 +85,35 @@ export const LkScreen = observer(() => {
       </Flex>
 
       {customers.length ? (
-        customers.map(customer => (
-          <TouchableOpacity // TODO: Заместо всего блока TouchableOpacity должны быть стилизованые плашки с клиентом типа <ClientCard key={} firstName={} lastName={} onPress={} /> (нужно создать компонент src/components/client-card.tsx)
-            onPress={() => navigate(Screens.DetailClient, { id: customer.id })}
-            key={customer.id}
-          >
-            <Text color={colors.white} fontSize={FontSize.S24}>
-              {customer.first_name}
+        <>
+          <TopContainer>
+            <Text fontSize={FontSize.S20} color={colors.white}>
+              {t('lk.clients')}
             </Text>
-          </TouchableOpacity>
-        ))
+            <Button
+              type={ButtonType.TEXT}
+              onPress={() => navigate(Screens.AddClientScreen)}
+              leftIcon={<AddIcon stroke={colors.green} />}
+            >
+              {t('buttons.addClient')}
+            </Button>
+          </TopContainer>
+          <View style={styles.searchInput}>
+            <SearchInput value={searchValue} onChangeText={setSearchValue} />
+          </View>
+          {searchCustomers.map(customer => (
+            <TouchableOpacity // TODO: Заместо всего блока TouchableOpacity должны быть стилизованые плашки с клиентом типа <ClientCard key={} firstName={} lastName={} onPress={} /> (нужно создать компонент src/components/client-card.tsx)
+              onPress={() =>
+                navigate(Screens.DetailClient, { id: customer.id })
+              }
+              key={customer.id}
+            >
+              <Text color={colors.white} fontSize={FontSize.S24}>
+                {customer.first_name}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </>
       ) : (
         <LkEmpty
           title={t('lk.hereClients')}
@@ -78,13 +122,15 @@ export const LkScreen = observer(() => {
           buttonText={t('buttons.addClient')}
         />
       )}
-    </LkBackground>
+    </View>
   );
 });
 
-const LkBackground = styled(View)`
-  padding-horizontal: ${normVert(16)}px;
-`;
+const styles = StyleSheet.create({
+  searchInput: {
+    marginBottom: normVert(20),
+  },
+});
 
 const Avatar = styled(Image)`
   width: ${normHor(44)}px;
@@ -123,4 +169,12 @@ const BackgroundColor = styled(View)`
   width: ${windowWidth}px;
   height: ${windowHeight}px;
   background-color: ${colors.black};
+`;
+
+const TopContainer = styled(View)`
+  margin-top: ${normVert(24)}px;
+  margin-bottom: ${normVert(16)}px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 `;

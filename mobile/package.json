@@ -10,7 +10,6 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@react-native-community/datetimepicker": "6.1.3",
     "@react-native-masked-view/masked-view": "0.2.6",
     "@react-navigation/native": "6.0.10",
     "@react-navigation/native-stack": "6.9.12",
@@ -18,6 +17,8 @@
     "axios": "0.27.2",
     "formik": "2.2.9",
     "lodash": "4.17.21",
+    "lottie-ios": "3.2.3",
+    "lottie-react-native": "4.0.3",
     "mobx": "6.3.2",
     "mobx-react": "7.2.0",
     "moment": "^2.29.4",
@@ -27,6 +28,7 @@
     "react-native-anchor-point": "1.0.6",
     "react-native-avoid-softinput": "3.1.5",
     "react-native-confirmation-code-field": "7.3.1",
+    "react-native-date-picker": "4.2.10",
     "react-native-gesture-handler": "2.4.2",
     "react-native-mask-input": "1.2.3",
     "react-native-mmkv": "2.5.1",

@@ -13,13 +13,14 @@ import { useMaskedInputProps } from 'react-native-mask-input';
 import styled from 'styled-components';
 
 import { colors, normHor, normVert } from '@theme';
-import { Text } from '@ui';
+import { Placeholder, Text } from '@ui';
 
 import { FontSize } from '~types';
 
 export type TInputProps = {
   placeholder?: string;
   rightIcon?: JSX.Element;
+  leftIcon?: JSX.Element;
   width?: string;
   height?: number;
   isTextarea?: boolean;
@@ -27,11 +28,14 @@ export type TInputProps = {
   mask?: any;
   error?: string;
   description?: string;
+  onFocus?: () => void;
+  onBlur?: () => void;
 } & TextInputProps;
 
 export const Input = ({
   placeholder,
   rightIcon,
+  leftIcon,
   width = '100%',
   height = 48,
   isTextarea = false,
@@ -50,8 +54,14 @@ export const Input = ({
     setState(state => ({ ...state, value }));
   };
 
+  const handleBlur = () => {
+    props?.onBlur?.();
+    setState(state => ({ ...state, isFocused: false }));
+  };
+
   const handleFocus = () => {
-    setState(state => ({ ...state, isFocused: !state.isFocused }));
+    props?.onFocus?.();
+    setState(state => ({ ...state, isFocused: true }));
   };
 
   const isActive = props.value || state.value !== '' || state.isFocused;
@@ -62,75 +72,7 @@ export const Input = ({
     mask,
   });
 
-  const [placeholderWidth, setPlaceholderWidth] = useState(0);
-  const [placeholderHeight, setPlaceholderHeight] = useState(0);
-
-  const placeholderAnimY = useRef(new Animated.Value(0)).current;
-  const placeholderAnimSize = useRef(new Animated.Value(1)).current;
-
-  const movePlaceholderYIn = () => {
-    Animated.timing(placeholderAnimY, {
-      toValue: -normVert(12),
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const movePlaceholderYOut = () => {
-    Animated.timing(placeholderAnimY, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const sizePlaceholderIn = () => {
-    Animated.timing(placeholderAnimSize, {
-      toValue: 0.8,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const sizePlaceholderOut = () => {
-    Animated.timing(placeholderAnimSize, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  useEffect(() => {
-    if (isActive) {
-      movePlaceholderYIn();
-      sizePlaceholderIn();
-    } else {
-      movePlaceholderYOut();
-      sizePlaceholderOut();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isActive]);
-
-  const getTransform = () => {
-    const transform = {
-      transform: [
-        {
-          translateY: placeholderAnimY as unknown as number,
-        },
-        {
-          translateX: normHor(16),
-        },
-        {
-          scale: placeholderAnimSize as unknown as number,
-        },
-      ],
-    };
-    return withAnchorPoint(
-      transform,
-      { x: 0, y: 0 },
-      { width: placeholderWidth, height: placeholderHeight },
-    );
-  };
+  const direction = (leftIcon && 'left') || (rightIcon && 'right') || null;
 
   return (
     <View style={style}>
@@ -140,17 +82,12 @@ export const Input = ({
         height={height}
         width={width}
         isFocused={state.isFocused}
+        dir={direction}
       >
-        <Placeholder
-          isActive={Boolean(isActive)}
-          onLayout={event => {
-            setPlaceholderWidth(event.nativeEvent.layout.width);
-            setPlaceholderHeight(event.nativeEvent.layout.height);
-          }}
-          style={getTransform()}
-        >
-          {placeholder}
-        </Placeholder>
+        {leftIcon && <Icon dir="left">{leftIcon}</Icon>}
+        {placeholder && (
+          <Placeholder isActive={Boolean(isActive)} text={placeholder} />
+        )}
         <InputRN
           {...props}
           {...maskedInputProps}
@@ -158,12 +95,11 @@ export const Input = ({
           style={{ paddingVertical: 0 }}
           isTextarea={isTextarea}
           clearTextOnFocus={false}
-          placeholderTextColor={colors.white}
           onFocus={handleFocus}
-          onBlur={handleFocus}
+          onBlur={handleBlur}
           value={props.value ?? state.value}
         />
-        <Icon>{rightIcon}</Icon>
+        {rightIcon && <Icon dir="right">{rightIcon}</Icon>}
       </InputContainer>
       {description && (
         <ErrorText align="center" fontSize={FontSize.S12} color={colors.black5}>
@@ -184,12 +120,16 @@ const InputContainer = styled(View)<{
   isTextarea: boolean;
   error: string;
   isFocused: boolean;
+  dir: 'left' | 'right' | null;
 }>`
   border-width: 1px;
   border-color: ${colors.transparent};
   height: ${({ height }) => normVert(height)}px;
   width: ${({ width }) => width};
   padding-horizontal: ${normHor(16)}px;
+  ${({ dir }) =>
+    (dir === 'right' || dir === null) && `padding-left: ${normHor(16)}px;`}
+  ${({ dir }) => dir === 'left' && `padding-left:${normHor(44)}px;`}
   background-color: ${({ error }) => (error ? colors.red2 : colors.black3)};
   ${({ error }) =>
     error &&
@@ -199,7 +139,7 @@ const InputContainer = styled(View)<{
   flex-direction: row;
   align-items: center;
   ${({ isTextarea }) => isTextarea && `padding-top: ${normVert(16)}px`};
-  padding-top: ${normVert(18)}px;
+  padding-top: ${({ dir }) => (dir === 'left' ? 0 : `${normVert(18)}px`)};
   ${({ isFocused, error }) =>
     isFocused &&
     !error &&
@@ -212,9 +152,10 @@ const ErrorText = styled(Text)`
   margin-left: ${normHor(16)}px;
 `;
 
-const Icon = styled(View)`
+const Icon = styled(View)<{ dir: 'left' | 'right' }>`
   position: absolute;
-  right: ${normHor(16)}px;
+  ${({ dir }) =>
+    dir === 'left' ? `left: ${normHor(16)}px` : `right: ${normHor(16)}px`}
 `;
 
 const InputRN = styled(TextInput)<{ isTextarea: boolean }>`
@@ -222,10 +163,4 @@ const InputRN = styled(TextInput)<{ isTextarea: boolean }>`
   width: 100%;
   height: 100%;
   color: ${colors.white};
-`;
-
-const Placeholder = styled(Animated.Text)<{ isActive: boolean }>`
-  position: absolute;
-  color: ${colors.black5};
-  font-size: ${FontSize.S17};
 `;

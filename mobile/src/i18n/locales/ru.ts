@@ -9,6 +9,7 @@ export const ru = {
     smsText2: 'был отправлен',
   },
   lk: {
+    clients: 'Клиенты',
     welcome: 'Привет, {name}!',
     hereClients: 'Здесь будут ваши клиенты',
     hereCanAdd: 'В этом разделе можно\nдобавлять клиентов',
@@ -20,6 +21,9 @@ export const ru = {
   addClient: {
     title: 'Новый клиент',
     phoneDescription: 'Отправим на него приглашение клиента в приложение',
+  },
+  newPlan: {
+    title: 'Новый план',
   },
   profile: {
     profileTitle: 'Профиль',
@@ -54,6 +58,7 @@ export const ru = {
     getCode: 'Получить новый код',
     addClient: 'Добавить клиента',
     add: 'Добавить',
+    next: 'Далее',
     save: 'Сохранить',
     cancel: 'Отменить',
     forgotPassword: 'Забыл (-а) пароль',

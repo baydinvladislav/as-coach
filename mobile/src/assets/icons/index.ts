@@ -8,3 +8,4 @@ export * from './lock';
 export * from './notification';
 export * from './arrow-left';
 export * from './logout';
+export * from './search';

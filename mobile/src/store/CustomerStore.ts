@@ -20,6 +20,30 @@ export default class CustomerStore {
   }
 
   @observable customers: CustomerProps[] = [];
+  @observable searchCustomers: CustomerProps[] = [];
+
+  @action
+  setCustomer(data: CustomerProps[]) {
+    this.customers = [...this.customers, ...data];
+  }
+
+  @action
+  setSearchCustomer(data: CustomerProps[]) {
+    this.searchCustomers = [...data];
+  }
+
+  @action
+  searchCustomerByName(searchValue?: string) {
+    this.setSearchCustomer(
+      searchValue
+        ? this.customers.filter(
+            customer =>
+              customer.first_name.includes(searchValue) ||
+              customer.last_name.includes(searchValue),
+          )
+        : this.customers,
+    );
+  }
 
   @action
   getCustomerById(id: string) {
@@ -34,7 +58,8 @@ export default class CustomerStore {
         return;
       }
       const { data } = await getCustomers();
-      this.customers = data;
+      this.setCustomer(data);
+      this.setSearchCustomer(data);
     } catch (e) {
       console.warn(e);
       throw e;
@@ -46,7 +71,7 @@ export default class CustomerStore {
   async createCustomer(values: Partial<CustomerProps>) {
     try {
       const { data } = await createCustomer(values);
-      this.customers = [...this.customers, data];
+      this.setCustomer([data]);
     } catch (e) {
       console.warn(e);
       throw e;
