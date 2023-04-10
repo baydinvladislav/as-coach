@@ -20,6 +20,7 @@ from .models import User
 from .schemas import TokenSchema, UserRegisterIn, UserRegisterOut
 from .utils import (create_access_token, create_refresh_token,
                     get_hashed_password, verify_password)
+from ..config import STATIC_DIR
 
 auth_router = APIRouter()
 
@@ -188,11 +189,10 @@ async def update_profile(
     Returns:
         dictionary with updated full user info
     """
-    static_dir = os.path.join(os.getcwd(), "static", "user_avatar")
     if photo is not None:
         saving_time = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
         file_name = f"{user.username}_{saving_time}.jpeg"
-        photo_path = f"{static_dir}/{file_name}"
+        photo_path = f"{STATIC_DIR}/{file_name}"
         with open(photo_path, 'wb') as buffer:
             shutil.copyfileobj(photo.file, buffer)
         user.photo_path = photo_path
@@ -211,6 +211,7 @@ async def update_profile(
     database.commit()
     database.refresh(user)
 
+    photo_link = user.photo_path.split('/src')[1]
     return {
         "id": str(user.id),
         "first_name": user.first_name,
@@ -219,5 +220,5 @@ async def update_profile(
         "birthday": user.birthday,
         "email": user.email,
         "username": user.username,
-        "photo_path": user.photo_path
+        "photo_path": photo_link
     }
