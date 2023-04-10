@@ -211,7 +211,11 @@ async def update_profile(
     database.commit()
     database.refresh(user)
 
-    photo_link = user.photo_path.split('/src')[1]
+    if user.photo_path:
+        photo_link = user.photo_path.split('/src')[1]
+    else:
+        photo_link = ""
+
     return {
         "id": str(user.id),
         "first_name": user.first_name,
