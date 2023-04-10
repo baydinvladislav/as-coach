@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from src.customer.schemas import CustomerCreateIn, CustomerOut
+from src.customer.schemas import CustomerCreateIn, CustomerOut, TrainingPlanIn, TrainingPlanOut
 from src.dependencies import get_db
 from src.auth.dependencies import get_current_user
 from src.customer.models import Customer
@@ -153,3 +153,25 @@ async def get_customer(
         "last_name": customer.last_name,
         "phone_number": customer.phone_number
     }
+
+
+@customer_router.post(
+    "/customers/{customer_id}/week_plans/",
+    summary="Create new training plan for customer",
+    status_code=status.HTTP_201_CREATED,
+    response_model=TrainingPlanOut)
+async def create_training_plan(
+        training_plan_data: TrainingPlanIn,
+        customer_id: str,
+        database: Session = Depends(get_db),
+        current_user: Session = Depends(get_current_user)) -> dict:
+    """
+    Creates new week plan for specific customer
+
+    Args:
+        training_plan_data: data from application user to create new week plan
+        customer_id: customer's str(UUID)
+        database: dependency injection for access to database
+        current_user: dependency injection to define a current user
+    """
+    pass

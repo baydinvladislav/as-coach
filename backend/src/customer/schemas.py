@@ -28,3 +28,17 @@ class CustomerOut(CustomerCreateIn, BaseModel):
     Schema represents Customer in response
     """
     id: str
+
+
+class TrainingPlanIn(BaseModel):
+    """
+
+    """
+    pass
+
+
+class TrainingPlanOut(BaseModel):
+    """
+
+    """
+    pass

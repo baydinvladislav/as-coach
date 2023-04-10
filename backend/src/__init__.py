@@ -1,6 +1,6 @@
 from .database import Base, engine
 from .auth.models import User
-from .customer.models import Customer
+from .customer.models import Customer, TrainingPlan
 from .gym.models import (
-    Diet, DietOnTrainingPlan, TrainingPlan, Training, Exercise, ExercisesOnTraining
+    Diet, DietOnTrainingPlan, Training, Exercise, ExercisesOnTraining
 )
