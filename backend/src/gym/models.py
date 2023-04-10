@@ -10,15 +10,37 @@ from src.database import Base
 from src.models import BaseModel
 
 
+class Diet(Base, BaseModel):
+    """
+    M2M to TrainingPlan
+    """
+    __tablename__ = "diet"
+
+    proteins = Column("proteins", Integer, nullable=False)
+    fats = Column("fats", Integer, nullable=False)
+    carbs = Column("carbs", Integer, nullable=False)
+    training_plans = relationship("TrainingPlan", secondary="dietontrainingplan", back_populates="diets")
+
+
+class DietOnTrainingPlan(Base, BaseModel):
+    """
+    Link table between Diet and TrainingsPlan tables
+    """
+    __tablename__ = "dietontrainingplan"
+
+    nutrition_id = Column(UUID, ForeignKey("diet.id"), nullable=False)
+    training_plan_id = Column(UUID, ForeignKey("trainingplan.id"), nullable=False)
+
+
 class TrainingPlan(Base, BaseModel):
     """
     Contains training, nutrition and also relates to customer.
     """
+    __tablename__ = "trainingplan"
+
     start_date = Column("start_date", Date)
     end_date = Column("end_date", Date)
-    proteins = Column("proteins", Integer, nullable=False)
-    fats = Column("fats", Integer, nullable=False)
-    carbs = Column("carbs", Integer, nullable=False)
+    diets = relationship("Diet", secondary="dietontrainingplan", back_populates="trainingplans")
     customer_id = Column(UUID, ForeignKey("customer.id"), nullable=False)
     customer = relationship("Customer", back_populates="training_plans")
     trainings = relationship("Training", cascade="all,delete-orphan", back_populates="training_plan")
@@ -31,6 +53,8 @@ class Training(Base, BaseModel):
     """
     Contains training's exercises.
     """
+    __tablename__ = "training"
+
     name = Column("name", String(50), nullable=False)
     training_plan_id = Column(UUID, ForeignKey("trainingplan.id", ondelete="CASCADE"), nullable=False)
     week_plan = relationship("TrainingPlan", back_populates="trainings")
@@ -45,6 +69,8 @@ class Exercise(Base, BaseModel):
     Represents exercises in training.
     User can create custom exercises but user can not see custom exercises other users.
     """
+    __tablename__ = "exercise"
+
     name = Column("name", String(50), nullable=False)
     trainings = relationship("Training", secondary="exercisesontraining", back_populates="exercises")
     user_id = Column(UUID, ForeignKey("user.id"))
@@ -58,6 +84,8 @@ class ExercisesOnTraining(Base, BaseModel):
     """
     Model for M2M relationship Training and Exercise.
     """
+    __tablename__ = "exercisesontraining"
+
     training_id = Column(UUID, ForeignKey("training.id"), nullable=False)
     exercise_id = Column(UUID, ForeignKey("exercise.id"), nullable=False)
     sets = Column('sets', JSON, default=[])
