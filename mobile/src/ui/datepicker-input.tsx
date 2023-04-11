@@ -11,11 +11,7 @@ import { Placeholder, TInputProps, Text } from '@ui';
 
 import { FontSize } from '~types';
 
-export const DatePickerInput = ({
-  placeholder,
-  style,
-  ...props
-}: TInputProps) => {
+export const DatePickerInput = ({ placeholder, style }: TInputProps) => {
   const ref = useRef<{ focus: () => void; blur: () => void }>();
   const [isFirstOpen, setIsFirstOpen] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
@@ -49,12 +45,7 @@ export const DatePickerInput = ({
         onBlur={handleBlur}
       />
       {placeholder && (
-        <PlaceholderContainer>
-          <Placeholder
-            isActive={!(!isOpen && isFirstOpen)}
-            text={placeholder}
-          />
-        </PlaceholderContainer>
+        <Placeholder isActive={!(!isOpen && isFirstOpen)} text={placeholder} />
       )}
       {!isFirstOpen && (
         <Text
@@ -87,12 +78,4 @@ const Container = styled(TouchableOpacity)<{ height: number }>`
 
 const HiddenInput = styled(TextInput)`
   position: absolute;
-`;
-
-const PlaceholderContainer = styled(View)`
-  flex-direction: row;
-  align-items: center;
-  position: absolute;
-  width: 100%;
-  height: ${normVert(48)}px;
 `;

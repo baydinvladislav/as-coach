@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Animated } from 'react-native';
 
 import { withAnchorPoint } from 'react-native-anchor-point';
@@ -14,24 +14,35 @@ type TProps = {
 };
 
 export const Placeholder = ({ text, isActive }: TProps) => {
+  const firstRender = useRef(true);
+
+  useLayoutEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+  });
+
   const [placeholderWidth, setPlaceholderWidth] = useState(0);
   const [placeholderHeight, setPlaceholderHeight] = useState(0);
 
-  const placeholderAnimY = useRef(new Animated.Value(0)).current;
+  const placeholderAnimY = useRef(new Animated.Value(normVert(14))).current;
   const placeholderAnimSize = useRef(new Animated.Value(1)).current;
+
+  const duration = firstRender.current ? 0 : 300;
 
   const movePlaceholderYIn = () => {
     Animated.timing(placeholderAnimY, {
-      toValue: -normVert(12),
-      duration: 300,
+      toValue: normVert(6),
+      duration,
       useNativeDriver: true,
     }).start();
   };
 
   const movePlaceholderYOut = () => {
     Animated.timing(placeholderAnimY, {
-      toValue: 0,
-      duration: 300,
+      toValue: normVert(14),
+      duration,
       useNativeDriver: true,
     }).start();
   };
@@ -39,7 +50,7 @@ export const Placeholder = ({ text, isActive }: TProps) => {
   const sizePlaceholderIn = () => {
     Animated.timing(placeholderAnimSize, {
       toValue: 0.8,
-      duration: 300,
+      duration,
       useNativeDriver: true,
     }).start();
   };
@@ -47,7 +58,7 @@ export const Placeholder = ({ text, isActive }: TProps) => {
   const sizePlaceholderOut = () => {
     Animated.timing(placeholderAnimSize, {
       toValue: 1,
-      duration: 300,
+      duration,
       useNativeDriver: true,
     }).start();
   };

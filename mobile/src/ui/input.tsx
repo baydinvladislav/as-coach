@@ -93,10 +93,11 @@ export const Input = ({
           {...maskedInputProps}
           placeholder=""
           style={{ paddingVertical: 0 }}
-          isTextarea={isTextarea}
           clearTextOnFocus={false}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          multiline={isTextarea}
+          numberOfLines={4}
           value={props.value ?? state.value}
         />
         {rightIcon && <Icon dir="right">{rightIcon}</Icon>}
@@ -114,6 +115,7 @@ export const Input = ({
     </View>
   );
 };
+
 const InputContainer = styled(View)<{
   width: string;
   height: number;
@@ -137,8 +139,7 @@ const InputContainer = styled(View)<{
      border-color: ${colors.red};`};
   border-radius: 12px;
   flex-direction: row;
-  align-items: center;
-  ${({ isTextarea }) => isTextarea && `padding-top: ${normVert(16)}px`};
+  align-items: flex-start;
   padding-top: ${({ dir }) => (dir === 'left' ? 0 : `${normVert(18)}px`)};
   ${({ isFocused, error }) =>
     isFocused &&
@@ -154,11 +155,12 @@ const ErrorText = styled(Text)`
 
 const Icon = styled(View)<{ dir: 'left' | 'right' }>`
   position: absolute;
+  top: ${normVert(14)}px;
   ${({ dir }) =>
     dir === 'left' ? `left: ${normHor(16)}px` : `right: ${normHor(16)}px`}
 `;
 
-const InputRN = styled(TextInput)<{ isTextarea: boolean }>`
+const InputRN = styled(TextInput)`
   font-size: ${FontSize.S16};
   width: 100%;
   height: 100%;

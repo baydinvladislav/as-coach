@@ -18,3 +18,5 @@ export const PHONE_MASK = [
   /\d/,
   /\d/,
 ];
+
+export const RANGE_MASK = [/\d/, /\d/, /\d/, /\d/];

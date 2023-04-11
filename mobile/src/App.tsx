@@ -71,7 +71,7 @@ const ATTR = (screen: string) => {
 
     case Screens.LkScreen:
     case Screens.AddClientScreen:
-    case Screens.NewPlanScreen:
+    case Screens.PlanScreen:
     case Screens.DetailClient:
       return {
         backgroundBlurRadius: 10,
