@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import styled from 'styled-components';
 
-import { ArrowLeftIcon } from '@assets';
+import { ArrowLeftIcon, BackgroundImage } from '@assets';
 import { LkEmpty } from '@components';
 import { TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
@@ -12,7 +12,8 @@ import { t } from '@i18n';
 import { RoutesProps, Screens, useNavigation } from '@navigation';
 import { CustomerProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
-import { Badge, BadgeStatuses, Text } from '@ui';
+import { Badge, BadgeStatuses, Keyboard, Text } from '@ui';
+import { windowHeight, windowWidth } from '@utils';
 
 import { FontSize } from '~types';
 
@@ -29,7 +30,20 @@ export const DetailClient = ({ route }: RoutesProps) => {
   }, [customer, id]);
 
   return (
-    <View style={{ flex: 1, paddingTop: TOP_PADDING }}>
+    <Keyboard
+      style={{
+        flex: 1,
+        paddingHorizontal: normHor(16),
+        paddingTop: TOP_PADDING,
+      }}
+    >
+      <BackgroundColor />
+      <Background
+        blurRadius={10}
+        source={BackgroundImage}
+        style={{ opacity: 0.3 }}
+      />
+
       <Circle style={styles.back} onPress={() => goBack()}>
         <ArrowLeftIcon />
       </Circle>
@@ -43,7 +57,7 @@ export const DetailClient = ({ route }: RoutesProps) => {
         onPress={() => navigate(Screens.NewPlanScreen)}
         buttonText={t('buttons.createPlan')}
       />
-    </View>
+    </Keyboard>
   );
 };
 
@@ -63,4 +77,17 @@ const Circle = styled(TouchableOpacity)`
   height: ${normVert(32)}px;
   align-items: center;
   justify-content: center;
+`;
+
+const Background = styled(Image)`
+  position: absolute;
+  width: ${windowWidth}px;
+  height: ${windowHeight}px;
+`;
+
+const BackgroundColor = styled(View)`
+  position: absolute;
+  width: ${windowWidth}px;
+  height: ${windowHeight}px;
+  background-color: ${colors.black};
 `;

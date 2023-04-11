@@ -8,3 +8,6 @@ export * from './switch';
 export * from './view-with-buttons';
 export * from './keyboard';
 export * from './badge';
+export * from './loader';
+export * from './datepicker-input';
+export * from './placeholder';

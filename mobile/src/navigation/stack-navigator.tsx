@@ -13,6 +13,7 @@ import {
   LkScreen,
   LoginScreen,
   NewChangePasswordScreen,
+  NewPlanScreen,
   ProfileEditScreen,
   ProfileScreen,
   RegistrationScreen,
@@ -60,6 +61,14 @@ export const StackNavigator = observer(() => {
         }}
         name={Screens.AddClientScreen}
         component={AddClientScreen}
+      />
+      <UserStack.Screen
+        options={{
+          presentation: 'modal',
+          animationEnabled: true,
+        }}
+        name={Screens.NewPlanScreen}
+        component={NewPlanScreen}
       />
       <UserStack.Screen name={Screens.SmsScreen} component={SmsScreen} />
       <UserStack.Screen
