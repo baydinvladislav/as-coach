@@ -13,7 +13,7 @@ import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { UserProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
-import { Input, Keyboard, Text, ViewWithButtons } from '@ui';
+import { Input, Keyboard, Select, Text, ViewWithButtons } from '@ui';
 import { profileEditValidationSchema, transformPhone } from '@utils';
 
 import { FontSize } from '~types';
@@ -38,7 +38,6 @@ export const ProfileEditScreen = observer(() => {
       ...user.me,
       username: formatWithMask({ text: user.me.username, mask: PHONE_MASK })
         .masked,
-      gender: 'male',
     },
     onSubmit: handleEdit,
     validationSchema: profileEditValidationSchema,
@@ -73,12 +72,13 @@ export const ProfileEditScreen = observer(() => {
           onChangeText={handleChange('last_name')}
           error={errors.last_name}
         />
-        <Input
+        <Select
           style={styles.input}
           placeholder={t('inputs.gender')}
           value={values.gender}
           onChangeText={handleChange('gender')}
           error={errors.gender}
+          data={{ keys: ['Мужской', 'Женский'], values: ['male', 'female'] }}
         />
         <Input
           style={styles.input}
