@@ -53,6 +53,7 @@ export const ProfileEditScreen = observer(() => {
         onConfirm={() => handleSubmit()}
         style={{ paddingTop: normVert(80) }}
         isDisabled={isDisabled}
+        isScroll={true}
       >
         <Text align="center" fontSize={FontSize.S17} color={colors.white}>
           {t('edit.editTitle')}

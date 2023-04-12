@@ -14,6 +14,7 @@ import {
   LoginScreen,
   NewChangePasswordScreen,
   NewPlanScreen,
+  PlanScreen,
   ProfileEditScreen,
   ProfileScreen,
   RegistrationScreen,
@@ -62,14 +63,14 @@ export const StackNavigator = observer(() => {
         name={Screens.AddClientScreen}
         component={AddClientScreen}
       />
-      <UserStack.Screen
-        options={{
+      <UserStack.Group
+        screenOptions={{
           presentation: 'modal',
           animationEnabled: true,
         }}
-        name={Screens.NewPlanScreen}
-        component={NewPlanScreen}
-      />
+      >
+        <UserStack.Screen name={Screens.PlanScreen} component={PlanScreen} />
+      </UserStack.Group>
       <UserStack.Screen name={Screens.SmsScreen} component={SmsScreen} />
       <UserStack.Screen
         name={Screens.ProfileScreen}

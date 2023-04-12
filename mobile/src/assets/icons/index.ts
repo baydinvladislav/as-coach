@@ -9,3 +9,6 @@ export * from './notification';
 export * from './arrow-left';
 export * from './logout';
 export * from './search';
+export * from './not-found';
+export * from './minus';
+export * from './check';

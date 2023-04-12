@@ -11,3 +11,5 @@ export * from './badge';
 export * from './loader';
 export * from './datepicker-input';
 export * from './placeholder';
+export * from './input-spinner';
+export * from './checkbox';

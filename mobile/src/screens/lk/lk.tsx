@@ -13,7 +13,7 @@ import {
   BicepsImage,
   DefaultAvatarImage,
 } from '@assets';
-import { LkEmpty, SearchInput } from '@components';
+import { LkEmpty, NotFound, SearchInput } from '@components';
 import { TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
@@ -69,9 +69,7 @@ export const LkScreen = observer(() => {
         style={{ opacity: 0.3 }}
       />
 
-      <TouchableOpacity onPress={() => setUpdate(update => update + 1)}>
-        <DateText>{moment().format('dddd, D MMM')}</DateText>
-      </TouchableOpacity>
+      <DateText>{moment().format('dddd, D MMM')}</DateText>
       <Flex>
         <Flex>
           <Text color={colors.white} fontSize={FontSize.S24}>
@@ -101,18 +99,22 @@ export const LkScreen = observer(() => {
           <View style={styles.searchInput}>
             <SearchInput value={searchValue} onChangeText={setSearchValue} />
           </View>
-          {searchCustomers.map(customer => (
-            <TouchableOpacity // TODO: Заместо всего блока TouchableOpacity должны быть стилизованые плашки с клиентом типа <ClientCard key={} firstName={} lastName={} onPress={} /> (нужно создать компонент src/components/client-card.tsx)
-              onPress={() =>
-                navigate(Screens.DetailClient, { id: customer.id })
-              }
-              key={customer.id}
-            >
-              <Text color={colors.white} fontSize={FontSize.S24}>
-                {customer.first_name}
-              </Text>
-            </TouchableOpacity>
-          ))}
+          {searchCustomers.length ? (
+            searchCustomers.map(customer => (
+              <TouchableOpacity // TODO: Заместо всего блока TouchableOpacity должны быть стилизованые плашки с клиентом типа <ClientCard key={} firstName={} lastName={} onPress={} /> (нужно создать компонент src/components/client-card.tsx)
+                onPress={() =>
+                  navigate(Screens.DetailClient, { id: customer.id })
+                }
+                key={customer.id}
+              >
+                <Text color={colors.white} fontSize={FontSize.S24}>
+                  {customer.first_name}
+                </Text>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <NotFound />
+          )}
         </>
       ) : (
         <LkEmpty

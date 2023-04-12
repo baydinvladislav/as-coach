@@ -7,14 +7,21 @@ import styled from 'styled-components';
 import { TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
+import { useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
 import { DatePickerInput, Keyboard, Text, ViewWithButtons } from '@ui';
 import { isIOS } from '@utils';
 
 import { FontSize } from '~types';
 
-export const NewPlanScreen = observer(() => {
+type TProps = {
+  onNext: () => void;
+  onPrev: () => void;
+};
+
+export const NewPlanScreen = observer(({ onNext, onPrev }: TProps) => {
   const { loading } = useStore();
+  const { navigate, goBack } = useNavigation();
 
   const isDisabled = loading.isLoading;
 
@@ -31,8 +38,8 @@ export const NewPlanScreen = observer(() => {
         </Text>
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
-          onCancel={() => console.log(123)}
-          onConfirm={() => console.log(123)}
+          onCancel={goBack}
+          onConfirm={onNext}
           confirmText={t('buttons.next')}
           isDisabled={isDisabled}
         >

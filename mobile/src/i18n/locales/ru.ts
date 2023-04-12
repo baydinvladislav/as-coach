@@ -25,6 +25,19 @@ export const ru = {
   newPlan: {
     title: 'Новый план',
   },
+  createPlan: {
+    title: 'Новый план',
+    title1: 'Питание',
+    title2: 'Тренировки',
+    title3: 'Заметки',
+    placeholder1: 'Белки',
+    placeholder2: 'Жиры',
+    placeholder3: 'Углеводы',
+    description1: 'Отдых между подходами, сек',
+    description2: 'Отдых между упражнениями, сек',
+    checkboxDescription: 'Разное в дни тренировок и отдыха',
+    enterText: 'Введи текст',
+  },
   profile: {
     profileTitle: 'Профиль',
     nav1: 'Личные данные',
@@ -39,6 +52,9 @@ export const ru = {
     changePasswordTitle: 'Введи текущий пароль',
     changeNewPasswordTitle: 'Придумай новый пароль',
     changePasswordDescription: 'Пароль должен содержать\nминимум 8 символов',
+  },
+  notFound: {
+    title: 'Такого клиента нет',
   },
   inputs: {
     phone: 'Номер телефона',
@@ -63,6 +79,8 @@ export const ru = {
     cancel: 'Отменить',
     forgotPassword: 'Забыл (-а) пароль',
     createPlan: 'Создать план',
+    addDay: 'Добавить день',
+    prev: 'Назад',
   },
   errors: {
     required: 'Заполните обязательное поле',
