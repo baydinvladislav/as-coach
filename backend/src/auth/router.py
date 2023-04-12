@@ -2,9 +2,8 @@
 Contains routes for auth service.
 """
 
-import os
 import shutil
-import datetime
+from datetime import date, datetime
 from typing import NewType
 
 from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Form
@@ -167,7 +166,7 @@ async def update_profile(
         last_name: str = Form(None),
         photo: UploadFile = File(None),
         gender: NewType('Gender', Gender) = Form(None),
-        birthday: str = Form(None),
+        birthday: date = Form(None),
         email: str = Form(None),
         database: Session = Depends(get_db),
         user: User = Depends(get_current_user)
@@ -190,14 +189,14 @@ async def update_profile(
         dictionary with updated full user info
     """
     if photo is not None:
-        saving_time = datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
+        saving_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
         file_name = f"{user.username}_{saving_time}.jpeg"
         photo_path = f"{STATIC_DIR}/{file_name}"
         with open(photo_path, 'wb') as buffer:
             shutil.copyfileobj(photo.file, buffer)
         user.photo_path = photo_path
 
-    user.modified = datetime.datetime.now()
+    user.modified = datetime.now()
 
     database.query(User).filter(User.id == str(user.id)).update({
         "first_name": first_name,
