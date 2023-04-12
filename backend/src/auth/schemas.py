@@ -2,6 +2,7 @@
 Schemas for auth service
 """
 
+from datetime import date
 from typing import NewType, Optional
 
 from pydantic import BaseModel, validator
@@ -49,7 +50,7 @@ class UserProfile(BaseModel):
     first_name: str
     last_name: Optional[str]
     gender: Optional[NewType('Gender', Gender)]
-    birthday: Optional[str]
+    birthday: Optional[date]
     email: Optional[str]
     username: str
     photo_path: Optional[str]
