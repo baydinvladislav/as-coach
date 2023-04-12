@@ -93,10 +93,11 @@ export const ProfileEditScreen = observer(() => {
           value={values.email}
           onChangeText={handleChange('email')}
           error={errors.email}
+          autoCapitalize="none"
         />
         <Input
           mask={PHONE_MASK}
-          keyboardType={'phone-pad'}
+          keyboardType="phone-pad"
           placeholder={t('inputs.phone')}
           value={values.username}
           onChangeText={handleChange('username')}
