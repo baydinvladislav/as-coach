@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { useFormik } from 'formik';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
@@ -33,6 +34,27 @@ export const CreatePlanScreen = observer(({ onNext, onPrev }: TProps) => {
 
   const isDisabled = loading.isLoading;
 
+  const handleCreatePlan = (values: any) => {
+    console.log(values);
+  };
+
+  const { handleChange, handleSubmit, values } = useFormik({
+    initialValues: {
+      different_time: false,
+      squirrels1: '',
+      fats1: '',
+      carbohydrates1: '',
+      squirrels2: '',
+      fats2: '',
+      carbohydrates2: '',
+      days: [{ rest1: '', rest2: '' }],
+      notes: '',
+    },
+    onSubmit: handleCreatePlan,
+    validateOnChange: false,
+    validateOnBlur: false,
+  });
+
   return (
     <Keyboard style={{ flex: 1, paddingTop: isIOS ? TOP_PADDING : 0 }}>
       {isIOS && (
@@ -63,7 +85,18 @@ export const CreatePlanScreen = observer(({ onNext, onPrev }: TProps) => {
               <Checkbox
                 style={styles.checkbox}
                 placeholder={t('createPlan.checkboxDescription')}
+                value={values.different_time}
+                onChangeCheckbox={handleChange('different_time')}
               />
+              {values.different_time && (
+                <Text
+                  style={styles.text}
+                  fontSize={FontSize.S16}
+                  color={colors.black4}
+                >
+                  {t('createPlan.days1')}
+                </Text>
+              )}
               <InputSpinner
                 style={styles.input}
                 placeholder={t('createPlan.placeholder1')}
@@ -73,6 +106,27 @@ export const CreatePlanScreen = observer(({ onNext, onPrev }: TProps) => {
                 placeholder={t('createPlan.placeholder2')}
               />
               <InputSpinner placeholder={t('createPlan.placeholder3')} />
+
+              {values.different_time && (
+                <>
+                  <Text
+                    style={[styles.text, styles.restDays]}
+                    fontSize={FontSize.S16}
+                    color={colors.black4}
+                  >
+                    {t('createPlan.days2')}
+                  </Text>
+                  <InputSpinner
+                    style={styles.input}
+                    placeholder={t('createPlan.placeholder1')}
+                  />
+                  <InputSpinner
+                    style={styles.input}
+                    placeholder={t('createPlan.placeholder2')}
+                  />
+                  <InputSpinner placeholder={t('createPlan.placeholder3')} />
+                </>
+              )}
             </CreatePlanItem>
             <CreatePlanItem title={t('createPlan.title2')}>
               <Button
@@ -114,6 +168,12 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: normVert(20),
+  },
+  text: {
+    marginBottom: normVert(20),
+  },
+  restDays: {
+    marginTop: normVert(33),
   },
   addDayButton: { marginRight: 'auto', marginBottom: normVert(20) },
   checkbox: {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { useFormik } from 'formik';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
@@ -21,9 +22,20 @@ type TProps = {
 
 export const NewPlanScreen = observer(({ onNext, onPrev }: TProps) => {
   const { loading } = useStore();
-  const { navigate, goBack } = useNavigation();
+  const { goBack } = useNavigation();
 
   const isDisabled = loading.isLoading;
+
+  const handleNewPlan = () => {
+    onNext();
+  };
+
+  const { handleChange, handleSubmit, values } = useFormik({
+    initialValues: { start_date: '', end_date: '' },
+    onSubmit: handleNewPlan,
+    validateOnChange: false,
+    validateOnBlur: false,
+  });
 
   return (
     <Keyboard style={{ flex: 1, paddingTop: isIOS ? TOP_PADDING : 0 }}>
@@ -39,15 +51,22 @@ export const NewPlanScreen = observer(({ onNext, onPrev }: TProps) => {
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
           onCancel={goBack}
-          onConfirm={onNext}
+          onConfirm={handleSubmit}
           confirmText={t('buttons.next')}
           isDisabled={isDisabled}
         >
           <View>
-            <DatePickerInput style={styles.input} placeholder="Дата начала" />
+            <DatePickerInput
+              style={styles.input}
+              placeholder="Дата начала"
+              value={values.start_date}
+              onChangeText={handleChange('start_date')}
+            />
             <DatePickerInput
               style={styles.input}
               placeholder="Дата окончания"
+              value={values.end_date}
+              onChangeText={handleChange('end_date')}
             />
           </View>
         </ViewWithButtons>
