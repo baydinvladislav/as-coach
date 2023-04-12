@@ -66,7 +66,7 @@ export const CreatePlanScreen = observer(({ onNext, onPrev }: TProps) => {
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
           onCancel={onPrev}
-          onConfirm={() => console.log(123)}
+          onConfirm={handleSubmit}
           confirmText={t('buttons.next')}
           cancelText={t('buttons.prev')}
           isDisabled={isDisabled}
@@ -100,12 +100,20 @@ export const CreatePlanScreen = observer(({ onNext, onPrev }: TProps) => {
               <InputSpinner
                 style={styles.input}
                 placeholder={t('createPlan.placeholder1')}
+                value={values.squirrels1}
+                onChangeText={handleChange('squirrels1')}
               />
               <InputSpinner
                 style={styles.input}
                 placeholder={t('createPlan.placeholder2')}
+                value={values.fats1}
+                onChangeText={handleChange('fats1')}
               />
-              <InputSpinner placeholder={t('createPlan.placeholder3')} />
+              <InputSpinner
+                placeholder={t('createPlan.placeholder3')}
+                value={values.carbohydrates1}
+                onChangeText={handleChange('carbohydrates1')}
+              />
 
               {values.different_time && (
                 <>
@@ -119,12 +127,20 @@ export const CreatePlanScreen = observer(({ onNext, onPrev }: TProps) => {
                   <InputSpinner
                     style={styles.input}
                     placeholder={t('createPlan.placeholder1')}
+                    value={values.squirrels2}
+                    onChangeText={handleChange('squirrels2')}
                   />
                   <InputSpinner
                     style={styles.input}
                     placeholder={t('createPlan.placeholder2')}
+                    value={values.fats2}
+                    onChangeText={handleChange('fats2')}
                   />
-                  <InputSpinner placeholder={t('createPlan.placeholder3')} />
+                  <InputSpinner
+                    placeholder={t('createPlan.placeholder3')}
+                    value={values.carbohydrates2}
+                    onChangeText={handleChange('carbohydrates2')}
+                  />
                 </>
               )}
             </CreatePlanItem>

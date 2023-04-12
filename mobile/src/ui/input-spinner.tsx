@@ -11,10 +11,22 @@ import { colors, normHor, normVert } from '@theme';
 import { Input, TInputProps } from './input';
 
 export const InputSpinner = ({ style, ...props }: TInputProps) => {
-  console.log(123);
+  const handlePlus = () => {
+    props.onChangeText?.(String(Number(props.value) + 10));
+  };
+
+  const handleMinus = () => {
+    const value = Number(props.value) - 10;
+    if (value >= 0) {
+      props.onChangeText?.(String(value));
+    } else {
+      props.onChangeText?.(String(0));
+    }
+  };
+
   return (
     <Container style={style}>
-      <Icon>
+      <Icon onPress={handleMinus}>
         <MinusIcon stroke={colors.green} fill={colors.green} />
       </Icon>
       <Input
@@ -23,7 +35,7 @@ export const InputSpinner = ({ style, ...props }: TInputProps) => {
         width={`${normHor(221)}px`}
         {...props}
       />
-      <Icon>
+      <Icon onPress={handlePlus}>
         <AddIcon stroke={colors.green} fill={colors.green} />
       </Icon>
     </Container>
