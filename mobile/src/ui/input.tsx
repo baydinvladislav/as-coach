@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  Animated,
   StyleProp,
   TextInput,
   TextInputProps,
@@ -8,14 +7,15 @@ import {
   ViewStyle,
 } from 'react-native';
 
-import { withAnchorPoint } from 'react-native-anchor-point';
 import { useMaskedInputProps } from 'react-native-mask-input';
 import styled from 'styled-components';
 
 import { colors, normHor, normVert } from '@theme';
-import { Placeholder, Text } from '@ui';
 
 import { FontSize } from '~types';
+
+import { Placeholder } from './placeholder';
+import { Text } from './text';
 
 export type TInputProps = {
   placeholder?: string;

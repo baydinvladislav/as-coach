@@ -15,6 +15,7 @@
     "@react-navigation/native-stack": "6.9.12",
     "@react-navigation/stack": "6.2.1",
     "axios": "0.27.2",
+    "deprecated-react-native-prop-types": "4.0.0",
     "formik": "2.2.9",
     "lodash": "4.17.21",
     "lottie-ios": "3.2.3",
