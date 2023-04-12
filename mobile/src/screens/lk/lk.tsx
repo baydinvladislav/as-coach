@@ -14,6 +14,7 @@ import {
   DefaultAvatarImage,
 } from '@assets';
 import { LkEmpty, NotFound, SearchInput } from '@components';
+import ClientCard from 'src/components/client-card';
 import { TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
@@ -101,16 +102,12 @@ export const LkScreen = observer(() => {
           </View>
           {searchCustomers.length ? (
             searchCustomers.map(customer => (
-              <TouchableOpacity // TODO: Заместо всего блока TouchableOpacity должны быть стилизованые плашки с клиентом типа <ClientCard key={} firstName={} lastName={} onPress={} /> (нужно создать компонент src/components/client-card.tsx)
-                onPress={() =>
-                  navigate(Screens.DetailClient, { id: customer.id })
-                }
-                key={customer.id}
-              >
-                <Text color={colors.white} fontSize={FontSize.S24}>
-                  {customer.first_name}
-                </Text>
-              </TouchableOpacity>
+              <ClientCard 
+                key={customer.id} 
+                firstName={customer.first_name} 
+                lastName={customer.last_name}
+                onPress={() => navigate(Screens.DetailClient, { id: customer.id })}
+              />
             ))
           ) : (
             <NotFound />

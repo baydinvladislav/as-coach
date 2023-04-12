@@ -4,3 +4,4 @@ export * from './lk-empty';
 export * from './search-input';
 export * from './not-found';
 export * from './create-plan-item';
+export * from './client-card';
