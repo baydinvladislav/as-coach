@@ -174,4 +174,7 @@ async def create_training_plan(
         database: dependency injection for access to database
         current_user: dependency injection to define a current user
     """
-    pass
+    return {
+        "id": "123",
+        "name": "Mock Test Plan"
+    }
