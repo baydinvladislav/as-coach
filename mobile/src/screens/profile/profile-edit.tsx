@@ -7,7 +7,7 @@ import { formatWithMask } from 'react-native-mask-input';
 import styled from 'styled-components';
 
 import { DefaultAvatarImage } from '@assets';
-import { PHONE_MASK } from '@constants';
+import { DATE_MASK, PHONE_MASK } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
@@ -78,7 +78,10 @@ export const ProfileEditScreen = observer(() => {
           value={values.gender}
           onChangeText={handleChange('gender')}
           error={errors.gender}
-          data={{ keys: ['Мужской', 'Женский'], values: ['male', 'female'] }}
+          data={{
+            keys: ['Мужской', 'Женский'],
+            values: ['male', 'female'],
+          }}
         />
         <Input
           style={styles.input}
@@ -86,6 +89,7 @@ export const ProfileEditScreen = observer(() => {
           value={values.birthday}
           onChangeText={handleChange('birthday')}
           error={errors.birthday}
+          mask={DATE_MASK}
         />
         <Input
           style={styles.input}
