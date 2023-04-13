@@ -19,7 +19,7 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engin
 
 
 @pytest.fixture()
-def create_customer(create_user):
+def create_customer(create_user, override_get_db):
     """
     Creates test customer
     """
