@@ -63,7 +63,9 @@ async def create_user(
     return {
         "id": str(user.id),
         "first_name": user.first_name,
-        "username": user.username
+        "username": user.username,
+        "access_token": create_access_token(str(user.username)),
+        "refresh_token": create_refresh_token(str(user.username))
     }
 
 
