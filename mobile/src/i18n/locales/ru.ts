@@ -87,6 +87,8 @@ export const ru = {
   errors: {
     required: 'Заполните обязательное поле',
     phoneError: 'Некорректный номер телефона',
+    birthdayError: 'Некорректная дата рождения',
+    emailError: 'Некорректная почта',
   },
   common: {
     nonePlan: 'Нет плана',

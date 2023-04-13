@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 
 import { useMaskedInputProps } from 'react-native-mask-input';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { colors, normHor, normVert } from '@theme';
 
@@ -102,19 +102,25 @@ export const Input = ({
         />
         {rightIcon && <Icon dir="right">{rightIcon}</Icon>}
       </InputContainer>
-      {description && (
-        <ErrorText align="center" fontSize={FontSize.S12} color={colors.black5}>
-          {description}
-        </ErrorText>
-      )}
       {error && (
         <ErrorText fontSize={FontSize.S12} color={colors.red}>
           {error}
         </ErrorText>
       )}
+      {description && (
+        <ErrorText align="center" fontSize={FontSize.S12} color={colors.black5}>
+          {description}
+        </ErrorText>
+      )}
     </View>
   );
 };
+
+const paddingStyle = css<{ dir: 'left' | 'right' | null }>`
+  padding-left: ${({ dir }) =>
+    dir === 'right' || dir === null ? normHor(16) : normHor(44)}px;
+  padding-top: ${({ dir }) => (dir === 'left' ? 0 : normVert(18))}px;
+`;
 
 const InputContainer = styled(View)<{
   width: string;
@@ -124,14 +130,13 @@ const InputContainer = styled(View)<{
   isFocused: boolean;
   dir: 'left' | 'right' | null;
 }>`
+  ${paddingStyle}
+
   border-width: 1px;
   border-color: ${colors.transparent};
   height: ${({ height }) => normVert(height)}px;
   width: ${({ width }) => width};
   padding-horizontal: ${normHor(16)}px;
-  ${({ dir }) =>
-    (dir === 'right' || dir === null) && `padding-left: ${normHor(16)}px;`}
-  ${({ dir }) => dir === 'left' && `padding-left:${normHor(44)}px;`}
   background-color: ${({ error }) => (error ? colors.red2 : colors.black3)};
   ${({ error }) =>
     error &&
@@ -140,7 +145,6 @@ const InputContainer = styled(View)<{
   border-radius: 12px;
   flex-direction: row;
   align-items: flex-start;
-  padding-top: ${({ dir }) => (dir === 'left' ? 0 : `${normVert(18)}px`)};
   ${({ isFocused, error }) =>
     isFocused &&
     !error &&

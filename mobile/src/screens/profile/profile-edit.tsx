@@ -3,6 +3,7 @@ import { Image, StyleSheet } from 'react-native';
 
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react';
+import moment from 'moment';
 import { formatWithMask } from 'react-native-mask-input';
 import styled from 'styled-components';
 
@@ -26,8 +27,13 @@ export const ProfileEditScreen = observer(() => {
   const isDisabled = loading.isLoading;
 
   const handleEdit = (values: Partial<UserProps>) => {
+    console.log(moment(values.birthday, 'DD.mm.yy').format('yyyy-mm-DD'));
     user
-      .profileEdit({ ...values, username: transformPhone(values?.username) })
+      .profileEdit({
+        ...values,
+        birthday: moment(values.birthday, 'DD.mm.yy').format('yyyy-mm-DD'),
+        username: transformPhone(values?.username),
+      })
       .then(() => {
         navigate(Screens.ProfileScreen);
       });
@@ -38,6 +44,7 @@ export const ProfileEditScreen = observer(() => {
       ...user.me,
       username: formatWithMask({ text: user.me.username, mask: PHONE_MASK })
         .masked,
+      birthday: moment(user.me.birthday, 'yyyy-mm-DD').format('DD.mm.yy'),
     },
     onSubmit: handleEdit,
     validationSchema: profileEditValidationSchema,
@@ -46,11 +53,11 @@ export const ProfileEditScreen = observer(() => {
   });
 
   return (
-    <Keyboard>
+    <Keyboard style={{ flex: 1 }}>
       <ViewWithButtons
         onCancel={() => navigate(Screens.ProfileScreen)}
         onConfirm={() => handleSubmit()}
-        style={{ paddingTop: normVert(80) }}
+        style={{ paddingTop: normVert(80), justifyContent: 'space-between' }}
         isDisabled={isDisabled}
         isScroll={true}
       >
