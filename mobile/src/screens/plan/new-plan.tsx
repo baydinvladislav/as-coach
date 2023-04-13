@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { useFormik } from 'formik';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
@@ -15,46 +16,60 @@ import { isIOS } from '@utils';
 import { FontSize } from '~types';
 
 type TProps = {
-  onNext: () => void;
-  onPrev: () => void;
+  handleSubmit: () => void;
+  values: any;
+  handleChange: (e: string | React.ChangeEvent<any>) => () => void;
 };
 
-export const NewPlanScreen = observer(({ onNext, onPrev }: TProps) => {
-  const { loading } = useStore();
-  const { navigate, goBack } = useNavigation();
+export const NewPlanScreen = observer(
+  ({ handleSubmit, values, handleChange }: TProps) => {
+    const { loading } = useStore();
+    const { goBack } = useNavigation();
 
-  const isDisabled = loading.isLoading;
+    const isDisabled = loading.isLoading;
 
-  return (
-    <Keyboard style={{ flex: 1, paddingTop: isIOS ? TOP_PADDING : 0 }}>
-      {isIOS && (
-        <TopBackground>
-          <Line />
-        </TopBackground>
-      )}
-      <Background style={{ paddingTop: isIOS ? 0 : TOP_PADDING }}>
-        <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
-          {t('newPlan.title')}
-        </Text>
-        <ViewWithButtons
-          style={{ justifyContent: 'space-between' }}
-          onCancel={goBack}
-          onConfirm={onNext}
-          confirmText={t('buttons.next')}
-          isDisabled={isDisabled}
-        >
-          <View>
-            <DatePickerInput style={styles.input} placeholder="Дата начала" />
-            <DatePickerInput
-              style={styles.input}
-              placeholder="Дата окончания"
-            />
-          </View>
-        </ViewWithButtons>
-      </Background>
-    </Keyboard>
-  );
-});
+    return (
+      <Keyboard style={{ flex: 1, paddingTop: isIOS ? TOP_PADDING : 0 }}>
+        {isIOS && (
+          <TopBackground>
+            <Line />
+          </TopBackground>
+        )}
+        <Background style={{ paddingTop: isIOS ? 0 : TOP_PADDING }}>
+          <Text
+            style={styles.title}
+            color={colors.white}
+            fontSize={FontSize.S24}
+          >
+            {t('newPlan.title')}
+          </Text>
+          <ViewWithButtons
+            style={{ justifyContent: 'space-between' }}
+            onCancel={goBack}
+            onConfirm={handleSubmit}
+            confirmText={t('buttons.next')}
+            isDisabled={isDisabled}
+          >
+            <View>
+              <DatePickerInput
+                style={styles.input}
+                placeholder="Дата начала"
+                value={values.start_date}
+                onChangeText={handleChange('start_date')}
+              />
+              <DatePickerInput
+                style={styles.input}
+                placeholder="Дата окончания"
+                value={values.end_date}
+                onChangeText={handleChange('end_date')}
+              />
+            </View>
+          </ViewWithButtons>
+        </Background>
+      </Keyboard>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   title: {

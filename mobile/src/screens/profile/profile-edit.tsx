@@ -3,17 +3,18 @@ import { Image, StyleSheet } from 'react-native';
 
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react';
+import moment from 'moment';
 import { formatWithMask } from 'react-native-mask-input';
 import styled from 'styled-components';
 
 import { DefaultAvatarImage } from '@assets';
-import { PHONE_MASK } from '@constants';
+import { DATE_MASK, PHONE_MASK } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { UserProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
-import { Input, Keyboard, Text, ViewWithButtons } from '@ui';
+import { Input, Keyboard, Select, Text, ViewWithButtons } from '@ui';
 import { profileEditValidationSchema, transformPhone } from '@utils';
 
 import { FontSize } from '~types';
@@ -26,8 +27,13 @@ export const ProfileEditScreen = observer(() => {
   const isDisabled = loading.isLoading;
 
   const handleEdit = (values: Partial<UserProps>) => {
+    console.log(moment(values.birthday, 'DD.mm.yy').format('yyyy-mm-DD'));
     user
-      .profileEdit({ ...values, username: transformPhone(values?.username) })
+      .profileEdit({
+        ...values,
+        birthday: moment(values.birthday, 'DD.mm.yy').format('yyyy-mm-DD'),
+        username: transformPhone(values?.username),
+      })
       .then(() => {
         navigate(Screens.ProfileScreen);
       });
@@ -38,7 +44,7 @@ export const ProfileEditScreen = observer(() => {
       ...user.me,
       username: formatWithMask({ text: user.me.username, mask: PHONE_MASK })
         .masked,
-      gender: 'male',
+      birthday: moment(user.me.birthday, 'yyyy-mm-DD').format('DD.mm.yy'),
     },
     onSubmit: handleEdit,
     validationSchema: profileEditValidationSchema,
@@ -47,11 +53,11 @@ export const ProfileEditScreen = observer(() => {
   });
 
   return (
-    <Keyboard>
+    <Keyboard style={{ flex: 1 }}>
       <ViewWithButtons
         onCancel={() => navigate(Screens.ProfileScreen)}
         onConfirm={() => handleSubmit()}
-        style={{ paddingTop: normVert(80) }}
+        style={{ paddingTop: normVert(80), justifyContent: 'space-between' }}
         isDisabled={isDisabled}
         isScroll={true}
       >
@@ -73,12 +79,16 @@ export const ProfileEditScreen = observer(() => {
           onChangeText={handleChange('last_name')}
           error={errors.last_name}
         />
-        <Input
+        <Select
           style={styles.input}
           placeholder={t('inputs.gender')}
           value={values.gender}
           onChangeText={handleChange('gender')}
           error={errors.gender}
+          data={{
+            keys: ['Мужской', 'Женский'],
+            values: ['male', 'female'],
+          }}
         />
         <Input
           style={styles.input}
@@ -86,6 +96,7 @@ export const ProfileEditScreen = observer(() => {
           value={values.birthday}
           onChangeText={handleChange('birthday')}
           error={errors.birthday}
+          mask={DATE_MASK}
         />
         <Input
           style={styles.input}
@@ -93,10 +104,11 @@ export const ProfileEditScreen = observer(() => {
           value={values.email}
           onChangeText={handleChange('email')}
           error={errors.email}
+          autoCapitalize="none"
         />
         <Input
           mask={PHONE_MASK}
-          keyboardType={'phone-pad'}
+          keyboardType="phone-pad"
           placeholder={t('inputs.phone')}
           value={values.username}
           onChangeText={handleChange('username')}

@@ -13,3 +13,4 @@ export * from './datepicker-input';
 export * from './placeholder';
 export * from './input-spinner';
 export * from './checkbox';
+export * from './select';

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import {
   StyleProp,
   StyleSheet,
+  TextInputProps,
   TouchableOpacity,
   View,
   ViewStyle,
@@ -18,16 +19,24 @@ import { FontSize } from '~types';
 type TProps = {
   placeholder: string;
   style?: StyleProp<ViewStyle>;
-};
+  value: boolean;
+  onChangeCheckbox: (e: string | React.ChangeEvent<any>) => void;
+} & Omit<TextInputProps, 'value'>;
 
-export const Checkbox = ({ placeholder, style }: TProps) => {
-  const [isChecked, setIsChecked] = useState(false);
+export const Checkbox = ({ placeholder, style, value, ...props }: TProps) => {
+  const [isChecked, setIsChecked] = useState(value);
+
+  const handleChange = () => {
+    setIsChecked(isChecked => {
+      props.onChangeCheckbox?.({
+        target: { value: !isChecked },
+      } as ChangeEvent<any>);
+      return !isChecked;
+    });
+  };
 
   return (
-    <Container
-      style={style}
-      onPress={() => setIsChecked(isChecked => !isChecked)}
-    >
+    <Container style={style} onPress={handleChange}>
       <Square isChecked={isChecked}>{isChecked && <CheckIcon />}</Square>
       <Text style={styles.text} fontSize={FontSize.S16} color={colors.black4}>
         {placeholder}

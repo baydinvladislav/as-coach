@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { useFormik } from 'formik';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
@@ -24,89 +25,145 @@ import { isIOS } from '@utils';
 import { ButtonType, FontSize } from '~types';
 
 type TProps = {
-  onNext: () => void;
   onPrev: () => void;
+  handleSubmit: () => void;
+  values: any;
+  handleChange: (e: string | React.ChangeEvent<any>) => () => void;
 };
 
-export const CreatePlanScreen = observer(({ onNext, onPrev }: TProps) => {
-  const { loading } = useStore();
+export const CreatePlanScreen = observer(
+  ({ onPrev, handleSubmit, values, handleChange }: TProps) => {
+    const { loading } = useStore();
 
-  const isDisabled = loading.isLoading;
+    const isDisabled = loading.isLoading;
 
-  return (
-    <Keyboard style={{ flex: 1, paddingTop: isIOS ? TOP_PADDING : 0 }}>
-      {isIOS && (
-        <TopBackground>
-          <Line />
-        </TopBackground>
-      )}
-      <Background style={{ flex: 1, paddingTop: isIOS ? 0 : TOP_PADDING }}>
-        <ViewWithButtons
-          style={{ justifyContent: 'space-between' }}
-          onCancel={onPrev}
-          onConfirm={() => console.log(123)}
-          confirmText={t('buttons.next')}
-          cancelText={t('buttons.prev')}
-          isDisabled={isDisabled}
-          isScroll={true}
-        >
-          <>
-            <NameText>Сухарева София</NameText>
-            <Text
-              style={styles.title}
-              color={colors.white}
-              fontSize={FontSize.S24}
-            >
-              14 АВГ — 26 АВГ
-            </Text>
-            <CreatePlanItem title={t('createPlan.title1')}>
-              <Checkbox
-                style={styles.checkbox}
-                placeholder={t('createPlan.checkboxDescription')}
-              />
-              <InputSpinner
-                style={styles.input}
-                placeholder={t('createPlan.placeholder1')}
-              />
-              <InputSpinner
-                style={styles.input}
-                placeholder={t('createPlan.placeholder2')}
-              />
-              <InputSpinner placeholder={t('createPlan.placeholder3')} />
-            </CreatePlanItem>
-            <CreatePlanItem title={t('createPlan.title2')}>
-              <Button
-                style={styles.addDayButton}
-                type={ButtonType.TEXT}
-                onPress={() => console.log(123)}
-                leftIcon={<AddIcon stroke={colors.green} />}
+    return (
+      <Keyboard style={{ flex: 1, paddingTop: isIOS ? TOP_PADDING : 0 }}>
+        {isIOS && (
+          <TopBackground>
+            <Line />
+          </TopBackground>
+        )}
+        <Background style={{ flex: 1, paddingTop: isIOS ? 0 : TOP_PADDING }}>
+          <ViewWithButtons
+            style={{ justifyContent: 'space-between' }}
+            onCancel={onPrev}
+            onConfirm={handleSubmit}
+            confirmText={t('buttons.next')}
+            cancelText={t('buttons.prev')}
+            isDisabled={isDisabled}
+            isScroll={true}
+          >
+            <>
+              <NameText>Сухарева София</NameText>
+              <Text
+                style={styles.title}
+                color={colors.white}
+                fontSize={FontSize.S24}
               >
-                {t('buttons.addDay')}
-              </Button>
-              <InputSpinner
-                value={'0'}
-                style={styles.input}
-                placeholder={t('createPlan.description1')}
-              />
-              <InputSpinner
-                value={'0'}
-                style={styles.input}
-                placeholder={t('createPlan.description2')}
-              />
-            </CreatePlanItem>
-            <CreatePlanItem title={t('createPlan.title3')}>
-              <Input
-                placeholder={t('createPlan.enterText')}
-                isTextarea={true}
-                height={normVert(96)}
-              />
-            </CreatePlanItem>
-          </>
-        </ViewWithButtons>
-      </Background>
-    </Keyboard>
-  );
-});
+                14 АВГ — 26 АВГ
+              </Text>
+              <CreatePlanItem title={t('createPlan.title1')}>
+                <Checkbox
+                  style={styles.checkbox}
+                  placeholder={t('createPlan.checkboxDescription')}
+                  value={values.different_time}
+                  onChangeCheckbox={handleChange('different_time')}
+                />
+                {values.different_time && (
+                  <Text
+                    style={styles.text}
+                    fontSize={FontSize.S16}
+                    color={colors.black4}
+                  >
+                    {t('createPlan.days1')}
+                  </Text>
+                )}
+                <InputSpinner
+                  style={styles.input}
+                  placeholder={t('createPlan.placeholder1')}
+                  value={values.squirrels1}
+                  onChangeText={handleChange('squirrels1')}
+                />
+                <InputSpinner
+                  style={styles.input}
+                  placeholder={t('createPlan.placeholder2')}
+                  value={values.fats1}
+                  onChangeText={handleChange('fats1')}
+                />
+                <InputSpinner
+                  placeholder={t('createPlan.placeholder3')}
+                  value={values.carbohydrates1}
+                  onChangeText={handleChange('carbohydrates1')}
+                />
+
+                {values.different_time && (
+                  <>
+                    <Text
+                      style={[styles.text, styles.restDays]}
+                      fontSize={FontSize.S16}
+                      color={colors.black4}
+                    >
+                      {t('createPlan.days2')}
+                    </Text>
+                    <InputSpinner
+                      style={styles.input}
+                      placeholder={t('createPlan.placeholder1')}
+                      value={values.squirrels2}
+                      onChangeText={handleChange('squirrels2')}
+                    />
+                    <InputSpinner
+                      style={styles.input}
+                      placeholder={t('createPlan.placeholder2')}
+                      value={values.fats2}
+                      onChangeText={handleChange('fats2')}
+                    />
+                    <InputSpinner
+                      placeholder={t('createPlan.placeholder3')}
+                      value={values.carbohydrates2}
+                      onChangeText={handleChange('carbohydrates2')}
+                    />
+                  </>
+                )}
+              </CreatePlanItem>
+              <CreatePlanItem title={t('createPlan.title2')}>
+                <Button
+                  style={styles.addDayButton}
+                  type={ButtonType.TEXT}
+                  onPress={() => console.log(123)}
+                  leftIcon={<AddIcon stroke={colors.green} />}
+                >
+                  {t('buttons.addDay')}
+                </Button>
+                <InputSpinner
+                  style={styles.input}
+                  placeholder={t('createPlan.description1')}
+                  value={values?.days?.[0]?.rest1}
+                  onChangeText={handleChange('days[0].rest1')}
+                />
+                <InputSpinner
+                  style={styles.input}
+                  placeholder={t('createPlan.description2')}
+                  value={values?.days?.[0]?.rest2}
+                  onChangeText={handleChange('days[0].rest2')}
+                />
+              </CreatePlanItem>
+              <CreatePlanItem title={t('createPlan.title3')}>
+                <Input
+                  placeholder={t('createPlan.enterText')}
+                  isTextarea={true}
+                  height={normVert(96)}
+                  value={values.notes}
+                  onChangeText={handleChange('notes')}
+                />
+              </CreatePlanItem>
+            </>
+          </ViewWithButtons>
+        </Background>
+      </Keyboard>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   title: {
@@ -114,6 +171,12 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: normVert(20),
+  },
+  text: {
+    marginBottom: normVert(20),
+  },
+  restDays: {
+    marginTop: normVert(33),
   },
   addDayButton: { marginRight: 'auto', marginBottom: normVert(20) },
   checkbox: {

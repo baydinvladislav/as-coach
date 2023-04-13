@@ -12,3 +12,4 @@ export * from './search';
 export * from './not-found';
 export * from './minus';
 export * from './check';
+export * from './arrow-down';

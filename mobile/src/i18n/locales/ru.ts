@@ -37,6 +37,8 @@ export const ru = {
     description2: 'Отдых между упражнениями, сек',
     checkboxDescription: 'Разное в дни тренировок и отдыха',
     enterText: 'Введи текст',
+    days1: 'Дни тренировок',
+    days2: 'Дни отдыха',
   },
   profile: {
     profileTitle: 'Профиль',
@@ -85,6 +87,8 @@ export const ru = {
   errors: {
     required: 'Заполните обязательное поле',
     phoneError: 'Некорректный номер телефона',
+    birthdayError: 'Некорректная дата рождения',
+    emailError: 'Некорректная почта',
   },
   common: {
     nonePlan: 'Нет плана',

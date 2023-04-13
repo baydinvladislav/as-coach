@@ -37,13 +37,14 @@ export const LoginScreen = observer(() => {
       });
   };
 
-  const { setErrors, errors, handleChange, handleSubmit, values } = useFormik({
-    initialValues: { username: '', password: '' },
-    onSubmit: handleLogin,
-    validationSchema: loginValidationSchema,
-    validateOnChange: false,
-    validateOnBlur: false,
-  });
+  const { dirty, setErrors, errors, handleChange, handleSubmit, values } =
+    useFormik({
+      initialValues: { username: '', password: '' },
+      onSubmit: handleLogin,
+      validationSchema: loginValidationSchema,
+      validateOnChange: false,
+      validateOnBlur: false,
+    });
 
   return (
     <View style={{ flex: 1 }}>
@@ -79,7 +80,7 @@ export const LoginScreen = observer(() => {
         style={styles.button}
         type={ButtonType.PRIMARY}
         onPress={() => handleSubmit()}
-        isDisabled={isDisabled}
+        isDisabled={!dirty || isDisabled}
       >
         {t('buttons.login')}
       </Button>
