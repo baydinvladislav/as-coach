@@ -4,6 +4,7 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from src.customer.models import Customer
 from src.auth.utils import get_hashed_password
 from src.dependencies import get_db
 from src.main import app
@@ -15,6 +16,29 @@ TEST_USER_PASSWORD = os.getenv("TEST_USER_PASSWORD")
 
 engine = create_engine(DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+@pytest.fixture()
+def create_customer(create_user):
+    """
+    Creates test customer
+    """
+    test_user = override_get_db.query(User).filter(
+        User.username == create_user.username
+    ).first()
+
+    if not test_user.customers:
+        test_customer = Customer(
+            phone_number='+79991119922',
+            first_name='Арнольд',
+            last_name='Шварцнеггер'
+        )
+
+        override_get_db.add(test_customer)
+        override_get_db.commit()
+        return test_customer
+    else:
+        return test_user.customers[0]
 
 
 @pytest.fixture()
