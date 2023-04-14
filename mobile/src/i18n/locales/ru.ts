@@ -40,6 +40,10 @@ export const ru = {
     days1: 'Дни тренировок',
     days2: 'Дни отдыха',
   },
+  newDay: {
+    title: 'День {day}',
+    exercisesTitle: 'День {day}. {exercises}',
+  },
   profile: {
     profileTitle: 'Профиль',
     nav1: 'Личные данные',
@@ -67,6 +71,8 @@ export const ru = {
     gender: 'Пол',
     birthday: 'Дата рождения',
     email: 'E-mail',
+    exercises: 'Название тренировки',
+    search: 'Поиск',
   },
   buttons: {
     login: 'Войти',
@@ -81,6 +87,7 @@ export const ru = {
     cancel: 'Отменить',
     forgotPassword: 'Забыл (-а) пароль',
     createPlan: 'Создать план',
+    createExercises: 'Создать упражнения',
     addDay: 'Добавить день',
     prev: 'Назад',
   },

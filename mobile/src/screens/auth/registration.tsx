@@ -31,7 +31,7 @@ export const RegistrationScreen = observer(() => {
         ...values,
         username: transformPhone(values.username),
       })
-      .then(() => navigate(Screens.LoginScreen))
+      .then(() => navigate(Screens.LkScreen))
       .catch((e: AxiosError<{ detail: string }>) => {
         setErrors({ username: e.response?.data.detail });
       });
