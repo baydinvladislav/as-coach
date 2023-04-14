@@ -43,11 +43,10 @@ export const DatePickerInput = ({
   };
 
   const handleDateChange = (date: Date) => {
-    console.log('handleDateChange', date);
     setDate(date);
     props.onChangeText?.(String(date));
   };
-  console.log('date', date);
+
   return (
     <Container onPress={handlePress} height={isOpen ? 241 : 48} style={style}>
       <HiddenInput

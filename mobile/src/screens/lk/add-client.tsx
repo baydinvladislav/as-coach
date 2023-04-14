@@ -19,7 +19,7 @@ import { FontSize } from '~types';
 export const AddClientScreen = observer(() => {
   const { customer, loading } = useStore();
 
-  const isDisabled = loading.isLoading;
+  const isLoading = loading.isLoading;
 
   const { navigate } = useNavigation();
 
@@ -56,7 +56,7 @@ export const AddClientScreen = observer(() => {
           onCancel={() => navigate(Screens.LkScreen)}
           onConfirm={handleSubmit}
           confirmText={t('buttons.add')}
-          isDisabled={isDisabled}
+          isLoading={isLoading}
         >
           <View>
             <Input

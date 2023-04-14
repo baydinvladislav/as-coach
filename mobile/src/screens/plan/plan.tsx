@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View } from 'react-native';
 
 import { useFormik } from 'formik';
 
 import { CreatePlanScreen } from './create-plan';
+import { DayExercisesScreen } from './day-exercises';
+import { Layout } from './layout';
+import { NewDayScreen } from './new-day';
 import { NewPlanScreen } from './new-plan';
 
 export const PlanScreen = () => {
@@ -22,7 +24,11 @@ export const PlanScreen = () => {
     if (current === 0) {
       handleNext();
     } else if (current === 1) {
-      console.log('create');
+      handleNext();
+    } else if (current === 2) {
+      handleNext();
+    } else if (current === 3) {
+      console.log('end');
     }
   };
 
@@ -54,9 +60,13 @@ export const PlanScreen = () => {
   };
 
   return (
-    <>
+    <Layout>
       {current === 0 && <NewPlanScreen {...formProps} />}
       {current === 1 && <CreatePlanScreen {...formProps} onPrev={handlePrev} />}
-    </>
+      {current === 2 && <NewDayScreen {...formProps} onPrev={handlePrev} />}
+      {current === 3 && (
+        <DayExercisesScreen {...formProps} onPrev={handlePrev} />
+      )}
+    </Layout>
   );
 };

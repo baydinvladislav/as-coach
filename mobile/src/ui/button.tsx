@@ -3,6 +3,7 @@ import { TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
 
 import styled from 'styled-components';
 
+import { LoadingIcon } from '@assets';
 import { colors, normHor, normVert } from '@theme';
 
 import { ButtonType } from '~types';
@@ -14,22 +15,32 @@ type TProps = {
   type: ButtonType;
   leftIcon?: JSX.Element;
   isDisabled?: boolean;
+  isLoading?: boolean;
 } & TouchableOpacityProps;
 
 export const Button = ({
   children,
   leftIcon,
   isDisabled = false,
+  isLoading = false,
   ...props
 }: TProps) => (
-  <ButtonStyled {...props} activeOpacity={0.5} disabled={isDisabled}>
+  <ButtonStyled
+    {...props}
+    activeOpacity={0.5}
+    disabled={isLoading || isDisabled}
+  >
     {leftIcon && <View style={{ marginRight: normHor(12) }}>{leftIcon}</View>}
-    <Text
-      style={{ opacity: isDisabled ? 0.4 : 1 }}
-      color={switchFontColor(props.type)}
-    >
-      {children}
-    </Text>
+    {isLoading ? (
+      <LoadingIcon />
+    ) : (
+      <Text
+        style={{ opacity: isDisabled ? 0.4 : 1 }}
+        color={switchFontColor(props.type)}
+      >
+        {children}
+      </Text>
+    )}
   </ButtonStyled>
 );
 
