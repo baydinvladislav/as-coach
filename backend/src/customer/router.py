@@ -175,15 +175,15 @@ async def create_training_plan(
         database: dependency injection for access to database
         current_user: dependency injection to define a current user
     """
-    # start_transaction
     try:
         # create training plan
         training_plan = TrainingPlan(
             start_date=training_plan_data.start_date,
             end_date=training_plan_data.end_date,
-            customer_id=str(customer_id)
+            customer_id=customer_id
         )
         database.add(training_plan)
+        database.flush()
 
         # create diets
         for diet_item in training_plan_data.diets:
@@ -193,6 +193,7 @@ async def create_training_plan(
                 carbs=diet_item.carbs
             )
             database.add(diet)
+            database.flush()
 
             # bound diet with training_plan
             diet_on_training_plan = DietOnTrainingPlan(
@@ -205,9 +206,10 @@ async def create_training_plan(
         for training_item in training_plan_data.trainings:
             training = Training(
                 name=training_item.name,
-                training_plan_id=str(training_item.id)
+                training_plan_id=str(training_plan.id)
             )
             database.add(training)
+            database.flush()
 
             # create exercises on training
             for exercise_item in training_item.exercises:
@@ -217,6 +219,7 @@ async def create_training_plan(
                     sets=exercise_item.sets
                 )
                 database.add(exercise_on_training)
+                database.flush()
 
         database.commit()
         database.refresh(training_plan)

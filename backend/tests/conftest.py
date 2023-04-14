@@ -31,7 +31,8 @@ def create_customer(create_user, override_get_db):
         test_customer = Customer(
             phone_number='+79991119922',
             first_name='Арнольд',
-            last_name='Шварцнеггер'
+            last_name='Шварцнеггер',
+            user_id=str(create_user.id)
         )
 
         override_get_db.add(test_customer)
