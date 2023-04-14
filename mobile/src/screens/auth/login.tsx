@@ -23,7 +23,7 @@ export const LoginScreen = observer(() => {
   const { navigate } = useNavigation();
 
   const { user, loading } = useStore();
-  const isDisabled = loading.isLoading;
+  const isLoading = loading.isLoading;
 
   const handleLogin = (values: Partial<UserProps>) => {
     user
@@ -80,7 +80,8 @@ export const LoginScreen = observer(() => {
         style={styles.button}
         type={ButtonType.PRIMARY}
         onPress={() => handleSubmit()}
-        isDisabled={!dirty || isDisabled}
+        isDisabled={!dirty}
+        isLoading={isLoading}
       >
         {t('buttons.login')}
       </Button>

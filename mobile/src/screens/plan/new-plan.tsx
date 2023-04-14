@@ -26,7 +26,7 @@ export const NewPlanScreen = observer(
     const { loading } = useStore();
     const { goBack } = useNavigation();
 
-    const isDisabled = loading.isLoading;
+    const isLoading = loading.isLoading;
 
     return (
       <Keyboard style={{ flex: 1, paddingTop: isIOS ? TOP_PADDING : 0 }}>
@@ -48,7 +48,7 @@ export const NewPlanScreen = observer(
             onCancel={goBack}
             onConfirm={handleSubmit}
             confirmText={t('buttons.next')}
-            isDisabled={isDisabled}
+            isLoading={isLoading}
           >
             <View>
               <DatePickerInput

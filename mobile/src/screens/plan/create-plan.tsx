@@ -35,7 +35,7 @@ export const CreatePlanScreen = observer(
   ({ onPrev, handleSubmit, values, handleChange }: TProps) => {
     const { loading } = useStore();
 
-    const isDisabled = loading.isLoading;
+    const isLoading = loading.isLoading;
 
     return (
       <Keyboard style={{ flex: 1, paddingTop: isIOS ? TOP_PADDING : 0 }}>
@@ -51,7 +51,7 @@ export const CreatePlanScreen = observer(
             onConfirm={handleSubmit}
             confirmText={t('buttons.next')}
             cancelText={t('buttons.prev')}
-            isDisabled={isDisabled}
+            isLoading={isLoading}
             isScroll={true}
           >
             <>

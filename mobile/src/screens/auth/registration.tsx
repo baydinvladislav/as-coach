@@ -23,7 +23,7 @@ export const RegistrationScreen = observer(() => {
   const { navigate } = useNavigation();
 
   const { user, loading } = useStore();
-  const isDisabled = loading.isLoading;
+  const isLoading = loading.isLoading;
 
   const handleRegister = (values: Partial<UserProps>) => {
     user
@@ -86,7 +86,7 @@ export const RegistrationScreen = observer(() => {
         style={styles.button}
         type={ButtonType.PRIMARY}
         onPress={() => handleSubmit()}
-        isDisabled={isDisabled}
+        isLoading={isLoading}
       >
         {t('buttons.continue')}
       </Button>

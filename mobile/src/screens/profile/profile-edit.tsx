@@ -24,7 +24,7 @@ export const ProfileEditScreen = observer(() => {
 
   const { user, loading } = useStore();
 
-  const isDisabled = loading.isLoading;
+  const isLoading = loading.isLoading;
 
   const handleEdit = (values: Partial<UserProps>) => {
     console.log(moment(values.birthday, 'DD.mm.yy').format('yyyy-mm-DD'));
@@ -58,7 +58,7 @@ export const ProfileEditScreen = observer(() => {
         onCancel={() => navigate(Screens.ProfileScreen)}
         onConfirm={() => handleSubmit()}
         style={{ paddingTop: normVert(80), justifyContent: 'space-between' }}
-        isDisabled={isDisabled}
+        isLoading={isLoading}
         isScroll={true}
       >
         <Text align="center" fontSize={FontSize.S17} color={colors.white}>
