@@ -32,7 +32,7 @@ class Customer(Base, BaseModel):
 
 class TrainingPlan(Base, BaseModel):
     """
-    Contains training, nutrition and also relates to customer.
+    Contains training, diets, notes and also relates to customer.
     """
     __tablename__ = "trainingplan"
 

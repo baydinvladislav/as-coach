@@ -31,7 +31,7 @@ class DietOnTrainingPlan(Base, BaseModel):
     """
     __tablename__ = "dietontrainingplan"
 
-    nutrition_id = Column(UUID, ForeignKey("diet.id"), nullable=False)
+    diet_id = Column(UUID, ForeignKey("diet.id"), nullable=False)
     training_plan_id = Column(UUID, ForeignKey("trainingplan.id"), nullable=False)
 
     def __repr__(self):

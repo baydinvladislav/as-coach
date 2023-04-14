@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 from src.customer.schemas import CustomerCreateIn, CustomerOut, TrainingPlanIn, TrainingPlanOut
 from src.dependencies import get_db
 from src.auth.dependencies import get_current_user
-from src.customer.models import Customer
+from src.customer.models import Customer, TrainingPlan
+from src.gym.models import Training, ExercisesOnTraining, Diet, DietOnTrainingPlan
 from src.utils import validate_uuid
 
 customer_router = APIRouter()
@@ -174,7 +175,69 @@ async def create_training_plan(
         database: dependency injection for access to database
         current_user: dependency injection to define a current user
     """
+    # start_transaction
+    try:
+        # create training plan
+        training_plan = TrainingPlan(
+            start_date=training_plan_data.start_date,
+            end_date=training_plan_data.end_date,
+            customer_id=str(customer_id)
+        )
+        database.add(training_plan)
+
+        # create diets
+        for diet_item in training_plan_data.diets:
+            diet = Diet(
+                proteins=diet_item.proteins,
+                fats=diet_item.fats,
+                carbs=diet_item.carbs
+            )
+            database.add(diet)
+
+            # bound diet with training_plan
+            diet_on_training_plan = DietOnTrainingPlan(
+                diet_id=str(diet.id),
+                training_plan_id=str(training_plan.id)
+            )
+            database.add(diet_on_training_plan)
+
+        # create trainings
+        for training_item in training_plan_data.trainings:
+            training = Training(
+                name=training_item.name,
+                training_plan_id=str(training_item.id)
+            )
+            database.add(training)
+
+            # create exercises on training
+            for exercise_item in training_item.exercises:
+                exercise_on_training = ExercisesOnTraining(
+                    training_id=str(training.id),
+                    exercise_id=str(exercise_item.id),
+                    sets=exercise_item.sets
+                )
+                database.add(exercise_on_training)
+
+        database.commit()
+        database.refresh(training_plan)
+
+        proteins = "-".join([diet.proteins for diet in training_plan.diets])
+        fats = "-".join([diet.fats for diet in training_plan.diets])
+        carbs = "-".join([diet.carbs for diet in training_plan.diets])
+
+    except Exception as e:
+        database.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Error during training plan creation: {e}"
+        )
+
     return {
-        "id": "123",
-        "name": "Mock Test Plan"
+        "id": str(training_plan.id),
+        "start_date": training_plan.start_date,
+        "end_date": training_plan.end_date,
+        "number_of_trainings": len(training_plan.trainings),
+        "proteins": proteins,
+        "fats": fats,
+        "carbs": carbs
     }
