@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ArrowRightIcon from 'src/assets/icons/arrow-right'
+import { normVert, normHor } from '@theme';
+import { colors } from '@theme';
 
 type ClientCardProps = {
   firstName: string;
@@ -28,23 +30,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF33',
-    width: '100%',
-    height: '45%',
+    backgroundColor: colors.grey5,
+    width: normHor(343),
+    height: normVert(84),
     borderRadius: 12,
-    marginVertical: 10,
+    marginVertical: normVert(10),
   },
 
   line: {
-    backgroundColor: '#B8FF5F',
+    backgroundColor: colors.green,
     height: '80%',
-    flex: 0.008,
+    width: normHor(4),
     borderRadius: 10,
   },
 
   userInfo: {
     flex: 0.8,
-    height: '60%',
+    height: normVert(50),
+    borderWidth: 1,
+    borderColor: 'white',
     flexDirection: 'row',
     marginLeft: '5%',
     borderRadius: 10,
@@ -52,14 +56,14 @@ const styles = StyleSheet.create({
 
   lastName: {
     fontSize: 17,
-    color: 'white',
+    color: colors.white,
     marginLeft: 5,
     alignSelf: 'flex-end',
   },
 
   firstName: {
     fontSize: 17,
-    color: 'white',
+    color: colors.white,
     alignSelf: 'flex-end',
     marginLeft: 5,
   },
