@@ -1,9 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ArrowRightIcon from 'src/assets/icons/arrow-right'
 import { normVert, normHor } from '@theme';
 import { colors } from '@theme';
+import { Text } from '@ui';
+
+import { FontSize } from '~types';
 
 type ClientCardProps = {
   firstName: string;
@@ -16,8 +19,20 @@ const ClientCard: React.FC<ClientCardProps> = ({ firstName, lastName, onPress })
     <TouchableOpacity onPress={onPress} style={styles.card}>
       <View style={styles.line}></View>
       <View style={styles.userInfo}>
-        <Text style={styles.lastName}>{lastName}</Text>
-        <Text style={styles.firstName}>{firstName}</Text>
+        <Text
+          style={styles.lastName}
+          color={colors.white}
+          fontSize={FontSize.S17}
+        >
+          {lastName}
+        </Text>
+        <Text
+          style={styles.firstName}
+          color={colors.white}
+          fontSize={FontSize.S17}
+        >
+          {firstName}
+        </Text>
       </View>
       <View style={styles.arrowContainer}><ArrowRightIcon /></View>
     </TouchableOpacity>
@@ -47,33 +62,26 @@ const styles = StyleSheet.create({
   userInfo: {
     flex: 0.8,
     height: normVert(50),
-    borderWidth: 1,
-    borderColor: 'white',
     flexDirection: 'row',
-    marginLeft: '5%',
+    marginLeft: normVert(22),
     borderRadius: 10,
   },
 
   lastName: {
-    fontSize: 17,
-    color: colors.white,
-    marginLeft: 5,
     alignSelf: 'flex-end',
   },
 
   firstName: {
-    fontSize: 17,
-    color: colors.white,
     alignSelf: 'flex-end',
-    marginLeft: 5,
+    marginLeft: normHor(4),
   },
 
   arrowContainer: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     flex: 0.2,
-    height: '60%',
+    marginRight: normVert(32)
   },
 });
 
