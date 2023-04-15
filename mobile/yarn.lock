@@ -1520,6 +1520,11 @@
   resolved "https://registry.yarnpkg.com/@react-native/normalize-color/-/normalize-color-2.0.0.tgz#da955909432474a9a0fe1cbffc66576a0447f567"
   integrity sha512-Wip/xsc5lw8vsBlmY2MO/gFLp3MvuZ2baBZjDeTjjndMgM0h5sxz7AZR62RDPGgstp8Np7JzjvVqVT7tpFZqsw==
 
+"@react-native/normalize-colors@*":
+  version "0.73.0"
+  resolved "https://registry.yarnpkg.com/@react-native/normalize-colors/-/normalize-colors-0.73.0.tgz#23e15cf2a2b73ac7e5e6df8d5b86b173cfb35a3f"
+  integrity sha512-EmSCmJ0djeMJadeFsms6Pl/R85i9xSJMc+tyJu/GEMkKXBVyYQyqanK4RHFU0v8MO90OWj+SiFXjCkKYiJ6mkg==
+
 "@react-native/polyfills@2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@react-native/polyfills/-/polyfills-2.0.0.tgz#4c40b74655c83982c8cf47530ee7dc13d957b6aa"
@@ -3109,6 +3114,15 @@ depd@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/depd/-/depd-2.0.0.tgz#b696163cc757560d09cf22cc8fad1571b79e76df"
   integrity sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==
+
+deprecated-react-native-prop-types@4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/deprecated-react-native-prop-types/-/deprecated-react-native-prop-types-4.0.0.tgz#544845e32f3220bc676f18c0b846d673399c45cb"
+  integrity sha512-q0kk77qFPC4adlnZH7cv9lfbHALeaTkl7wT1uNERc+e0Os3KcBKKy1rVliTE8sfey6TP6OPzoIXpr9OPidvvHw==
+  dependencies:
+    "@react-native/normalize-colors" "*"
+    invariant "*"
+    prop-types "*"
 
 deprecated-react-native-prop-types@^2.3.0:
   version "2.3.0"
@@ -6675,7 +6689,7 @@ react-native-confirmation-code-field@7.3.1:
   resolved "https://registry.yarnpkg.com/react-native-confirmation-code-field/-/react-native-confirmation-code-field-7.3.1.tgz#e705ee5b73d7749cac29da287379fa8690904fe6"
   integrity sha512-5vI6BclB31e4vTYg0HmV/Vy9zI5MQZfHr1EN3kYzvaZq4GMIsyr6lrSmnQW1TtWR7Z8oURrhCpwo+JsWXxCoug==
 
-react-native-date-picker@^4.2.10:
+react-native-date-picker@4.2.10:
   version "4.2.10"
   resolved "https://registry.yarnpkg.com/react-native-date-picker/-/react-native-date-picker-4.2.10.tgz#e84cba21ce413d72b2da1c784af3a8a4b2020df3"
   integrity sha512-Qtu5mvuESjhSKCsecl5+V3kcGxjB3yUUJbbAq6u8JVZj9/fRf8+IV/yfDSREqMoiLM1ljMumxFT2Qdqkw/++Lw==
@@ -6734,6 +6748,11 @@ react-native-screens@3.13.1:
   dependencies:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
+
+react-native-select-dropdown@^3.3.2:
+  version "3.3.2"
+  resolved "https://registry.yarnpkg.com/react-native-select-dropdown/-/react-native-select-dropdown-3.3.2.tgz#f874bc48f7633b914c202782bbbf988a8b5863a2"
+  integrity sha512-2rsPgAzeZ4Pdsf/kCuwYyzmLd5OO+cT3yZ0gAvVZ9C+5xkchiY7iE9u5M5F0DCgMqmwJjBBsiBEvULJ/Eaxpng==
 
 react-native-snap-carousel@3.9.1:
   version "3.9.1"

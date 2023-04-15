@@ -40,6 +40,8 @@ class UserRegisterOut(BaseModel):
     id: str
     username: str
     first_name: str
+    access_token: str
+    refresh_token: str
 
 
 class UserProfile(BaseModel):

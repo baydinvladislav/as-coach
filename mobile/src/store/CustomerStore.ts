@@ -72,6 +72,7 @@ export default class CustomerStore {
     try {
       const { data } = await createCustomer(values);
       this.setCustomer([data]);
+      this.setSearchCustomer(this.customers);
     } catch (e) {
       console.warn(e);
       throw e;

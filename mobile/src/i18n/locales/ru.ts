@@ -37,6 +37,12 @@ export const ru = {
     description2: 'Отдых между упражнениями, сек',
     checkboxDescription: 'Разное в дни тренировок и отдыха',
     enterText: 'Введи текст',
+    days1: 'Дни тренировок',
+    days2: 'Дни отдыха',
+  },
+  newDay: {
+    title: 'День {day}',
+    exercisesTitle: 'День {day}. {exercises}',
   },
   profile: {
     profileTitle: 'Профиль',
@@ -65,6 +71,8 @@ export const ru = {
     gender: 'Пол',
     birthday: 'Дата рождения',
     email: 'E-mail',
+    exercises: 'Название тренировки',
+    search: 'Поиск',
   },
   buttons: {
     login: 'Войти',
@@ -79,12 +87,15 @@ export const ru = {
     cancel: 'Отменить',
     forgotPassword: 'Забыл (-а) пароль',
     createPlan: 'Создать план',
+    createExercises: 'Создать упражнения',
     addDay: 'Добавить день',
     prev: 'Назад',
   },
   errors: {
     required: 'Заполните обязательное поле',
     phoneError: 'Некорректный номер телефона',
+    birthdayError: 'Некорректная дата рождения',
+    emailError: 'Некорректная почта',
   },
   common: {
     nonePlan: 'Нет плана',

@@ -1,5 +1,5 @@
 import React, { Ref, useRef, useState } from 'react';
-import { TextInput, View } from 'react-native';
+import { TextInput } from 'react-native';
 
 import moment from 'moment';
 import DatePicker from 'react-native-date-picker';
@@ -11,11 +11,17 @@ import { Placeholder, TInputProps, Text } from '@ui';
 
 import { FontSize } from '~types';
 
-export const DatePickerInput = ({ placeholder, style }: TInputProps) => {
+export const DatePickerInput = ({
+  placeholder,
+  style,
+  ...props
+}: TInputProps) => {
   const ref = useRef<{ focus: () => void; blur: () => void }>();
-  const [isFirstOpen, setIsFirstOpen] = useState(true);
+  const [isFirstOpen, setIsFirstOpen] = useState(!props.value);
   const [isOpen, setIsOpen] = useState(false);
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(
+    props.value ? new Date(props.value) : new Date(),
+  );
 
   const text = moment(date).format('dd D MMM');
 
@@ -34,6 +40,11 @@ export const DatePickerInput = ({ placeholder, style }: TInputProps) => {
     } else {
       ref.current?.focus();
     }
+  };
+
+  const handleDateChange = (date: Date) => {
+    setDate(date);
+    props.onChangeText?.(String(date));
   };
 
   return (
@@ -62,7 +73,7 @@ export const DatePickerInput = ({ placeholder, style }: TInputProps) => {
           theme={'dark'}
           mode={'datetime'}
           date={date}
-          onDateChange={setDate}
+          onDateChange={handleDateChange}
         />
       )}
     </Container>

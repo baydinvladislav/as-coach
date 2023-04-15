@@ -20,7 +20,7 @@ import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
-import { Button, Keyboard, Text } from '@ui';
+import { Button, Text } from '@ui';
 import { windowHeight, windowWidth } from '@utils';
 
 import { ButtonType, FontSize, FontWeight } from '~types';
@@ -30,7 +30,6 @@ moment.locale('ru');
 export const LkScreen = observer(() => {
   const [searchValue, setSearchValue] = useState<string | undefined>();
 
-  const [update, setUpdate] = useState(0);
   const { user, customer } = useStore();
   const { top } = useSafeAreaInsets();
 
@@ -39,7 +38,7 @@ export const LkScreen = observer(() => {
   useEffect(() => {
     customer.getCustomers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [update]);
+  }, []);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const search = useCallback(

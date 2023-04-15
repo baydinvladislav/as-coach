@@ -5,3 +5,4 @@ export * from './search-input';
 export * from './not-found';
 export * from './create-plan-item';
 export * from './client-card';
+export * from './checkbox-group';

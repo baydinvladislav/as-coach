@@ -21,7 +21,7 @@ type TProps = {
   style?: StyleProp<ViewStyle>;
   onCancel: () => void;
   onConfirm: () => void;
-  isDisabled?: boolean;
+  isLoading?: boolean;
   confirmText?: string;
   cancelText?: string;
   isScroll?: boolean;
@@ -34,7 +34,7 @@ export const ViewWithButtons = ({
   onConfirm,
   confirmText = t('buttons.save'),
   cancelText = t('buttons.cancel'),
-  isDisabled,
+  isLoading,
   isScroll = false,
 }: TProps) => {
   const Container = isScroll ? ScrollView : View;
@@ -51,7 +51,7 @@ export const ViewWithButtons = ({
           style={styles.button}
           type={ButtonType.PRIMARY}
           onPress={onConfirm}
-          isDisabled={isDisabled}
+          isLoading={isLoading}
         >
           {confirmText}
         </Button>

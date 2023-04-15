@@ -70,7 +70,17 @@ export default class UserStore {
   @actionLoading()
   async register(values: Partial<UserProps>) {
     try {
-      await registration(values);
+      const {
+        data: { access_token },
+      } = await registration(values);
+
+      await storage.setItem(TOKEN, access_token ?? '');
+
+      this.setHasAccess(true);
+
+      const { data } = await me();
+
+      this.me = data;
     } catch (e) {
       console.warn(e);
       throw e;
