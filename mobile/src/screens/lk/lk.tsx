@@ -14,7 +14,7 @@ import {
   DefaultAvatarImage,
 } from '@assets';
 import { LkEmpty, NotFound, SearchInput } from '@components';
-import ClientCard from 'src/components/client-card';
+import { ClientCard } from '@components';
 import { TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import ArrowRightIcon from 'src/assets/icons/arrow-right'
+import { ArrowRightIcon } from '@assets';
 import { normVert, normHor } from '@theme';
 import { colors } from '@theme';
 import { Text } from '@ui';
@@ -14,7 +14,7 @@ type ClientCardProps = {
   onPress: () => void;
 };
 
-const ClientCard: React.FC<ClientCardProps> = ({ firstName, lastName, onPress }) => {
+export const ClientCard: React.FC<ClientCardProps> = ({ firstName, lastName, onPress }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.card}>
       <View style={styles.line}></View>
@@ -84,5 +84,3 @@ const styles = StyleSheet.create({
     marginRight: normVert(32)
   },
 });
-
-export default ClientCard;
