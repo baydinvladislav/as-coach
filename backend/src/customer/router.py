@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -240,3 +240,43 @@ async def create_training_plan(
         "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
         "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets])
     }
+
+
+@customer_router.get(
+    "/customers/{customer_id}/training_plans/",
+    summary="Returns all training plans for customer",
+    status_code=status.HTTP_200_OK)
+async def get_all_training_plans(
+        customer_id: str,
+        database: Session = Depends(get_db),
+        current_user: Session = Depends(get_current_user)) -> Union[list[dict], list[None]]:
+    """
+    Returns all training plans for specific customer
+
+    Args:
+        customer_id: customer's str(UUID)
+        database: dependency injection for access to database
+        current_user: dependency injection to define a current user
+    """
+    customer = database.query(Customer).get(customer_id)
+    if not customer:
+        raise HTTPException(
+            status_code=404,
+            detail=f"customer with id={customer_id} doesn't exist"
+        )
+
+    training_plans = database.query(TrainingPlan).filter(TrainingPlan.customer_id == customer_id)
+
+    response = []
+    for training_plan in training_plans:
+        response.append({
+            "id": str(training_plan.id),
+            "start_date": training_plan.start_date.strftime('%Y-%m-%d'),
+            "end_date": training_plan.end_date.strftime('%Y-%m-%d'),
+            "number_of_trainings": len(training_plan.trainings),
+            "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
+            "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
+            "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets])
+        })
+
+    return response

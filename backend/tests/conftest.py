@@ -1,10 +1,11 @@
 import os
-
+from datetime import date, timedelta
 import pytest
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from src.customer.models import Customer
+from src.customer.models import Customer, TrainingPlan
 from src.auth.utils import get_hashed_password
 from src.dependencies import get_db
 from src.main import app
@@ -17,6 +18,31 @@ TEST_USER_PASSWORD = os.getenv("TEST_USER_PASSWORD")
 
 engine = create_engine(DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+@pytest.fixture()
+def create_training_plans(create_user, create_customer, override_get_db):
+    training_plans = override_get_db.query(TrainingPlan).all()
+    if training_plans:
+        return training_plans
+
+    training_plans = [
+        TrainingPlan(
+            start_date=date.today().strftime('%Y-%m-%d'),
+            end_date=(date.today() + timedelta(days=6)).strftime('%Y-%m-%d'),
+            customer_id=str(create_customer.id)
+        ),
+        TrainingPlan(
+            start_date=(date.today() + timedelta(days=7)).strftime('%Y-%m-%d'),
+            end_date=(date.today() + timedelta(days=14)).strftime('%Y-%m-%d'),
+            customer_id=str(create_customer.id)
+        )
+    ]
+
+    override_get_db.bulk_save_objects(training_plans)
+    override_get_db.commit()
+
+    return override_get_db.query(TrainingPlan).all()
 
 
 @pytest.fixture()
