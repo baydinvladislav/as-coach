@@ -224,9 +224,9 @@ async def create_training_plan(
         database.commit()
         database.refresh(training_plan)
 
-        proteins = training_plan.diets[0].proteins
-        fats = training_plan.diets[0].fats
-        carbs = training_plan.diets[0].carbs
+        proteins = "/".join([str(diet.proteins) for diet in training_plan.diets])
+        fats = "/".join([str(diet.fats) for diet in training_plan.diets])
+        carbs = "/".join([str(diet.carbs) for diet in training_plan.diets])
 
     except Exception as e:
         database.rollback()

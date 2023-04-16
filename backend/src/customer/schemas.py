@@ -49,6 +49,6 @@ class TrainingPlanOut(BaseModel):
     start_date: str
     end_date: str
     number_of_trainings: int
-    proteins: int
-    fats: int
-    carbs: int
+    proteins: str
+    fats: str
+    carbs: str
