@@ -157,7 +157,7 @@ async def get_customer(
 
 
 @customer_router.post(
-    "/customers/{customer_id}/week_plans/",
+    "/customers/{customer_id}/training_plans/",
     summary="Create new training plan for customer",
     status_code=status.HTTP_201_CREATED,
     response_model=TrainingPlanOut)
@@ -167,10 +167,10 @@ async def create_training_plan(
         database: Session = Depends(get_db),
         current_user: Session = Depends(get_current_user)) -> dict:
     """
-    Creates new week plan for specific customer
+    Creates new training plan for specific customer
 
     Args:
-        training_plan_data: data from application user to create new week plan
+        training_plan_data: data from application user to create new training plan
         customer_id: customer's str(UUID)
         database: dependency injection for access to database
         current_user: dependency injection to define a current user
@@ -224,10 +224,6 @@ async def create_training_plan(
         database.commit()
         database.refresh(training_plan)
 
-        proteins = "/".join([str(diet.proteins) for diet in training_plan.diets])
-        fats = "/".join([str(diet.fats) for diet in training_plan.diets])
-        carbs = "/".join([str(diet.carbs) for diet in training_plan.diets])
-
     except Exception as e:
         database.rollback()
         raise HTTPException(
@@ -240,7 +236,7 @@ async def create_training_plan(
         "start_date": training_plan.start_date.strftime('%Y-%m-%d'),
         "end_date": training_plan.end_date.strftime('%Y-%m-%d'),
         "number_of_trainings": len(training_plan.trainings),
-        "proteins": proteins,
-        "fats": fats,
-        "carbs": carbs
+        "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
+        "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
+        "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets])
     }
