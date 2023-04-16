@@ -1,178 +1,45 @@
+from datetime import date, timedelta
 import pytest
 
 from httpx import AsyncClient
 
 from src.main import app
 from src.customer.models import TrainingPlan
+from src.gym.models import MuscleGroup
 from src.auth.utils import create_access_token
 
 
 @pytest.mark.anyio
-async def test_create_training_plan_successfully(create_customer, override_get_db):
+async def test_create_training_plan_successfully(
+        create_customer,
+        create_exercises,
+        override_get_db
+):
     """
     Successfully training plan creation
     """
+    muscle_groups = override_get_db.query(MuscleGroup).all()
+
     training_plan_data = {
-        "start_date": "2023-04-10",
-        "end_date": "2023-04-16",
+        "start_date": date.today().strftime('%Y-%m-%d'),
+        "end_date": (date.today() + timedelta(days=7)).strftime('%Y-%m-%d'),
         "diets": [
             {
                 "proteins": 200,
                 "fats": 100,
                 "carbs": 400
             }
-        ],
-        "trainings": [
-            {
-                "name": "Плечи, грудь",
-                "exercises": [
-                    {
-                        "id": "string",
-                        "sets": [20, 15, 10, 15, 20]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 12, 12]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15, 15]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15, 15]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15, 15]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15, 15]
-                    }
-                ]
-            },
-            {
-                "name": "Спина, задняя дельта, бицепс",
-                "exercises": [
-                    {
-                        "id": "string",
-                        "sets": [15, 8, 8, 8, 8]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 8, 8, 8, 8]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15, 15]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15, 15]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15, 15]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [20, 15, 10, 15, 20]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15, 15, 15]
-                    },
-                ]
-            },
-            {
-                "name": "Грудь средняя и передняя дельты, трицепс",
-                "exercises": [
-                    {
-                        "id": "string",
-                        "sets": [10, 10, 10, 10]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [12, 12, 12, 12]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [12, 12, 12, 12]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [10, 10, 10, 10]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15, 15]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15, 15]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15, 15]
-                    }
-                ]
-            },
-            {
-                "name": "Ноги",
-                "exercises": [
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15, 15]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [10, 10, 10, 10]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15, 15]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [10, 10, 10, 10]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15, 15]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [12, 12, 12, 12]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [20, 20, 20, 20]
-                    },
-                    {
-                        "id": "string",
-                        "sets": [15, 15, 15, 15]
-                    }
-                ]
-            }
         ]
     }
+
+    trainings = []
+    for muscle in muscle_groups:
+        trainings.append({
+            "name": muscle.name,
+            "exercises": [dict(id=str(exercise.id), sets=[12, 12, 12]) for exercise in muscle.exercises]
+        })
+
+    training_plan_data["trainings"] = trainings
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
         auth_token = create_access_token(create_customer.user.username)

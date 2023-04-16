@@ -74,7 +74,8 @@ class Exercise(Base, BaseModel):
     trainings = relationship("Training", secondary="exercisesontraining", back_populates="exercises")
     user_id = Column(UUID, ForeignKey("user.id"))
     user = relationship("User", back_populates="exercises")
-    muscle_group_id = Column(UUID, ForeignKey("musclegroup.id"))
+    muscle_group_id = Column(UUID, ForeignKey("musclegroup.id"), nullable=False)
+    muscle_group = relationship("MuscleGroup", back_populates="exercises")
 
     def __repr__(self):
         return f"exercise: {self.name}"

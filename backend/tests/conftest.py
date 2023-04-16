@@ -9,6 +9,7 @@ from src.auth.utils import get_hashed_password
 from src.dependencies import get_db
 from src.main import app
 from src.auth.models import User
+from src.gym.models import Exercise, MuscleGroup
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 TEST_USER_USERNAME = os.getenv("TEST_USER_USERNAME")
@@ -16,6 +17,111 @@ TEST_USER_PASSWORD = os.getenv("TEST_USER_PASSWORD")
 
 engine = create_engine(DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+@pytest.fixture()
+def create_muscle_groups(override_get_db):
+    muscle_groups = override_get_db.query(MuscleGroup).all()
+    if muscle_groups:
+        return muscle_groups
+
+    muscle_groups = (
+        MuscleGroup(name="Грудь"),
+        MuscleGroup(name="Бицепс"),
+
+        MuscleGroup(name="Спина"),
+        MuscleGroup(name="Трицепс"),
+
+        MuscleGroup(name="Ноги")
+    )
+
+    override_get_db.bulk_save_objects(muscle_groups)
+    override_get_db.commit()
+
+    return override_get_db.query(MuscleGroup).all()
+
+
+@pytest.fixture()
+def create_exercises(create_muscle_groups, override_get_db):
+    exercises = override_get_db.query(Exercise).all()
+    if exercises:
+        return exercises
+
+    chest = override_get_db.query(MuscleGroup).filter(MuscleGroup.name == "Грудь").first()
+    biceps = override_get_db.query(MuscleGroup).filter(MuscleGroup.name == "Бицепс").first()
+    back = override_get_db.query(MuscleGroup).filter(MuscleGroup.name == "Спина").first()
+    triceps = override_get_db.query(MuscleGroup).filter(MuscleGroup.name == "Трицепс").first()
+    legs = override_get_db.query(MuscleGroup).filter(MuscleGroup.name == "Ноги").first()
+
+    exercises = (
+        Exercise(
+            name='Жим штанги лежа',
+            muscle_group_id=str(chest.id)
+        ),
+        Exercise(
+            name='Разводка с гантелями',
+            muscle_group_id=str(chest.id)
+        ),
+        Exercise(
+            name='Сведения в кроссовере',
+            muscle_group_id=str(chest.id)
+        ),
+        Exercise(
+            name='Подъем штанги на бицепс',
+            muscle_group_id=str(biceps.id)
+        ),
+        Exercise(
+            name='Сгибания Молот',
+            muscle_group_id=str(biceps.id)
+        ),
+
+        Exercise(
+            name='Подтягивания',
+            muscle_group_id=str(back.id)
+        ),
+        Exercise(
+            name='Тяга штанги в наклоне',
+            muscle_group_id=str(back.id)
+        ),
+        Exercise(
+            name='Пулловер с верхнего блока',
+            muscle_group_id=str(back.id)
+        ),
+        Exercise(
+            name='Жим штанги узким хватом',
+            muscle_group_id=str(triceps.id)
+        ),
+        Exercise(
+            name='Разгибания с верхнего блока',
+            muscle_group_id=str(triceps.id)
+        ),
+
+        Exercise(
+            name='Приседания со штангой',
+            muscle_group_id=str(legs.id)
+        ),
+        Exercise(
+            name='Жим платформы ногами',
+            muscle_group_id=str(legs.id)
+        ),
+        Exercise(
+            name='Сгибания ногами сидя',
+            muscle_group_id=str(legs.id)
+        ),
+        Exercise(
+            name='Разгибания ногами лежа',
+            muscle_group_id=str(legs.id),
+        ),
+        Exercise(
+            name='Становая тяга на прямых ногах',
+            muscle_group_id=str(legs.id)
+        )
+    )
+
+    override_get_db.bulk_save_objects(exercises)
+    override_get_db.commit()
+
+    return override_get_db.query(Exercise).all()
 
 
 @pytest.fixture()
