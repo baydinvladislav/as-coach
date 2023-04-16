@@ -14,7 +14,8 @@ if config.config_file_name is not None:
 from src import (
     Base, engine,
     User, Customer,
-    Diet, DietOnTrainingPlan, TrainingPlan, Training, Exercise, ExercisesOnTraining
+    Diet, DietOnTrainingPlan, TrainingPlan, Training,
+    Exercise, ExercisesOnTraining, MuscleGroup
 )
 
 target_metadata = Base.metadata

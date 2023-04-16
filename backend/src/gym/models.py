@@ -53,6 +53,16 @@ class Training(Base, BaseModel):
         return f"training: {self.name}"
 
 
+class MuscleGroup(Base, BaseModel):
+    """
+    Muscle group for exercises
+    """
+    __tablename__ = "musclegroup"
+
+    name = Column("name", String(50), nullable=False)
+    exercises = relationship("Exercise", back_populates="muscle_group", cascade="all,delete-orphan")
+
+
 class Exercise(Base, BaseModel):
     """
     Represents exercises in training.
@@ -64,6 +74,7 @@ class Exercise(Base, BaseModel):
     trainings = relationship("Training", secondary="exercisesontraining", back_populates="exercises")
     user_id = Column(UUID, ForeignKey("user.id"))
     user = relationship("User", back_populates="exercises")
+    muscle_group_id = Column(UUID, ForeignKey("musclegroup.id"))
 
     def __repr__(self):
         return f"exercise: {self.name}"
