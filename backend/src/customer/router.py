@@ -224,9 +224,9 @@ async def create_training_plan(
         database.commit()
         database.refresh(training_plan)
 
-        proteins = "-".join([diet.proteins for diet in training_plan.diets])
-        fats = "-".join([diet.fats for diet in training_plan.diets])
-        carbs = "-".join([diet.carbs for diet in training_plan.diets])
+        proteins = training_plan.diets[0].proteins
+        fats = training_plan.diets[0].fats
+        carbs = training_plan.diets[0].carbs
 
     except Exception as e:
         database.rollback()
@@ -237,8 +237,8 @@ async def create_training_plan(
 
     return {
         "id": str(training_plan.id),
-        "start_date": training_plan.start_date,
-        "end_date": training_plan.end_date,
+        "start_date": training_plan.start_date.strftime('%Y-%m-%d'),
+        "end_date": training_plan.end_date.strftime('%Y-%m-%d'),
         "number_of_trainings": len(training_plan.trainings),
         "proteins": proteins,
         "fats": fats,
