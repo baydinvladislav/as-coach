@@ -21,7 +21,7 @@ async def test_get_all_training_plans(
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
         auth_token = create_access_token(create_customer.user.username)
         response = await ac.get(
-            f"/api/customers/{create_customer.id}/training_plans/",
+            f"/api/customers/{create_customer.id}/training_plans",
             headers={
                 "Authorization": f"Bearer {auth_token}"
             }

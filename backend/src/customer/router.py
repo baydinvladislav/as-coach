@@ -157,7 +157,7 @@ async def get_customer(
 
 
 @customer_router.post(
-    "/customers/{customer_id}/training_plans/",
+    "/customers/{customer_id}/training_plans",
     summary="Create new training plan for customer",
     status_code=status.HTTP_201_CREATED,
     response_model=TrainingPlanOut)
@@ -246,7 +246,7 @@ async def create_training_plan(
 
 
 @customer_router.get(
-    "/customers/{customer_id}/training_plans/",
+    "/customers/{customer_id}/training_plans",
     summary="Returns all training plans for customer",
     status_code=status.HTTP_200_OK)
 async def get_all_training_plans(
