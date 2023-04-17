@@ -282,3 +282,51 @@ async def get_all_training_plans(
         })
 
     return response
+
+
+@customer_router.get(
+    "/customers/{customer_id}/training_plans/{training_plan_id}",
+    response_model=TrainingPlanOut,
+    status_code=status.HTTP_200_OK)
+async def get_training_plan(
+    training_plan_id: str,
+    customer_id: str,
+    database: Session = Depends(get_db),
+    current_user: Session = Depends(get_current_user)
+) -> dict:
+    """
+    Gets specific training plan by ID
+
+    Args:
+        training_plan_id: str(UUID) of specified training plan
+        customer_id: str(UUID) of specified customer
+        database: dependency injection for access to database
+        current_user: returns current application user
+
+    Raise:
+        HTTPException: 404 when customer or training plan are not found
+    """
+    customer = database.query(Customer).get(customer_id)
+    training_plan = database.query(TrainingPlan).get(training_plan_id)
+
+    if not customer:
+        raise HTTPException(
+            status_code=404,
+            detail=f"customer with id={customer_id} doesn't exist"
+        )
+
+    if not training_plan:
+        raise HTTPException(
+            status_code=404,
+            detail=f"training plan with id={training_plan_id} doesn't exist"
+        )
+
+    return {
+        "id": str(training_plan.id),
+        "start_date": training_plan.start_date.strftime('%Y-%m-%d'),
+        "end_date": training_plan.end_date.strftime('%Y-%m-%d'),
+        "number_of_trainings": len(training_plan.trainings),
+        "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
+        "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
+        "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets])
+    }
