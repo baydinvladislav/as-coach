@@ -29,7 +29,9 @@ async def test_create_training_plan_successfully(
                 "fats": 100,
                 "carbs": 400
             }
-        ]
+        ],
+        "set_rest": 60,
+        "exercise_rest": 120
     }
 
     trainings = []
