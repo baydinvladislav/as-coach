@@ -180,7 +180,10 @@ async def create_training_plan(
         training_plan = TrainingPlan(
             start_date=training_plan_data.start_date,
             end_date=training_plan_data.end_date,
-            customer_id=customer_id
+            customer_id=customer_id,
+            set_rest=training_plan_data.set_rest,
+            exercise_rest=training_plan_data.exercise_rest,
+            notes=training_plan_data.notes
         )
         database.add(training_plan)
         database.flush()
