@@ -1,12 +1,13 @@
-from typing import Optional
+from typing import Optional, Union
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from src.customer.schemas import CustomerCreateIn, CustomerOut
+from src.customer.schemas import CustomerCreateIn, CustomerOut, TrainingPlanIn, TrainingPlanOut
 from src.dependencies import get_db
 from src.auth.dependencies import get_current_user
-from src.customer.models import Customer
+from src.customer.models import Customer, TrainingPlan
+from src.gym.models import Training, ExercisesOnTraining, Diet, DietOnTrainingPlan
 from src.utils import validate_uuid
 
 customer_router = APIRouter()
@@ -152,4 +153,180 @@ async def get_customer(
         "first_name": customer.first_name,
         "last_name": customer.last_name,
         "phone_number": customer.phone_number
+    }
+
+
+@customer_router.post(
+    "/customers/{customer_id}/training_plans/",
+    summary="Create new training plan for customer",
+    status_code=status.HTTP_201_CREATED,
+    response_model=TrainingPlanOut)
+async def create_training_plan(
+        training_plan_data: TrainingPlanIn,
+        customer_id: str,
+        database: Session = Depends(get_db),
+        current_user: Session = Depends(get_current_user)) -> dict:
+    """
+    Creates new training plan for specific customer
+
+    Args:
+        training_plan_data: data from application user to create new training plan
+        customer_id: customer's str(UUID)
+        database: dependency injection for access to database
+        current_user: dependency injection to define a current user
+    """
+    try:
+        # create training plan
+        training_plan = TrainingPlan(
+            start_date=training_plan_data.start_date,
+            end_date=training_plan_data.end_date,
+            customer_id=customer_id
+        )
+        database.add(training_plan)
+        database.flush()
+
+        # create diets
+        for diet_item in training_plan_data.diets:
+            diet = Diet(
+                proteins=diet_item.proteins,
+                fats=diet_item.fats,
+                carbs=diet_item.carbs
+            )
+            database.add(diet)
+            database.flush()
+
+            # bound diet with training_plan
+            diet_on_training_plan = DietOnTrainingPlan(
+                diet_id=str(diet.id),
+                training_plan_id=str(training_plan.id)
+            )
+            database.add(diet_on_training_plan)
+
+        # create trainings
+        for training_item in training_plan_data.trainings:
+            training = Training(
+                name=training_item.name,
+                training_plan_id=str(training_plan.id)
+            )
+            database.add(training)
+            database.flush()
+
+            # create exercises on training
+            for exercise_item in training_item.exercises:
+                exercise_on_training = ExercisesOnTraining(
+                    training_id=str(training.id),
+                    exercise_id=str(exercise_item.id),
+                    sets=exercise_item.sets
+                )
+                database.add(exercise_on_training)
+                database.flush()
+
+        database.commit()
+        database.refresh(training_plan)
+
+    except Exception as e:
+        database.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Error during training plan creation: {e}"
+        )
+
+    return {
+        "id": str(training_plan.id),
+        "start_date": training_plan.start_date.strftime('%Y-%m-%d'),
+        "end_date": training_plan.end_date.strftime('%Y-%m-%d'),
+        "number_of_trainings": len(training_plan.trainings),
+        "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
+        "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
+        "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets])
+    }
+
+
+@customer_router.get(
+    "/customers/{customer_id}/training_plans/",
+    summary="Returns all training plans for customer",
+    status_code=status.HTTP_200_OK)
+async def get_all_training_plans(
+        customer_id: str,
+        database: Session = Depends(get_db),
+        current_user: Session = Depends(get_current_user)) -> Union[list[dict], list[None]]:
+    """
+    Returns all training plans for specific customer
+
+    Args:
+        customer_id: customer's str(UUID)
+        database: dependency injection for access to database
+        current_user: dependency injection to define a current user
+    """
+    customer = database.query(Customer).get(customer_id)
+    if not customer:
+        raise HTTPException(
+            status_code=404,
+            detail=f"customer with id={customer_id} doesn't exist"
+        )
+
+    training_plans = database.query(TrainingPlan).filter(
+        TrainingPlan.customer_id == customer_id
+    ).order_by(TrainingPlan.end_date.desc())
+
+    response = []
+    for training_plan in training_plans:
+        response.append({
+            "id": str(training_plan.id),
+            "start_date": training_plan.start_date.strftime('%Y-%m-%d'),
+            "end_date": training_plan.end_date.strftime('%Y-%m-%d'),
+            "number_of_trainings": len(training_plan.trainings),
+            "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
+            "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
+            "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets])
+        })
+
+    return response
+
+
+@customer_router.get(
+    "/customers/{customer_id}/training_plans/{training_plan_id}",
+    response_model=TrainingPlanOut,
+    status_code=status.HTTP_200_OK)
+async def get_training_plan(
+    training_plan_id: str,
+    customer_id: str,
+    database: Session = Depends(get_db),
+    current_user: Session = Depends(get_current_user)
+) -> dict:
+    """
+    Gets specific training plan by ID
+
+    Args:
+        training_plan_id: str(UUID) of specified training plan
+        customer_id: str(UUID) of specified customer
+        database: dependency injection for access to database
+        current_user: returns current application user
+
+    Raise:
+        HTTPException: 404 when customer or training plan are not found
+    """
+    customer = database.query(Customer).get(customer_id)
+    training_plan = database.query(TrainingPlan).get(training_plan_id)
+
+    if not customer:
+        raise HTTPException(
+            status_code=404,
+            detail=f"customer with id={customer_id} doesn't exist"
+        )
+
+    if not training_plan:
+        raise HTTPException(
+            status_code=404,
+            detail=f"training plan with id={training_plan_id} doesn't exist"
+        )
+
+    return {
+        "id": str(training_plan.id),
+        "start_date": training_plan.start_date.strftime('%Y-%m-%d'),
+        "end_date": training_plan.end_date.strftime('%Y-%m-%d'),
+        "number_of_trainings": len(training_plan.trainings),
+        "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
+        "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
+        "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets])
     }

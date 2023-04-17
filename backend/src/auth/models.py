@@ -25,6 +25,7 @@ class User(Base, BaseModel):
     email = Column("email", String(100), nullable=True)
     birthday = Column("birthday", Date, nullable=True)
     photo_path = Column("photo_path", String(255), nullable=True)
+    exercises = relationship("Exercise", cascade="all,delete-orphan", back_populates="user")
 
     def __repr__(self):
-        return self.username
+        return f"user: {self.username}"

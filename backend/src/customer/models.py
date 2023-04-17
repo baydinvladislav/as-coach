@@ -2,7 +2,7 @@
 Customer models.
 """
 
-from sqlalchemy import Column, Enum, String, ForeignKey
+from sqlalchemy import Column, Enum, String, ForeignKey, Date
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
@@ -24,6 +24,24 @@ class Customer(Base, BaseModel):
     gender: Column = Column("gender", Enum(Gender), nullable=True)
     user_id = Column(UUID, ForeignKey("user.id"), nullable=False)
     user = relationship("User", back_populates="customers")
+    training_plans = relationship("TrainingPlan", cascade="all,delete-orphan", back_populates="customer")
 
     def __repr__(self):
-        return f"{self.last_name} {self.first_name}"
+        return f"customer: {self.last_name} {self.first_name}"
+
+
+class TrainingPlan(Base, BaseModel):
+    """
+    Contains training, diets, notes and also relates to customer.
+    """
+    __tablename__ = "trainingplan"
+
+    start_date = Column("start_date", Date)
+    end_date = Column("end_date", Date)
+    diets = relationship("Diet", secondary="dietontrainingplan", back_populates="training_plans")
+    customer_id = Column(UUID, ForeignKey("customer.id"), nullable=False)
+    customer = relationship("Customer", back_populates="training_plans")
+    trainings = relationship("Training", cascade="all,delete-orphan", back_populates="training_plan")
+
+    def __repr__(self):
+        return f"training_plan:  {self.start_date} до {self.end_date}"
