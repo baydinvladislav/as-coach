@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime
 
 from httpx import AsyncClient
 
@@ -14,7 +15,8 @@ async def test_get_all_training_plans(
         override_get_db
 ):
     """
-    Check that user can get all customer's training plans
+    Checks that user can get all customer's training plans
+    Checks training plans order
     """
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
         auth_token = create_access_token(create_customer.user.username)
@@ -26,4 +28,7 @@ async def test_get_all_training_plans(
         )
 
     assert response.status_code == 200
-    assert response.json()[0]["end_date"] > response.json()[-1]["end_date"]
+
+    first_date_end = datetime.strptime(response.json()[0]["end_date"], '%Y-%m-%d').date()
+    last_date_end = datetime.strptime(response.json()[-1]["end_date"], '%Y-%m-%d').date()
+    assert first_date_end > last_date_end

@@ -265,7 +265,9 @@ async def get_all_training_plans(
             detail=f"customer with id={customer_id} doesn't exist"
         )
 
-    training_plans = database.query(TrainingPlan).filter(TrainingPlan.customer_id == customer_id)
+    training_plans = database.query(TrainingPlan).filter(
+        TrainingPlan.customer_id == customer_id
+    ).order_by(TrainingPlan.end_date.desc())
 
     response = []
     for training_plan in training_plans:
