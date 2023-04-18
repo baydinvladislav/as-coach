@@ -54,7 +54,7 @@ export const DetailClient = ({ route }: RoutesProps) => {
       <LkEmpty
         title={t('detailCustomer.herePlans')}
         description={t('detailCustomer.hereCanAdd')}
-        onPress={() => navigate(Screens.PlanScreen)}
+        onPress={() => navigate(Screens.PlanScreen, data)}
         buttonText={t('buttons.createPlan')}
       />
     </Keyboard>

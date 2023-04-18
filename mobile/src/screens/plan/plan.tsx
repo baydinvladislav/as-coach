@@ -1,6 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useFormik } from 'formik';
+import moment from 'moment';
+
+import { createPlan } from '@api';
+import { RoutesProps, Screens, useNavigation } from '@navigation';
+import { CustomerProps } from '@store';
+
+import { TPlan } from '~types';
 
 import { CreatePlanScreen } from './create-plan';
 import { DayExercisesScreen } from './day-exercises';
@@ -8,65 +15,93 @@ import { Layout } from './layout';
 import { NewDayScreen } from './new-day';
 import { NewPlanScreen } from './new-plan';
 
-export const PlanScreen = () => {
-  const [current, setCurrent] = useState(0);
+export enum PlanScreens {
+  CREATE_DATE_SCREEN = 'CreateDateScreen',
+  CREATE_PLAN_SCREEN = 'CreatePlanScreen',
+  CREATE_DAY_SCREEN = 'CreateDayScreen',
+  CREATE_DAY_EXERCISES_SCREEN = 'CreateDayExercisesScreen',
+  CREATE_EXERCISES_SCREEN = 'CreateExercisesScreen',
+}
 
-  const handleNext = () => {
-    setCurrent(current => current + 1);
+export const PlanScreen = ({ route }: RoutesProps) => {
+  const { navigate } = useNavigation();
+  const [currentScreen, setCurrentScreen] = useState(
+    PlanScreens.CREATE_DATE_SCREEN,
+  );
+
+  const customer = route.params as CustomerProps;
+
+  const onSubmit = (values: TPlan) => {
+    console.log('values', values);
+    createPlan(customer.id, {
+      ...values,
+      start_date: moment(values.start_date),
+      end_date: moment(values.end_date),
+      diets: values.diets.map(diet => ({
+        carbs: Number(diet.carbs),
+        fats: Number(diet.fats),
+        proteins: Number(diet.proteins),
+      })),
+    }).then(() => navigate(Screens.DetailClient, { id: customer.id }));
   };
 
-  const handlePrev = () => {
-    setCurrent(current => current - 1);
+  const handleNavigate = (nextScreen: PlanScreens) => {
+    setCurrentScreen(nextScreen);
   };
 
-  const onSubmit = (values: any) => {
-    console.log('submit', values);
-    if (current === 0) {
-      handleNext();
-    } else if (current === 1) {
-      handleNext();
-    } else if (current === 2) {
-      handleNext();
-    } else if (current === 3) {
-      console.log('end');
-    }
-  };
-
-  const { handleChange, handleSubmit, values } = useFormik({
+  const { handleChange, handleSubmit, values, setValues } = useFormik({
     initialValues: {
+      // Server values
+      diets: [
+        { proteins: '', fats: '', carbs: '' },
+        { proteins: '', fats: '', carbs: '' },
+      ],
       start_date: '',
       end_date: '',
-      different_time: false,
-      squirrels1: '',
-      fats1: '',
-      carbohydrates1: '',
-      squirrels2: '',
-      fats2: '',
-      carbohydrates2: '',
-      days: [{ rest1: '0', rest2: '0' }],
+      trainings: [],
       notes: '',
+      set_rest: '0',
+      exercise_rest: '0',
+
+      // Locally values
+      different_time: false,
     },
     onSubmit,
     validateOnChange: false,
     validateOnBlur: false,
   });
+  useEffect(() => {
+    console.log('VALUES', values);
+  }, [values]);
 
   const formProps = {
-    values,
+    customer,
+    values: values as unknown as TPlan,
     handleSubmit,
+    handleNavigate,
+    setValues: setValues as unknown as React.Dispatch<
+      React.SetStateAction<TPlan>
+    >,
     handleChange: handleChange as (
       e: string | React.ChangeEvent<any>,
     ) => () => void,
   };
 
-  return (
-    <Layout>
-      {current === 0 && <NewPlanScreen {...formProps} />}
-      {current === 1 && <CreatePlanScreen {...formProps} onPrev={handlePrev} />}
-      {current === 2 && <NewDayScreen {...formProps} onPrev={handlePrev} />}
-      {current === 3 && (
-        <DayExercisesScreen {...formProps} onPrev={handlePrev} />
-      )}
-    </Layout>
-  );
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case PlanScreens.CREATE_DATE_SCREEN:
+        return <NewPlanScreen {...formProps} />;
+
+      case PlanScreens.CREATE_PLAN_SCREEN:
+        return <CreatePlanScreen {...formProps} />;
+
+      case PlanScreens.CREATE_DAY_SCREEN:
+        return <NewDayScreen {...formProps} />;
+
+      case PlanScreens.CREATE_DAY_EXERCISES_SCREEN:
+        return <DayExercisesScreen {...formProps} />;
+    }
+  };
+
+  return <Layout>{renderScreen()}</Layout>;
 };

@@ -3,39 +3,50 @@ import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
 import { colors, normVert } from '@theme';
 import { Checkbox, Text } from '@ui';
+import { addExerciseToPlan } from '@utils';
 
-import { FontSize } from '~types';
+import { FontSize, TExercises, TPlan } from '~types';
 
 type TProps = {
   title: string;
   style?: StyleProp<ViewStyle>;
-  data: {
-    id: number;
-    value: boolean;
-    placeholder: string;
-  }[];
+  data: TExercises[];
+  setValues: React.Dispatch<React.SetStateAction<TPlan>>;
+  dayName: string;
 };
 
-export const CheckboxGroup = ({ style, data, title }: TProps) => (
-  <View style={style}>
-    <Text
-      style={{ textTransform: 'uppercase' }}
-      fontSize={FontSize.S10}
-      color={colors.grey4}
-    >
-      {title}
-    </Text>
-    {data.map(item => (
-      <Checkbox
-        style={styles.checkbox}
-        key={item.id}
-        value={item.value}
-        onChangeCheckbox={() => console.log(123)}
-        placeholder={item.placeholder}
-      />
-    ))}
-  </View>
-);
+export const CheckboxGroup = ({
+  style,
+  data,
+  title,
+  setValues,
+  dayName,
+}: TProps) => {
+  const handlePress = (id: string) => {
+    setValues(values => addExerciseToPlan(values, dayName, id));
+  };
+
+  return (
+    <View style={style}>
+      <Text
+        style={{ textTransform: 'uppercase' }}
+        fontSize={FontSize.S10}
+        color={colors.grey4}
+      >
+        {title}
+      </Text>
+      {data.map(item => (
+        <Checkbox
+          style={styles.checkbox}
+          key={item.id}
+          value={false}
+          onChangeCheckbox={() => handlePress(item.id)}
+          placeholder={item.name}
+        />
+      ))}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   checkbox: {

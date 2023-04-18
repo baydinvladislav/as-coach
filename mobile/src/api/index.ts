@@ -5,6 +5,7 @@ import { API_URL, TOKEN } from '@constants';
 import { storage } from '@utils';
 
 export * from './auth';
+export * from './customer';
 
 export const axiosBase = axios.create({
   headers: {

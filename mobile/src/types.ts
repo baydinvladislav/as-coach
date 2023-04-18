@@ -23,3 +23,29 @@ export type TResponseError = {
   msg: string;
   type: string;
 }[];
+
+export type TPlan = {
+  diets: { proteins: string; fats: string; carbs: string }[];
+  start_date: string;
+  end_date: string;
+  trainings: TPropsExercise[];
+  notes: string;
+  set_rest: string;
+  exercise_rest: string;
+  different_time: boolean;
+};
+
+export type TExercises = {
+  id: string;
+  muscle_group: string;
+  name: string;
+};
+
+export type TExercisesEdited = {
+  [key: string]: TExercises[];
+};
+
+export type TPropsExercise = {
+  name: string;
+  exercises: { id: string; name: string; sets: number[] }[];
+};

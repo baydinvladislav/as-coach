@@ -9,16 +9,18 @@ import { useNavigation } from '@navigation';
 import { colors, normVert } from '@theme';
 import { DatePickerInput, Text, ViewWithButtons } from '@ui';
 
-import { FontSize } from '~types';
+import { FontSize, TPlan } from '~types';
+
+import { PlanScreens } from './plan';
 
 type TProps = {
-  handleSubmit: () => void;
-  values: any;
+  values: TPlan;
   handleChange: (e: string | React.ChangeEvent<any>) => () => void;
+  handleNavigate: (nextScreen: PlanScreens) => void;
 };
 
 export const NewPlanScreen = observer(
-  ({ handleSubmit, values, handleChange }: TProps) => {
+  ({ values, handleChange, handleNavigate }: TProps) => {
     const { loading } = useStore();
     const { goBack } = useNavigation();
 
@@ -32,7 +34,7 @@ export const NewPlanScreen = observer(
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
           onCancel={goBack}
-          onConfirm={handleSubmit}
+          onConfirm={() => handleNavigate(PlanScreens.CREATE_PLAN_SCREEN)}
           confirmText={t('buttons.next')}
           isLoading={isLoading}
         >

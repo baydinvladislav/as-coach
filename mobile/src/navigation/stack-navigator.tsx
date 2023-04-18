@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { observer } from 'mobx-react-lite';
 import { SmsScreen } from 'src/screens/auth/sms';
 
+import { TOKEN } from '@constants';
 import { useStore } from '@hooks';
 import { Screens } from '@navigation';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -13,21 +14,32 @@ import {
   LkScreen,
   LoginScreen,
   NewChangePasswordScreen,
-  NewPlanScreen,
   PlanScreen,
   ProfileEditScreen,
   ProfileScreen,
   RegistrationScreen,
   WelcomeScreen,
 } from '@screens';
+import { storage } from '@utils';
 
 const GuestStack = createStackNavigator();
 const UserStack = createStackNavigator();
 
 export const StackNavigator = observer(() => {
-  const { user } = useStore();
+  const { user, customer } = useStore();
 
   const isGuest = !user.hasAccess; // меняем !user.hasAccess на !!!user.hasAccess для разработки. Чтобы открывался сразу лк
+
+  useEffect(() => {
+    if (!isGuest) {
+      customer.getExercises();
+    } else {
+      const getToken = storage.getItem(TOKEN);
+      getToken.then((token?: string) => {
+        token && user.setHasAccess(true);
+      });
+    }
+  }, [customer, isGuest, user]);
 
   return isGuest ? (
     <GuestStack.Navigator

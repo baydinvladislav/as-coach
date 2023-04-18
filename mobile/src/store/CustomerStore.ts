@@ -1,5 +1,8 @@
-import { action, computed, makeObservable, observable } from 'mobx';
-import { createCustomer, getCustomers } from 'src/api/customer';
+import { action, makeObservable, observable } from 'mobx';
+
+import { createCustomer, getCustomers, getExercises } from '@api';
+
+import { TExercisesEdited } from '~types';
 
 import { RootStore } from './RootStore';
 import { actionLoading } from './action-loading';
@@ -19,12 +22,25 @@ export default class CustomerStore {
     makeObservable(this);
   }
 
+  @observable exercises: TExercisesEdited = {};
   @observable customers: CustomerProps[] = [];
   @observable searchCustomers: CustomerProps[] = [];
 
   @action
   setCustomer(data: CustomerProps[]) {
     this.customers = [...this.customers, ...data];
+  }
+
+  @action
+  setExercises(data: TExercisesEdited) {
+    this.exercises = data;
+  }
+
+  @action
+  getExerciseById(id: string) {
+    return Object.values(this.exercises)
+      .flat(1)
+      .filter(exercise => exercise.id === id)[0];
   }
 
   @action
@@ -73,6 +89,27 @@ export default class CustomerStore {
       const { data } = await createCustomer(values);
       this.setCustomer([data]);
       this.setSearchCustomer(this.customers);
+    } catch (e) {
+      console.warn(e);
+      throw e;
+    }
+  }
+
+  @action
+  async getExercises() {
+    try {
+      const { data } = await getExercises();
+
+      const obj: TExercisesEdited = {};
+
+      data.forEach(item => {
+        if (obj[item?.muscle_group] === undefined) {
+          obj[item?.muscle_group] = [];
+        }
+        obj[item?.muscle_group].push(item);
+      });
+
+      this.setExercises(obj);
     } catch (e) {
       console.warn(e);
       throw e;

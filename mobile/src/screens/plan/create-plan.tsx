@@ -2,12 +2,14 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 
 import { observer } from 'mobx-react';
+import moment from 'moment';
 import styled from 'styled-components';
 
 import { AddIcon } from '@assets';
-import { CreatePlanItem } from '@components';
+import { CreatePlanItem, ExercisesCard } from '@components';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
+import { CustomerProps } from '@store';
 import { colors, normVert } from '@theme';
 import {
   Button,
@@ -18,17 +20,26 @@ import {
   ViewWithButtons,
 } from '@ui';
 
-import { ButtonType, FontSize } from '~types';
+import { ButtonType, FontSize, TPlan } from '~types';
+
+import { PlanScreens } from './plan';
 
 type TProps = {
-  onPrev: () => void;
+  customer: CustomerProps;
   handleSubmit: () => void;
-  values: any;
+  values: TPlan;
   handleChange: (e: string | React.ChangeEvent<any>) => () => void;
+  handleNavigate: (nextScreen: PlanScreens) => void;
 };
 
 export const CreatePlanScreen = observer(
-  ({ onPrev, handleSubmit, values, handleChange }: TProps) => {
+  ({
+    customer,
+    handleNavigate,
+    handleSubmit,
+    values,
+    handleChange,
+  }: TProps) => {
     const { loading } = useStore();
 
     const isLoading = loading.isLoading;
@@ -36,16 +47,19 @@ export const CreatePlanScreen = observer(
     return (
       <ViewWithButtons
         style={{ justifyContent: 'space-between' }}
-        onCancel={onPrev}
+        onCancel={() => handleNavigate(PlanScreens.CREATE_DATE_SCREEN)}
         onConfirm={handleSubmit}
         confirmText={t('buttons.next')}
         cancelText={t('buttons.prev')}
         isLoading={isLoading}
         isScroll={true}
       >
-        <NameText>Сухарева София</NameText>
+        <NameText>
+          {customer?.first_name} {customer?.last_name}
+        </NameText>
         <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
-          14 АВГ — 26 АВГ
+          {moment(values.start_date).format('D MMM').slice(0, -1)} —{' '}
+          {moment(values.end_date).format('D MMM').slice(0, -1)}
         </Text>
         <CreatePlanItem title={t('createPlan.title1')}>
           <Checkbox
@@ -66,19 +80,19 @@ export const CreatePlanScreen = observer(
           <InputSpinner
             style={styles.input}
             placeholder={t('createPlan.placeholder1')}
-            value={values.squirrels1}
-            onChangeText={handleChange('squirrels1')}
+            value={values.diets[0].proteins}
+            onChangeText={handleChange('diets[0].proteins')}
           />
           <InputSpinner
             style={styles.input}
             placeholder={t('createPlan.placeholder2')}
-            value={values.fats1}
-            onChangeText={handleChange('fats1')}
+            value={values.diets[0].fats}
+            onChangeText={handleChange('diets[0].fats')}
           />
           <InputSpinner
             placeholder={t('createPlan.placeholder3')}
-            value={values.carbohydrates1}
-            onChangeText={handleChange('carbohydrates1')}
+            value={values.diets[0].carbs}
+            onChangeText={handleChange('diets[0].carbs')}
           />
 
           {values.different_time && (
@@ -93,28 +107,31 @@ export const CreatePlanScreen = observer(
               <InputSpinner
                 style={styles.input}
                 placeholder={t('createPlan.placeholder1')}
-                value={values.squirrels2}
-                onChangeText={handleChange('squirrels2')}
+                value={values.diets[1].proteins}
+                onChangeText={handleChange('diets[1].proteins')}
               />
               <InputSpinner
                 style={styles.input}
                 placeholder={t('createPlan.placeholder2')}
-                value={values.fats2}
-                onChangeText={handleChange('fats2')}
+                value={values.diets[1].fats}
+                onChangeText={handleChange('diets[1].fats')}
               />
               <InputSpinner
                 placeholder={t('createPlan.placeholder3')}
-                value={values.carbohydrates2}
-                onChangeText={handleChange('carbohydrates2')}
+                value={values.diets[1].carbs}
+                onChangeText={handleChange('diets[1].carbs')}
               />
             </>
           )}
         </CreatePlanItem>
         <CreatePlanItem title={t('createPlan.title2')}>
+          {values.trainings.map(exercise => (
+            <ExercisesCard key={exercise.name} exercises={exercise} />
+          ))}
           <Button
             style={styles.addDayButton}
             type={ButtonType.TEXT}
-            onPress={() => console.log(123)}
+            onPress={() => handleNavigate(PlanScreens.CREATE_DAY_SCREEN)}
             leftIcon={<AddIcon stroke={colors.green} />}
           >
             {t('buttons.addDay')}
@@ -122,14 +139,14 @@ export const CreatePlanScreen = observer(
           <InputSpinner
             style={styles.input}
             placeholder={t('createPlan.description1')}
-            value={values?.days?.[0]?.rest1}
-            onChangeText={handleChange('days[0].rest1')}
+            value={values.set_rest}
+            onChangeText={handleChange('set_rest')}
           />
           <InputSpinner
             style={styles.input}
             placeholder={t('createPlan.description2')}
-            value={values?.days?.[0]?.rest2}
-            onChangeText={handleChange('days[0].rest2')}
+            value={values.exercise_rest}
+            onChangeText={handleChange('exercise_rest')}
           />
         </CreatePlanItem>
         <CreatePlanItem title={t('createPlan.title3')}>
@@ -148,7 +165,7 @@ export const CreatePlanScreen = observer(
 
 const styles = StyleSheet.create({
   title: {
-    marginTop: normVert(14),
+    textTransform: 'uppercase',
   },
   input: {
     marginBottom: normVert(20),
