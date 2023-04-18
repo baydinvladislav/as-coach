@@ -26,6 +26,7 @@ export const ru = {
     title: 'Новый план',
   },
   createPlan: {
+    exercises: 'упражнения',
     title: 'Новый план',
     title1: 'Питание',
     title2: 'Тренировки',

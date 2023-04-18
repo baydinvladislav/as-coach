@@ -27,7 +27,6 @@ export const ProfileEditScreen = observer(() => {
   const isLoading = loading.isLoading;
 
   const handleEdit = (values: Partial<UserProps>) => {
-    console.log(moment(values.birthday, 'DD.mm.yy').format('yyyy-mm-DD'));
     user
       .profileEdit({
         ...values,

@@ -27,12 +27,10 @@ export const Checkbox = ({ placeholder, style, value, ...props }: TProps) => {
   const [isChecked, setIsChecked] = useState(value);
 
   const handleChange = () => {
-    setIsChecked(isChecked => {
-      props.onChangeCheckbox?.({
-        target: { value: !isChecked },
-      } as ChangeEvent<any>);
-      return !isChecked;
-    });
+    props.onChangeCheckbox?.({
+      target: { value: !isChecked },
+    } as ChangeEvent<any>);
+    setIsChecked(isChecked => !isChecked);
   };
 
   return (

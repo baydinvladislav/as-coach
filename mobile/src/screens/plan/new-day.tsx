@@ -1,46 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { observer } from 'mobx-react';
 
 import { useStore } from '@hooks';
 import { t } from '@i18n';
-import { useNavigation } from '@navigation';
 import { colors, normVert } from '@theme';
 import { Input, Text, ViewWithButtons } from '@ui';
 
-import { FontSize } from '~types';
+import { FontSize, TPlan } from '~types';
+
+import { PlanScreens } from './plan';
 
 type TProps = {
-  onPrev: () => void;
-  handleSubmit: () => void;
-  values: any;
+  values: TPlan;
   handleChange: (e: string | React.ChangeEvent<any>) => () => void;
+  handleNavigate: (nextScreen: PlanScreens) => void;
 };
 
 export const NewDayScreen = observer(
-  ({ onPrev, handleSubmit, values, handleChange }: TProps) => {
+  ({ handleNavigate, values, handleChange }: TProps) => {
+    const [dayNumber] = useState(values.trainings.length);
     const { loading } = useStore();
-    const { goBack } = useNavigation();
 
     const isLoading = loading.isLoading;
 
     return (
       <>
         <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
-          {t('newDay.title', { day: '1' })}
+          {t('newDay.title', { day: dayNumber + 1 })}
         </Text>
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
-          onCancel={onPrev}
-          onConfirm={handleSubmit}
+          onCancel={() => handleNavigate(PlanScreens.CREATE_PLAN_SCREEN)}
+          onConfirm={() => {
+            handleNavigate(PlanScreens.CREATE_DAY_EXERCISES_SCREEN);
+          }}
           confirmText={t('buttons.next')}
           isLoading={isLoading}
         >
           <Input
             placeholder="Название тренировки"
-            value={values.start_date}
-            onChangeText={handleChange('start_date')}
+            value={values.trainings?.[dayNumber]?.name}
+            onChangeText={handleChange(`trainings[${dayNumber}].name`)}
           />
         </ViewWithButtons>
       </>

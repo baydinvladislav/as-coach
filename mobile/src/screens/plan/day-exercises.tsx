@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { observer } from 'mobx-react';
@@ -7,63 +7,41 @@ import { AddIcon } from '@assets';
 import { CheckboxGroup, SearchInput } from '@components';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
-import { useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
 import { Button, Text, ViewWithButtons } from '@ui';
 
-import { ButtonType, FontSize } from '~types';
+import { ButtonType, FontSize, TPlan } from '~types';
+
+import { PlanScreens } from './plan';
 
 type TProps = {
-  onPrev: () => void;
-  handleSubmit: () => void;
-  values: any;
+  handleNavigate: (nextScreen: PlanScreens) => void;
+  values: TPlan;
   handleChange: (e: string | React.ChangeEvent<any>) => () => void;
+  setValues: React.Dispatch<React.SetStateAction<TPlan>>;
 };
 
-const CHECKBOX_DATA = [
-  {
-    id: 1,
-    title: 'Бицепс',
-    items: [
-      { id: 1, value: false, placeholder: 'Подъем штанги на бицепс' },
-      { id: 2, value: false, placeholder: 'Молот' },
-      { id: 3, value: false, placeholder: 'Подъем штанги на бицепс' },
-      { id: 4, value: false, placeholder: 'Сгибания гантелями стоя' },
-      { id: 5, value: false, placeholder: 'Паучьи сгибания' },
-    ],
-  },
-  {
-    id: 2,
-    title: 'Ноги',
-    items: [
-      { id: 1, value: false, placeholder: 'Жим ногами' },
-      { id: 2, value: false, placeholder: 'Выпады в смите' },
-      { id: 3, value: false, placeholder: 'Сгибания ног' },
-      { id: 4, value: false, placeholder: 'Разведение ног' },
-    ],
-  },
-  {
-    id: 3,
-    title: 'Кардио',
-    items: [
-      { id: 1, value: false, placeholder: 'Беговая дорожка' },
-      { id: 2, value: false, placeholder: 'Велосипед' },
-      { id: 3, value: false, placeholder: 'Эллипс' },
-    ],
-  },
-];
-
 export const DayExercisesScreen = observer(
-  ({ onPrev, handleSubmit, values, handleChange }: TProps) => {
-    const { loading } = useStore();
-    const { goBack } = useNavigation();
+  ({ handleNavigate, values, setValues }: TProps) => {
+    const [dayNumber] = useState(values.trainings.length);
+    const { loading, customer } = useStore();
 
     const isLoading = loading.isLoading;
+
+    const [data, keys] = [
+      Object.values(customer.exercises),
+      Object.keys(customer.exercises),
+    ];
+
+    const dayName = values.trainings[dayNumber - 1].name;
 
     return (
       <>
         <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
-          {t('newDay.exercisesTitle', { day: '1', exercises: 'Бицепс' })}
+          {t('newDay.exercisesTitle', {
+            day: dayNumber,
+            exercises: dayName,
+          })}
         </Text>
         <View style={styles.searchInput}>
           <SearchInput />
@@ -71,25 +49,27 @@ export const DayExercisesScreen = observer(
         <Button
           style={styles.addExercisesButton}
           type={ButtonType.TEXT}
-          onPress={() => console.log(123)}
+          onPress={() => handleNavigate(PlanScreens.CREATE_EXERCISES_SCREEN)}
           leftIcon={<AddIcon stroke={colors.green} />}
         >
           {t('buttons.createExercises')}
         </Button>
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
-          onCancel={onPrev}
-          onConfirm={handleSubmit}
+          onCancel={() => handleNavigate(PlanScreens.CREATE_DAY_SCREEN)}
+          onConfirm={() => handleNavigate(PlanScreens.CREATE_PLAN_SCREEN)}
           confirmText={t('buttons.next')}
           isLoading={isLoading}
           isScroll={true}
         >
-          {CHECKBOX_DATA.map(item => (
+          {data.map((item: any, index) => (
             <CheckboxGroup
               style={styles.checkboxGroup}
-              key={item.id}
-              data={item.items}
-              title={'Бицепс'}
+              key={keys[index]}
+              data={item}
+              title={keys[index]}
+              setValues={setValues}
+              dayName={dayName}
             />
           ))}
         </ViewWithButtons>
