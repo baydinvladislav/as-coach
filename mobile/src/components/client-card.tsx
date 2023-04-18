@@ -48,11 +48,11 @@ export const ClientCard: React.FC<ClientCardProps> = ({
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingTop: normVert(16),
+    paddingBottom: normVert(18),
     backgroundColor: colors.grey5,
-    width: normHor(343),
-    height: normVert(84),
     borderRadius: 12,
     marginVertical: normVert(10),
   },
@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
   },
 
   userInfo: {
-    flex: 0.8,
     height: normVert(50),
     flexDirection: 'column',
     marginLeft: normHor(24),
@@ -84,7 +83,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'flex-end',
-    flex: 0.2,
     marginRight: normVert(32),
   },
 });
