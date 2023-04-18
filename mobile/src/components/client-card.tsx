@@ -54,8 +54,10 @@ const styles = StyleSheet.create({
 
   line: {
     backgroundColor: colors.green,
-    height: '80%',
-    width: normHor(4),
+    height: normVert(60),
+    position: 'absolute',
+    marginLeft: normVert(8),
+    width: normHor(3),
     borderRadius: 10,
   },
 
@@ -63,7 +65,7 @@ const styles = StyleSheet.create({
     flex: 0.8,
     height: normVert(50),
     flexDirection: 'row',
-    marginLeft: normVert(22),
+    marginLeft: normHor(24),
     borderRadius: 10,
   },
 
