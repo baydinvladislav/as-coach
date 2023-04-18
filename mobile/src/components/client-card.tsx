@@ -5,7 +5,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { ArrowRightIcon } from '@assets';
 import { colors, normHor, normVert } from '@theme';
-import { Text } from '@ui';
+import { Badge, BadgeStatuses, Text } from '@ui';
 
 import { FontSize } from '~types';
 
@@ -23,20 +23,21 @@ export const ClientCard: React.FC<ClientCardProps> = ({
   <TouchableOpacity onPress={onPress} style={styles.card}>
     <View style={styles.line} />
     <View style={styles.userInfo}>
-      <Text
-        style={styles.lastName}
-        color={colors.white}
-        fontSize={FontSize.S17}
-      >
-        {lastName}
-      </Text>
-      <Text
-        style={styles.firstName}
-        color={colors.white}
-        fontSize={FontSize.S17}
-      >
-        {firstName}
-      </Text>
+      <View>
+        <Badge text={'План истекает 20.04'} status={BadgeStatuses.GOOD} />
+      </View>
+      <View style={styles.names}>
+        <Text color={colors.white} fontSize={FontSize.S17}>
+          {lastName}
+        </Text>
+        <Text
+          style={{ marginLeft: normHor(4) }}
+          color={colors.white}
+          fontSize={FontSize.S17}
+        >
+          {firstName}
+        </Text>
+      </View>
     </View>
     <View style={styles.arrowContainer}>
       <ArrowRightIcon />
@@ -68,18 +69,15 @@ const styles = StyleSheet.create({
   userInfo: {
     flex: 0.8,
     height: normVert(50),
-    flexDirection: 'row',
+    flexDirection: 'column',
     marginLeft: normHor(24),
     borderRadius: 10,
+    justifyContent: 'space-between',
   },
 
-  lastName: {
-    alignSelf: 'flex-end',
-  },
-
-  firstName: {
-    alignSelf: 'flex-end',
-    marginLeft: normHor(4),
+  names: {
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
   },
 
   arrowContainer: {
