@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+
 import { TouchableOpacity } from 'react-native-gesture-handler';
+
 import { ArrowRightIcon } from '@assets';
-import { normVert, normHor } from '@theme';
-import { colors } from '@theme';
+import { colors, normHor, normVert } from '@theme';
 import { Text } from '@ui';
 
 import { FontSize } from '~types';
@@ -14,31 +15,34 @@ type ClientCardProps = {
   onPress: () => void;
 };
 
-export const ClientCard: React.FC<ClientCardProps> = ({ firstName, lastName, onPress }) => {
-  return (
-    <TouchableOpacity onPress={onPress} style={styles.card}>
-      <View style={styles.line}></View>
-      <View style={styles.userInfo}>
-        <Text
-          style={styles.lastName}
-          color={colors.white}
-          fontSize={FontSize.S17}
-        >
-          {lastName}
-        </Text>
-        <Text
-          style={styles.firstName}
-          color={colors.white}
-          fontSize={FontSize.S17}
-        >
-          {firstName}
-        </Text>
-      </View>
-      <View style={styles.arrowContainer}><ArrowRightIcon /></View>
-    </TouchableOpacity>
-  );
-};
-
+export const ClientCard: React.FC<ClientCardProps> = ({
+  firstName,
+  lastName,
+  onPress,
+}) => (
+  <TouchableOpacity onPress={onPress} style={styles.card}>
+    <View style={styles.line} />
+    <View style={styles.userInfo}>
+      <Text
+        style={styles.lastName}
+        color={colors.white}
+        fontSize={FontSize.S17}
+      >
+        {lastName}
+      </Text>
+      <Text
+        style={styles.firstName}
+        color={colors.white}
+        fontSize={FontSize.S17}
+      >
+        {firstName}
+      </Text>
+    </View>
+    <View style={styles.arrowContainer}>
+      <ArrowRightIcon />
+    </View>
+  </TouchableOpacity>
+);
 
 const styles = StyleSheet.create({
   card: {
@@ -83,6 +87,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-end',
     flex: 0.2,
-    marginRight: normVert(32)
+    marginRight: normVert(32),
   },
 });
