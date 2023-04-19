@@ -48,6 +48,7 @@ const ButtonStyled = styled(TouchableOpacity)<{ type: ButtonType }>`
   background: ${({ type }) => switchBackgroundColor(type)};
   flex-direction: row;
   justify-content: center;
+  align-items: center;
   padding-vertical: ${normVert(13)}px;
   border-radius: 12px;
 `;

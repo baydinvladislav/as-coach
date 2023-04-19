@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 
+import { Sets } from '@components';
 import { colors, normVert } from '@theme';
 import { Checkbox, Text } from '@ui';
 import { addExerciseToPlan } from '@utils';
@@ -13,6 +14,8 @@ type TProps = {
   data: TExercises[];
   setValues: React.Dispatch<React.SetStateAction<TPlan>>;
   dayName: string;
+  values: TPlan;
+  dayNumber: number;
 };
 
 export const CheckboxGroup = ({
@@ -21,9 +24,14 @@ export const CheckboxGroup = ({
   title,
   setValues,
   dayName,
+  values,
+  dayNumber,
 }: TProps) => {
   const handlePress = (id: string) => {
     setValues(values => addExerciseToPlan(values, dayName, id));
+  };
+  const handleChangeSets = (id: string, e: React.ChangeEvent<any>) => {
+    setValues(values => addExerciseToPlan(values, dayName, id, e.target.value));
   };
 
   return (
@@ -35,15 +43,28 @@ export const CheckboxGroup = ({
       >
         {title}
       </Text>
-      {data.map(item => (
-        <Checkbox
-          style={styles.checkbox}
-          key={item.id}
-          value={false}
-          onChangeCheckbox={() => handlePress(item.id)}
-          placeholder={item.name}
-        />
-      ))}
+      {data.map((item, key) => {
+        const exercise = values.trainings[dayNumber].exercises?.find(
+          exercise => exercise.id === item.id,
+        );
+        return (
+          <>
+            <Checkbox
+              style={[styles.checkbox, key !== 0 && styles.border]}
+              key={item.id}
+              onChangeCheckbox={() => handlePress(item.id)}
+              placeholder={item.name}
+              value={Boolean(exercise)}
+            />
+            {exercise && (
+              <Sets
+                val={exercise?.sets}
+                onChangeText={e => handleChangeSets(item.id, e)}
+              />
+            )}
+          </>
+        );
+      })}
     </View>
   );
 };
@@ -51,5 +72,9 @@ export const CheckboxGroup = ({
 const styles = StyleSheet.create({
   checkbox: {
     paddingVertical: normVert(16),
+  },
+  border: {
+    borderTopColor: colors.black3,
+    borderTopWidth: 1,
   },
 });

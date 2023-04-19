@@ -49,3 +49,13 @@ export type TPropsExercise = {
   name: string;
   exercises: { id: string; name: string; sets: number[] }[];
 };
+
+export type TPlanType = {
+  carbs: string;
+  end_date: string;
+  fats: string;
+  id: string;
+  number_of_trainings: number;
+  proteins: string;
+  start_date: string;
+};

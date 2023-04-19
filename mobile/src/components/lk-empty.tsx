@@ -51,7 +51,7 @@ export const LkEmpty = observer(
         <Button
           type={ButtonType.TEXT}
           onPress={onPress}
-          leftIcon={<AddIcon stroke={colors.green} />}
+          leftIcon={<AddIcon fill={colors.green} />}
         >
           {buttonText}
         </Button>

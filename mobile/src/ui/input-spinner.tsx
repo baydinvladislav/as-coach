@@ -27,7 +27,7 @@ export const InputSpinner = ({ style, ...props }: TInputProps) => {
   return (
     <Container style={style}>
       <Icon onPress={handleMinus}>
-        <MinusIcon stroke={colors.green} fill={colors.green} />
+        <MinusIcon stroke={colors.green} />
       </Icon>
       <Input
         keyboardType="number-pad"
@@ -36,7 +36,7 @@ export const InputSpinner = ({ style, ...props }: TInputProps) => {
         {...props}
       />
       <Icon onPress={handlePlus}>
-        <AddIcon stroke={colors.green} fill={colors.green} />
+        <AddIcon fill={colors.green} />
       </Icon>
     </Container>
   );

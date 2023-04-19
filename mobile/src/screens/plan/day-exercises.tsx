@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { observer } from 'mobx-react';
@@ -15,15 +15,18 @@ import { ButtonType, FontSize, TPlan } from '~types';
 import { PlanScreens } from './plan';
 
 type TProps = {
-  handleNavigate: (nextScreen: PlanScreens) => void;
+  handleNavigate: (
+    nextScreen: PlanScreens,
+    params?: Record<string, any>,
+  ) => void;
   values: TPlan;
   handleChange: (e: string | React.ChangeEvent<any>) => () => void;
   setValues: React.Dispatch<React.SetStateAction<TPlan>>;
+  params: Record<string, any>;
 };
 
 export const DayExercisesScreen = observer(
-  ({ handleNavigate, values, setValues }: TProps) => {
-    const [dayNumber] = useState(values.trainings.length);
+  ({ handleNavigate, values, setValues, params }: TProps) => {
     const { loading, customer } = useStore();
 
     const isLoading = loading.isLoading;
@@ -33,13 +36,13 @@ export const DayExercisesScreen = observer(
       Object.keys(customer.exercises),
     ];
 
-    const dayName = values.trainings[dayNumber - 1].name;
+    const dayName = values.trainings[params.dayNumber].name;
 
     return (
       <>
         <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
           {t('newDay.exercisesTitle', {
-            day: dayNumber,
+            day: params.dayNumber + 1,
             exercises: dayName,
           })}
         </Text>
@@ -50,13 +53,13 @@ export const DayExercisesScreen = observer(
           style={styles.addExercisesButton}
           type={ButtonType.TEXT}
           onPress={() => handleNavigate(PlanScreens.CREATE_EXERCISES_SCREEN)}
-          leftIcon={<AddIcon stroke={colors.green} />}
+          leftIcon={<AddIcon fill={colors.green} />}
         >
           {t('buttons.createExercises')}
         </Button>
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
-          onCancel={() => handleNavigate(PlanScreens.CREATE_DAY_SCREEN)}
+          onCancel={() => handleNavigate(PlanScreens.CREATE_DAY_SCREEN, params)}
           onConfirm={() => handleNavigate(PlanScreens.CREATE_PLAN_SCREEN)}
           confirmText={t('buttons.next')}
           isLoading={isLoading}
@@ -70,6 +73,8 @@ export const DayExercisesScreen = observer(
               title={keys[index]}
               setValues={setValues}
               dayName={dayName}
+              values={values}
+              dayNumber={params.dayNumber}
             />
           ))}
         </ViewWithButtons>

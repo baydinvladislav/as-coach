@@ -1,5 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  FlatList,
+  Image,
+  ListRenderItemInfo,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 import { debounce } from 'lodash';
 import { observer } from 'mobx-react';
@@ -13,12 +20,12 @@ import {
   BicepsImage,
   DefaultAvatarImage,
 } from '@assets';
-import { LkEmpty, NotFound, SearchInput } from '@components';
-import { ClientCard } from '@components';
+import { ClientCard, LkEmpty, NotFound, SearchInput } from '@components';
 import { TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
+import { CustomerProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
 import { Button, Text } from '@ui';
 import { windowHeight, windowWidth } from '@utils';
@@ -54,6 +61,15 @@ export const LkScreen = observer(() => {
 
   const customers = customer.customers;
   const searchCustomers = customer.searchCustomers;
+
+  const renderItem = (customer: ListRenderItemInfo<CustomerProps>) => (
+    <ClientCard
+      key={customer.item.id}
+      firstName={customer.item.first_name}
+      lastName={customer.item.last_name}
+      onPress={() => navigate(Screens.DetailClient, { id: customer.item.id })}
+    />
+  );
 
   return (
     <View
@@ -91,7 +107,7 @@ export const LkScreen = observer(() => {
             <Button
               type={ButtonType.TEXT}
               onPress={() => navigate(Screens.AddClientScreen)}
-              leftIcon={<AddIcon stroke={colors.green} />}
+              leftIcon={<AddIcon fill={colors.green} />}
             >
               {t('buttons.addClient')}
             </Button>
@@ -100,14 +116,11 @@ export const LkScreen = observer(() => {
             <SearchInput value={searchValue} onChangeText={setSearchValue} />
           </View>
           {searchCustomers.length ? (
-            searchCustomers.map(customer => (
-              <ClientCard 
-                key={customer.id} 
-                firstName={customer.first_name} 
-                lastName={customer.last_name}
-                onPress={() => navigate(Screens.DetailClient, { id: customer.id })}
-              />
-            ))
+            <FlatList
+              data={searchCustomers}
+              renderItem={renderItem}
+              keyExtractor={item => item.id}
+            />
           ) : (
             <NotFound />
           )}
@@ -172,6 +185,7 @@ const BackgroundColor = styled(View)`
 const TopContainer = styled(View)`
   margin-top: ${normVert(24)}px;
   margin-bottom: ${normVert(16)}px;
+  padding-vertical: ${normVert(10)}px;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;

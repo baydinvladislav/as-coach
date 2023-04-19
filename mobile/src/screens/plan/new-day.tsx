@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet } from 'react-native';
 
 import { observer } from 'mobx-react';
@@ -15,12 +15,15 @@ import { PlanScreens } from './plan';
 type TProps = {
   values: TPlan;
   handleChange: (e: string | React.ChangeEvent<any>) => () => void;
-  handleNavigate: (nextScreen: PlanScreens) => void;
+  handleNavigate: (
+    nextScreen: PlanScreens,
+    params?: Record<string, any>,
+  ) => void;
+  params: Record<string, any>;
 };
 
 export const NewDayScreen = observer(
-  ({ handleNavigate, values, handleChange }: TProps) => {
-    const [dayNumber] = useState(values.trainings.length);
+  ({ handleNavigate, values, handleChange, params }: TProps) => {
     const { loading } = useStore();
 
     const isLoading = loading.isLoading;
@@ -28,21 +31,21 @@ export const NewDayScreen = observer(
     return (
       <>
         <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
-          {t('newDay.title', { day: dayNumber + 1 })}
+          {t('newDay.title', { day: params.dayNumber + 1 })}
         </Text>
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
           onCancel={() => handleNavigate(PlanScreens.CREATE_PLAN_SCREEN)}
           onConfirm={() => {
-            handleNavigate(PlanScreens.CREATE_DAY_EXERCISES_SCREEN);
+            handleNavigate(PlanScreens.CREATE_DAY_EXERCISES_SCREEN, params);
           }}
           confirmText={t('buttons.next')}
           isLoading={isLoading}
         >
           <Input
             placeholder="Название тренировки"
-            value={values.trainings?.[dayNumber]?.name}
-            onChangeText={handleChange(`trainings[${dayNumber}].name`)}
+            value={values.trainings?.[params.dayNumber]?.name}
+            onChangeText={handleChange(`trainings[${params.dayNumber}].name`)}
           />
         </ViewWithButtons>
       </>
