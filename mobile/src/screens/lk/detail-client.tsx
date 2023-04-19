@@ -1,21 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, View } from 'react-native';
+import {
+  FlatList,
+  Image,
+  ListRenderItemInfo,
+  StyleSheet,
+  View,
+} from 'react-native';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import styled from 'styled-components';
 
-import { ArrowLeftIcon, BackgroundImage } from '@assets';
-import { LkEmpty } from '@components';
+import { getCustomerPlan } from '@api';
+import { AddIcon, ArrowLeftIcon, BackgroundImage } from '@assets';
+import { LkEmpty, PlanCard } from '@components';
 import { TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { RoutesProps, Screens, useNavigation } from '@navigation';
 import { CustomerProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
-import { Badge, BadgeStatuses, Keyboard, Text } from '@ui';
+import { Badge, BadgeStatuses, Button, Text } from '@ui';
 import { windowHeight, windowWidth } from '@utils';
 
-import { FontSize } from '~types';
+import { ButtonType, FontSize, TPlanType } from '~types';
 
 export const DetailClient = ({ route }: RoutesProps) => {
   const { navigate, goBack } = useNavigation();
@@ -26,11 +33,17 @@ export const DetailClient = ({ route }: RoutesProps) => {
 
   useEffect(() => {
     const data = customer.getCustomerById(id);
-    setData(data);
+    getCustomerPlan(data.id).then(({ data: plans }) => {
+      setData({ ...data, plans });
+    });
   }, [customer, id]);
 
+  const renderItem = (plan: ListRenderItemInfo<TPlanType>) => (
+    <PlanCard plan={plan.item} />
+  );
+
   return (
-    <Keyboard
+    <View
       style={{
         flex: 1,
         paddingHorizontal: normHor(16),
@@ -51,13 +64,36 @@ export const DetailClient = ({ route }: RoutesProps) => {
       <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
         {data.first_name}
       </Text>
-      <LkEmpty
-        title={t('detailCustomer.herePlans')}
-        description={t('detailCustomer.hereCanAdd')}
-        onPress={() => navigate(Screens.PlanScreen, data)}
-        buttonText={t('buttons.createPlan')}
-      />
-    </Keyboard>
+      {data.plans?.length ? (
+        <>
+          <TopContainer>
+            <Text fontSize={FontSize.S20} color={colors.white}>
+              {t('detailCustomer.plans')}
+            </Text>
+            <Button
+              type={ButtonType.TEXT}
+              onPress={() => navigate(Screens.PlanScreen, data)}
+              leftIcon={<AddIcon fill={colors.green} />}
+            >
+              {t('buttons.createPlan')}
+            </Button>
+          </TopContainer>
+
+          <FlatList
+            data={data.plans}
+            renderItem={renderItem}
+            keyExtractor={item => item.id}
+          />
+        </>
+      ) : (
+        <LkEmpty
+          title={t('detailCustomer.herePlans')}
+          description={t('detailCustomer.hereCanAdd')}
+          onPress={() => navigate(Screens.PlanScreen, data)}
+          buttonText={t('buttons.createPlan')}
+        />
+      )}
+    </View>
   );
 };
 
@@ -90,4 +126,13 @@ const BackgroundColor = styled(View)`
   width: ${windowWidth}px;
   height: ${windowHeight}px;
   background-color: ${colors.black};
+`;
+
+const TopContainer = styled(View)`
+  margin-top: ${normVert(24)}px;
+  margin-bottom: ${normVert(16)}px;
+  padding-vertical: ${normVert(10)}px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 `;

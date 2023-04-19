@@ -29,24 +29,36 @@ export const PlanScreen = ({ route }: RoutesProps) => {
     PlanScreens.CREATE_DATE_SCREEN,
   );
 
+  const [params, setParams] = useState({});
+
   const customer = route.params as CustomerProps;
 
   const onSubmit = (values: TPlan) => {
-    console.log('values', values);
     createPlan(customer.id, {
       ...values,
       start_date: moment(values.start_date),
       end_date: moment(values.end_date),
-      diets: values.diets.map(diet => ({
-        carbs: Number(diet.carbs),
-        fats: Number(diet.fats),
-        proteins: Number(diet.proteins),
-      })),
+      diets: values.diets
+        .map((diet, index) => {
+          if (index !== 0 && !values.different_time) {
+            return undefined;
+          }
+          return {
+            carbs: Number(diet.carbs),
+            fats: Number(diet.fats),
+            proteins: Number(diet.proteins),
+          };
+        })
+        .filter(item => item),
     }).then(() => navigate(Screens.DetailClient, { id: customer.id }));
   };
 
-  const handleNavigate = (nextScreen: PlanScreens) => {
+  const handleNavigate = (
+    nextScreen: PlanScreens,
+    params?: Record<string, any>,
+  ) => {
     setCurrentScreen(nextScreen);
+    setParams(params || {});
   };
 
   const { handleChange, handleSubmit, values, setValues } = useFormik({
@@ -75,6 +87,7 @@ export const PlanScreen = ({ route }: RoutesProps) => {
   }, [values]);
 
   const formProps = {
+    params,
     customer,
     values: values as unknown as TPlan,
     handleSubmit,

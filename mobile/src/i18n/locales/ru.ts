@@ -15,8 +15,12 @@ export const ru = {
     hereCanAdd: 'В этом разделе можно\nдобавлять клиентов',
   },
   detailCustomer: {
+    plans: 'Планы',
     herePlans: 'Здесь будут планы клиента',
     hereCanAdd: 'В этом разделе можно создавать\nтренировочные планы клиентам',
+    carbs: '{number} Углеводов',
+    fats: '{number} Жиров',
+    proteins: '{number} Белка',
   },
   addClient: {
     title: 'Новый клиент',

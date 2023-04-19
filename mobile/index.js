@@ -2,18 +2,15 @@
  * @format
  */
 import React from 'react';
-import {
-  AppRegistry,
-  ScrollView,
-  StatusBar,
-  Text,
-  TextInput,
-} from 'react-native';
+import { AppRegistry, ScrollView, StatusBar } from 'react-native';
 
 import { name as appName } from 'app.json';
+import overrideColorScheme from 'react-native-override-color-scheme';
 import { isIOS } from 'src/utils';
 
 import App from './src/App';
+
+overrideColorScheme.setScheme('dark');
 
 ScrollView.defaultProps = ScrollView.defaultProps || {};
 ScrollView.defaultProps.bounces = false;

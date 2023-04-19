@@ -2,7 +2,7 @@ import { action, makeObservable, observable } from 'mobx';
 
 import { createCustomer, getCustomers, getExercises } from '@api';
 
-import { TExercisesEdited } from '~types';
+import { TExercisesEdited, TPlanType } from '~types';
 
 import { RootStore } from './RootStore';
 import { actionLoading } from './action-loading';
@@ -12,6 +12,7 @@ export type CustomerProps = {
   first_name: string;
   last_name: string;
   phone_number: string;
+  plans: TPlanType[];
 };
 
 export default class CustomerStore {

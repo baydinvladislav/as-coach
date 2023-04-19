@@ -21,5 +21,6 @@ export const colors = {
   orange2: 'rgba(252, 196, 111, 0.2)',
   red: '#E3051E',
   red2: 'rgba(236, 71, 70, 0.1)',
+  red3: '#3D0B12',
   transparent: 'transparent',
 };

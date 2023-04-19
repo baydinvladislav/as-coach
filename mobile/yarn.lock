@@ -1505,6 +1505,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-masked-view/masked-view/-/masked-view-0.2.6.tgz#b26c52d5db3ad0926b13deea79c69620966a9221"
   integrity sha512-303CxmetUmgiX9NSUxatZkNh9qTYYdiM8xkGf9I3Uj20U3eGY3M78ljeNQ4UVCJA+FNGS5nC1dtS9GjIqvB4dg==
 
+"@react-native-menu/menu@0.7.3":
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/@react-native-menu/menu/-/menu-0.7.3.tgz#ac4c61c10c75859acc4687e527939c23304e7637"
+  integrity sha512-weevTwqG6DTQzhy1QimvXN5hCx3QirrMgMvHSN5KmxRhGivgroREUFyQR2CGmnEB6A4sqy0iqRgop1sL4lYQ/w==
+
 "@react-native/assets@1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@react-native/assets/-/assets-1.0.0.tgz#c6f9bf63d274bafc8e970628de24986b30a55c8e"
@@ -6729,6 +6734,11 @@ react-native-modal-datetime-picker@13.1.2:
   dependencies:
     prop-types "^15.7.2"
 
+react-native-override-color-scheme@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-override-color-scheme/-/react-native-override-color-scheme-1.0.3.tgz#5b1f04ceb2b583644b60c496169374cd6aa883f4"
+  integrity sha512-AMHR0uOMbEJL59m61kl0CMcLKRC+dgo6uozNLd2S70o0kUDMIDhr+EF484/af8UDB22OHI5ehsprGMKLiXIfow==
+
 react-native-safe-area-context@4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.5.0.tgz#9208313236e8f49e1920ac1e2a2c975f03aed284"
@@ -6749,7 +6759,7 @@ react-native-screens@3.13.1:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
-react-native-select-dropdown@^3.3.2:
+react-native-select-dropdown@3.3.2:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/react-native-select-dropdown/-/react-native-select-dropdown-3.3.2.tgz#f874bc48f7633b914c202782bbbf988a8b5863a2"
   integrity sha512-2rsPgAzeZ4Pdsf/kCuwYyzmLd5OO+cT3yZ0gAvVZ9C+5xkchiY7iE9u5M5F0DCgMqmwJjBBsiBEvULJ/Eaxpng==

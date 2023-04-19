@@ -7,3 +7,5 @@ export * from './create-plan-item';
 export * from './client-card';
 export * from './checkbox-group';
 export * from './exercises-card';
+export * from './plan-card';
+export * from './sets';

@@ -19,12 +19,12 @@ import { FontSize } from '~types';
 type TProps = {
   placeholder: string;
   style?: StyleProp<ViewStyle>;
-  value: boolean;
   onChangeCheckbox: (e: string | React.ChangeEvent<any>) => void;
+  value?: boolean;
 } & Omit<TextInputProps, 'value'>;
 
 export const Checkbox = ({ placeholder, style, value, ...props }: TProps) => {
-  const [isChecked, setIsChecked] = useState(value);
+  const [isChecked, setIsChecked] = useState(false);
 
   const handleChange = () => {
     props.onChangeCheckbox?.({
@@ -35,7 +35,9 @@ export const Checkbox = ({ placeholder, style, value, ...props }: TProps) => {
 
   return (
     <Container style={style} onPress={handleChange}>
-      <Square isChecked={isChecked}>{isChecked && <CheckIcon />}</Square>
+      <Square isChecked={value || isChecked}>
+        {(value || isChecked) && <CheckIcon />}
+      </Square>
       <Text style={styles.text} fontSize={FontSize.S16} color={colors.black4}>
         {placeholder}
       </Text>

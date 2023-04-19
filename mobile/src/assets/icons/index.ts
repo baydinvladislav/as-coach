@@ -14,3 +14,7 @@ export * from './minus';
 export * from './check';
 export * from './arrow-down';
 export * from './loading';
+export * from './more';
+export * from './delete';
+export * from './edit';
+export * from './arrow-up2';

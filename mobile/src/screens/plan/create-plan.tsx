@@ -29,7 +29,10 @@ type TProps = {
   handleSubmit: () => void;
   values: TPlan;
   handleChange: (e: string | React.ChangeEvent<any>) => () => void;
-  handleNavigate: (nextScreen: PlanScreens) => void;
+  handleNavigate: (
+    nextScreen: PlanScreens,
+    params?: Record<string, any>,
+  ) => void;
 };
 
 export const CreatePlanScreen = observer(
@@ -65,7 +68,6 @@ export const CreatePlanScreen = observer(
           <Checkbox
             style={styles.checkbox}
             placeholder={t('createPlan.checkboxDescription')}
-            value={values.different_time}
             onChangeCheckbox={handleChange('different_time')}
           />
           {values.different_time && (
@@ -125,14 +127,26 @@ export const CreatePlanScreen = observer(
           )}
         </CreatePlanItem>
         <CreatePlanItem title={t('createPlan.title2')}>
-          {values.trainings.map(exercise => (
-            <ExercisesCard key={exercise.name} exercises={exercise} />
+          {values.trainings.map((exercise, index) => (
+            <ExercisesCard
+              onEdit={() =>
+                handleNavigate(PlanScreens.CREATE_DAY_SCREEN, {
+                  dayNumber: index,
+                })
+              }
+              key={exercise.name}
+              exercises={exercise}
+            />
           ))}
           <Button
             style={styles.addDayButton}
             type={ButtonType.TEXT}
-            onPress={() => handleNavigate(PlanScreens.CREATE_DAY_SCREEN)}
-            leftIcon={<AddIcon stroke={colors.green} />}
+            onPress={() =>
+              handleNavigate(PlanScreens.CREATE_DAY_SCREEN, {
+                dayNumber: values.trainings.length,
+              })
+            }
+            leftIcon={<AddIcon fill={colors.green} />}
           >
             {t('buttons.addDay')}
           </Button>
