@@ -72,7 +72,8 @@ async def create_customer(
         "id": str(customer.id),
         "first_name": customer.first_name,
         "last_name": customer.last_name,
-        "phone_number": customer.phone_number
+        "phone_number": customer.phone_number,
+        "last_plan_end_date": None
     }
 
 
@@ -82,7 +83,7 @@ async def create_customer(
     status_code=status.HTTP_200_OK)
 async def get_customers(
         current_user: Session = Depends(get_current_user)
-) -> list[Optional[CustomerOut]]:
+) -> list[Optional[dict]]:
     """
     Gets all customer for current user
 
@@ -95,11 +96,18 @@ async def get_customers(
     customers = []
 
     for customer in current_user.customers:
+        training_plans = sorted(customer.training_plans, key=lambda x: x.end_date, reverse=True)
+        if training_plans:
+            last_plan_end_date = training_plans[0].end_date.strftime('%Y-%m-%d')
+        else:
+            last_plan_end_date = None
+
         customers.append({
             "id": str(customer.id),
             "first_name": customer.first_name,
             "last_name": customer.last_name,
-            "phone_number": customer.phone_number
+            "phone_number": customer.phone_number,
+            "last_plan_end_date": last_plan_end_date
         })
 
     return customers
@@ -107,12 +115,13 @@ async def get_customers(
 
 @customer_router.get(
     "/customers/{customer_id}",
+    response_model=CustomerOut,
     status_code=status.HTTP_200_OK)
 async def get_customer(
         customer_id: str,
         database: Session = Depends(get_db),
         current_user: Session = Depends(get_current_user)
-) -> CustomerOut:
+) -> dict:
     """
     Gets specific customer by ID.
 
@@ -148,11 +157,18 @@ async def get_customer(
             detail="The client belong to another user"
         )
 
+    training_plans = sorted(customer.training_plans, key=lambda x: x.end_date, reverse=True)
+    if training_plans:
+        last_plan_end_date = training_plans[0].end_date.strftime('%Y-%m-%d')
+    else:
+        last_plan_end_date = None
+
     return {
         "id": str(customer.id),
         "first_name": customer.first_name,
         "last_name": customer.last_name,
-        "phone_number": customer.phone_number
+        "phone_number": customer.phone_number,
+        "last_plan_end_date": last_plan_end_date
     }
 
 
