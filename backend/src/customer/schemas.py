@@ -29,6 +29,10 @@ class CustomerOut(CustomerCreateIn, BaseModel):
     Schema represents Customer in response
     """
     id: str
+    first_name: str
+    last_name: str
+    phone_number: Optional[str]
+    last_plan_end_date: Union[str, None]
 
 
 class TrainingPlanIn(BaseModel):
