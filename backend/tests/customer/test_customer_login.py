@@ -14,6 +14,8 @@ async def test_customer_login_successfully(create_customer):
         "password": create_customer.password
     }
 
+    print(login_data)
+
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
         response = await ac.post(
             "/api/login",
