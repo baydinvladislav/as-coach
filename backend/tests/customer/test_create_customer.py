@@ -77,8 +77,8 @@ async def test_create_customer_it_already_exists(create_user, override_get_db):
     Failed because of customer with these last_name + first already exists
     """
     customer_data = {
-        "first_name": "Александр",
-        "last_name": "Иванов",
+        "first_name": TEST_CUSTOMER_FIRST_NAME,
+        "last_name": TEST_CUSTOMER_LAST_NAME,
         "phone_number": None
     }
 
@@ -113,3 +113,11 @@ async def test_create_customer_it_already_exists(create_user, override_get_db):
         )
 
     assert response.status_code == 400
+
+    override_get_db.query(Customer).filter(
+        Customer.first_name == response.json()["first_name"],
+        Customer.last_name == response.json()["last_name"],
+    ).first()
+
+    override_get_db.delete(customer)
+    override_get_db.commit()
