@@ -2,7 +2,6 @@ import pytest
 from httpx import AsyncClient
 
 from src.main import app
-from backend.tests.conftest import TEST_CLIENT_PASSWORD
 
 
 @pytest.mark.anyio
@@ -12,7 +11,7 @@ async def test_customer_login_successfully(create_customer):
     """
     login_data = {
         "username": create_customer.username,
-        "password": TEST_CLIENT_PASSWORD
+        "password": create_customer.password
     }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:

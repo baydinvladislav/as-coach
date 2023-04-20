@@ -11,11 +11,11 @@ from src.dependencies import get_db
 from src.main import app
 from src.auth.models import User
 from src.gym.models import Exercise, MuscleGroup
+from src.customer.utils import generate_random_password
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 TEST_USER_USERNAME = os.getenv("TEST_USER_USERNAME")
 TEST_USER_PASSWORD = os.getenv("TEST_USER_PASSWORD")
-TEST_CLIENT_PASSWORD = os.getenv("TEST_CLIENT_PASSWORD")
 
 engine = create_engine(DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -165,7 +165,7 @@ def create_customer(create_user, override_get_db):
             username='+79991119922',
             first_name='Арнольд',
             last_name='Шварцнеггер',
-            password=get_hashed_password(TEST_CLIENT_PASSWORD),
+            password=generate_random_password(8),
             user_id=str(create_user.id)
         )
 
