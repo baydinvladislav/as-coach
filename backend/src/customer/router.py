@@ -173,7 +173,7 @@ async def get_customer(
         "id": str(customer.id),
         "first_name": customer.first_name,
         "last_name": customer.last_name,
-        "phone_number": customer.phone_number,
+        "phone_number": customer.username,
         "last_plan_end_date": last_plan_end_date
     }
 
