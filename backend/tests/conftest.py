@@ -15,7 +15,7 @@ from src.gym.models import Exercise, MuscleGroup
 DATABASE_URL = os.getenv("DATABASE_URL")
 TEST_USER_USERNAME = os.getenv("TEST_USER_USERNAME")
 TEST_USER_PASSWORD = os.getenv("TEST_USER_PASSWORD")
-TEST_CLIENT_PASSWORD = os.getenv("TEST_USER_PASSWORD")
+TEST_CLIENT_PASSWORD = os.getenv("TEST_CLIENT_PASSWORD")
 
 engine = create_engine(DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
