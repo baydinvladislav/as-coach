@@ -11,10 +11,17 @@ from src.dependencies import get_db
 from src.main import app
 from src.auth.models import User
 from src.gym.models import Exercise, MuscleGroup
+from src.customer.utils import generate_random_password
 
 DATABASE_URL = os.getenv("DATABASE_URL")
+
+TEST_USER_FIRST_NAME = os.getenv("TEST_USER_FIRST_NAME")
 TEST_USER_USERNAME = os.getenv("TEST_USER_USERNAME")
 TEST_USER_PASSWORD = os.getenv("TEST_USER_PASSWORD")
+
+TEST_CUSTOMER_FIRST_NAME = os.getenv("TEST_CUSTOMER_FIRST_NAME")
+TEST_CUSTOMER_LAST_NAME = os.getenv("TEST_CUSTOMER_LAST_NAME")
+TEST_CUSTOMER_USERNAME = os.getenv("TEST_CUSTOMER_USERNAME")
 
 engine = create_engine(DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -161,9 +168,10 @@ def create_customer(create_user, override_get_db):
 
     if not test_user.customers:
         test_customer = Customer(
-            phone_number='+79991119922',
-            first_name='Арнольд',
-            last_name='Шварцнеггер',
+            username=TEST_CUSTOMER_USERNAME,
+            first_name=TEST_CUSTOMER_FIRST_NAME,
+            last_name=TEST_CUSTOMER_LAST_NAME,
+            password=generate_random_password(8),
             user_id=str(create_user.id)
         )
 
@@ -186,7 +194,7 @@ def create_user(override_get_db):
     if not test_user:
         test_user = User(
             username=TEST_USER_USERNAME,
-            first_name='Владислав',
+            first_name=TEST_USER_FIRST_NAME,
             password=get_hashed_password(TEST_USER_PASSWORD)
         )
 

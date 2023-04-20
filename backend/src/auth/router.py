@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from src.dependencies import get_db
 from src.models import Gender
 from src.auth.schemas import UserProfile
+from src.customer.models import Customer
 
 from .dependencies import get_current_user
 from .models import User
@@ -89,7 +90,11 @@ async def login(
     Returns:
         access_token and refresh_token inside dictionary
     """
-    user = database.query(User).filter(User.username == form_data.username).first()
+    coach = database.query(User).filter(User.username == form_data.username).first()
+    customer = database.query(Customer).filter(Customer.username == form_data.username).first()
+
+    user = coach or customer
+
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -98,12 +103,15 @@ async def login(
 
     hashed_password = str(user.password)
     if not verify_password(form_data.password, hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Incorrect email or password"
-        )
+        if not customer.password == form_data.password:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Incorrect email or password"
+            )
 
     return {
+        "id": str(user.id),
+        "first_name": user.first_name,
         "access_token": create_access_token(str(user.username)),
         "refresh_token": create_refresh_token(str(user.username))
     }

@@ -9,6 +9,7 @@ from src.auth.dependencies import get_current_user
 from src.customer.models import Customer, TrainingPlan
 from src.gym.models import Training, ExercisesOnTraining, Diet, DietOnTrainingPlan
 from src.utils import validate_uuid
+from src.customer.utils import generate_random_password
 
 customer_router = APIRouter()
 
@@ -38,7 +39,7 @@ async def create_customer(
     """
     if customer_data.phone_number:
         customer = database.query(Customer).filter(
-            Customer.phone_number == customer_data.phone_number
+            Customer.username == customer_data.phone_number
         ).first()
 
         if customer is not None:
@@ -61,9 +62,14 @@ async def create_customer(
     customer = Customer(
         first_name=customer_data.first_name,
         last_name=customer_data.last_name,
-        phone_number=customer_data.phone_number,
+        username=customer_data.phone_number,
+        password=generate_random_password(8),
         user_id=str(current_user.id)
     )
+
+    # TODO: send sms invite to customer
+    # if customer.username:
+    #     send_sms()
 
     database.add(customer)
     database.commit()
@@ -72,7 +78,7 @@ async def create_customer(
         "id": str(customer.id),
         "first_name": customer.first_name,
         "last_name": customer.last_name,
-        "phone_number": customer.phone_number,
+        "phone_number": customer.username,
         "last_plan_end_date": None
     }
 
@@ -106,7 +112,7 @@ async def get_customers(
             "id": str(customer.id),
             "first_name": customer.first_name,
             "last_name": customer.last_name,
-            "phone_number": customer.phone_number,
+            "phone_number": customer.username,
             "last_plan_end_date": last_plan_end_date
         })
 
@@ -167,7 +173,7 @@ async def get_customer(
         "id": str(customer.id),
         "first_name": customer.first_name,
         "last_name": customer.last_name,
-        "phone_number": customer.phone_number,
+        "phone_number": customer.username,
         "last_plan_end_date": last_plan_end_date
     }
 
