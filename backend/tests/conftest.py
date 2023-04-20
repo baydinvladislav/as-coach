@@ -14,8 +14,14 @@ from src.gym.models import Exercise, MuscleGroup
 from src.customer.utils import generate_random_password
 
 DATABASE_URL = os.getenv("DATABASE_URL")
+
+TEST_USER_FIRST_NAME = os.getenv("TEST_USER_FIRST_NAME")
 TEST_USER_USERNAME = os.getenv("TEST_USER_USERNAME")
 TEST_USER_PASSWORD = os.getenv("TEST_USER_PASSWORD")
+
+TEST_CUSTOMER_FIRST_NAME = os.getenv("TEST_CUSTOMER_FIRST_NAME")
+TEST_CUSTOMER_LAST_NAME = os.getenv("TEST_CUSTOMER_LAST_NAME")
+TEST_CUSTOMER_USERNAME = os.getenv("TEST_CUSTOMER_USERNAME")
 
 engine = create_engine(DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

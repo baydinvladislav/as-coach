@@ -4,6 +4,9 @@ from httpx import AsyncClient
 from src.main import app
 from src.customer.models import Customer
 from src.auth.utils import create_access_token
+from tests.conftest import (
+    TEST_CUSTOMER_FIRST_NAME, TEST_CUSTOMER_LAST_NAME, TEST_CUSTOMER_USERNAME
+)
 
 
 @pytest.mark.anyio
@@ -12,9 +15,9 @@ async def test_create_customer_successfully(create_user, override_get_db):
     Successfully customer creation
     """
     customer_data = {
-        "first_name": "Александр",
-        "last_name": "Иванов",
-        "phone_number": "+79857773322"
+        "first_name": TEST_CUSTOMER_FIRST_NAME,
+        "last_name": TEST_CUSTOMER_LAST_NAME,
+        "phone_number": TEST_CUSTOMER_USERNAME
     }
 
     customer = override_get_db.query(Customer).filter(

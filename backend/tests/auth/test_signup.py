@@ -3,7 +3,9 @@ from httpx import AsyncClient
 
 from src.auth.models import User
 from src.main import app
-from backend.tests.conftest import TEST_USER_PASSWORD, TEST_USER_USERNAME
+from backend.tests.conftest import (
+    TEST_USER_FIRST_NAME, TEST_USER_USERNAME, TEST_USER_PASSWORD
+)
 
 
 @pytest.mark.anyio
@@ -22,11 +24,8 @@ async def test_signup_successfully(override_get_db):
     body = {
         "username": TEST_USER_USERNAME,
         "password": TEST_USER_PASSWORD,
-        "first_name": "Владислав"
+        "first_name": TEST_USER_FIRST_NAME
     }
-
-    print(TEST_USER_USERNAME)
-    print(TEST_USER_PASSWORD)
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
         response = await ac.post("/api/signup", json=body)
@@ -51,7 +50,7 @@ async def test_signup_validation_error(override_get_db):
         # without "+"
         "username": "79850002233",
         "password": TEST_USER_PASSWORD,
-        "first_name": "Владислав"
+        "first_name": TEST_USER_FIRST_NAME
     }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
@@ -77,7 +76,7 @@ async def test_signup_too_short_password(override_get_db):
         "username": TEST_USER_USERNAME,
         # password is less 8 symbols
         "password": "1234567",
-        "first_name": "Владислав"
+        "first_name": TEST_USER_FIRST_NAME
     }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
@@ -94,7 +93,7 @@ async def test_signup_failed_username_already_registered(create_user):
     signup_data = {
         "username": TEST_USER_USERNAME,
         "password": TEST_USER_PASSWORD,
-        "first_name": "Владислав"
+        "first_name": TEST_USER_FIRST_NAME
     }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
