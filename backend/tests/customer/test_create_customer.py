@@ -114,10 +114,10 @@ async def test_create_customer_it_already_exists(create_user, override_get_db):
 
     assert response.status_code == 400
 
-    override_get_db.query(Customer).filter(
+    customer_in_db = override_get_db.query(Customer).filter(
         Customer.first_name == TEST_CUSTOMER_FIRST_NAME,
         Customer.last_name == TEST_CUSTOMER_LAST_NAME
     ).first()
 
-    override_get_db.delete(customer)
+    override_get_db.delete(customer_in_db)
     override_get_db.commit()
