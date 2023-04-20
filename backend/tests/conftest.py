@@ -168,9 +168,9 @@ def create_customer(create_user, override_get_db):
 
     if not test_user.customers:
         test_customer = Customer(
-            username='+79991119922',
-            first_name='Арнольд',
-            last_name='Шварцнеггер',
+            username=TEST_CUSTOMER_USERNAME,
+            first_name=TEST_CUSTOMER_FIRST_NAME,
+            last_name=TEST_CUSTOMER_LAST_NAME,
             password=generate_random_password(8),
             user_id=str(create_user.id)
         )
@@ -194,7 +194,7 @@ def create_user(override_get_db):
     if not test_user:
         test_user = User(
             username=TEST_USER_USERNAME,
-            first_name='Владислав',
+            first_name=TEST_USER_FIRST_NAME,
             password=get_hashed_password(TEST_USER_PASSWORD)
         )
 
