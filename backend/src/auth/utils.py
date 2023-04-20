@@ -38,7 +38,13 @@ def verify_password(password: str, hashed_password: str) -> bool:
     Returns:
         True if password matches with hashed_password otherwise False
     """
-    return password_context.verify(password, hashed_password)
+    is_identified = password_context.identify(hashed_password)
+    if not is_identified:
+        return False
+
+    is_verified = password_context.verify(password, hashed_password)
+    if is_verified:
+        return True
 
 
 def create_access_token(subject: str) -> str:

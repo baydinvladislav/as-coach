@@ -17,7 +17,7 @@ class Customer(Base, BaseModel):
     __tablename__ = "customer"
     __table_args__ = {'extend_existing': True}
 
-    phone_number = Column("phone_number", String(100), nullable=True)
+    username = Column("username", String(100), nullable=True)
     password = Column("password", String, nullable=True)
     first_name = Column("first_name", String(50), nullable=False)
     last_name = Column("last_name", String(50), nullable=False)
