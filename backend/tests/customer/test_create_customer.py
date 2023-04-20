@@ -18,7 +18,7 @@ async def test_create_customer_successfully(create_user, override_get_db):
     }
 
     customer = override_get_db.query(Customer).filter(
-        Customer.phone_number == customer_data["phone_number"]
+        Customer.username == customer_data["phone_number"]
     ).first()
     if customer:
         override_get_db.delete(customer)
