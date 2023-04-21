@@ -17,7 +17,7 @@ from src.customer.models import Customer
 
 from .dependencies import get_current_user
 from .models import User
-from .schemas import TokenSchema, UserRegisterIn, UserRegisterOut
+from .schemas import LoginResponse, UserRegisterIn, UserRegisterOut
 from .utils import (create_access_token, create_refresh_token,
                     get_hashed_password, verify_password)
 from ..config import STATIC_DIR
@@ -74,7 +74,7 @@ async def create_user(
     "/login",
     summary="Create access and refresh tokens for user",
     status_code=status.HTTP_200_OK,
-    response_model=TokenSchema)
+    response_model=LoginResponse)
 async def login(
         form_data: OAuth2PasswordRequestForm = Depends(),
         database: Session = Depends(get_db)):
@@ -111,6 +111,7 @@ async def login(
 
     return {
         "id": str(user.id),
+        "user_type": "coach" if coach else "customer",
         "first_name": user.first_name,
         "access_token": create_access_token(str(user.username)),
         "refresh_token": create_refresh_token(str(user.username))

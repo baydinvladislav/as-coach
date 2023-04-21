@@ -58,6 +58,17 @@ class UserProfile(BaseModel):
     photo_path: Optional[str]
 
 
+class LoginResponse(BaseModel):
+    """
+    Response after successfully user login
+    """
+    id: str
+    user_type: str
+    first_name: str
+    access_token: str
+    refresh_token: str
+
+
 class TokenSchema(BaseModel):
     """
     Validates token schema
