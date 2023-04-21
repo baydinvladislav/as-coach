@@ -10,20 +10,25 @@ import { isIOS } from '@utils';
 
 type TProps = {
   children: React.ReactNode;
+  isScroll?: boolean;
 };
 
-export const Layout = ({ children }: TProps) => (
-  <Keyboard style={{ flex: 1, paddingTop: isIOS ? TOP_PADDING : 0 }}>
-    {isIOS && (
-      <TopBackground>
-        <Line />
-      </TopBackground>
-    )}
-    <Background style={{ paddingTop: isIOS ? 0 : TOP_PADDING }}>
-      {children}
-    </Background>
-  </Keyboard>
-);
+export const Layout = ({ children, isScroll = true }: TProps) => {
+  const Container = isScroll ? Keyboard : View;
+
+  return (
+    <Container style={{ flex: 1, paddingTop: isIOS ? TOP_PADDING : 0 }}>
+      {isIOS && (
+        <TopBackground>
+          <Line />
+        </TopBackground>
+      )}
+      <Background style={{ paddingTop: isIOS ? 0 : TOP_PADDING }}>
+        {children}
+      </Background>
+    </Container>
+  );
+};
 
 const Background = styled(View)`
   background-color: ${colors.black6};

@@ -5,6 +5,7 @@ import { withAnchorPoint } from 'react-native-anchor-point';
 import styled from 'styled-components';
 
 import { colors, normHor, normVert } from '@theme';
+import { isIOS } from '@utils';
 
 import { FontSize } from '~types';
 
@@ -33,7 +34,7 @@ export const Placeholder = ({ text, isActive }: TProps) => {
 
   const movePlaceholderYIn = () => {
     Animated.timing(placeholderAnimY, {
-      toValue: normVert(6),
+      toValue: normVert(isIOS ? 6 : 2),
       duration,
       useNativeDriver: true,
     }).start();
@@ -41,7 +42,7 @@ export const Placeholder = ({ text, isActive }: TProps) => {
 
   const movePlaceholderYOut = () => {
     Animated.timing(placeholderAnimY, {
-      toValue: normVert(14),
+      toValue: normVert(isIOS ? 14 : 10),
       duration,
       useNativeDriver: true,
     }).start();

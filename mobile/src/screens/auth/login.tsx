@@ -33,7 +33,7 @@ export const LoginScreen = observer(() => {
       })
       .then(() => navigate(Screens.LkScreen))
       .catch((e: AxiosError<{ detail: string }>) => {
-        setErrors({ password: e.response?.data.detail });
+        setErrors({ password: e.response?.data?.detail });
       });
   };
 
@@ -47,35 +47,33 @@ export const LoginScreen = observer(() => {
     });
 
   return (
-    <View style={{ flex: 1 }}>
-      <Keyboard style={{ paddingTop: TOP_PADDING }}>
-        <Logo />
-        <Text
-          style={styles.title}
-          align="center"
-          fontSize={FontSize.S24}
-          color={colors.white}
-        >
-          {t('auth.loginTitle')}
-        </Text>
-        <Inputs>
-          <Input
-            keyboardType={'phone-pad'}
-            mask={PHONE_MASK}
-            style={styles.input}
-            placeholder={t('inputs.phone')}
-            value={values.username}
-            onChangeText={handleChange('username')}
-            error={errors.username}
-          />
-          <PasswordInput
-            value={values.password}
-            placeholder={t('inputs.password')}
-            onChangeText={handleChange('password')}
-            error={errors.password}
-          />
-        </Inputs>
-      </Keyboard>
+    <Keyboard style={{ paddingTop: TOP_PADDING, flex: 1 }}>
+      <Logo />
+      <Text
+        style={styles.title}
+        align="center"
+        fontSize={FontSize.S24}
+        color={colors.white}
+      >
+        {t('auth.loginTitle')}
+      </Text>
+      <Inputs>
+        <Input
+          keyboardType={'phone-pad'}
+          mask={PHONE_MASK}
+          style={styles.input}
+          placeholder={t('inputs.phone')}
+          value={values.username}
+          onChangeText={handleChange('username')}
+          error={errors.username}
+        />
+        <PasswordInput
+          value={values.password}
+          placeholder={t('inputs.password')}
+          onChangeText={handleChange('password')}
+          error={errors.password}
+        />
+      </Inputs>
       <Button
         style={styles.button}
         type={ButtonType.PRIMARY}
@@ -97,7 +95,7 @@ export const LoginScreen = observer(() => {
           {t('buttons.registration')}
         </Button>
       </Flex>
-    </View>
+    </Keyboard>
   );
 });
 

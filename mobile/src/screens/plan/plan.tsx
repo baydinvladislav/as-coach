@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { useFormik } from 'formik';
 import moment from 'moment';
@@ -82,9 +82,6 @@ export const PlanScreen = ({ route }: RoutesProps) => {
     validateOnChange: false,
     validateOnBlur: false,
   });
-  useEffect(() => {
-    console.log('VALUES', values);
-  }, [values]);
 
   const formProps = {
     params,
@@ -116,5 +113,11 @@ export const PlanScreen = ({ route }: RoutesProps) => {
     }
   };
 
-  return <Layout>{renderScreen()}</Layout>;
+  return (
+    <Layout
+      isScroll={currentScreen === PlanScreens.CREATE_DATE_SCREEN ? false : true}
+    >
+      {renderScreen()}
+    </Layout>
+  );
 };

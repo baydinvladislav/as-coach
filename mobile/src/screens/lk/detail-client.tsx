@@ -57,7 +57,7 @@ export const DetailClient = ({ route }: RoutesProps) => {
         style={{ opacity: 0.3 }}
       />
 
-      <Circle style={styles.back} onPress={() => goBack()}>
+      <Circle style={styles.back} onPress={goBack}>
         <ArrowLeftIcon />
       </Circle>
       <Badge text={t('common.nonePlan')} status={BadgeStatuses.NONE} />
@@ -80,6 +80,7 @@ export const DetailClient = ({ route }: RoutesProps) => {
           </TopContainer>
 
           <FlatList
+            nestedScrollEnabled={true}
             data={data.plans}
             renderItem={renderItem}
             keyExtractor={item => item.id}

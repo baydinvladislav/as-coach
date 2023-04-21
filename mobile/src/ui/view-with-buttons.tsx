@@ -19,6 +19,7 @@ import { ButtonType } from '~types';
 type TProps = {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
+  containerStyle?: StyleProp<ViewStyle>;
   onCancel: () => void;
   onConfirm: () => void;
   isLoading?: boolean;
@@ -30,6 +31,7 @@ type TProps = {
 export const ViewWithButtons = ({
   children,
   style,
+  containerStyle,
   onCancel,
   onConfirm,
   confirmText = t('buttons.save'),
@@ -41,8 +43,8 @@ export const ViewWithButtons = ({
   return (
     <ChildrenContainer style={style}>
       <Container
-        style={styles.container}
-        contentContainerStyle={styles.container}
+        style={[styles.container, containerStyle]}
+        contentContainerStyle={[styles.container, containerStyle]}
       >
         {children}
       </Container>

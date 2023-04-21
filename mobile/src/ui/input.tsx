@@ -30,6 +30,7 @@ export type TInputProps = {
   description?: string;
   onFocus?: () => void;
   onBlur?: () => void;
+  onPress?: () => void;
 } & TextInputProps;
 
 export const Input = ({
@@ -43,6 +44,7 @@ export const Input = ({
   mask,
   error,
   description,
+  onPress,
   ...props
 }: TInputProps) => {
   const [state, setState] = useState({
@@ -99,6 +101,7 @@ export const Input = ({
           multiline={isTextarea}
           numberOfLines={4}
           value={props.value ?? state.value}
+          onPressIn={onPress}
         />
         {rightIcon && <Icon dir="right">{rightIcon}</Icon>}
       </InputContainer>
