@@ -183,7 +183,7 @@ async def update_profile(
         birthday: date = Form(None),
         email: str = Form(None),
         database: Session = Depends(get_db),
-        user: User = Depends(get_current_user)
+        user: Union[User, Customer] = Depends(get_coach_or_customer)
 ) -> dict:
     """
     Updated full info about user
@@ -212,7 +212,12 @@ async def update_profile(
 
     user.modified = datetime.now()
 
-    database.query(User).filter(User.id == str(user.id)).update({
+    if isinstance(user, User):
+        user_class = User
+    else:
+        user_class = Customer
+
+    database.query(user_class).filter(user_class.id == str(user.id)).update({
         "first_name": first_name,
         "username": username,
         "last_name": last_name,
