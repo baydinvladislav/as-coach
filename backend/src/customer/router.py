@@ -290,7 +290,7 @@ async def get_all_training_plans(
 ) -> Union[list[dict], list[None]]:
     """
     Returns all training plans for specific customer
-    Endpoint can be used by both the coach and the client
+    Endpoint can be used by both the coach and the customer
 
     Args:
         customer_id: customer's str(UUID)
@@ -335,7 +335,7 @@ async def get_training_plan(
 ) -> dict:
     """
     Gets specific training plan by ID
-    Endpoint can be used by both the coach and the client
+    Endpoint can be used by both the coach and the customer
 
     Args:
         training_plan_id: str(UUID) of specified training plan

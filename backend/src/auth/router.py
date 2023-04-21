@@ -16,7 +16,6 @@ from src.auth.schemas import UserProfile
 from src.customer.models import Customer
 from src.customer.dependencies import get_coach_or_customer
 
-from .dependencies import get_current_user
 from .models import User
 from .schemas import LoginResponse, UserRegisterIn, UserRegisterOut
 from .utils import (create_access_token, create_refresh_token,
@@ -126,7 +125,7 @@ async def login(
 async def get_me(user: Union[User, Customer] = Depends(get_coach_or_customer)):
     """
     Returns info about current user
-    Endpoint can be used by both the coach and the client
+    Endpoint can be used by both the coach and the customer
 
     Args:
         user: user object from get_current_user dependency
@@ -150,6 +149,7 @@ async def get_me(user: Union[User, Customer] = Depends(get_coach_or_customer)):
 async def get_profile(user: Union[User, Customer] = Depends(get_coach_or_customer)):
     """
     Returns full info about user
+    Endpoint can be used by both the coach and the customer
 
     Args:
         user: user/customer object from get_coach_or_customer dependency
@@ -188,6 +188,7 @@ async def update_profile(
 ) -> dict:
     """
     Updated full info about user
+    Endpoint can be used by both the coach and the customer
 
     Args:
         first_name: client value from body
