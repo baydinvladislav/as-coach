@@ -7,6 +7,7 @@ from src.customer.schemas import CustomerCreateIn, CustomerOut, TrainingPlanIn, 
 from src.dependencies import get_db
 from src.auth.dependencies import get_current_user
 from src.customer.models import Customer, TrainingPlan
+from src.customer.dependencies import get_coach_or_customer
 from src.gym.models import Training, ExercisesOnTraining, Diet, DietOnTrainingPlan
 from src.utils import validate_uuid
 from src.customer.utils import generate_random_password
@@ -274,7 +275,8 @@ async def create_training_plan(
 async def get_all_training_plans(
         customer_id: str,
         database: Session = Depends(get_db),
-        current_user: Session = Depends(get_current_user)) -> Union[list[dict], list[None]]:
+        current_user: Session = Depends(get_coach_or_customer)
+) -> Union[list[dict], list[None]]:
     """
     Returns all training plans for specific customer
 
@@ -317,7 +319,7 @@ async def get_training_plan(
     training_plan_id: str,
     customer_id: str,
     database: Session = Depends(get_db),
-    current_user: Session = Depends(get_current_user)
+    current_user: Session = Depends(get_coach_or_customer)
 ) -> dict:
     """
     Gets specific training plan by ID
