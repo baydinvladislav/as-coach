@@ -23,6 +23,7 @@ async def test_get_user_profile(create_user):
     assert 'id' in response.json()
     assert response.json()['username'] == create_user.username
     assert response.json()['first_name'] == create_user.first_name
+    assert response.json()["user_type"] == "coach"
 
 
 @pytest.mark.anyio
@@ -50,3 +51,4 @@ async def test_post_user_profile(create_user):
     assert response.status_code == 200
     assert response.json()["last_name"] == update_user_data["last_name"]
     assert response.json()["email"] == update_user_data["email"]
+    assert response.json()["user_type"] == "coach"

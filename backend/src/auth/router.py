@@ -233,6 +233,7 @@ async def update_profile(
         "id": str(user.id),
         "first_name": user.first_name,
         "last_name": user.last_name,
+        "user_type": "coach" if isinstance(user, User) else "customer",
         "gender": user.gender,
         "birthday": user.birthday,
         "email": user.email,
