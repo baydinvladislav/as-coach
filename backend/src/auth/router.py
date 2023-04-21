@@ -4,7 +4,7 @@ Contains routes for auth service.
 
 import shutil
 from datetime import date, datetime
-from typing import NewType
+from typing import NewType, Union
 
 from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Form
 from fastapi.security import OAuth2PasswordRequestForm
@@ -14,6 +14,7 @@ from src.dependencies import get_db
 from src.models import Gender
 from src.auth.schemas import UserProfile
 from src.customer.models import Customer
+from src.customer.dependencies import get_coach_or_customer
 
 from .dependencies import get_current_user
 from .models import User
@@ -122,7 +123,7 @@ async def login(
     "/me",
     status_code=status.HTTP_200_OK,
     summary="Get details of currently logged in user")
-async def get_me(user: User = Depends(get_current_user)):
+async def get_me(user: Union[User, Customer] = Depends(get_coach_or_customer)):
     """
     Returns info about current user
 
@@ -134,6 +135,7 @@ async def get_me(user: User = Depends(get_current_user)):
     """
     return {
         "id": str(user.id),
+        "user_type": "coach" if isinstance(user, User) else "customer",
         "username": user.username,
         "first_name": user.first_name
     }
