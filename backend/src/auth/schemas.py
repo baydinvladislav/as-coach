@@ -70,14 +70,6 @@ class LoginResponse(BaseModel):
     refresh_token: str
 
 
-class TokenSchema(BaseModel):
-    """
-    Validates token schema
-    """
-    access_token: str
-    refresh_token: str
-
-
 class TokenPayload(BaseModel):
     """
     Validates token payload

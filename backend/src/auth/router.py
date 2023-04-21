@@ -126,6 +126,7 @@ async def login(
 async def get_me(user: Union[User, Customer] = Depends(get_coach_or_customer)):
     """
     Returns info about current user
+    Endpoint can be used by both the coach and the client
 
     Args:
         user: user object from get_current_user dependency
