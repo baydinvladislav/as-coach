@@ -27,7 +27,7 @@ export const ru = {
     phoneDescription: 'Отправим на него приглашение клиента в приложение',
   },
   newPlan: {
-    title: 'Новый план',
+    title: 'Выбери даты',
   },
   createPlan: {
     exercises: 'упражнения',
@@ -78,6 +78,8 @@ export const ru = {
     email: 'E-mail',
     exercises: 'Название тренировки',
     search: 'Поиск',
+    startDate: 'Дата начала',
+    endDate: 'Дата окончания',
   },
   buttons: {
     login: 'Войти',
