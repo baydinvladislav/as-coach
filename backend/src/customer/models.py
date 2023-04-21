@@ -25,6 +25,9 @@ class Customer(Base, BaseModel):
     user_id = Column(UUID, ForeignKey("user.id"), nullable=False)
     user = relationship("User", back_populates="customers")
     training_plans = relationship("TrainingPlan", cascade="all,delete-orphan", back_populates="customer")
+    birthday = Column("birthday", Date, nullable=True)
+    photo_path = Column("photo_path", String(255), nullable=True)
+    email = Column("email", String(100), nullable=True)
 
     def __repr__(self):
         return f"customer: {self.last_name} {self.first_name}"

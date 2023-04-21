@@ -146,12 +146,12 @@ async def get_me(user: Union[User, Customer] = Depends(get_coach_or_customer)):
     status_code=status.HTTP_200_OK,
     response_model=UserProfile,
     summary="Get user profile")
-async def get_profile(user: User = Depends(get_current_user)):
+async def get_profile(user: Union[User, Customer] = Depends(get_coach_or_customer)):
     """
     Returns full info about user
 
     Args:
-        user: user object from get_current_user dependency
+        user: user/customer object from get_coach_or_customer dependency
 
     Returns:
         dictionary with full user info
@@ -160,6 +160,7 @@ async def get_profile(user: User = Depends(get_current_user)):
         "id": str(user.id),
         "first_name": user.first_name,
         "last_name": user.last_name,
+        "user_type": "coach" if isinstance(user, User) else "customer",
         "gender": user.gender,
         "birthday": user.birthday,
         "email": user.email,

@@ -52,9 +52,10 @@ class UserProfile(BaseModel):
     first_name: str
     last_name: Optional[str]
     gender: Optional[NewType('Gender', Gender)]
+    user_type: str
     birthday: Optional[date]
     email: Optional[str]
-    username: str
+    username: Optional[str]
     photo_path: Optional[str]
 
 
