@@ -18,3 +18,4 @@ export * from './more';
 export * from './delete';
 export * from './edit';
 export * from './arrow-up2';
+export * from './cross';
