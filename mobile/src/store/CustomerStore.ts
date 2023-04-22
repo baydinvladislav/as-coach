@@ -97,9 +97,6 @@ export default class CustomerStore {
   @actionLoading()
   async getCustomers() {
     try {
-      if (this.customers.length) {
-        return;
-      }
       const { data } = await getCustomers();
       this.setCustomer(data);
       this.setSearchCustomer(data);
