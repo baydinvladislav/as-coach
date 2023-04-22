@@ -74,6 +74,7 @@ export const LkScreen = observer(() => {
   return (
     <View
       style={{
+        flex: 1,
         paddingHorizontal: normHor(16),
         paddingTop: TOP_PADDING + top,
       }}
@@ -115,9 +116,13 @@ export const LkScreen = observer(() => {
           <View style={styles.searchInput}>
             <SearchInput value={searchValue} onChangeText={setSearchValue} />
           </View>
-          {searchCustomers.length ? (
+          {(searchValue && searchCustomers.length) || !searchValue ? (
             <FlatList
-              data={searchCustomers}
+              data={
+                !searchValue && !searchCustomers.length
+                  ? customers
+                  : searchCustomers
+              }
               renderItem={renderItem}
               keyExtractor={item => item.id}
             />

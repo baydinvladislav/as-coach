@@ -1,6 +1,11 @@
 import { action, makeObservable, observable } from 'mobx';
 
-import { createCustomer, getCustomers, getExercises } from '@api';
+import {
+  createCustomer,
+  getCustomerPlan,
+  getCustomers,
+  getExercises,
+} from '@api';
 
 import { TExercisesEdited, TPlanType } from '~types';
 
@@ -24,6 +29,7 @@ export default class CustomerStore {
   }
 
   @observable exercises: TExercisesEdited = {};
+  @observable searchExercises: TExercisesEdited = {};
   @observable customers: CustomerProps[] = [];
   @observable searchCustomers: CustomerProps[] = [];
 
@@ -45,21 +51,46 @@ export default class CustomerStore {
   }
 
   @action
+  setSearchExercises(data: TExercisesEdited) {
+    this.searchExercises = data;
+  }
+
+  @action
+  searchExercisesByName(searchValue?: string) {
+    if (searchValue) {
+      const result: Record<string, any> = {};
+      for (const key in this.exercises) {
+        for (const i in this.exercises[key]) {
+          if (this.exercises[key][i].name.includes(searchValue)) {
+            result[key] = [this.exercises[key][i]];
+            console.log(this.exercises[key], result[key]);
+          }
+        }
+      }
+      this.setSearchExercises(result);
+    } else {
+      this.setSearchExercises({});
+    }
+  }
+
+  @action
   setSearchCustomer(data: CustomerProps[]) {
     this.searchCustomers = [...data];
   }
 
   @action
   searchCustomerByName(searchValue?: string) {
-    this.setSearchCustomer(
-      searchValue
-        ? this.customers.filter(
-            customer =>
-              customer.first_name.includes(searchValue) ||
-              customer.last_name.includes(searchValue),
-          )
-        : this.customers,
-    );
+    if (searchValue) {
+      this.setSearchCustomer(
+        this.customers.filter(
+          customer =>
+            customer.first_name.includes(searchValue) ||
+            customer.last_name.includes(searchValue),
+        ),
+      );
+    } else {
+      this.setSearchCustomer([]);
+    }
   }
 
   @action
@@ -69,11 +100,20 @@ export default class CustomerStore {
 
   @action
   @actionLoading()
+  async getCustomerPlanById(customer: CustomerProps) {
+    try {
+      const { data } = await getCustomerPlan(customer.id);
+
+      return data;
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+
+  @action
+  @actionLoading()
   async getCustomers() {
     try {
-      if (this.customers.length) {
-        return;
-      }
       const { data } = await getCustomers();
       this.setCustomer(data);
       this.setSearchCustomer(data);

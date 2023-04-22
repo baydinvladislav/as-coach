@@ -43,28 +43,29 @@ export const CheckboxGroup = ({
       >
         {title}
       </Text>
-      {data.map((item, key) => {
-        const exercise = values.trainings[dayNumber].exercises?.find(
-          exercise => exercise.id === item.id,
-        );
-        return (
-          <>
-            <Checkbox
-              style={[styles.checkbox, key !== 0 && styles.border]}
-              key={item.id}
-              onChangeCheckbox={() => handlePress(item.id)}
-              placeholder={item.name}
-              value={Boolean(exercise)}
-            />
-            {exercise && (
-              <Sets
-                val={exercise?.sets}
-                onChangeText={e => handleChangeSets(item.id, e)}
-              />
-            )}
-          </>
-        );
-      })}
+      {data.length
+        ? data.map((item, key) => {
+            const exercise = values.trainings[dayNumber].exercises?.find(
+              exercise => exercise.id === item.id,
+            );
+            return (
+              <React.Fragment key={dayNumber + item.id}>
+                <Checkbox
+                  style={[styles.checkbox, key !== 0 && styles.border]}
+                  onChangeCheckbox={() => handlePress(item.id)}
+                  placeholder={item.name}
+                  value={Boolean(exercise)}
+                />
+                {exercise && (
+                  <Sets
+                    val={exercise?.sets}
+                    onChangeText={e => handleChangeSets(item.id, e)}
+                  />
+                )}
+              </React.Fragment>
+            );
+          })
+        : null}
     </View>
   );
 };

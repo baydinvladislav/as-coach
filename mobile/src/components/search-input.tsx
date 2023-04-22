@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import { SearchIcon } from '@assets';
+import { CrossIcon, SearchIcon } from '@assets';
 import { t } from '@i18n';
 import { normHor } from '@theme';
 import { Button, Input, TInputProps } from '@ui';
@@ -34,6 +34,13 @@ export const SearchInput = (props: TInputProps) => {
         onBlur={handleBlur}
         width={isFocused ? `${normHor(245)}px` : undefined}
         leftIcon={<SearchIcon />}
+        rightIcon={
+          isFocused ? (
+            <TouchableOpacity onPress={() => handleChangeText('')}>
+              <CrossIcon />
+            </TouchableOpacity>
+          ) : undefined
+        }
       />
       {isFocused && (
         <Button

@@ -16,13 +16,15 @@ import { FontSize, TPlan } from '~types';
 import { PlanScreens } from './plan';
 
 type TProps = {
+  clearErrors: () => void;
+  errors: Record<string, any>;
   values: TPlan;
   handleChange: (e: string | React.ChangeEvent<any>) => () => void;
   handleNavigate: (nextScreen: PlanScreens) => void;
 };
 
 export const NewPlanScreen = observer(
-  ({ values, handleChange, handleNavigate }: TProps) => {
+  ({ values, handleChange, handleNavigate, errors, clearErrors }: TProps) => {
     const [dateType, setDateType] = useState<'start' | 'end' | null>(null);
 
     const handleChangeDateType = (type: 'start' | 'end') => {
@@ -34,6 +36,7 @@ export const NewPlanScreen = observer(
     const isLoading = loading.isLoading;
 
     const handlePress = (type: 'start' | 'end') => {
+      clearErrors();
       handleChangeDateType(type);
     };
 
@@ -57,6 +60,8 @@ export const NewPlanScreen = observer(
                       )
                     : undefined
                 }
+                error={errors.start_date}
+                showError={false}
               />
             </View>
           </Wrapper>
@@ -72,6 +77,8 @@ export const NewPlanScreen = observer(
                     ? moment(values.end_date, 'yyyy-mm-DD').format('DD MMM ddd')
                     : undefined
                 }
+                error={errors.end_date}
+                showError={false}
               />
             </View>
           </Wrapper>

@@ -46,6 +46,17 @@ export default class UserStore {
   }
 
   @action
+  async getMe() {
+    try {
+      const { data } = await me();
+      this.setHasAccess(true);
+      this.me = data;
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+
+  @action
   @actionLoading()
   async login(values: Partial<UserProps>) {
     try {
