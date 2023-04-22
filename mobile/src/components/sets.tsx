@@ -21,13 +21,6 @@ type TProps = {
 
 export const Sets = ({ onChangeText, val }: TProps) => {
   const [isRemovable, setIsRemovable] = useState(false);
-  const inputsRefs = [
-    useRef<TextInput | null>(null),
-    useRef<TextInput | null>(null),
-    useRef<TextInput | null>(null),
-    useRef<TextInput | null>(null),
-    useRef<TextInput | null>(null),
-  ];
   const [value, setValue] = useState<(number | string)[]>(val || ['']);
 
   useEffect(() => {
@@ -43,11 +36,9 @@ export const Sets = ({ onChangeText, val }: TProps) => {
   };
 
   const handleAdd = () => {
-    if (value.length <= 4) {
-      onChangeText({
-        target: { value: [...value, ''] },
-      } as ChangeEvent<any>);
-    }
+    onChangeText({
+      target: { value: [...value, ''] },
+    } as ChangeEvent<any>);
   };
 
   const handleDelete = (index: number) => {
@@ -56,15 +47,17 @@ export const Sets = ({ onChangeText, val }: TProps) => {
     } as ChangeEvent<any>);
   };
 
+  const inputsRefs = useRef<TextInput[] | null[]>([]);
+
   const handlePress = (index: number) => {
     setIsRemovable(false);
-    inputsRefs[index].current?.focus();
+    inputsRefs?.current?.[index]?.focus();
   };
 
   return (
     <View style={styles.row}>
       {value.map((value, index) => (
-        <View key={index}>
+        <View key={index} style={styles.cell}>
           {isRemovable && (
             <AbsoluteIcon onPress={() => handleDelete(index)}>
               <DeleteIcon />
@@ -77,7 +70,7 @@ export const Sets = ({ onChangeText, val }: TProps) => {
           >
             <View pointerEvents="none">
               <Input
-                ref={inputsRefs[index]}
+                ref={element => (inputsRefs.current[index] = element)}
                 value={String(value)}
                 onChangeText={text => handleChange(text, index)}
               />
@@ -85,11 +78,9 @@ export const Sets = ({ onChangeText, val }: TProps) => {
           </Pressable>
         </View>
       ))}
-      {value.length <= 4 && (
-        <Icon onPress={handleAdd}>
-          <AddIcon fill={colors.green} />
-        </Icon>
-      )}
+      <Icon onPress={handleAdd}>
+        <AddIcon fill={colors.green} />
+      </Icon>
     </View>
   );
 };
@@ -99,6 +90,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: normVert(24),
+    flexWrap: 'wrap',
+    marginTop: normVert(-16),
+    marginLeft: normHor(40),
+  },
+  cell: {
+    marginTop: normVert(16),
   },
 });
 

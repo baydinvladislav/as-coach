@@ -29,10 +29,10 @@ export const addExerciseToPlan = (
                 if (isExists) {
                   return arr;
                 } else {
-                  return [...arr, { id, sets: [''] }];
+                  return [...arr, { id, sets: ['12', '12', '12'] }];
                 }
               } else {
-                return [{ id, sets: [''] }];
+                return [{ id, sets: ['12', '12', '12'] }];
               }
             })(),
           };

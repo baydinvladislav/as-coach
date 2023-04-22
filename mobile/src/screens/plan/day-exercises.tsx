@@ -68,7 +68,7 @@ export const DayExercisesScreen = observer(
           {data.map((item: any, index) => (
             <CheckboxGroup
               style={styles.checkboxGroup}
-              key={keys[index]}
+              key={params.dayNumber + keys[index]}
               data={item}
               title={keys[index]}
               setValues={setValues}
