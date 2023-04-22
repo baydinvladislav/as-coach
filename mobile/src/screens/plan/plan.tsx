@@ -6,6 +6,7 @@ import moment from 'moment';
 import { createPlan } from '@api';
 import { RoutesProps, Screens, useNavigation } from '@navigation';
 import { CustomerProps } from '@store';
+import { createPlanValidationSchema } from '@utils';
 
 import { TPlan } from '~types';
 
@@ -53,15 +54,15 @@ export const PlanScreen = ({ route }: RoutesProps) => {
     }).then(() => navigate(Screens.DetailClient, { id: customer.id }));
   };
 
-  const handleNavigate = (
-    nextScreen: PlanScreens,
-    params?: Record<string, any>,
-  ) => {
-    setCurrentScreen(nextScreen);
-    setParams(params || {});
-  };
-
-  const { handleChange, handleSubmit, values, setValues } = useFormik({
+  const {
+    handleChange,
+    handleSubmit,
+    errors,
+    values,
+    setValues,
+    validateForm,
+    setErrors,
+  } = useFormik({
     initialValues: {
       // Server values
       diets: [
@@ -77,16 +78,43 @@ export const PlanScreen = ({ route }: RoutesProps) => {
 
       // Locally values
       different_time: false,
+      day_name: '',
     },
     onSubmit,
+    validationSchema: createPlanValidationSchema,
     validateOnChange: false,
     validateOnBlur: false,
   });
+
+  const handleNavigate = (
+    nextScreen: PlanScreens,
+    params?: Record<string, any>,
+  ) => {
+    if (currentScreen === PlanScreens.CREATE_DATE_SCREEN) {
+      validateForm().then(data => {
+        if (
+          !Object.keys(data).includes('start_date') &&
+          !Object.keys(data).includes('end_date')
+        ) {
+          setCurrentScreen(nextScreen);
+          setParams(params || {});
+        }
+      });
+    } else {
+      setCurrentScreen(nextScreen);
+      setParams(params || {});
+    }
+  };
+
+  const clearErrors = () => {
+    setErrors({});
+  };
 
   const formProps = {
     params,
     customer,
     values: values as unknown as TPlan,
+    errors: errors as Record<string, any>,
     handleSubmit,
     handleNavigate,
     setValues: setValues as unknown as React.Dispatch<
@@ -95,6 +123,7 @@ export const PlanScreen = ({ route }: RoutesProps) => {
     handleChange: handleChange as (
       e: string | React.ChangeEvent<any>,
     ) => () => void,
+    clearErrors,
   };
 
   const renderScreen = () => {

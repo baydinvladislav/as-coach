@@ -32,10 +32,11 @@ export const DetailClient = ({ route }: RoutesProps) => {
   const id = (route.params as { id: string })?.id;
 
   useEffect(() => {
-    const data = customer.getCustomerById(id);
-    getCustomerPlan(data.id).then(({ data: plans }) => {
+    const client = customer.getCustomerById(id);
+    customer.getCustomerPlanById(client).then(plans => {
       setData({ ...data, plans });
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customer, id]);
 
   const renderItem = (plan: ListRenderItemInfo<TPlanType>) => (

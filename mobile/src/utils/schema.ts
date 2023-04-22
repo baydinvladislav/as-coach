@@ -52,3 +52,10 @@ export const addClientValidationSchema = () =>
       .matches(PHONE_REGEXP, t('errors.phoneError'))
       .required(t('errors.required')),
   });
+
+export const createPlanValidationSchema = () =>
+  yup.object().shape({
+    start_date: yup.string().required(t('errors.required')),
+    end_date: yup.string().required(t('errors.required')),
+    day_name: yup.string().required(t('errors.required')),
+  });

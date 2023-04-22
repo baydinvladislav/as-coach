@@ -27,6 +27,7 @@ export type TInputProps = {
   style?: StyleProp<ViewStyle>;
   mask?: any;
   error?: string;
+  showError?: boolean;
   description?: string;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -45,6 +46,7 @@ export const Input = ({
   error,
   description,
   onPress,
+  showError = true,
   ...props
 }: TInputProps) => {
   const [state, setState] = useState({
@@ -105,7 +107,7 @@ export const Input = ({
         />
         {rightIcon && <Icon dir="right">{rightIcon}</Icon>}
       </InputContainer>
-      {error && (
+      {showError && error && (
         <ErrorText fontSize={FontSize.S12} color={colors.red}>
           {error}
         </ErrorText>

@@ -1,6 +1,11 @@
 import { action, makeObservable, observable } from 'mobx';
 
-import { createCustomer, getCustomers, getExercises } from '@api';
+import {
+  createCustomer,
+  getCustomerPlan,
+  getCustomers,
+  getExercises,
+} from '@api';
 
 import { TExercisesEdited, TPlanType } from '~types';
 
@@ -91,6 +96,18 @@ export default class CustomerStore {
   @action
   getCustomerById(id: string) {
     return this.customers.filter(customer => customer.id === id)[0];
+  }
+
+  @action
+  @actionLoading()
+  async getCustomerPlanById(customer: CustomerProps) {
+    try {
+      const { data } = await getCustomerPlan(customer.id);
+
+      return data;
+    } catch (e) {
+      console.warn(e);
+    }
   }
 
   @action

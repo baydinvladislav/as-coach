@@ -36,7 +36,7 @@ export const StackNavigator = observer(() => {
     } else {
       const getToken = storage.getItem(TOKEN);
       getToken.then((token?: string) => {
-        token && user.setHasAccess(true);
+        token && user.getMe();
       });
     }
   }, [customer, isGuest, user]);
