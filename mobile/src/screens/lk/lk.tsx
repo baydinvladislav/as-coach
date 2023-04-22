@@ -74,6 +74,7 @@ export const LkScreen = observer(() => {
   return (
     <View
       style={{
+        flex: 1,
         paddingHorizontal: normHor(16),
         paddingTop: TOP_PADDING + top,
       }}
