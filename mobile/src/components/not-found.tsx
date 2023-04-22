@@ -8,7 +8,11 @@ import { Text } from '@ui';
 
 import { FontSize } from '~types';
 
-export const NotFound = () => (
+type TProps = {
+  text?: string;
+};
+
+export const NotFound = ({ text = t('notFound.client') }: TProps) => (
   <>
     <NotFoundIcon style={styles.icon} />
     <Text
@@ -17,7 +21,7 @@ export const NotFound = () => (
       fontSize={FontSize.S17}
       color={colors.black4}
     >
-      {t('notFound.title')}
+      {t('notFound.title', { name: text })}
     </Text>
   </>
 );

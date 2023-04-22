@@ -65,7 +65,9 @@ export const ru = {
     changePasswordDescription: 'Пароль должен содержать\nминимум 8 символов',
   },
   notFound: {
-    title: 'Такого клиента нет',
+    title: 'Такого {name} нет',
+    client: 'клиента',
+    exercise: 'упражнения',
   },
   inputs: {
     phone: 'Номер телефона',

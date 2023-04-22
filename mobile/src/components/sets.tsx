@@ -70,6 +70,7 @@ export const Sets = ({ onChangeText, val }: TProps) => {
           >
             <View pointerEvents="none">
               <Input
+                maxLength={3}
                 ref={element => (inputsRefs.current[index] = element)}
                 value={String(value)}
                 onChangeText={text => handleChange(text, index)}
