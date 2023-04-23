@@ -20,7 +20,11 @@ type TProps = {
   errors: Record<string, any>;
   values: TPlan;
   handleChange: (e: string | React.ChangeEvent<any>) => () => void;
-  handleNavigate: (nextScreen: PlanScreens) => void;
+  handleNavigate: (
+    nextScreen: PlanScreens,
+    params?: Record<string, any>,
+    withValidate?: boolean,
+  ) => void;
 };
 
 export const NewPlanScreen = observer(
@@ -85,7 +89,9 @@ export const NewPlanScreen = observer(
         </Flex>
         <ViewWithButtons
           onCancel={goBack}
-          onConfirm={() => handleNavigate(PlanScreens.CREATE_PLAN_SCREEN)}
+          onConfirm={() =>
+            handleNavigate(PlanScreens.CREATE_PLAN_SCREEN, undefined, true)
+          }
           confirmText={t('buttons.next')}
           isLoading={isLoading}
           style={{ justifyContent: 'space-between' }}
@@ -99,18 +105,6 @@ export const NewPlanScreen = observer(
               end: handleChange('end_date'),
             }}
           />
-          {/* <DatePickerInput
-              style={styles.input}
-              placeholder="Дата начала"
-              value={values.start_date}
-              onChangeText={handleChange('start_date')}
-            />
-            <DatePickerInput
-              style={styles.input}
-              placeholder="Дата окончания"
-              value={values.end_date}
-              onChangeText={handleChange('end_date')}
-            /> */}
         </ViewWithButtons>
       </>
     );

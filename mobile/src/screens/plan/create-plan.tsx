@@ -32,7 +32,10 @@ type TProps = {
   handleNavigate: (
     nextScreen: PlanScreens,
     params?: Record<string, any>,
+    withValidate?: boolean,
   ) => void;
+  errors: Record<string, any>;
+  setValues: React.Dispatch<React.SetStateAction<TPlan>>;
 };
 
 export const CreatePlanScreen = observer(
@@ -42,17 +45,35 @@ export const CreatePlanScreen = observer(
     handleSubmit,
     values,
     handleChange,
+    errors,
+    setValues,
   }: TProps) => {
     const { loading } = useStore();
 
     const isLoading = loading.isLoading;
+
+    const handleDifferentTime = () => {
+      if (values.different_time) {
+        setValues(values => ({
+          ...values,
+          different_time: !values.different_time,
+          diets: values.diets.filter((_, key) => key === 0),
+        }));
+      } else {
+        setValues(values => ({
+          ...values,
+          different_time: !values.different_time,
+          diets: [...values.diets, { proteins: '', fats: '', carbs: '' }],
+        }));
+      }
+    };
 
     return (
       <ViewWithButtons
         style={{ justifyContent: 'space-between' }}
         onCancel={() => handleNavigate(PlanScreens.CREATE_DATE_SCREEN)}
         onConfirm={handleSubmit}
-        confirmText={t('buttons.next')}
+        confirmText={t('buttons.createPlan')}
         cancelText={t('buttons.prev')}
         isLoading={isLoading}
         isScroll={true}
@@ -67,8 +88,9 @@ export const CreatePlanScreen = observer(
         <CreatePlanItem title={t('createPlan.title1')}>
           <Checkbox
             style={styles.checkbox}
+            value={values.different_time}
             placeholder={t('createPlan.checkboxDescription')}
-            onChangeCheckbox={handleChange('different_time')}
+            onChangeCheckbox={handleDifferentTime}
           />
           {values.different_time && (
             <Text
@@ -84,17 +106,20 @@ export const CreatePlanScreen = observer(
             placeholder={t('createPlan.placeholder1')}
             value={values.diets[0].proteins}
             onChangeText={handleChange('diets[0].proteins')}
+            error={errors?.diets?.[0]?.proteins}
           />
           <InputSpinner
             style={styles.input}
             placeholder={t('createPlan.placeholder2')}
             value={values.diets[0].fats}
             onChangeText={handleChange('diets[0].fats')}
+            error={errors?.diets?.[0]?.fats}
           />
           <InputSpinner
             placeholder={t('createPlan.placeholder3')}
             value={values.diets[0].carbs}
             onChangeText={handleChange('diets[0].carbs')}
+            error={errors?.diets?.[0]?.carbs}
           />
 
           {values.different_time && (
@@ -109,19 +134,22 @@ export const CreatePlanScreen = observer(
               <InputSpinner
                 style={styles.input}
                 placeholder={t('createPlan.placeholder1')}
-                value={values.diets[1].proteins}
+                value={values?.diets?.[1]?.proteins}
                 onChangeText={handleChange('diets[1].proteins')}
+                error={errors?.diets?.[1]?.proteins}
               />
               <InputSpinner
                 style={styles.input}
                 placeholder={t('createPlan.placeholder2')}
-                value={values.diets[1].fats}
+                value={values?.diets?.[1]?.fats}
                 onChangeText={handleChange('diets[1].fats')}
+                error={errors?.diets?.[1]?.fats}
               />
               <InputSpinner
                 placeholder={t('createPlan.placeholder3')}
-                value={values.diets[1].carbs}
+                value={values?.diets?.[1]?.carbs}
                 onChangeText={handleChange('diets[1].carbs')}
+                error={errors?.diets?.[1]?.carbs}
               />
             </>
           )}
@@ -132,9 +160,11 @@ export const CreatePlanScreen = observer(
               onEdit={() =>
                 handleNavigate(PlanScreens.CREATE_DAY_SCREEN, {
                   dayNumber: index,
+                  isExists: true,
+                  oldValue: values.trainings,
                 })
               }
-              key={exercise.name}
+              key={index + exercise.name}
               exercises={exercise}
             />
           ))}
@@ -144,6 +174,7 @@ export const CreatePlanScreen = observer(
             onPress={() =>
               handleNavigate(PlanScreens.CREATE_DAY_SCREEN, {
                 dayNumber: values.trainings.length,
+                isExists: false,
               })
             }
             leftIcon={<AddIcon fill={colors.green} />}

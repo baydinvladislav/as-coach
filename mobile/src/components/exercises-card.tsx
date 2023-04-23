@@ -41,9 +41,11 @@ export const ExercisesCard = ({ exercises, onEdit }: TProps) => {
             {exercises.exercises.length} {t('createPlan.exercises')}
           </Text>
         </View>
-        <Icon onPress={() => setIsOpen(isOpen => !isOpen)}>
-          {isOpen ? <ArrowUp2Icon /> : <ArrowDownIcon />}
-        </Icon>
+        {exercises.exercises.length ? (
+          <Icon onPress={() => setIsOpen(isOpen => !isOpen)}>
+            {isOpen ? <ArrowUp2Icon /> : <ArrowDownIcon />}
+          </Icon>
+        ) : null}
       </View>
       {isOpen &&
         exercises.exercises?.map((exercise, key) => {

@@ -60,7 +60,7 @@ const DATA = (
 ];
 
 export const ProfileScreen = observer(() => {
-  const { user } = useStore();
+  const { user, customer } = useStore();
 
   const { navigate } = useNavigation();
 
@@ -73,6 +73,7 @@ export const ProfileScreen = observer(() => {
   };
 
   const handleLogout = () => {
+    customer.setInitialCustomers();
     user.logout().then(() => navigate(Screens.WelcomeScreen));
   };
 

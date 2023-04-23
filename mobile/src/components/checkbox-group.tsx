@@ -16,6 +16,7 @@ type TProps = {
   dayName: string;
   values: TPlan;
   dayNumber: number;
+  errors: Record<string, any>;
 };
 
 export const CheckboxGroup = ({
@@ -26,6 +27,7 @@ export const CheckboxGroup = ({
   dayName,
   values,
   dayNumber,
+  errors,
 }: TProps) => {
   const handlePress = (id: string) => {
     setValues(values => addExerciseToPlan(values, dayName, id));
@@ -58,6 +60,7 @@ export const CheckboxGroup = ({
                 />
                 {exercise && (
                   <Sets
+                    errors={errors?.exercises?.[key]?.sets}
                     val={exercise?.sets}
                     onChangeText={e => handleChangeSets(item.id, e)}
                   />

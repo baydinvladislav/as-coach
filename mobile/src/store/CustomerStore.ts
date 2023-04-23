@@ -34,8 +34,14 @@ export default class CustomerStore {
   @observable searchCustomers: CustomerProps[] = [];
 
   @action
+  setInitialCustomers() {
+    this.setCustomer([]);
+    this.setSearchCustomer([]);
+  }
+
+  @action
   setCustomer(data: CustomerProps[]) {
-    this.customers = [...this.customers, ...data];
+    this.customers = data;
   }
 
   @action
@@ -63,7 +69,6 @@ export default class CustomerStore {
         for (const i in this.exercises[key]) {
           if (this.exercises[key][i].name.includes(searchValue)) {
             result[key] = [this.exercises[key][i]];
-            console.log(this.exercises[key], result[key]);
           }
         }
       }

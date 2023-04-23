@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   FlatList,
   Image,
@@ -10,13 +10,13 @@ import {
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import styled from 'styled-components';
 
-import { getCustomerPlan } from '@api';
 import { AddIcon, ArrowLeftIcon, BackgroundImage } from '@assets';
 import { LkEmpty, PlanCard } from '@components';
 import { TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { RoutesProps, Screens, useNavigation } from '@navigation';
+import { useFocusEffect } from '@react-navigation/native';
 import { CustomerProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
 import { Badge, BadgeStatuses, Button, Text } from '@ui';
@@ -31,13 +31,15 @@ export const DetailClient = ({ route }: RoutesProps) => {
 
   const id = (route.params as { id: string })?.id;
 
-  useEffect(() => {
-    const client = customer.getCustomerById(id);
-    customer.getCustomerPlanById(client).then(plans => {
-      setData({ ...data, plans });
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [customer, id]);
+  useFocusEffect(
+    useCallback(() => {
+      const client = customer.getCustomerById(id);
+      customer.getCustomerPlanById(client).then(plans => {
+        setData({ ...data, ...client, plans });
+      });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []),
+  );
 
   const renderItem = (plan: ListRenderItemInfo<TPlanType>) => (
     <PlanCard plan={plan.item} />
