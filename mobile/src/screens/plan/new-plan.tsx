@@ -99,18 +99,6 @@ export const NewPlanScreen = observer(
               end: handleChange('end_date'),
             }}
           />
-          {/* <DatePickerInput
-              style={styles.input}
-              placeholder="Дата начала"
-              value={values.start_date}
-              onChangeText={handleChange('start_date')}
-            />
-            <DatePickerInput
-              style={styles.input}
-              placeholder="Дата окончания"
-              value={values.end_date}
-              onChangeText={handleChange('end_date')}
-            /> */}
         </ViewWithButtons>
       </>
     );
