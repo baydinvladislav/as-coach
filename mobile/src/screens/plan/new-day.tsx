@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { observer } from 'mobx-react';
@@ -18,15 +18,53 @@ type TProps = {
   handleNavigate: (
     nextScreen: PlanScreens,
     params?: Record<string, any>,
+    withValidate?: boolean,
   ) => void;
   params: Record<string, any>;
+  setValues: React.Dispatch<React.SetStateAction<TPlan>>;
+  errors: Record<string, any>;
 };
 
 export const NewDayScreen = observer(
-  ({ handleNavigate, values, handleChange, params }: TProps) => {
+  ({
+    handleNavigate,
+    values,
+    handleChange,
+    params,
+    setValues,
+    errors,
+  }: TProps) => {
+    useEffect(() => {
+      if (!params.isExists) {
+        setValues(values => ({
+          ...values,
+          trainings: [...values.trainings, { name: '', exercises: [] }],
+        }));
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     const { loading } = useStore();
 
     const isLoading = loading.isLoading;
+
+    const handleCancel = () => {
+      if (!params.isExists) {
+        setValues(values => ({
+          ...values,
+          trainings: values.trainings.filter(
+            (_, key) => key !== params.dayNumber,
+          ),
+        }));
+      } else {
+        setValues(values => ({
+          ...values,
+          trainings: params.oldValue,
+        }));
+      }
+
+      handleNavigate(PlanScreens.CREATE_PLAN_SCREEN);
+    };
 
     return (
       <>
@@ -35,9 +73,13 @@ export const NewDayScreen = observer(
         </Text>
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
-          onCancel={() => handleNavigate(PlanScreens.CREATE_PLAN_SCREEN)}
+          onCancel={handleCancel}
           onConfirm={() => {
-            handleNavigate(PlanScreens.CREATE_DAY_EXERCISES_SCREEN, params);
+            handleNavigate(
+              PlanScreens.CREATE_DAY_EXERCISES_SCREEN,
+              params,
+              true,
+            );
           }}
           confirmText={t('buttons.next')}
           isLoading={isLoading}
@@ -46,6 +88,7 @@ export const NewDayScreen = observer(
             placeholder="Название тренировки"
             value={values.trainings?.[params.dayNumber]?.name}
             onChangeText={handleChange(`trainings[${params.dayNumber}].name`)}
+            error={errors.trainings?.[params.dayNumber]?.name}
           />
         </ViewWithButtons>
       </>

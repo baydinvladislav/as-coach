@@ -24,7 +24,7 @@ type TProps = {
 } & Omit<TextInputProps, 'value'>;
 
 export const Checkbox = ({ placeholder, style, value, ...props }: TProps) => {
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(value ?? false);
 
   const handleChange = () => {
     props.onChangeCheckbox?.({

@@ -19,15 +19,17 @@ type TProps = {
   handleNavigate: (
     nextScreen: PlanScreens,
     params?: Record<string, any>,
+    withValidate?: boolean,
   ) => void;
   values: TPlan;
   handleChange: (e: string | React.ChangeEvent<any>) => () => void;
   setValues: React.Dispatch<React.SetStateAction<TPlan>>;
   params: Record<string, any>;
+  errors: Record<string, any>;
 };
 
 export const DayExercisesScreen = observer(
-  ({ handleNavigate, values, setValues, params }: TProps) => {
+  ({ handleNavigate, values, setValues, params, errors }: TProps) => {
     const [searchValue, setSearchValue] = useState<string | undefined>();
 
     const { loading, customer } = useStore();
@@ -47,7 +49,7 @@ export const DayExercisesScreen = observer(
       ),
     ];
 
-    const dayName = values.trainings[params.dayNumber].name;
+    const dayName = values?.trainings?.[params.dayNumber]?.name;
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const search = useCallback(
@@ -60,6 +62,24 @@ export const DayExercisesScreen = observer(
     useEffect(() => {
       search();
     }, [search, searchValue]);
+
+    const handleCancel = () => {
+      if (!params.isExists) {
+        setValues(values => ({
+          ...values,
+          trainings: values.trainings.filter(
+            (_, key) => key !== params.dayNumber,
+          ),
+        }));
+      } else {
+        setValues(values => ({
+          ...values,
+          trainings: params.oldValue,
+        }));
+      }
+
+      handleNavigate(PlanScreens.CREATE_PLAN_SCREEN);
+    };
 
     return (
       <>
@@ -82,8 +102,10 @@ export const DayExercisesScreen = observer(
         </Button>
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
-          onCancel={() => handleNavigate(PlanScreens.CREATE_DAY_SCREEN, params)}
-          onConfirm={() => handleNavigate(PlanScreens.CREATE_PLAN_SCREEN)}
+          onCancel={handleCancel}
+          onConfirm={() =>
+            handleNavigate(PlanScreens.CREATE_PLAN_SCREEN, undefined, true)
+          }
           confirmText={t('buttons.next')}
           isLoading={isLoading}
           isScroll={true}
@@ -99,6 +121,7 @@ export const DayExercisesScreen = observer(
                 dayName={dayName}
                 values={values}
                 dayNumber={params.dayNumber}
+                errors={errors?.trainings?.[params.dayNumber]}
               />
             ))
           ) : (

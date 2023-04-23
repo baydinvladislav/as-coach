@@ -37,8 +37,8 @@ export const PlanScreen = ({ route }: RoutesProps) => {
   const onSubmit = (values: TPlan) => {
     createPlan(customer.id, {
       ...values,
-      start_date: moment(values.start_date),
-      end_date: moment(values.end_date),
+      start_date: moment(values.start_date, 'DD mmm ddd'),
+      end_date: moment(values.end_date, 'DD mmm ddd'),
       diets: values.diets
         .map((diet, index) => {
           if (index !== 0 && !values.different_time) {
@@ -65,10 +65,7 @@ export const PlanScreen = ({ route }: RoutesProps) => {
   } = useFormik({
     initialValues: {
       // Server values
-      diets: [
-        { proteins: '', fats: '', carbs: '' },
-        { proteins: '', fats: '', carbs: '' },
-      ],
+      diets: [{ proteins: '', fats: '', carbs: '' }],
       start_date: '',
       end_date: '',
       trainings: [],
@@ -78,7 +75,6 @@ export const PlanScreen = ({ route }: RoutesProps) => {
 
       // Locally values
       different_time: false,
-      day_name: '',
     },
     onSubmit,
     validationSchema: createPlanValidationSchema,
@@ -86,28 +82,54 @@ export const PlanScreen = ({ route }: RoutesProps) => {
     validateOnBlur: false,
   });
 
+  const clearErrors = () => {
+    setErrors({});
+  };
+
   const handleNavigate = (
     nextScreen: PlanScreens,
     params?: Record<string, any>,
+    withValidate = false,
   ) => {
-    if (currentScreen === PlanScreens.CREATE_DATE_SCREEN) {
-      validateForm().then(data => {
-        if (
-          !Object.keys(data).includes('start_date') &&
-          !Object.keys(data).includes('end_date')
-        ) {
-          setCurrentScreen(nextScreen);
-          setParams(params || {});
-        }
-      });
-    } else {
+    if (!withValidate) {
+      clearErrors();
       setCurrentScreen(nextScreen);
       setParams(params || {});
     }
-  };
-
-  const clearErrors = () => {
-    setErrors({});
+    if (withValidate) {
+      if (currentScreen === PlanScreens.CREATE_DATE_SCREEN) {
+        validateForm().then(data => {
+          if (
+            !Object.keys(data).includes('start_date') &&
+            !Object.keys(data).includes('end_date')
+          ) {
+            clearErrors();
+            setCurrentScreen(nextScreen);
+            setParams(params || {});
+          }
+        });
+      } else if (currentScreen === PlanScreens.CREATE_DAY_SCREEN) {
+        validateForm().then(data => {
+          if (!Object.keys(data).includes('trainings')) {
+            clearErrors();
+            setCurrentScreen(nextScreen);
+            setParams(params || {});
+          }
+        });
+      } else if (currentScreen === PlanScreens.CREATE_DAY_EXERCISES_SCREEN) {
+        validateForm().then(data => {
+          if (!Object.keys(data).includes('trainings')) {
+            clearErrors();
+            setCurrentScreen(nextScreen);
+            setParams(params || {});
+          }
+        });
+      } else {
+        clearErrors();
+        setCurrentScreen(nextScreen);
+        setParams(params || {});
+      }
+    }
   };
 
   const formProps = {

@@ -17,9 +17,10 @@ import { FontSize } from '~types';
 type TProps = {
   onChangeText: (e: React.ChangeEvent<any>) => void;
   val?: number[];
+  errors?: string[];
 };
 
-export const Sets = ({ onChangeText, val }: TProps) => {
+export const Sets = ({ onChangeText, val, errors }: TProps) => {
   const [isRemovable, setIsRemovable] = useState(false);
   const [value, setValue] = useState<(number | string)[]>(val || ['']);
 
@@ -70,6 +71,7 @@ export const Sets = ({ onChangeText, val }: TProps) => {
           >
             <View pointerEvents="none">
               <Input
+                isError={Boolean(errors?.[index])}
                 maxLength={3}
                 ref={element => (inputsRefs.current[index] = element)}
                 value={String(value)}
@@ -100,7 +102,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Input = styled(TextInput)`
+const Input = styled(TextInput)<{ isError: boolean }>`
   font-size: ${FontSize.S16};
   width: ${normHor(53)}px;
   height: ${normVert(48)}px;
@@ -110,6 +112,10 @@ const Input = styled(TextInput)`
   padding-vertical: ${normVert(14)}px;
   padding-horizontal: ${normHor(4)}px;
   text-align: center;
+  ${({ isError }) =>
+    `border: 1px solid ${isError ? colors.red : colors.transparent};`}
+  border-radius: 12px;
+  background-color: ${({ isError }) => (isError ? colors.red2 : colors.black3)};
 `;
 
 const Icon = styled(TouchableOpacity)`

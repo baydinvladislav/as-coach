@@ -57,5 +57,22 @@ export const createPlanValidationSchema = () =>
   yup.object().shape({
     start_date: yup.string().required(t('errors.required')),
     end_date: yup.string().required(t('errors.required')),
-    day_name: yup.string().required(t('errors.required')),
+    diets: yup.array().of(
+      yup.object().shape({
+        proteins: yup.string().required(t('errors.required')),
+        fats: yup.string().required(t('errors.required')),
+        carbs: yup.string().required(t('errors.required')),
+      }),
+    ),
+    trainings: yup.array().of(
+      yup.object().shape({
+        name: yup.string().required(t('errors.required')),
+        exercises: yup.array().of(
+          yup.object().shape({
+            id: yup.string().required(t('errors.required')),
+            sets: yup.array().of(yup.string().required(t('errors.required'))),
+          }),
+        ),
+      }),
+    ),
   });
