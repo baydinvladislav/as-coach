@@ -52,16 +52,20 @@ class UserProfile(BaseModel):
     first_name: str
     last_name: Optional[str]
     gender: Optional[NewType('Gender', Gender)]
+    user_type: str
     birthday: Optional[date]
     email: Optional[str]
-    username: str
+    username: Optional[str]
     photo_path: Optional[str]
 
 
-class TokenSchema(BaseModel):
+class LoginResponse(BaseModel):
     """
-    Validates token schema
+    Response after successfully user login
     """
+    id: str
+    user_type: str
+    first_name: str
     access_token: str
     refresh_token: str
 

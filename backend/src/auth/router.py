@@ -4,7 +4,7 @@ Contains routes for auth service.
 
 import shutil
 from datetime import date, datetime
-from typing import NewType
+from typing import NewType, Union
 
 from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Form
 from fastapi.security import OAuth2PasswordRequestForm
@@ -14,10 +14,10 @@ from src.dependencies import get_db
 from src.models import Gender
 from src.auth.schemas import UserProfile
 from src.customer.models import Customer
+from src.customer.dependencies import get_coach_or_customer
 
-from .dependencies import get_current_user
 from .models import User
-from .schemas import TokenSchema, UserRegisterIn, UserRegisterOut
+from .schemas import LoginResponse, UserRegisterIn, UserRegisterOut
 from .utils import (create_access_token, create_refresh_token,
                     get_hashed_password, verify_password)
 from ..config import STATIC_DIR
@@ -74,7 +74,7 @@ async def create_user(
     "/login",
     summary="Create access and refresh tokens for user",
     status_code=status.HTTP_200_OK,
-    response_model=TokenSchema)
+    response_model=LoginResponse)
 async def login(
         form_data: OAuth2PasswordRequestForm = Depends(),
         database: Session = Depends(get_db)):
@@ -111,6 +111,7 @@ async def login(
 
     return {
         "id": str(user.id),
+        "user_type": "coach" if coach else "customer",
         "first_name": user.first_name,
         "access_token": create_access_token(str(user.username)),
         "refresh_token": create_refresh_token(str(user.username))
@@ -121,9 +122,10 @@ async def login(
     "/me",
     status_code=status.HTTP_200_OK,
     summary="Get details of currently logged in user")
-async def get_me(user: User = Depends(get_current_user)):
+async def get_me(user: Union[User, Customer] = Depends(get_coach_or_customer)):
     """
     Returns info about current user
+    Endpoint can be used by both the coach and the customer
 
     Args:
         user: user object from get_current_user dependency
@@ -133,6 +135,7 @@ async def get_me(user: User = Depends(get_current_user)):
     """
     return {
         "id": str(user.id),
+        "user_type": "coach" if isinstance(user, User) else "customer",
         "username": user.username,
         "first_name": user.first_name
     }
@@ -143,12 +146,13 @@ async def get_me(user: User = Depends(get_current_user)):
     status_code=status.HTTP_200_OK,
     response_model=UserProfile,
     summary="Get user profile")
-async def get_profile(user: User = Depends(get_current_user)):
+async def get_profile(user: Union[User, Customer] = Depends(get_coach_or_customer)):
     """
     Returns full info about user
+    Endpoint can be used by both the coach and the customer
 
     Args:
-        user: user object from get_current_user dependency
+        user: user/customer object from get_coach_or_customer dependency
 
     Returns:
         dictionary with full user info
@@ -157,6 +161,7 @@ async def get_profile(user: User = Depends(get_current_user)):
         "id": str(user.id),
         "first_name": user.first_name,
         "last_name": user.last_name,
+        "user_type": "coach" if isinstance(user, User) else "customer",
         "gender": user.gender,
         "birthday": user.birthday,
         "email": user.email,
@@ -179,10 +184,11 @@ async def update_profile(
         birthday: date = Form(None),
         email: str = Form(None),
         database: Session = Depends(get_db),
-        user: User = Depends(get_current_user)
+        user: Union[User, Customer] = Depends(get_coach_or_customer)
 ) -> dict:
     """
     Updated full info about user
+    Endpoint can be used by both the coach and the customer
 
     Args:
         first_name: client value from body
@@ -208,7 +214,12 @@ async def update_profile(
 
     user.modified = datetime.now()
 
-    database.query(User).filter(User.id == str(user.id)).update({
+    if isinstance(user, User):
+        user_class = User
+    else:
+        user_class = Customer
+
+    database.query(user_class).filter(user_class.id == str(user.id)).update({
         "first_name": first_name,
         "username": username,
         "last_name": last_name,
@@ -229,6 +240,7 @@ async def update_profile(
         "id": str(user.id),
         "first_name": user.first_name,
         "last_name": user.last_name,
+        "user_type": "coach" if isinstance(user, User) else "customer",
         "gender": user.gender,
         "birthday": user.birthday,
         "email": user.email,

@@ -5,8 +5,11 @@ Module for auth utils
 from datetime import datetime, timedelta
 
 from jose import jwt
+from fastapi import HTTPException, status
+from pydantic import ValidationError
 from passlib.context import CryptContext
 
+from src.auth.schemas import TokenPayload
 from src.auth.config import (ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM,
                          JWT_REFRESH_SECRET_KEY, JWT_SECRET_KEY,
                          REFRESH_TOKEN_EXPIRE_MINUTES)
@@ -79,3 +82,30 @@ def create_refresh_token(subject: str) -> str:
     to_encode = {"exp": expires_delta, "sub": str(subject)}
     encoded_jwt = jwt.encode(to_encode, str(JWT_REFRESH_SECRET_KEY), str(ALGORITHM))
     return encoded_jwt
+
+
+def decode_jwt_token(token: str):
+    """
+    Decodes given token
+    """
+    try:
+        payload = jwt.decode(
+            token, str(JWT_SECRET_KEY), algorithms=[str(ALGORITHM)]
+        )
+        token_data = TokenPayload(**payload)
+
+        if datetime.fromtimestamp(token_data.exp) < datetime.now():
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token expired",
+                headers={"WWW-Authenticate": "Bearer"}
+            )
+
+        return token_data
+
+    except (jwt.JWTError, ValidationError):  # type: ignore
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
