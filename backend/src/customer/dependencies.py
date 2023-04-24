@@ -2,20 +2,14 @@
 Dependencies for customer service
 """
 
-from typing import Union
-from datetime import datetime
-
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from jose import jwt
-from pydantic import ValidationError
 from sqlalchemy.orm import Session
 
 from src.auth.models import User
 from src.customer.models import Customer
-from src.auth.schemas import TokenPayload
-from src.auth.config import ALGORITHM, JWT_SECRET_KEY
 from src.dependencies import get_db
+from src.auth.utils import decode_jwt_token
 
 reuseable_oauth = OAuth2PasswordBearer(
     tokenUrl="/api/login",
@@ -25,33 +19,14 @@ reuseable_oauth = OAuth2PasswordBearer(
 
 async def get_coach_or_customer(
         token: str = Depends(reuseable_oauth),
-        database: Session = Depends(get_db)) -> Union[User, Customer]:
+        database: Session = Depends(get_db)):
     """
     Provide endpoint permission for coach and customer
 
     Extracts username from client token,
     provides current user
     """
-    try:
-        payload = jwt.decode(
-            token, str(JWT_SECRET_KEY), algorithms=[str(ALGORITHM)]
-        )
-        token_data = TokenPayload(**payload)
-
-        if datetime.fromtimestamp(token_data.exp) < datetime.now():
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token expired",
-                headers={"WWW-Authenticate": "Bearer"}
-            )
-
-    except (jwt.JWTError, ValidationError):  # type: ignore
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"}
-        )
-
+    token_data = decode_jwt_token(token)
     token_username = token_data.sub
 
     coach = database.query(User).filter(User.username == token_username).first()
