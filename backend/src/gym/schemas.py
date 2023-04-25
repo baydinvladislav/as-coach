@@ -2,7 +2,7 @@
 Schemas for gym service
 """
 
-from typing import List
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -22,6 +22,7 @@ class Exercise(BaseModel):
     """
     id: str
     sets: List[int]
+    supersets: Optional[List[str]]
 
 
 class Training(BaseModel):

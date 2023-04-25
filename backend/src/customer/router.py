@@ -1,3 +1,4 @@
+import uuid
 from typing import Optional, Union
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -249,11 +250,21 @@ async def create_training_plan(
             database.flush()
 
             # create exercises on training
+            superset_dict = {}
             for exercise_item in training_item.exercises:
+                if len(exercise_item.supersets) > 0:
+                    if str(exercise_item.id) not in superset_dict:
+                        superset_id = str(uuid.uuid4())
+
+                        superset_dict[str(exercise_item.id)] = superset_id
+                        for e in exercise_item.supersets:
+                            superset_dict[str(e)] = superset_id
+
                 exercise_on_training = ExercisesOnTraining(
                     training_id=str(training.id),
                     exercise_id=str(exercise_item.id),
-                    sets=exercise_item.sets
+                    sets=exercise_item.sets,
+                    superset_id=superset_dict.get(str(exercise_item.id))
                 )
                 database.add(exercise_on_training)
                 database.flush()

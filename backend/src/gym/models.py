@@ -90,6 +90,7 @@ class ExercisesOnTraining(Base, BaseModel):
     training_id = Column(UUID, ForeignKey("training.id"), nullable=False)
     exercise_id = Column(UUID, ForeignKey("exercise.id"), nullable=False)
     sets = Column('sets', JSON, default=[])
+    superset_id = Column(UUID, nullable=True)
 
     def __repr__(self):
         return f"exercise on training: {self.id}"
