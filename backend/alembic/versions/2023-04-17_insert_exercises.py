@@ -51,12 +51,17 @@ def upgrade() -> None:
             name='Сведения в кроссовере',
             muscle_group_id=str(chest.id)
         ),
+
         Exercise(
             name='Подъем штанги на бицепс',
             muscle_group_id=str(biceps.id)
         ),
         Exercise(
             name='Сгибания Молот',
+            muscle_group_id=str(biceps.id)
+        ),
+        Exercise(
+            name='Сгибания на скамье Скотта',
             muscle_group_id=str(biceps.id)
         ),
 
@@ -72,12 +77,17 @@ def upgrade() -> None:
             name='Пулловер с верхнего блока',
             muscle_group_id=str(back.id)
         ),
+
         Exercise(
             name='Жим штанги узким хватом',
             muscle_group_id=str(triceps.id)
         ),
         Exercise(
             name='Разгибания с верхнего блока',
+            muscle_group_id=str(triceps.id)
+        ),
+        Exercise(
+            name='Французский жим',
             muscle_group_id=str(triceps.id)
         ),
 
