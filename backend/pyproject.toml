@@ -16,6 +16,7 @@ passlib = "^1.7.4"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 sqlalchemy = "^2.0.4"
 alembic = "^1.10.2"
+python-dotenv = "^1.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
