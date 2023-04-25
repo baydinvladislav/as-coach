@@ -90,6 +90,12 @@ async def login(
     Returns:
         access_token and refresh_token inside dictionary
     """
+    if not form_data.username or not form_data.password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Empty fields"
+        )
+
     coach = database.query(User).filter(User.username == form_data.username).first()
     customer = database.query(Customer).filter(Customer.username == form_data.username).first()
 
