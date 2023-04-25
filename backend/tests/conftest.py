@@ -2,9 +2,9 @@ import os
 from datetime import date, timedelta
 import pytest
 
-from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from src import engine
 from src.customer.models import Customer, TrainingPlan
 from src.auth.utils import get_hashed_password
 from src.dependencies import get_db
@@ -13,7 +13,6 @@ from src.auth.models import User
 from src.gym.models import Exercise, MuscleGroup
 from src.customer.utils import generate_random_password
 
-DATABASE_URL = os.getenv("DATABASE_URL")
 
 TEST_USER_FIRST_NAME = os.getenv("TEST_USER_FIRST_NAME")
 TEST_USER_USERNAME = os.getenv("TEST_USER_USERNAME")
@@ -23,7 +22,6 @@ TEST_CUSTOMER_FIRST_NAME = os.getenv("TEST_CUSTOMER_FIRST_NAME")
 TEST_CUSTOMER_LAST_NAME = os.getenv("TEST_CUSTOMER_LAST_NAME")
 TEST_CUSTOMER_USERNAME = os.getenv("TEST_CUSTOMER_USERNAME")
 
-engine = create_engine(DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
@@ -222,7 +220,7 @@ async def startup_event():
     In the beginning on each test creates database schema,
     also changes production db to testing db
     """
-    from src.database import Base
+    from src import Base, engine
 
     Base.metadata.create_all(bind=engine)
     app.dependency_overrides[get_db] = override_get_db
