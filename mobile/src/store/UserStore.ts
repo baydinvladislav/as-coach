@@ -1,8 +1,10 @@
 import { action, computed, makeObservable, observable } from 'mobx';
 
-import { login, me, profileEdit, registration } from '@api';
+import { getMuscleGroups, login, me, profileEdit, registration } from '@api';
 import { TOKEN } from '@constants';
 import { storage } from '@utils';
+
+import { TMuscleGroups } from '~types';
 
 import { RootStore } from './RootStore';
 import { actionLoading } from './action-loading';
@@ -35,6 +37,7 @@ export default class UserStore {
     birthday: '',
     email: '',
   };
+  @observable muscleGroups: TMuscleGroups[] = [];
 
   @action
   setHasAccess(isSignedIn: boolean) {
@@ -51,6 +54,22 @@ export default class UserStore {
       const { data } = await me();
       this.setHasAccess(true);
       this.me = data;
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+
+  @action
+  async setMuscleGroups(data: TMuscleGroups) {
+    this.muscleGroups = data;
+  }
+
+  @action
+  async getMuscleGroups() {
+    try {
+      const { data } = await getMuscleGroups();
+
+      this.muscleGroups(data)
     } catch (e) {
       console.warn(e);
     }

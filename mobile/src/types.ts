@@ -41,6 +41,11 @@ export type TExercises = {
   name: string;
 };
 
+export type TMuscleGroups = {
+  id: string;
+  name: string;
+};
+
 export type TExercisesEdited = {
   [key: string]: TExercises[];
 };

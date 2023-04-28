@@ -1,16 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { observer } from 'mobx-react';
 
-import { SearchInput } from '@components';
+import { CheckboxGroup, SearchInput } from '@components';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { CustomerProps } from '@store';
-import { normHor, normVert } from '@theme';
-import { ViewWithButtons } from '@ui';
+import { colors, normHor, normVert } from '@theme';
+import { Text, ViewWithButtons } from '@ui';
 
-import { TPlan } from '~types';
+import { FontSize, TMuscleGroups, TPlan } from '~types';
 
 import { PlanScreens } from './plan';
 
@@ -30,7 +30,6 @@ type TProps = {
 
 export const CreateExerciseScreen = observer(
   ({
-    customer,
     handleNavigate,
     handleSubmit,
     values,
@@ -38,48 +37,43 @@ export const CreateExerciseScreen = observer(
     errors,
     setValues,
   }: TProps) => {
-    const searchValue = '';
-    const setSearchValue = '';
-
-    const { loading } = useStore();
-
+    const [searchValue, setSearchValue] = useState<string | undefined>();
+    const { loading, user } = useStore();
     const isLoading = loading.isLoading;
-
-    const handleDifferentTime = () => {
-      if (values.different_time) {
-        setValues(values => ({
-          ...values,
-          different_time: !values.different_time,
-          diets: values.diets.filter((_, key) => key === 0),
-        }));
-      } else {
-        setValues(values => ({
-          ...values,
-          different_time: !values.different_time,
-          diets: [...values.diets, { proteins: '', fats: '', carbs: '' }],
-        }));
-      }
-    };
-
+    const data = user.muscleGroups;
+    
     return (
-      <ViewWithButtons
-        style={{ justifyContent: 'space-between' }}
-        onCancel={() => handleNavigate(PlanScreens.CREATE_DATE_SCREEN)}
-        onConfirm={handleSubmit}
-        confirmText={t('buttons.createPlan')}
-        cancelText={t('buttons.prev')}
-        isLoading={isLoading}
-        isScroll={true}
-      >
+      <>
+        <Text style={styles.title} color={colors.white} fontSize={FontSize.S20}>
+          {t('newExercise.title')}
+        </Text>
         <View style={styles.searchInput}>
-          <SearchInput value={searchValue} />
+          <SearchInput value={searchValue} onChangeText={setSearchValue} />
         </View>
-      </ViewWithButtons>
+        <ViewWithButtons
+          style={{ justifyContent: 'space-between' }}
+          onCancel={() => handleNavigate(PlanScreens.CREATE_DATE_SCREEN)}
+          onConfirm={handleSubmit}
+          confirmText={t('buttons.create')}
+          cancelText={t('buttons.cancel')}
+          isLoading={isLoading}
+          isScroll={true}
+          // eslint-disable-next-line react/no-children-prop
+          children={undefined}
+        />
+        <CheckboxGroup data={data} />
+      </>
     );
   },
 );
 
 const styles = StyleSheet.create({
+  title: {
+    marginTop: normVert(14),
+    marginBottom: normVert(16),
+    marginLeft: normHor(16),
+  },
+
   searchInput: {
     marginBottom: normVert(20),
     marginHorizontal: normHor(16),

@@ -49,6 +49,9 @@ export const ru = {
     title: 'День {day}',
     exercisesTitle: 'День {day}. {exercises}',
   },
+  newExercise: {
+    title: 'Новое упражнение',
+  },
   profile: {
     profileTitle: 'Профиль',
     nav1: 'Личные данные',
@@ -95,6 +98,7 @@ export const ru = {
     save: 'Сохранить',
     cancel: 'Отменить',
     forgotPassword: 'Забыл (-а) пароль',
+    create: 'Создать',
     createPlan: 'Создать план',
     createExercises: 'Создать упражнения',
     addDay: 'Добавить день',
