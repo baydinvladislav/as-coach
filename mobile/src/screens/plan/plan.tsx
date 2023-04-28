@@ -10,6 +10,7 @@ import { createPlanValidationSchema } from '@utils';
 
 import { TPlan } from '~types';
 
+import { CreateExerciseScreen } from './create-exercise';
 import { CreatePlanScreen } from './create-plan';
 import { DayExercisesScreen } from './day-exercises';
 import { Layout } from './layout';
@@ -124,6 +125,14 @@ export const PlanScreen = ({ route }: RoutesProps) => {
             setParams(params || {});
           }
         });
+      } else if (currentScreen === PlanScreens.CREATE_EXERCISES_SCREEN) {
+        validateForm().then(data => {
+          if (!Object.keys(data).includes('trainings')) {
+            clearErrors();
+            setCurrentScreen(nextScreen);
+            setParams(params || {});
+          }
+        });
       } else {
         clearErrors();
         setCurrentScreen(nextScreen);
@@ -161,6 +170,9 @@ export const PlanScreen = ({ route }: RoutesProps) => {
 
       case PlanScreens.CREATE_DAY_EXERCISES_SCREEN:
         return <DayExercisesScreen {...formProps} />;
+
+      case PlanScreens.CREATE_EXERCISES_SCREEN:
+        return <CreateExerciseScreen {...formProps} />;
     }
   };
 
