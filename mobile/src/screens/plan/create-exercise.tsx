@@ -1,16 +1,17 @@
+/* eslint-disable arrow-body-style */
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { observer } from 'mobx-react';
 
-import { CheckboxGroup, SearchInput } from '@components';
+import { SearchInput } from '@components';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { CustomerProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
-import { Text, ViewWithButtons } from '@ui';
+import { Checkbox, Text, ViewWithButtons } from '@ui';
 
-import { FontSize, TMuscleGroups, TPlan } from '~types';
+import { FontSize, TPlan } from '~types';
 
 import { PlanScreens } from './plan';
 
@@ -41,7 +42,10 @@ export const CreateExerciseScreen = observer(
     const { loading, user } = useStore();
     const isLoading = loading.isLoading;
     const data = user.muscleGroups;
-    
+    const handlePress = () => {
+      '§12';
+    };
+
     return (
       <>
         <Text style={styles.title} color={colors.white} fontSize={FontSize.S20}>
@@ -58,16 +62,29 @@ export const CreateExerciseScreen = observer(
           cancelText={t('buttons.cancel')}
           isLoading={isLoading}
           isScroll={true}
-          // eslint-disable-next-line react/no-children-prop
-          children={undefined}
-        />
-        <CheckboxGroup data={data} />
+        >
+          {data.map(item => {
+            return (
+              <Checkbox
+                key={item.id}
+                style={styles.checkbox}
+                onChangeCheckbox={() => handlePress()}
+                placeholder={item.name}
+                value={false}
+              />
+            );
+          })}
+        </ViewWithButtons>
       </>
     );
   },
 );
 
 const styles = StyleSheet.create({
+  checkbox: {
+    paddingVertical: normVert(16),
+  },
+
   title: {
     marginTop: normVert(14),
     marginBottom: normVert(16),

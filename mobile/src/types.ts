@@ -35,14 +35,14 @@ export type TPlan = {
   different_time: boolean;
 };
 
-export type TExercises = {
+export type TMuscleGroups = {
   id: string;
-  muscle_group: string;
   name: string;
 };
 
-export type TMuscleGroups = {
+export type TExercises = {
   id: string;
+  muscle_group: string;
   name: string;
 };
 

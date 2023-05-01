@@ -60,7 +60,7 @@ export default class UserStore {
   }
 
   @action
-  async setMuscleGroups(data: TMuscleGroups) {
+  setMuscleGroups(data: TMuscleGroups[]) {
     this.muscleGroups = data;
   }
 
@@ -69,7 +69,7 @@ export default class UserStore {
     try {
       const { data } = await getMuscleGroups();
 
-      this.muscleGroups(data)
+      this.setMuscleGroups(data);
     } catch (e) {
       console.warn(e);
     }
