@@ -38,7 +38,7 @@ export const Checkbox = ({ placeholder, style, value, ...props }: TProps) => {
       <Square isChecked={value || isChecked}>
         {(value || isChecked) && <CheckIcon />}
       </Square>
-      <Text style={styles.text} fontSize={FontSize.S16} color={colors.black4}>
+      <Text style={styles.text} fontSize={FontSize.S16} color={colors.white}>
         {placeholder}
       </Text>
     </Container>

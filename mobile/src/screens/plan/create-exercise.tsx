@@ -1,15 +1,13 @@
-/* eslint-disable arrow-body-style */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { observer } from 'mobx-react';
 
-import { SearchInput } from '@components';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { CustomerProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
-import { Checkbox, Text, ViewWithButtons } from '@ui';
+import { Checkbox, Input, Text, ViewWithButtons } from '@ui';
 
 import { FontSize, TPlan } from '~types';
 
@@ -19,6 +17,7 @@ type TProps = {
   customer: CustomerProps;
   handleSubmit: () => void;
   values: TPlan;
+  params: Record<string, any>;
   handleChange: (e: string | React.ChangeEvent<any>) => () => void;
   handleNavigate: (
     nextScreen: PlanScreens,
@@ -36,9 +35,9 @@ export const CreateExerciseScreen = observer(
     values,
     handleChange,
     errors,
+    params,
     setValues,
   }: TProps) => {
-    const [searchValue, setSearchValue] = useState<string | undefined>();
     const { loading, user } = useStore();
     const isLoading = loading.isLoading;
     const data = user.muscleGroups;
@@ -48,6 +47,7 @@ export const CreateExerciseScreen = observer(
 
     useEffect(() => {
       user.getMuscleGroups();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -55,8 +55,13 @@ export const CreateExerciseScreen = observer(
         <Text style={styles.title} color={colors.white} fontSize={FontSize.S20}>
           {t('newExercise.title')}
         </Text>
-        <View style={styles.searchInput}>
-          <SearchInput value={searchValue} onChangeText={setSearchValue} />
+        <View style={styles.input}>
+          <Input
+            placeholder="Название"
+            // value={values.trainings?.[params.dayNumber]?.name}
+            onChangeText={handleChange(`trainings[${params.dayNumber}].name`)}
+            error={errors.trainings?.[params.dayNumber]?.name}
+          />
         </View>
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
@@ -67,17 +72,18 @@ export const CreateExerciseScreen = observer(
           isLoading={isLoading}
           isScroll={true}
         >
-          {data.map(item => {
-            return (
-              <Checkbox
-                key={item.id}
-                style={styles.checkbox}
-                onChangeCheckbox={() => handlePress()}
-                placeholder={item.name}
-                value={false}
-              />
-            );
-          })}
+          {data.map(item => (
+            <Checkbox
+              key={item.id}
+              style={[
+                styles.checkbox,
+                item.name != data[0].name && styles.border,
+              ]}
+              onChangeCheckbox={() => handlePress()}
+              placeholder={item.name}
+              value={false}
+            />
+          ))}
         </ViewWithButtons>
       </>
     );
@@ -95,8 +101,13 @@ const styles = StyleSheet.create({
     marginLeft: normHor(16),
   },
 
-  searchInput: {
-    marginBottom: normVert(20),
+  border: {
+    borderTopColor: colors.black3,
+    borderTopWidth: 1,
+  },
+
+  input: {
+    marginBottom: normVert(40),
     marginHorizontal: normHor(16),
   },
 });

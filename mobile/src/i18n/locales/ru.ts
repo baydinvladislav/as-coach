@@ -50,7 +50,7 @@ export const ru = {
     exercisesTitle: 'День {day}. {exercises}',
   },
   newExercise: {
-    title: 'Новое упражнение',
+    title: 'Создать упражнение',
   },
   profile: {
     profileTitle: 'Профиль',
