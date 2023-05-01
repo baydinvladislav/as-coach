@@ -1,5 +1,5 @@
 /* eslint-disable arrow-body-style */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { observer } from 'mobx-react';
@@ -45,6 +45,10 @@ export const CreateExerciseScreen = observer(
     const handlePress = () => {
       '§12';
     };
+
+    useEffect(() => {
+      user.getMuscleGroups();
+    }, []);
 
     return (
       <>
