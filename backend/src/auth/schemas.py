@@ -68,6 +68,7 @@ class LoginResponse(BaseModel):
     first_name: str
     access_token: str
     refresh_token: str
+    password_changed: bool
 
 
 class TokenPayload(BaseModel):
