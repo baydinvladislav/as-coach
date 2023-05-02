@@ -36,9 +36,9 @@ export const DetailClient = ({ route }: RoutesProps) => {
 
   useFocusEffect(
     useCallback(() => {
+      loading.decreaseLoadingStatus();
       const client = customer.getCustomerById(id);
       customer.getCustomerPlanById(id).then(plans => {
-        loading.decreaseLoadingStatus();
         setData({ ...data, ...client, plans });
       });
       // eslint-disable-next-line react-hooks/exhaustive-deps

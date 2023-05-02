@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { Animated, Easing, StyleProp, View, ViewStyle } from 'react-native';
 
 import { Edge, SafeAreaView } from 'react-native-safe-area-context';
@@ -25,19 +25,18 @@ export const Layout = ({
 }: TProps) => {
   const opacityAnim = useRef(new Animated.Value(backgroundOpacity)).current;
 
-  const changeOpacityUp = () => {
+  const changeOpacityUp = useCallback(() => {
     Animated.timing(opacityAnim, {
       toValue: backgroundOpacity,
       duration: 100,
       useNativeDriver: true,
       easing: Easing.linear,
     }).start();
-  };
+  }, [backgroundOpacity, opacityAnim]);
 
   useEffect(() => {
     changeOpacityUp();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [backgroundOpacity]);
+  }, [backgroundOpacity, changeOpacityUp]);
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={edges}>
