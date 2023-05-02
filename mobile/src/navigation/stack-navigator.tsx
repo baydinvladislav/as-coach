@@ -31,13 +31,13 @@ export const StackNavigator = observer(() => {
   const isGuest = !user.hasAccess; // меняем !user.hasAccess на !!!user.hasAccess для разработки. Чтобы открывался сразу лк
 
   useEffect(() => {
+    const getToken = storage.getItem(TOKEN);
+    getToken.then((token?: string) => {
+      token && user.getMe();
+    });
+
     if (!isGuest) {
       customer.getExercises();
-    } else {
-      const getToken = storage.getItem(TOKEN);
-      getToken.then((token?: string) => {
-        token && user.getMe();
-      });
     }
   }, [customer, isGuest, user]);
 

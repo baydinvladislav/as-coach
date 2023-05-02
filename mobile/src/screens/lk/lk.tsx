@@ -37,7 +37,7 @@ moment.locale('ru');
 export const LkScreen = observer(() => {
   const [searchValue, setSearchValue] = useState<string | undefined>();
 
-  const { user, customer } = useStore();
+  const { user, customer, loading } = useStore();
   const { top } = useSafeAreaInsets();
 
   const { navigate } = useNavigation();
@@ -62,12 +62,20 @@ export const LkScreen = observer(() => {
   const customers = customer.customers;
   const searchCustomers = customer.searchCustomers;
 
+  const handleNavigateDetailClient = (id: string) => {
+    loading.increaseLoadingStatus();
+    navigate(Screens.DetailClient, {
+      id,
+      from: Screens.LkScreen,
+    });
+  };
+
   const renderItem = (customer: ListRenderItemInfo<CustomerProps>) => (
     <ClientCard
       key={customer.item.id}
       firstName={customer.item.first_name}
       lastName={customer.item.last_name}
-      onPress={() => navigate(Screens.DetailClient, { id: customer.item.id })}
+      onPress={() => handleNavigateDetailClient(customer.item.id)}
     />
   );
 

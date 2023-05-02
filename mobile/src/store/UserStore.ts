@@ -72,10 +72,6 @@ export default class UserStore {
       await storage.setItem(TOKEN, access_token ?? '');
 
       this.setHasAccess(true);
-
-      const { data } = await me();
-
-      this.setMe(data);
     } catch (e) {
       console.warn(e);
       throw e;
@@ -93,10 +89,6 @@ export default class UserStore {
       await storage.setItem(TOKEN, access_token ?? '');
 
       this.setHasAccess(true);
-
-      const { data } = await me();
-
-      this.setMe(data);
     } catch (e) {
       console.warn(e);
       throw e;

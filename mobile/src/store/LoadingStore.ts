@@ -25,6 +25,8 @@ export class LoadingStore {
 
   @action
   decreaseLoadingStatus() {
-    this.loadingStatus = this.loadingStatus - 1;
+    if (this.loadingStatus !== 0) {
+      this.loadingStatus = this.loadingStatus - 1;
+    }
   }
 }

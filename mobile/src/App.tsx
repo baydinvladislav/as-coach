@@ -10,6 +10,7 @@ import React, { useRef, useState } from 'react';
 import 'moment/locale/ru';
 import 'react-native-gesture-handler';
 import { Edge, SafeAreaProvider } from 'react-native-safe-area-context';
+import { enableScreens } from 'react-native-screens';
 
 import { Screens, StackNavigator } from '@navigation';
 import {
@@ -21,6 +22,8 @@ import { colors } from '@theme';
 import { Layout } from '@ui';
 
 const App = () => {
+  enableScreens(true);
+
   const navigationRef = useNavigationContainerRef();
   const [currentScreen, setCurrentScreen] = useState<string>(
     Screens.WelcomeScreen,

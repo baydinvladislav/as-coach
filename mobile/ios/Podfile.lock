@@ -371,6 +371,9 @@ PODS:
     - React-Core
   - RNGestureHandler (2.4.2):
     - React-Core
+  - RNScreens (3.20.0):
+    - React-Core
+    - React-RCTImage
   - RNSVG (12.3.0):
     - React-Core
   - SocketRocket (0.6.0)
@@ -441,6 +444,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeAvoidSoftinput (from `../node_modules/react-native-avoid-softinput`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -541,6 +545,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-avoid-softinput"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNScreens:
+    :path: "../node_modules/react-native-screens"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   Yoga:
@@ -600,6 +606,7 @@ SPEC CHECKSUMS:
   ReactCommon: 095366164a276d91ea704ce53cb03825c487a3f2
   ReactNativeAvoidSoftinput: 33a9d92d54716d7b3133f48b93545f27a084a14a
   RNGestureHandler: 61628a2c859172551aa2100d3e73d1e57878392f
+  RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
   RNSVG: 302bfc9905bd8122f08966dc2ce2d07b7b52b9f8
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Yoga: 99652481fcd320aefa4a7ef90095b95acd181952
