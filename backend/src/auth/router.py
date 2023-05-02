@@ -19,7 +19,7 @@ from src.customer.dependencies import get_coach_or_customer
 from .models import User
 from .schemas import LoginResponse, UserRegisterIn, UserRegisterOut
 from .utils import (create_access_token, create_refresh_token,
-                    get_hashed_password, verify_password)
+                    get_hashed_password, verify_password, password_context)
 from ..config import STATIC_DIR
 
 auth_router = APIRouter()
@@ -109,10 +109,10 @@ async def login(
 
     hashed_password = str(user.password)
     if not verify_password(form_data.password, hashed_password):
-        if not customer.password == form_data.password:
+        if customer and customer.password != form_data.password:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Incorrect email or password"
+                detail="Incorrect password"
             )
 
     return {
@@ -120,7 +120,8 @@ async def login(
         "user_type": "coach" if coach else "customer",
         "first_name": user.first_name,
         "access_token": create_access_token(str(user.username)),
-        "refresh_token": create_refresh_token(str(user.username))
+        "refresh_token": create_refresh_token(str(user.username)),
+        "password_changed": bool(password_context.identify(hashed_password))
     }
 
 
