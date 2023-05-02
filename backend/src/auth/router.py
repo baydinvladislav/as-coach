@@ -112,7 +112,7 @@ async def login(
         if customer and customer.password != form_data.password:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Incorrect email or password"
+                detail="Incorrect password"
             )
 
     return {
