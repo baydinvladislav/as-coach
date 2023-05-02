@@ -41,6 +41,11 @@ export default class UserStore {
     this.isSignedIn = isSignedIn;
   }
 
+  @action
+  setMe(me: UserProps) {
+    this.me = me;
+  }
+
   @computed get hasAccess() {
     return this.isSignedIn;
   }
@@ -50,7 +55,7 @@ export default class UserStore {
     try {
       const { data } = await me();
       this.setHasAccess(true);
-      this.me = data;
+      this.setMe(data);
     } catch (e) {
       console.warn(e);
     }
@@ -70,7 +75,7 @@ export default class UserStore {
 
       const { data } = await me();
 
-      this.me = data;
+      this.setMe(data);
     } catch (e) {
       console.warn(e);
       throw e;
@@ -91,7 +96,7 @@ export default class UserStore {
 
       const { data } = await me();
 
-      this.me = data;
+      this.setMe(data);
     } catch (e) {
       console.warn(e);
       throw e;
@@ -103,7 +108,7 @@ export default class UserStore {
   async profileEdit(values: Partial<UserProps>) {
     try {
       const { data } = await profileEdit(values);
-      this.me = data;
+      this.setMe(data);
     } catch (e) {
       console.warn(e);
       throw e;

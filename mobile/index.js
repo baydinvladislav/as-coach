@@ -2,7 +2,13 @@
  * @format
  */
 import React from 'react';
-import { AppRegistry, ScrollView, StatusBar } from 'react-native';
+import {
+  AppRegistry,
+  ScrollView,
+  StatusBar,
+  Text,
+  TextInput,
+} from 'react-native';
 
 import { name as appName } from 'app.json';
 import overrideColorScheme from 'react-native-override-color-scheme';
@@ -12,7 +18,11 @@ import App from './src/App';
 
 overrideColorScheme.setScheme('dark');
 
+TextInput.defaultProps = TextInput.defaultProps || {};
+Text.defaultProps = Text.defaultProps || {};
 ScrollView.defaultProps = ScrollView.defaultProps || {};
+Text.defaultProps.allowFontScaling = false;
+TextInput.defaultProps.allowFontScaling = false;
 ScrollView.defaultProps.bounces = false;
 ScrollView.defaultProps.showsVerticalScrollIndicator = false;
 ScrollView.defaultProps.showsHorizontalScrollIndicator = false;
