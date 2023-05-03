@@ -25,16 +25,20 @@ import { windowHeight, windowWidth } from '@utils';
 import { ButtonType, FontSize, TPlanType } from '~types';
 
 export const DetailClient = ({ route }: RoutesProps) => {
+  const [previousScreen, setPreviousScreen] = useState(
+    (route.params as { from: Screens })?.from,
+  );
   const { navigate, goBack } = useNavigation();
   const [data, setData] = useState<Partial<CustomerProps>>({});
-  const { customer } = useStore();
+  const { customer, loading } = useStore();
 
   const id = (route.params as { id: string })?.id;
 
   useFocusEffect(
     useCallback(() => {
+      loading.decreaseLoadingStatus();
       const client = customer.getCustomerById(id);
-      customer.getCustomerPlanById(client).then(plans => {
+      customer.getCustomerPlanById(id).then(plans => {
         setData({ ...data, ...client, plans });
       });
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -42,8 +46,18 @@ export const DetailClient = ({ route }: RoutesProps) => {
   );
 
   const renderItem = (plan: ListRenderItemInfo<TPlanType>) => (
-    <PlanCard plan={plan.item} />
+    <PlanCard plan={plan.item} onPress={handleNavigateDetailPlan} />
   );
+
+  const handleNavigatePlan = () => {
+    setPreviousScreen(Screens.PlanScreen);
+    navigate(Screens.PlanScreen, data);
+  };
+
+  const handleNavigateDetailPlan = () => {
+    setPreviousScreen(Screens.DetailPlanScreen);
+    navigate(Screens.DetailPlanScreen);
+  };
 
   return (
     <View
@@ -53,12 +67,16 @@ export const DetailClient = ({ route }: RoutesProps) => {
         paddingTop: TOP_PADDING,
       }}
     >
-      <BackgroundColor />
-      <Background
-        blurRadius={10}
-        source={BackgroundImage}
-        style={{ opacity: 0.3 }}
-      />
+      {previousScreen !== Screens.LkScreen && (
+        <>
+          <BackgroundColor />
+          <Background
+            blurRadius={10}
+            source={BackgroundImage}
+            style={{ opacity: 0.3 }}
+          />
+        </>
+      )}
 
       <Circle style={styles.back} onPress={goBack}>
         <ArrowLeftIcon />
@@ -75,7 +93,7 @@ export const DetailClient = ({ route }: RoutesProps) => {
             </Text>
             <Button
               type={ButtonType.TEXT}
-              onPress={() => navigate(Screens.PlanScreen, data)}
+              onPress={handleNavigatePlan}
               leftIcon={<AddIcon fill={colors.green} />}
             >
               {t('buttons.createPlan')}
@@ -93,7 +111,7 @@ export const DetailClient = ({ route }: RoutesProps) => {
         <LkEmpty
           title={t('detailCustomer.herePlans')}
           description={t('detailCustomer.hereCanAdd')}
-          onPress={() => navigate(Screens.PlanScreen, data)}
+          onPress={handleNavigatePlan}
           buttonText={t('buttons.createPlan')}
         />
       )}

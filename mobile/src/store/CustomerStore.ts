@@ -49,12 +49,12 @@ export default class CustomerStore {
     this.exercises = data;
   }
 
-  @action
-  getExerciseById(id: string) {
-    return Object.values(this.exercises)
-      .flat(1)
-      .filter(exercise => exercise.id === id)[0];
-  }
+  // @action
+  // getExerciseById(id: string) {
+  //   return Object.values(this.exercises)
+  //     .flat(1)
+  //     .filter(exercise => exercise.id === id)[0];
+  // }
 
   @action
   setSearchExercises(data: TExercisesEdited) {
@@ -105,10 +105,9 @@ export default class CustomerStore {
 
   @action
   @actionLoading()
-  async getCustomerPlanById(customer: CustomerProps) {
+  async getCustomerPlanById(id: string) {
     try {
-      const { data } = await getCustomerPlan(customer.id);
-
+      const { data } = await getCustomerPlan(id);
       return data;
     } catch (e) {
       console.warn(e);

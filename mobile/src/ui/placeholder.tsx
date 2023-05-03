@@ -1,7 +1,18 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Animated } from 'react-native';
+import React, {
+  memo,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import { View } from 'react-native';
 
-import { withAnchorPoint } from 'react-native-anchor-point';
+import { getAnchorPoint } from 'react-native-anchor-point';
+import Reanimated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import styled from 'styled-components';
 
 import { colors, normHor, normVert } from '@theme';
@@ -14,7 +25,7 @@ type TProps = {
   isActive: boolean;
 };
 
-export const Placeholder = ({ text, isActive }: TProps) => {
+export const Placeholder = memo(({ text, isActive }: TProps) => {
   const firstRender = useRef(true);
 
   useLayoutEffect(() => {
@@ -24,44 +35,33 @@ export const Placeholder = ({ text, isActive }: TProps) => {
     }
   });
 
-  const [placeholderWidth, setPlaceholderWidth] = useState(0);
-  const [placeholderHeight, setPlaceholderHeight] = useState(0);
-
-  const placeholderAnimY = useRef(new Animated.Value(normVert(14))).current;
-  const placeholderAnimSize = useRef(new Animated.Value(1)).current;
+  const placeholderAnimY = useSharedValue(0);
+  const placeholderAnimSize = useSharedValue(+FontSize.S17.slice(0, -2));
 
   const duration = firstRender.current ? 0 : 300;
 
   const movePlaceholderYIn = () => {
-    Animated.timing(placeholderAnimY, {
-      toValue: normVert(isIOS ? 6 : 2),
+    placeholderAnimY.value = withTiming(normVert(isIOS ? 6 : 2), {
       duration,
-      useNativeDriver: true,
-    }).start();
+    });
   };
 
   const movePlaceholderYOut = () => {
-    Animated.timing(placeholderAnimY, {
-      toValue: normVert(isIOS ? 14 : 10),
+    placeholderAnimY.value = withTiming(normVert(isIOS ? 14 : 10), {
       duration,
-      useNativeDriver: true,
-    }).start();
+    });
   };
 
   const sizePlaceholderIn = () => {
-    Animated.timing(placeholderAnimSize, {
-      toValue: 0.8,
+    placeholderAnimSize.value = withTiming(+FontSize.S12.slice(0, -2), {
       duration,
-      useNativeDriver: true,
-    }).start();
+    });
   };
 
   const sizePlaceholderOut = () => {
-    Animated.timing(placeholderAnimSize, {
-      toValue: 1,
+    placeholderAnimSize.value = withTiming(+FontSize.S17.slice(0, -2), {
       duration,
-      useNativeDriver: true,
-    }).start();
+    });
   };
 
   useEffect(() => {
@@ -75,42 +75,24 @@ export const Placeholder = ({ text, isActive }: TProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive]);
 
-  const getTransform = () => {
-    const transform = {
-      transform: [
-        {
-          translateY: placeholderAnimY as unknown as number,
-        },
-        {
-          translateX: normHor(16),
-        },
-        {
-          scale: placeholderAnimSize as unknown as number,
-        },
-      ],
-    };
-    return withAnchorPoint(
-      transform,
-      { x: 0, y: 0 },
-      { width: placeholderWidth, height: placeholderHeight },
-    );
-  };
+  const animatedStyles = useAnimatedStyle(
+    () => ({
+      top: placeholderAnimY.value,
+      fontSize: placeholderAnimSize.value,
+    }),
+    [placeholderAnimY.value, placeholderAnimSize.value],
+  );
 
   return (
-    <Container
-      onLayout={event => {
-        setPlaceholderWidth(event.nativeEvent.layout.width);
-        setPlaceholderHeight(event.nativeEvent.layout.height);
-      }}
-      style={getTransform()}
-    >
-      {text}
-    </Container>
+    <View pointerEvents="none" style={{ position: 'absolute' }}>
+      <Container style={animatedStyles}>{text}</Container>
+    </View>
   );
-};
+});
 
-const Container = styled(Animated.Text)`
+const Container = styled(Reanimated.Text)`
   position: absolute;
   color: ${colors.black5};
   font-size: ${FontSize.S17};
+  margin-left: ${normHor(16)}px;
 `;

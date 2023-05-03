@@ -11,7 +11,7 @@ import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { CustomerProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
-import { Input, Keyboard, Text, ViewWithButtons } from '@ui';
+import { Input, Keyboard, ModalLayout, Text, ViewWithButtons } from '@ui';
 import { addClientValidationSchema, isIOS, transformPhone } from '@utils';
 
 import { FontSize } from '~types';
@@ -41,52 +41,45 @@ export const AddClientScreen = observer(() => {
   });
 
   return (
-    <Keyboard style={{ flex: 1, paddingTop: isIOS ? TOP_PADDING : 0 }}>
-      {isIOS && (
-        <TopBackground>
-          <Line />
-        </TopBackground>
-      )}
-      <Background style={{ paddingTop: isIOS ? 0 : TOP_PADDING }}>
-        <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
-          {t('addClient.title')}
-        </Text>
-        <ViewWithButtons
-          style={{ justifyContent: 'space-between' }}
-          onCancel={() => navigate(Screens.LkScreen)}
-          onConfirm={handleSubmit}
-          confirmText={t('buttons.add')}
-          isLoading={isLoading}
-        >
-          <View>
-            <Input
-              style={styles.input}
-              placeholder={t('inputs.firstName')}
-              value={values.first_name}
-              onChangeText={handleChange('first_name')}
-              error={errors.first_name}
-            />
-            <Input
-              style={styles.input}
-              placeholder={t('inputs.lastName')}
-              value={values.last_name}
-              onChangeText={handleChange('last_name')}
-              error={errors.last_name}
-            />
-            <Input
-              keyboardType={'phone-pad'}
-              mask={PHONE_MASK}
-              style={styles.input}
-              placeholder={t('inputs.phone')}
-              value={values.phone_number}
-              onChangeText={handleChange('phone_number')}
-              error={errors.phone_number}
-              description={t('addClient.phoneDescription')}
-            />
-          </View>
-        </ViewWithButtons>
-      </Background>
-    </Keyboard>
+    <ModalLayout>
+      <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
+        {t('addClient.title')}
+      </Text>
+      <ViewWithButtons
+        style={{ justifyContent: 'space-between' }}
+        onCancel={() => navigate(Screens.LkScreen)}
+        onConfirm={handleSubmit}
+        confirmText={t('buttons.add')}
+        isLoading={isLoading}
+      >
+        <View>
+          <Input
+            style={styles.input}
+            placeholder={t('inputs.firstName')}
+            value={values.first_name}
+            onChangeText={handleChange('first_name')}
+            error={errors.first_name}
+          />
+          <Input
+            style={styles.input}
+            placeholder={t('inputs.lastName')}
+            value={values.last_name}
+            onChangeText={handleChange('last_name')}
+            error={errors.last_name}
+          />
+          <Input
+            keyboardType={'phone-pad'}
+            mask={PHONE_MASK}
+            style={styles.input}
+            placeholder={t('inputs.phone')}
+            value={values.phone_number}
+            onChangeText={handleChange('phone_number')}
+            error={errors.phone_number}
+            description={t('addClient.phoneDescription')}
+          />
+        </View>
+      </ViewWithButtons>
+    </ModalLayout>
   );
 });
 
@@ -100,29 +93,3 @@ const styles = StyleSheet.create({
     marginBottom: normVert(20),
   },
 });
-
-const Background = styled(View)`
-  background-color: ${colors.black6};
-  flex: 1;
-  padding-top: ${normVert(40)}px;
-`;
-
-const TopBackground = styled(View)`
-  background-color: ${colors.black6};
-  flex: 1;
-  position: absolute;
-  top: ${normVert(34)}px;
-  width: 100%;
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Line = styled(View)`
-  background-color: ${colors.grey3};
-  width: ${normHor(76)}px;
-  height: ${normVert(6)}px;
-  border-radius: 100px;
-  margin-vertical: ${normVert(10)}px;
-`;

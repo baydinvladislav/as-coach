@@ -1,10 +1,20 @@
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
+import LinearGradient from 'react-native-linear-gradient';
+import Reanimated, {
+  Easing,
+  Extrapolation,
+  interpolate,
+  interpolateColor,
+  useAnimatedProps,
+  useAnimatedStyle,
+  useDerivedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import styled from 'styled-components';
 
 import { ArrowDownIcon, ArrowUp2Icon, EditIcon } from '@assets';
-import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { colors, normHor, normVert } from '@theme';
 import { Text } from '@ui';
@@ -16,44 +26,92 @@ type TProps = {
   onEdit: () => void;
 };
 
+const AnimatedLinearGradient =
+  Reanimated.createAnimatedComponent(LinearGradient);
+
 export const ExercisesCard = ({ exercises, onEdit }: TProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isEndAnimation, setIsEndAnimation] = useState(true);
+  const height = normVert(78);
+  const count = exercises.exercises.length;
+  const duration = 200 + 50 * count;
 
-  const { customer } = useStore();
+  const derived = useDerivedValue(
+    () =>
+      isOpen
+        ? withTiming(1, { duration, easing: Easing.linear })
+        : withTiming(0, { duration, easing: Easing.linear }),
+    [isOpen],
+  );
+
+  const heightStyles = useAnimatedStyle(() => ({
+    maxHeight: interpolate(derived.value, [0, 1], [height, 100 + 100 * count], {
+      extrapolateRight: Extrapolation.CLAMP,
+    }),
+  }));
+
+  const gradientProps = useAnimatedProps(() => ({
+    colors: [
+      interpolateColor(
+        derived.value,
+        [0, 1],
+        ['rgba(255, 255, 255, 0.2)', colors.black3],
+      ),
+      interpolateColor(
+        derived.value,
+        [0, 1],
+        ['rgba(255, 255, 255, 0.002)', colors.black3],
+      ),
+    ],
+  }));
+
+  const handleOpen = () => {
+    setIsOpen(isOpen => !isOpen);
+
+    if (isEndAnimation) {
+      setIsEndAnimation(isEndAnimation => !isEndAnimation);
+    } else {
+      setTimeout(() => {
+        setIsEndAnimation(isEndAnimation => !isEndAnimation);
+      }, duration);
+    }
+  };
 
   return (
-    <Container>
-      <View style={[isOpen && styles.topContainer, styles.row]}>
-        <View>
-          <View style={[styles.row, { justifyContent: 'flex-start' }]}>
-            <Text color={colors.white} fontSize={FontSize.S17}>
-              {exercises.name}
+    <Reanimated.View style={[styles.box, heightStyles]}>
+      <Container
+        colors={[colors.black3, colors.black3]}
+        animatedProps={gradientProps}
+      >
+        <View style={[!isEndAnimation && styles.topContainer, styles.row]}>
+          <View>
+            <View style={[styles.row, { justifyContent: 'flex-start' }]}>
+              <Text color={colors.white} fontSize={FontSize.S17}>
+                {exercises.name}
+              </Text>
+              <Icon onPress={onEdit}>
+                <EditIcon fill={colors.green} />
+              </Icon>
+            </View>
+            <Text
+              style={styles.exercisesText}
+              color={colors.black4}
+              fontSize={FontSize.S12}
+            >
+              {exercises.exercises.length} {t('createPlan.exercises')}
             </Text>
-            <Icon onPress={onEdit}>
-              <EditIcon fill={colors.green} />
-            </Icon>
           </View>
-          <Text
-            style={styles.exercisesText}
-            color={colors.black4}
-            fontSize={FontSize.S12}
-          >
-            {exercises.exercises.length} {t('createPlan.exercises')}
-          </Text>
+          {exercises.exercises.length ? (
+            <Icon onPress={handleOpen}>
+              {isOpen ? <ArrowUp2Icon /> : <ArrowDownIcon />}
+            </Icon>
+          ) : null}
         </View>
-        {exercises.exercises.length ? (
-          <Icon onPress={() => setIsOpen(isOpen => !isOpen)}>
-            {isOpen ? <ArrowUp2Icon /> : <ArrowDownIcon />}
-          </Icon>
-        ) : null}
-      </View>
-      {isOpen &&
-        exercises.exercises?.map((exercise, key) => {
-          const data = customer.getExerciseById(exercise.id);
-          return (
-            <View key={data.id} style={[styles.exercise, styles.row]}>
+        {!isEndAnimation &&
+          exercises.exercises?.map((exercise, key) => (
+            <View key={key} style={[styles.exercise, styles.row]}>
               <Text fontSize={FontSize.S12} color={colors.white}>
-                {key + 1}. {data.name}
+                {key + 1}. {exercise.name}
               </Text>
               <View style={styles.row}>
                 {exercise.sets.map((set, key) => (
@@ -70,13 +128,14 @@ export const ExercisesCard = ({ exercises, onEdit }: TProps) => {
                 ))}
               </View>
             </View>
-          );
-        })}
-    </Container>
+          ))}
+      </Container>
+    </Reanimated.View>
   );
 };
 
 const styles = StyleSheet.create({
+  box: { overflow: 'hidden', marginBottom: normVert(19), borderRadius: 12 },
   exercisesText: {
     marginTop: normVert(10),
   },
@@ -96,13 +155,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const Container = styled(View)`
-  background-color: ${colors.black3};
-  border-radius: 12px;
+const Container = styled(AnimatedLinearGradient)`
   width: 100%;
   padding-vertical: ${normVert(16)}px;
   padding-horizontal: ${normHor(16)}px;
-  margin-bottom: ${normVert(19)}px;
 `;
 
 const Icon = styled(TouchableOpacity)`

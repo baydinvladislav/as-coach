@@ -11,6 +11,7 @@ import {
   AddClientScreen,
   ChangePasswordScreen,
   DetailClient,
+  DetailPlanScreen,
   LkScreen,
   LoginScreen,
   NewChangePasswordScreen,
@@ -31,13 +32,13 @@ export const StackNavigator = observer(() => {
   const isGuest = !user.hasAccess; // меняем !user.hasAccess на !!!user.hasAccess для разработки. Чтобы открывался сразу лк
 
   useEffect(() => {
+    const getToken = storage.getItem(TOKEN);
+    getToken.then((token?: string) => {
+      token && user.getMe();
+    });
+
     if (!isGuest) {
       customer.getExercises();
-    } else {
-      const getToken = storage.getItem(TOKEN);
-      getToken.then((token?: string) => {
-        token && user.getMe();
-      });
     }
   }, [customer, isGuest, user]);
 
@@ -74,6 +75,14 @@ export const StackNavigator = observer(() => {
         }}
         name={Screens.AddClientScreen}
         component={AddClientScreen}
+      />
+      <UserStack.Screen
+        options={{
+          presentation: 'modal',
+          animationEnabled: true,
+        }}
+        name={Screens.DetailPlanScreen}
+        component={DetailPlanScreen}
       />
       <UserStack.Group
         screenOptions={{

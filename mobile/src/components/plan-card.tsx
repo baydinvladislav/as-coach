@@ -1,13 +1,8 @@
 import React from 'react';
-import {
-  Platform,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Platform, ScrollView, StyleSheet, View } from 'react-native';
 
 import moment from 'moment';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import styled from 'styled-components';
 
 import { MoreIcon } from '@assets';
@@ -20,6 +15,7 @@ import { FontSize, TPlanType } from '~types';
 
 type TProps = {
   plan: TPlanType;
+  onPress: () => void;
 };
 
 const ACTIONS = [
@@ -46,7 +42,7 @@ const ACTIONS = [
   },
 ] as MenuAction[];
 
-export const PlanCard = ({ plan }: TProps) => {
+export const PlanCard = ({ plan, onPress }: TProps) => {
   const renderNumber = (number: string) => {
     const arr = number.split('/');
 
@@ -54,12 +50,18 @@ export const PlanCard = ({ plan }: TProps) => {
   };
 
   return (
-    <Container>
+    <Container onPress={onPress}>
       <View style={styles.top}>
-        <Text style={styles.title} color={colors.white} fontSize={FontSize.S17}>
-          {moment(plan.start_date).format('D MMM').slice(0, -1)} —{' '}
-          {moment(plan.end_date).format('D MMM').slice(0, -1)}
-        </Text>
+        <View pointerEvents="none">
+          <Text
+            style={styles.title}
+            color={colors.white}
+            fontSize={FontSize.S17}
+          >
+            {moment(plan.start_date).format('D MMM').slice(0, -1)} —{' '}
+            {moment(plan.end_date).format('D MMM').slice(0, -1)}
+          </Text>
+        </View>
         <MenuView
           onPressAction={({ nativeEvent }) => {
             console.log(JSON.stringify(nativeEvent));
@@ -107,12 +109,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginHorizontal: normHor(16),
+    marginBottom: normVert(20),
   },
   title: {
     textTransform: 'uppercase',
   },
   row: {
-    marginTop: normVert(20),
     flexDirection: 'row',
     paddingLeft: normHor(16),
   },
@@ -134,7 +136,7 @@ const NumberText = styled(Text)`
   text-transform: uppercase;
 `;
 
-const Container = styled(View)`
+const Container = styled(TouchableOpacity)`
   background-color: ${colors.black3};
   border-radius: 12px;
   width: 100%;

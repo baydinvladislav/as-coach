@@ -35,9 +35,11 @@ import { ButtonType, FontSize, FontWeight } from '~types';
 moment.locale('ru');
 
 export const LkScreen = observer(() => {
+  const [searchInputKey, setSearchInputKey] = useState(0);
+
   const [searchValue, setSearchValue] = useState<string | undefined>();
 
-  const { user, customer } = useStore();
+  const { user, customer, loading } = useStore();
   const { top } = useSafeAreaInsets();
 
   const { navigate } = useNavigation();
@@ -62,12 +64,30 @@ export const LkScreen = observer(() => {
   const customers = customer.customers;
   const searchCustomers = customer.searchCustomers;
 
+  const handleNavigateDetailClient = (id: string) => {
+    setSearchInputKey(key => key + 1);
+    loading.increaseLoadingStatus();
+    navigate(Screens.DetailClient, {
+      id,
+      from: Screens.LkScreen,
+    });
+  };
+
+  const handleNavigateProfileScreen = () => {
+    setSearchInputKey(key => key + 1);
+    navigate(Screens.ProfileScreen);
+  };
+  const handleNavigateAddClientScreen = () => {
+    setSearchInputKey(key => key + 1);
+    navigate(Screens.AddClientScreen);
+  };
+
   const renderItem = (customer: ListRenderItemInfo<CustomerProps>) => (
     <ClientCard
       key={customer.item.id}
       firstName={customer.item.first_name}
       lastName={customer.item.last_name}
-      onPress={() => navigate(Screens.DetailClient, { id: customer.item.id })}
+      onPress={() => handleNavigateDetailClient(customer.item.id)}
     />
   );
 
@@ -94,7 +114,7 @@ export const LkScreen = observer(() => {
           </Text>
           <Biceps source={BicepsImage} />
         </Flex>
-        <TouchableOpacity onPress={() => navigate(Screens.ProfileScreen)}>
+        <TouchableOpacity onPress={handleNavigateProfileScreen}>
           <Avatar source={DefaultAvatarImage} />
         </TouchableOpacity>
       </Flex>
@@ -114,7 +134,11 @@ export const LkScreen = observer(() => {
             </Button>
           </TopContainer>
           <View style={styles.searchInput}>
-            <SearchInput value={searchValue} onChangeText={setSearchValue} />
+            <SearchInput
+              key={searchInputKey}
+              value={searchValue}
+              onChangeText={setSearchValue}
+            />
           </View>
           {(searchValue && searchCustomers.length) || !searchValue ? (
             <FlatList
@@ -134,7 +158,7 @@ export const LkScreen = observer(() => {
         <LkEmpty
           title={t('lk.hereClients')}
           description={t('lk.hereCanAdd')}
-          onPress={() => navigate(Screens.AddClientScreen)}
+          onPress={handleNavigateAddClientScreen}
           buttonText={t('buttons.addClient')}
         />
       )}

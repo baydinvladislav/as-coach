@@ -1,0 +1,16 @@
+diff --git a/node_modules/lottie-react-native/src/js/LottieView.js b/node_modules/lottie-react-native/src/js/LottieView.js
+index 1471fdd..4c20744 100644
+--- a/node_modules/lottie-react-native/src/js/LottieView.js
++++ b/node_modules/lottie-react-native/src/js/LottieView.js
+@@ -6,10 +6,10 @@ import {
+   View,
+   Platform,
+   StyleSheet,
+-  ViewPropTypes,
+   requireNativeComponent,
+   NativeModules,
+ } from 'react-native';
++import {ViewPropTypes} from 'deprecated-react-native-prop-types';
+ import SafeModule from 'react-native-safe-modules';
+ import PropTypes from 'prop-types';
+ 
