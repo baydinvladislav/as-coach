@@ -49,12 +49,12 @@ export default class CustomerStore {
     this.exercises = data;
   }
 
-  @action
-  getExerciseById(id: string) {
-    return Object.values(this.exercises)
-      .flat(1)
-      .filter(exercise => exercise.id === id)[0];
-  }
+  // @action
+  // getExerciseById(id: string) {
+  //   return Object.values(this.exercises)
+  //     .flat(1)
+  //     .filter(exercise => exercise.id === id)[0];
+  // }
 
   @action
   setSearchExercises(data: TExercisesEdited) {

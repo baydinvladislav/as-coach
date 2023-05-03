@@ -6,13 +6,13 @@ import moment from 'moment';
 import { createPlan } from '@api';
 import { RoutesProps, Screens, useNavigation } from '@navigation';
 import { CustomerProps } from '@store';
+import { ModalLayout } from '@ui';
 import { createPlanValidationSchema } from '@utils';
 
 import { TPlan } from '~types';
 
 import { CreatePlanScreen } from './create-plan';
 import { DayExercisesScreen } from './day-exercises';
-import { Layout } from './layout';
 import { NewDayScreen } from './new-day';
 import { NewPlanScreen } from './new-plan';
 
@@ -165,10 +165,10 @@ export const PlanScreen = ({ route }: RoutesProps) => {
   };
 
   return (
-    <Layout
+    <ModalLayout
       isScroll={currentScreen === PlanScreens.CREATE_DATE_SCREEN ? false : true}
     >
       {renderScreen()}
-    </Layout>
+    </ModalLayout>
   );
 };

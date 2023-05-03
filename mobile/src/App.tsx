@@ -8,7 +8,6 @@
 import React, { useRef, useState } from 'react';
 
 import 'moment/locale/ru';
-import 'react-native-gesture-handler';
 import { Edge, SafeAreaProvider } from 'react-native-safe-area-context';
 import { enableScreens } from 'react-native-screens';
 
@@ -75,6 +74,7 @@ const ATTR = (screen: string) => {
     case Screens.LkScreen:
     case Screens.AddClientScreen:
     case Screens.PlanScreen:
+    case Screens.DetailPlanScreen:
     case Screens.DetailClient:
       return {
         backgroundBlurRadius: 10,

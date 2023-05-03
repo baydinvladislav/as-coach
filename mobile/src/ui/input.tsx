@@ -32,6 +32,7 @@ export type TInputProps = {
   onFocus?: () => void;
   onBlur?: () => void;
   onPress?: () => void;
+  isFocused?: boolean;
 } & TextInputProps;
 
 export const Input = ({
@@ -47,32 +48,30 @@ export const Input = ({
   description,
   onPress,
   showError = true,
+  isFocused,
   ...props
 }: TInputProps) => {
-  const [state, setState] = useState({
-    value: '',
-    isFocused: false,
-  });
-
-  const handleChange = (value: string) => {
-    setState(state => ({ ...state, value }));
-  };
+  const [isLocallyFocused, setIsLocallyFocused] = useState(false);
 
   const handleBlur = () => {
     props?.onBlur?.();
-    setState(state => ({ ...state, isFocused: false }));
+    if (isFocused === undefined) {
+      setIsLocallyFocused(false);
+    }
   };
 
   const handleFocus = () => {
     props?.onFocus?.();
-    setState(state => ({ ...state, isFocused: true }));
+    if (isFocused === undefined) {
+      setIsLocallyFocused(true);
+    }
   };
 
-  const isActive = props.value || state.value !== '' || state.isFocused;
+  const isActive = Boolean(props.value) || isFocused || isLocallyFocused;
 
   const maskedInputProps = useMaskedInputProps({
     value: props.value,
-    onChangeText: props.onChangeText ?? handleChange,
+    onChangeText: props.onChangeText,
     mask,
   });
 
@@ -85,13 +84,11 @@ export const Input = ({
         isTextarea={isTextarea}
         height={height}
         width={width}
-        isFocused={state.isFocused}
+        isFocused={isFocused || isLocallyFocused}
         dir={direction}
       >
         {leftIcon && <Icon dir="left">{leftIcon}</Icon>}
-        {placeholder && (
-          <Placeholder isActive={Boolean(isActive)} text={placeholder} />
-        )}
+        {placeholder && <Placeholder isActive={isActive} text={placeholder} />}
         <InputRN
           {...props}
           {...maskedInputProps}
@@ -102,7 +99,7 @@ export const Input = ({
           onBlur={handleBlur}
           multiline={isTextarea}
           numberOfLines={4}
-          value={props.value ?? state.value}
+          value={props.value}
           onPressIn={onPress}
         />
         {rightIcon && <Icon dir="right">{rightIcon}</Icon>}

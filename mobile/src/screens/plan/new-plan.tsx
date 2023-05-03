@@ -87,10 +87,7 @@ const Inputs = ({ handlePress, values, errors }: InputsProps) => {
 
   return (
     <>
-      <Wrapper
-        isFocused={dateType === 'start'}
-        onPress={() => (handlePress('start'), setDateType('start'))}
-      >
+      <Wrapper onPress={() => (handlePress('start'), setDateType('start'))}>
         <View pointerEvents="none">
           <Input
             placeholder={t('inputs.startDate')}
@@ -99,18 +96,17 @@ const Inputs = ({ handlePress, values, errors }: InputsProps) => {
                 ? moment(values.start_date, 'yyyy-mm-DD').format('DD MMM ddd')
                 : undefined
             }
+            isFocused={dateType === 'start'}
             error={errors.start_date}
             showError={false}
           />
         </View>
       </Wrapper>
-      <Wrapper
-        isFocused={dateType === 'end'}
-        onPress={() => (handlePress('end'), setDateType('end'))}
-      >
+      <Wrapper onPress={() => (handlePress('end'), setDateType('end'))}>
         <View pointerEvents="none">
           <Input
             placeholder={t('inputs.endDate')}
+            isFocused={dateType === 'end'}
             value={
               values.end_date
                 ? moment(values.end_date, 'yyyy-mm-DD').format('DD MMM ddd')
@@ -144,9 +140,7 @@ const Flex = styled(View)`
   margin-bottom: ${normVert(44)}px;
 `;
 
-const Wrapper = styled(TouchableOpacity)<{ isFocused: boolean }>`
+const Wrapper = styled(TouchableOpacity)`
   width: 48%;
-  ${({ isFocused }) =>
-    `border: 1px solid ${isFocused ? colors.green : colors.transparent};`}
   border-radius: 12px;
 `;

@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import { name as appName } from 'app.json';
+import 'react-native-gesture-handler';
 import overrideColorScheme from 'react-native-override-color-scheme';
 import { isIOS } from 'src/utils';
 

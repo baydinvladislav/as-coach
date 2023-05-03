@@ -9,6 +9,7 @@ import { Button, Input, TInputProps } from '@ui';
 import { ButtonType } from '~types';
 
 export const SearchInput = (props: TInputProps) => {
+  const [key, setKey] = useState(0);
   const [isFocused, setIsFocused] = useState(false);
 
   const handleFocus = () => {
@@ -27,6 +28,7 @@ export const SearchInput = (props: TInputProps) => {
     <View style={styles.container}>
       <Input
         {...props}
+        key={key}
         onChangeText={handleChangeText}
         onFocus={handleFocus}
         onBlur={handleBlur}
@@ -46,6 +48,7 @@ export const SearchInput = (props: TInputProps) => {
           onPress={() => {
             handleBlur();
             handleChangeText('');
+            setKey(key => key + 1);
           }}
         >
           {t('buttons.cancel')}

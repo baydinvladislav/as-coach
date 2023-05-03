@@ -46,12 +46,17 @@ export const DetailClient = ({ route }: RoutesProps) => {
   );
 
   const renderItem = (plan: ListRenderItemInfo<TPlanType>) => (
-    <PlanCard plan={plan.item} />
+    <PlanCard plan={plan.item} onPress={handleNavigateDetailPlan} />
   );
 
   const handleNavigatePlan = () => {
     setPreviousScreen(Screens.PlanScreen);
     navigate(Screens.PlanScreen, data);
+  };
+
+  const handleNavigateDetailPlan = () => {
+    setPreviousScreen(Screens.DetailPlanScreen);
+    navigate(Screens.DetailPlanScreen);
   };
 
   return (

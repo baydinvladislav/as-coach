@@ -60,7 +60,7 @@ LocaleConfig.locales['ru'] = {
 
 LocaleConfig.defaultLocale = 'ru';
 
-const RANGE = 0.1 ?? 2;
+const RANGE = 6;
 
 const INITIAL_DATE = '2022-04-20';
 
@@ -163,63 +163,9 @@ const theme = {
 };
 
 const styles = StyleSheet.create({
-  cell: {
-    width: normHor(32),
-    height: normVert(32),
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  wrapper: {
-    position: 'relative',
-  },
-  selectedBackground: {
-    position: 'absolute',
-    width: normHor(32),
-    height: normVert(32),
-    backgroundColor: colors.green4,
-  },
-  start: {
-    right: normHor(-21),
-  },
-  end: {
-    left: normHor(-21),
-  },
-  center: {
-    width: normHor(60),
-    left: 0,
-    right: 0,
-  },
-  selected: {
-    backgroundColor: colors.green,
-    borderRadius: 100,
-  },
-  first: {
-    borderTopLeftRadius: 100,
-    borderBottomLeftRadius: 100,
-  },
-  last: {
-    width: normHor(32),
-    borderTopRightRadius: 100,
-    borderBottomRightRadius: 100,
-  },
   calendarStyle: {
     width: '100%',
     marginBottom: normVert(-120),
-  },
-  customDay: {
-    textAlign: 'center',
-  },
-  betweenText: {
-    color: colors.red,
-  },
-  selectedText: {
-    color: colors.black,
-  },
-  disabledText: {
-    color: colors.grey8,
-  },
-  defaultText: {
-    color: colors.white,
   },
   header: {
     flexDirection: 'row',

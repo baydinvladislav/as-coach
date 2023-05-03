@@ -30,10 +30,12 @@ module.exports = {
           '@constants': './src/constants',
           '@api': './src/api',
           '@store': './src/store',
+          '@context': './src/context',
           '~types': './src/types.ts',
         },
       },
     ],
     ['@babel/plugin-proposal-decorators', { legacy: true }],
+    ['react-native-reanimated/plugin'],
   ],
 };
