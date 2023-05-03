@@ -14,29 +14,29 @@ import { FontSize, TPlan } from '~types';
 import { PlanScreens } from './plan';
 
 type TProps = {
-  customer: CustomerProps;
-  handleSubmit: () => void;
-  values: TPlan;
   params: Record<string, any>;
-  handleChange: (e: string | React.ChangeEvent<any>) => () => void;
+  customer: CustomerProps;
+  values: TPlan;
+  errors: Record<string, any>;
+  handleSubmit: () => void;
   handleNavigate: (
     nextScreen: PlanScreens,
     params?: Record<string, any>,
     withValidate?: boolean,
   ) => void;
-  errors: Record<string, any>;
   setValues: React.Dispatch<React.SetStateAction<TPlan>>;
+  handleChange: (e: string | React.ChangeEvent<any>) => () => void;
 };
 
 export const CreateExerciseScreen = observer(
   ({
-    handleNavigate,
-    handleSubmit,
-    values,
-    handleChange,
-    errors,
     params,
+    values,
+    errors,
+    handleSubmit,
+    handleNavigate,
     setValues,
+    handleChange,
   }: TProps) => {
     const { loading, user } = useStore();
     const isLoading = loading.isLoading;
@@ -57,12 +57,19 @@ export const CreateExerciseScreen = observer(
         </Text>
         <View style={styles.input}>
           <Input
-            placeholder="Название"
+            placeholder={t('newExercise.placeholder')}
             // value={values.trainings?.[params.dayNumber]?.name}
             onChangeText={handleChange(`trainings[${params.dayNumber}].name`)}
             error={errors.trainings?.[params.dayNumber]?.name}
           />
         </View>
+        <Text
+          style={styles.subtitle}
+          color={colors.grey4}
+          fontSize={FontSize.S12}
+        >
+          {t('newExercise.subtitle')}
+        </Text>
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
           onCancel={() => handleNavigate(PlanScreens.CREATE_DATE_SCREEN)}
@@ -99,6 +106,13 @@ const styles = StyleSheet.create({
     marginTop: normVert(14),
     marginBottom: normVert(16),
     marginLeft: normHor(16),
+  },
+
+  subtitle: {
+    textTransform: 'uppercase',
+    marginLeft: normHor(16),
+    marginBottom: normVert(8),
+    fontWeight: 'bold',
   },
 
   border: {

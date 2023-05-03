@@ -22,7 +22,7 @@ export enum PlanScreens {
   CREATE_PLAN_SCREEN = 'CreatePlanScreen',
   CREATE_DAY_SCREEN = 'CreateDayScreen',
   CREATE_DAY_EXERCISES_SCREEN = 'CreateDayExercisesScreen',
-  CREATE_EXERCISES_SCREEN = 'CreateExercisesScreen',
+  CREATE_EXERCISE_SCREEN = 'CreateExerciseScreen',
 }
 
 export const PlanScreen = ({ route }: RoutesProps) => {
@@ -125,7 +125,7 @@ export const PlanScreen = ({ route }: RoutesProps) => {
             setParams(params || {});
           }
         });
-      } else if (currentScreen === PlanScreens.CREATE_EXERCISES_SCREEN) {
+      } else if (currentScreen === PlanScreens.CREATE_EXERCISE_SCREEN) {
         validateForm().then(data => {
           if (!Object.keys(data).includes('trainings')) {
             clearErrors();
@@ -171,7 +171,7 @@ export const PlanScreen = ({ route }: RoutesProps) => {
       case PlanScreens.CREATE_DAY_EXERCISES_SCREEN:
         return <DayExercisesScreen {...formProps} />;
 
-      case PlanScreens.CREATE_EXERCISES_SCREEN:
+      case PlanScreens.CREATE_EXERCISE_SCREEN:
         return <CreateExerciseScreen {...formProps} />;
     }
   };

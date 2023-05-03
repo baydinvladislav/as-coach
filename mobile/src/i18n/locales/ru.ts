@@ -51,6 +51,8 @@ export const ru = {
   },
   newExercise: {
     title: 'Создать упражнение',
+    subtitle: 'Группы мышц и кардио',
+    placeholder: 'Название',
   },
   profile: {
     profileTitle: 'Профиль',

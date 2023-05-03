@@ -95,7 +95,7 @@ export const DayExercisesScreen = observer(
         <Button
           style={styles.addExercisesButton}
           type={ButtonType.TEXT}
-          onPress={() => handleNavigate(PlanScreens.CREATE_EXERCISES_SCREEN)}
+          onPress={() => handleNavigate(PlanScreens.CREATE_EXERCISE_SCREEN)}
           leftIcon={<AddIcon fill={colors.green} />}
         >
           {t('buttons.createExercises')}
