@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
@@ -31,7 +31,7 @@ const AnimatedLinearGradient =
 
 export const ExercisesCard = ({ exercises, onEdit }: TProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isEndAnimation, setIsEndAnimation] = useState(false);
+  const [isEndAnimation, setIsEndAnimation] = useState(true);
   const height = normVert(78);
   const count = exercises.exercises.length;
   const duration = 200 + 50 * count;
@@ -43,17 +43,6 @@ export const ExercisesCard = ({ exercises, onEdit }: TProps) => {
         : withTiming(0, { duration, easing: Easing.linear }),
     [isOpen],
   );
-
-  useEffect(() => {
-    if (isEndAnimation) {
-      setIsEndAnimation(isEndAnimation => !isEndAnimation);
-    } else {
-      setTimeout(() => {
-        setIsEndAnimation(isEndAnimation => !isEndAnimation);
-      }, duration);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen]);
 
   const heightStyles = useAnimatedStyle(() => ({
     maxHeight: interpolate(derived.value, [0, 1], [height, 100 + 100 * count], {
@@ -78,6 +67,14 @@ export const ExercisesCard = ({ exercises, onEdit }: TProps) => {
 
   const handleOpen = () => {
     setIsOpen(isOpen => !isOpen);
+
+    if (isEndAnimation) {
+      setIsEndAnimation(isEndAnimation => !isEndAnimation);
+    } else {
+      setTimeout(() => {
+        setIsEndAnimation(isEndAnimation => !isEndAnimation);
+      }, duration);
+    }
   };
 
   return (
