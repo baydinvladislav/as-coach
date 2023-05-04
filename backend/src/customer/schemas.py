@@ -59,3 +59,19 @@ class TrainingPlanOut(BaseModel):
     proteins: str
     fats: str
     carbs: str
+
+
+class TrainingPlanOutFull(BaseModel):
+    """
+    Full training plan data
+    """
+    id: str
+    start_date: str
+    end_date: str
+    proteins: str
+    fats: str
+    carbs: str
+    trainings: list
+    set_rest: int
+    exercise_rest: int
+    notes: str
