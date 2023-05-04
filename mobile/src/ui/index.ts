@@ -15,3 +15,4 @@ export * from './checkbox';
 export * from './select';
 export * from './calendar';
 export * from './modal-layout';
+export * from './row-border';

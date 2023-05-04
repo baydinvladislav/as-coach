@@ -20,12 +20,13 @@ type TProps = {
   children: React.ReactNode;
   style?: StyleProp<ViewStyle>;
   containerStyle?: StyleProp<ViewStyle>;
-  onCancel: () => void;
-  onConfirm: () => void;
+  onCancel?: () => void;
+  onConfirm?: () => void;
   isLoading?: boolean;
   confirmText?: string;
   cancelText?: string;
   isScroll?: boolean;
+  withConfirm?: boolean;
 };
 
 export const ViewWithButtons = ({
@@ -49,17 +50,21 @@ export const ViewWithButtons = ({
         {children}
       </Container>
       <ButtonsContainer>
-        <Button
-          style={styles.button}
-          type={ButtonType.PRIMARY}
-          onPress={onConfirm}
-          isLoading={isLoading}
-        >
-          {confirmText}
-        </Button>
-        <Button type={ButtonType.SECONDARY} onPress={onCancel}>
-          {cancelText}
-        </Button>
+        {onConfirm && (
+          <Button
+            style={styles.button}
+            type={ButtonType.PRIMARY}
+            onPress={onConfirm}
+            isLoading={isLoading}
+          >
+            {confirmText}
+          </Button>
+        )}
+        {onCancel && (
+          <Button type={ButtonType.SECONDARY} onPress={onCancel}>
+            {cancelText}
+          </Button>
+        )}
       </ButtonsContainer>
     </ChildrenContainer>
   );

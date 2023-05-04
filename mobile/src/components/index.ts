@@ -9,3 +9,4 @@ export * from './checkbox-group';
 export * from './exercises-card';
 export * from './plan-card';
 export * from './sets';
+export * from './exercises-list';

@@ -1,13 +1,6 @@
-import React, {
-  memo,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { memo, useEffect, useLayoutEffect, useRef } from 'react';
 import { View } from 'react-native';
 
-import { getAnchorPoint } from 'react-native-anchor-point';
 import Reanimated, {
   useAnimatedStyle,
   useSharedValue,
@@ -35,7 +28,7 @@ export const Placeholder = memo(({ text, isActive }: TProps) => {
     }
   });
 
-  const placeholderAnimY = useSharedValue(0);
+  const placeholderAnimY = useSharedValue(normVert(isIOS ? 14 : 10));
   const placeholderAnimSize = useSharedValue(+FontSize.S17.slice(0, -2));
 
   const duration = firstRender.current ? 0 : 300;
