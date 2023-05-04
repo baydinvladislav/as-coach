@@ -6,7 +6,7 @@ import moment from 'moment';
 import styled from 'styled-components';
 
 import { AddIcon } from '@assets';
-import { CreatePlanItem, ExercisesCard } from '@components';
+import { CreatePlanItem, ExercisesList } from '@components';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { CustomerProps } from '@store';
@@ -155,19 +155,16 @@ export const CreatePlanScreen = observer(
           )}
         </CreatePlanItem>
         <CreatePlanItem title={t('createPlan.title2')}>
-          {values.trainings.map((exercise, index) => (
-            <ExercisesCard
-              onEdit={() =>
-                handleNavigate(PlanScreens.CREATE_DAY_SCREEN, {
-                  dayNumber: index,
-                  isExists: true,
-                  oldValue: values.trainings,
-                })
-              }
-              key={index + exercise.name}
-              exercises={exercise}
-            />
-          ))}
+          <ExercisesList
+            exercises={values.trainings}
+            onEdit={(index: number) =>
+              handleNavigate(PlanScreens.CREATE_DAY_SCREEN, {
+                dayNumber: index,
+                isExists: true,
+                oldValue: values.trainings,
+              })
+            }
+          />
           <Button
             style={styles.addDayButton}
             type={ButtonType.TEXT}

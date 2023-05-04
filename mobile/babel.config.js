@@ -30,7 +30,6 @@ module.exports = {
           '@constants': './src/constants',
           '@api': './src/api',
           '@store': './src/store',
-          '@context': './src/context',
           '~types': './src/types.ts',
         },
       },

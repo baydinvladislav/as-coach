@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
@@ -15,6 +15,7 @@ import Reanimated, {
 import styled from 'styled-components';
 
 import { ArrowDownIcon, ArrowUp2Icon, EditIcon } from '@assets';
+import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { colors, normHor, normVert } from '@theme';
 import { Text } from '@ui';
@@ -23,29 +24,66 @@ import { FontSize, TPropsExercise } from '~types';
 
 type TProps = {
   exercises: TPropsExercise;
-  onEdit: () => void;
+  onEdit?: () => void;
+  onOpen?: () => void;
+  isOpen?: boolean;
 };
 
 const AnimatedLinearGradient =
   Reanimated.createAnimatedComponent(LinearGradient);
 
-export const ExercisesCard = ({ exercises, onEdit }: TProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+const height = normVert(78);
+const width = normHor(313);
+const fullWidth = normHor(345);
+
+export const ExercisesCard = ({
+  exercises,
+  onEdit,
+  onOpen,
+  isOpen,
+}: TProps) => {
+  const firstRender = useRef(true);
+
+  useLayoutEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+  });
+
+  const { customer } = useStore();
+
+  const [isLocallyOpen, setIsLocallyOpen] = useState(false);
   const [isEndAnimation, setIsEndAnimation] = useState(true);
-  const height = normVert(78);
+
   const count = exercises.exercises.length;
-  const duration = 200 + 50 * count;
+  const duration = 200;
+  const countDuration = duration + 50 * count;
 
   const derived = useDerivedValue(
     () =>
-      isOpen
+      isLocallyOpen
+        ? withTiming(1, { duration: countDuration, easing: Easing.linear })
+        : withTiming(0, { duration: countDuration, easing: Easing.linear }),
+    [isLocallyOpen],
+  );
+
+  const widthDerived = useDerivedValue(
+    () =>
+      isLocallyOpen
         ? withTiming(1, { duration, easing: Easing.linear })
         : withTiming(0, { duration, easing: Easing.linear }),
-    [isOpen],
+    [isLocallyOpen],
   );
 
   const heightStyles = useAnimatedStyle(() => ({
     maxHeight: interpolate(derived.value, [0, 1], [height, 100 + 100 * count], {
+      extrapolateRight: Extrapolation.CLAMP,
+    }),
+  }));
+
+  const widthStyles = useAnimatedStyle(() => ({
+    width: interpolate(widthDerived.value, [0, 1], [width, fullWidth], {
       extrapolateRight: Extrapolation.CLAMP,
     }),
   }));
@@ -65,20 +103,28 @@ export const ExercisesCard = ({ exercises, onEdit }: TProps) => {
     ],
   }));
 
-  const handleOpen = () => {
-    setIsOpen(isOpen => !isOpen);
+  const handleOpen = (from?: 'programmicly' | 'ui') => {
+    from === 'ui' && onOpen?.();
+    setIsLocallyOpen(isLocallyOpen => !isLocallyOpen);
 
     if (isEndAnimation) {
       setIsEndAnimation(isEndAnimation => !isEndAnimation);
     } else {
       setTimeout(() => {
         setIsEndAnimation(isEndAnimation => !isEndAnimation);
-      }, duration);
+      }, countDuration);
     }
   };
 
+  useEffect(() => {
+    if (!firstRender.current && !isOpen && isLocallyOpen) {
+      handleOpen('programmicly');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
+  console.log(exercises);
   return (
-    <Reanimated.View style={[styles.box, heightStyles]}>
+    <Reanimated.View style={[styles.box, heightStyles, widthStyles]}>
       <Container
         colors={[colors.black3, colors.black3]}
         animatedProps={gradientProps}
@@ -89,9 +135,11 @@ export const ExercisesCard = ({ exercises, onEdit }: TProps) => {
               <Text color={colors.white} fontSize={FontSize.S17}>
                 {exercises.name}
               </Text>
-              <Icon onPress={onEdit}>
-                <EditIcon fill={colors.green} />
-              </Icon>
+              {onEdit && (
+                <Icon onPress={onEdit}>
+                  <EditIcon fill={colors.green} />
+                </Icon>
+              )}
             </View>
             <Text
               style={styles.exercisesText}
@@ -102,40 +150,56 @@ export const ExercisesCard = ({ exercises, onEdit }: TProps) => {
             </Text>
           </View>
           {exercises.exercises.length ? (
-            <Icon onPress={handleOpen}>
-              {isOpen ? <ArrowUp2Icon /> : <ArrowDownIcon />}
+            <Icon onPress={() => handleOpen('ui')}>
+              {isLocallyOpen ? <ArrowUp2Icon /> : <ArrowDownIcon />}
             </Icon>
           ) : null}
         </View>
         {!isEndAnimation &&
-          exercises.exercises?.map((exercise, key) => (
-            <View key={key} style={[styles.exercise, styles.row]}>
-              <Text fontSize={FontSize.S12} color={colors.white}>
-                {key + 1}. {exercise.name}
-              </Text>
-              <View style={styles.row}>
-                {exercise.sets.map((set, key) => (
-                  <React.Fragment key={key}>
-                    <Text fontSize={FontSize.S12} color={colors.white}>
-                      {set}
-                    </Text>
-                    {key !== exercise.sets.length - 1 && (
-                      <Text fontSize={FontSize.S12} color={colors.green}>
-                        ,{' '}
-                      </Text>
-                    )}
-                  </React.Fragment>
-                ))}
+          exercises.exercises?.map((exercise, key) => {
+            const { name } = customer.getExerciseById(exercise.id);
+            return (
+              <View key={key} style={[styles.row, styles.exercise]}>
+                <Number>
+                  <Text fontSize={FontSize.S12} color={colors.white}>
+                    {key + 1}
+                  </Text>
+                </Number>
+                <Column isLast={key === exercises.exercises.length - 1}>
+                  <Text fontSize={FontSize.S12} color={colors.white}>
+                    {name}
+                  </Text>
+                  <View style={[styles.row, styles.sets]}>
+                    {exercise.sets.map((set, key) => (
+                      <React.Fragment key={key}>
+                        <Text fontSize={FontSize.S12} color={colors.white}>
+                          {set}
+                        </Text>
+                        {key !== exercise.sets.length - 1 && (
+                          <Text fontSize={FontSize.S12} color={colors.green}>
+                            ,{' '}
+                          </Text>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </View>
+                </Column>
               </View>
-            </View>
-          ))}
+            );
+          })}
       </Container>
     </Reanimated.View>
   );
 };
 
 const styles = StyleSheet.create({
-  box: { overflow: 'hidden', marginBottom: normVert(19), borderRadius: 12 },
+  box: {
+    overflow: 'hidden',
+    marginBottom: normVert(19),
+    borderRadius: 12,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
   exercisesText: {
     marginTop: normVert(10),
   },
@@ -147,11 +211,16 @@ const styles = StyleSheet.create({
   },
   exercise: {
     marginTop: normVert(12),
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  sets: {
+    marginTop: normVert(7),
   },
 });
 
@@ -163,4 +232,23 @@ const Container = styled(AnimatedLinearGradient)`
 
 const Icon = styled(TouchableOpacity)`
   margin-left: ${normHor(13)}px;
+`;
+
+const Number = styled(View)`
+  border: 1px solid ${colors.black4};
+  border-radius: 100px;
+  width: ${normHor(22)}px;
+  height: ${normVert(22)}px;
+  align-items: center;
+  justify-content: center;
+  margin-right: ${normHor(12)}px;
+`;
+
+const Column = styled(View)<{ isLast: boolean }>`
+  margin-top: ${normVert(5)}px;
+  align-items: flex-start;
+  border-bottom-color: ${colors.black3};
+  border-bottom-width: ${({ isLast }) => (isLast ? 0 : 1)}px;
+  padding-bottom: ${normVert(18)}px;
+  width: ${normHor(247)}px;
 `;

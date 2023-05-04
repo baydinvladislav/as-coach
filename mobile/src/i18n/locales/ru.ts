@@ -99,6 +99,7 @@ export const ru = {
     createExercises: 'Создать упражнения',
     addDay: 'Добавить день',
     prev: 'Назад',
+    ok: 'Хорошо',
   },
   errors: {
     required: 'Заполните обязательное поле',
