@@ -71,7 +71,7 @@ class TrainingPlanOutFull(BaseModel):
     proteins: str
     fats: str
     carbs: str
-    trainings: list
+    trainings: Optional[list]
     set_rest: int
     exercise_rest: int
-    notes: str
+    notes: Optional[str]
