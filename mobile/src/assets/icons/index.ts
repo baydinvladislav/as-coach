@@ -19,3 +19,7 @@ export * from './delete';
 export * from './edit';
 export * from './arrow-up2';
 export * from './cross';
+export * from './edit2';
+export * from './superset';
+export * from './trash';
+export * from './menu';

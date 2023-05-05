@@ -1,4 +1,22 @@
-import { TPlan } from '~types';
+import { TPlan, TPropsExercises } from '~types';
+
+export const modifyPlan = (
+  values: TPlan,
+  dayName: string,
+  value: TPropsExercises[],
+) =>
+  ({
+    ...values,
+    trainings: [
+      ...values.trainings.map(training => {
+        if (training?.name === dayName) {
+          return { ...training, exercises: value };
+        } else {
+          return training;
+        }
+      }),
+    ],
+  } as TPlan);
 
 export const addExerciseToPlan = (
   values: TPlan,

@@ -22,6 +22,8 @@ import { Text } from '@ui';
 
 import { FontSize, TPropsExercise } from '~types';
 
+import { ExerciseInfo } from './exercise-info';
+
 type TProps = {
   exercises: TPropsExercise;
   onEdit?: () => void;
@@ -122,7 +124,7 @@ export const ExercisesCard = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
-  console.log(exercises);
+
   return (
     <Reanimated.View style={[styles.box, heightStyles, widthStyles]}>
       <Container
@@ -159,32 +161,13 @@ export const ExercisesCard = ({
           exercises.exercises?.map((exercise, key) => {
             const { name } = customer.getExerciseById(exercise.id);
             return (
-              <View key={key} style={[styles.row, styles.exercise]}>
-                <Number>
-                  <Text fontSize={FontSize.S12} color={colors.white}>
-                    {key + 1}
-                  </Text>
-                </Number>
-                <Column isLast={key === exercises.exercises.length - 1}>
-                  <Text fontSize={FontSize.S12} color={colors.white}>
-                    {name}
-                  </Text>
-                  <View style={[styles.row, styles.sets]}>
-                    {exercise.sets.map((set, key) => (
-                      <React.Fragment key={key}>
-                        <Text fontSize={FontSize.S12} color={colors.white}>
-                          {set}
-                        </Text>
-                        {key !== exercise.sets.length - 1 && (
-                          <Text fontSize={FontSize.S12} color={colors.green}>
-                            ,{' '}
-                          </Text>
-                        )}
-                      </React.Fragment>
-                    ))}
-                  </View>
-                </Column>
-              </View>
+              <ExerciseInfo
+                name={name}
+                exercises={exercise}
+                key={key}
+                index={key}
+                isLast={key === exercises.exercises.length - 1}
+              />
             );
           })}
       </Container>
@@ -209,18 +192,10 @@ const styles = StyleSheet.create({
     paddingBottom: normVert(16),
     marginBottom: normVert(4),
   },
-  exercise: {
-    marginTop: normVert(12),
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-  },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  sets: {
-    marginTop: normVert(7),
   },
 });
 
@@ -232,23 +207,4 @@ const Container = styled(AnimatedLinearGradient)`
 
 const Icon = styled(TouchableOpacity)`
   margin-left: ${normHor(13)}px;
-`;
-
-const Number = styled(View)`
-  border: 1px solid ${colors.black4};
-  border-radius: 100px;
-  width: ${normHor(22)}px;
-  height: ${normVert(22)}px;
-  align-items: center;
-  justify-content: center;
-  margin-right: ${normHor(12)}px;
-`;
-
-const Column = styled(View)<{ isLast: boolean }>`
-  margin-top: ${normVert(5)}px;
-  align-items: flex-start;
-  border-bottom-color: ${colors.black3};
-  border-bottom-width: ${({ isLast }) => (isLast ? 0 : 1)}px;
-  padding-bottom: ${normVert(18)}px;
-  width: ${normHor(247)}px;
 `;

@@ -17,6 +17,20 @@ import { isIOS } from 'src/utils';
 
 import App from './src/App';
 
+const ignoreWarns = [
+  'VirtualizedLists should never be nested inside plain ScrollViews',
+];
+
+const errorWarn = global.console.error;
+global.console.error = (...arg) => {
+  for (const error of ignoreWarns) {
+    if (arg[0].startsWith(error)) {
+      return;
+    }
+  }
+  errorWarn(...arg);
+};
+
 overrideColorScheme.setScheme('dark');
 
 TextInput.defaultProps = TextInput.defaultProps || {};
