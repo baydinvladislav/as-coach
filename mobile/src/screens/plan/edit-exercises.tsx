@@ -4,16 +4,16 @@ import { StyleSheet, View } from 'react-native';
 import { observer } from 'mobx-react';
 import {
   NestableDraggableFlatList,
-  NestableScrollContainer,
   RenderItemParams,
 } from 'react-native-draggable-flatlist';
+import styled from 'styled-components';
 
 import { CheckboxWithSets } from '@components';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { colors, normHor, normVert } from '@theme';
 import { Text, ViewWithButtons } from '@ui';
-import { addExerciseToPlan, modifyPlan } from '@utils';
+import { modifyPlan } from '@utils';
 
 import { FontSize, TPlan, TPropsExercises } from '~types';
 
@@ -73,14 +73,37 @@ export const EditExercisesScreen = observer(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [exercises]);
 
-    const handleSuperset = () => {
-      console.log(123);
+    const handleSuperset = (arr: string[]) => {
+      if (arr.length >= 2) {
+        setData(data => {
+          const exercise = data.find(item => selected.includes(item.id));
+          const index = data.findIndex(item => selected.includes(item.id));
+          const supersets = selected.filter(item => item !== exercise?.id);
+          data[index] = {
+            ...exercise,
+            supersets,
+          } as TPropsExercises;
+          return data.filter(
+            item => !(selected.includes(item.id) && !item.supersets?.length),
+          );
+        });
+        setSelected([]);
+      }
     };
 
     const handleDelete = (arr: string[]) => {
       if (arr.length) {
         setSelected([]);
-        setData(data => data?.filter(item => !arr.includes(item.id)));
+        setData(data =>
+          data
+            .map(item => ({
+              ...item,
+              supersets: item.supersets?.filter(
+                superset => !arr.includes(superset),
+              ),
+            }))
+            .filter(item => !arr.includes(item.id)),
+        );
       }
     };
 
@@ -92,19 +115,44 @@ export const EditExercisesScreen = observer(
     }: RenderItemParams<TPropsExercises>) => {
       const { name } = customer.getExerciseById(item.id);
       const index = getIndex() ?? 0;
+      const isSelected = selected.includes(item.id);
+
       return (
-        <CheckboxWithSets
-          key={item.id}
-          placeholder={name}
-          isFirst={index === 0}
-          handlePress={() => handlePress(item.id)}
-          exercise={item}
-          errors={errors}
-          handleChangeSets={e => handleChangeSets(item.id, e)}
-          index={index}
-          isSelected={false}
-          onDrag={drag}
-        />
+        <View style={{ position: 'relative' }}>
+          <CheckboxWithSets
+            key={item.id}
+            placeholder={name}
+            isFirst={index === 0}
+            handlePress={() => handlePress(item.id)}
+            exercise={item}
+            errors={errors}
+            handleChangeSets={e => handleChangeSets(item.id, e)}
+            index={index}
+            isSelected={isSelected}
+            onDrag={drag}
+          />
+          {item.supersets?.map((superset, key) => {
+            const { name } = customer.getExerciseById(superset);
+            const isSelected = selected.includes(superset);
+            return (
+              <View key={key}>
+                <Line />
+                <CheckboxWithSets
+                  key={superset}
+                  placeholder={name}
+                  isFirst={true}
+                  handlePress={() => handlePress(superset)}
+                  exercise={item}
+                  errors={errors}
+                  handleChangeSets={e => handleChangeSets(item.id, e)}
+                  index={index}
+                  isSelected={isSelected}
+                  onDrag={drag}
+                />
+              </View>
+            );
+          })}
+        </View>
       );
     };
 
@@ -130,7 +178,7 @@ export const EditExercisesScreen = observer(
           fontSize={FontSize.S10}
         >
           {t('supersets.dayTitle', {
-            day: params.dayNumber,
+            day: params.dayNumber + 1,
             name: dayName,
           })}
         </Text>
@@ -140,7 +188,7 @@ export const EditExercisesScreen = observer(
           onConfirm={handleConfirm}
           confirmText={t('buttons.saveChanges')}
           cancelText={t('buttons.cancel')}
-          onSuperset={handleSuperset}
+          onSuperset={() => handleSuperset(selected)}
           onDelete={() => handleDelete(selected)}
           isSelected={Boolean(selected.length)}
           isScroll={true}
@@ -148,7 +196,7 @@ export const EditExercisesScreen = observer(
         >
           <NestableDraggableFlatList
             data={data}
-            renderItem={renderItem as any}
+            renderItem={renderItem}
             keyExtractor={item => item.id}
             onDragEnd={({ data }) => setData(data)}
           />
@@ -179,3 +227,12 @@ const styles = StyleSheet.create({
     marginBottom: normVert(16),
   },
 });
+
+const Line = styled(View)`
+  background-color: ${colors.green};
+  width: 1px;
+  height: ${normVert(64)}px;
+  position: absolute;
+  bottom: ${normVert(106)}px;
+  left: ${normHor(11)}px;
+`;

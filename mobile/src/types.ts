@@ -50,7 +50,12 @@ export type TPropsExercise = {
   exercises: TPropsExercises[];
 };
 
-export type TPropsExercises = { id: string; name: string; sets: number[] };
+export type TPropsExercises = {
+  id: string;
+  name: string;
+  sets: number[];
+  supersets?: string[];
+};
 
 export type TPlanType = {
   carbs: string;

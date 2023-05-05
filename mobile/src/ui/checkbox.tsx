@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import {
   StyleProp,
   StyleSheet,
@@ -39,6 +39,10 @@ export const Checkbox = ({
     } as ChangeEvent<any>);
     setIsChecked(isChecked => !isChecked);
   };
+
+  useEffect(() => {
+    setIsChecked(value ?? isChecked);
+  }, [value]);
 
   return (
     <Container style={style} onPress={handleChange}>

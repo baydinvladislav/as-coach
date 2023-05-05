@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { observer } from 'mobx-react';
+import styled from 'styled-components';
 
 import { Edit2Icon } from '@assets';
 import { ExerciseInfo } from '@components';
@@ -68,7 +69,7 @@ export const CreateSupersetsScreen = observer(
           fontSize={FontSize.S10}
         >
           {t('supersets.dayTitle', {
-            day: params.dayNumber,
+            day: params.dayNumber + 1,
             name: dayName,
           })}
         </Text>
@@ -82,16 +83,38 @@ export const CreateSupersetsScreen = observer(
           cancelText={t('buttons.moreExercises')}
           isScroll={true}
         >
-          {exercises.map((exercise, key) => {
+          {exercises.map((exercise, key, arr) => {
             const { name } = customer.getExerciseById(exercise.id);
+
+            const index =
+              arr.slice(0, key).length +
+              arr
+                .slice(0, key)
+                .reduce((acc, item) => (acc += item.supersets?.length || 0), 0);
             return (
-              <ExerciseInfo
-                name={name}
-                key={key}
-                index={key}
-                isLast={key === exercises.length - 1}
-                exercises={exercise}
-              />
+              <React.Fragment key={key}>
+                <ExerciseInfo
+                  name={name}
+                  index={index}
+                  isLast={key === exercises.length - 1}
+                  exercises={exercise}
+                />
+                {exercise.supersets?.map?.((superset, i) => {
+                  const { name } = customer.getExerciseById(superset);
+                  return (
+                    <View key={i}>
+                      <Line />
+                      <ExerciseInfo
+                        name={name}
+                        key={i}
+                        index={i + index + 1}
+                        isLast={true}
+                        exercises={exercise}
+                      />
+                    </View>
+                  );
+                })}
+              </React.Fragment>
             );
           })}
         </ViewWithButtons>
@@ -118,3 +141,12 @@ const styles = StyleSheet.create({
     marginBottom: normVert(16),
   },
 });
+
+const Line = styled(View)`
+  background-color: ${colors.green};
+  width: 1px;
+  height: ${normVert(28)}px;
+  position: absolute;
+  bottom: ${normVert(78)}px;
+  left: ${normHor(10)}px;
+`;
