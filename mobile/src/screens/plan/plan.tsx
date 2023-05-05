@@ -12,7 +12,9 @@ import { createPlanValidationSchema } from '@utils';
 import { TPlan } from '~types';
 
 import { CreatePlanScreen } from './create-plan';
+import { CreateSupersetsScreen } from './create-supersets';
 import { DayExercisesScreen } from './day-exercises';
+import { EditExercisesScreen } from './edit-exercises';
 import { NewDayScreen } from './new-day';
 import { NewPlanScreen } from './new-plan';
 
@@ -22,6 +24,8 @@ export enum PlanScreens {
   CREATE_DAY_SCREEN = 'CreateDayScreen',
   CREATE_DAY_EXERCISES_SCREEN = 'CreateDayExercisesScreen',
   CREATE_EXERCISES_SCREEN = 'CreateExercisesScreen',
+  CREATE_SUPERSETS_SCREEN = 'CreateSupersetsScreen',
+  EDIT_EXERCISES_SCREEN = 'EditExercisesScreen',
 }
 
 export const PlanScreen = ({ route }: RoutesProps) => {
@@ -161,6 +165,12 @@ export const PlanScreen = ({ route }: RoutesProps) => {
 
       case PlanScreens.CREATE_DAY_EXERCISES_SCREEN:
         return <DayExercisesScreen {...formProps} />;
+
+      case PlanScreens.CREATE_SUPERSETS_SCREEN:
+        return <CreateSupersetsScreen {...formProps} />;
+
+      case PlanScreens.EDIT_EXERCISES_SCREEN:
+        return <EditExercisesScreen {...formProps} />;
     }
   };
 

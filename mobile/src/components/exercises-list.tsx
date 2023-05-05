@@ -45,7 +45,7 @@ export const ExercisesList = forwardRef((props: TProps, ref) => {
       {props.exercises.map((exercises, key) => (
         <ExercisesCard
           key={key}
-          onEdit={() => props.onEdit?.(key)}
+          onEdit={props.onEdit ? () => props.onEdit?.(key) : undefined}
           onOpen={() => handleOpen(key)}
           isOpen={Boolean(cards?.[key])}
           exercises={exercises}

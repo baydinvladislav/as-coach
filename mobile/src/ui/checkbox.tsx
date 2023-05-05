@@ -10,7 +10,7 @@ import {
 
 import styled from 'styled-components';
 
-import { CheckIcon } from '@assets';
+import { CheckIcon, MenuIcon } from '@assets';
 import { colors, normHor, normVert } from '@theme';
 import { Text } from '@ui';
 
@@ -21,9 +21,16 @@ type TProps = {
   style?: StyleProp<ViewStyle>;
   onChangeCheckbox: (e: string | React.ChangeEvent<any>) => void;
   value?: boolean;
+  onDrag?: () => void;
 } & Omit<TextInputProps, 'value'>;
 
-export const Checkbox = ({ placeholder, style, value, ...props }: TProps) => {
+export const Checkbox = ({
+  placeholder,
+  style,
+  value,
+  onDrag,
+  ...props
+}: TProps) => {
   const [isChecked, setIsChecked] = useState(value ?? false);
 
   const handleChange = () => {
@@ -38,9 +45,14 @@ export const Checkbox = ({ placeholder, style, value, ...props }: TProps) => {
       <Square isChecked={value || isChecked}>
         {(value || isChecked) && <CheckIcon />}
       </Square>
-      <Text style={styles.text} fontSize={FontSize.S16} color={colors.black4}>
+      <Text style={styles.text} fontSize={FontSize.S16} color={colors.white}>
         {placeholder}
       </Text>
+      {onDrag && (
+        <TouchableOpacity style={{ marginLeft: 'auto' }} onLongPress={onDrag}>
+          <MenuIcon />
+        </TouchableOpacity>
+      )}
     </Container>
   );
 };

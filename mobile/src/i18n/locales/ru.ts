@@ -69,6 +69,11 @@ export const ru = {
     client: 'клиента',
     exercise: 'упражнения',
   },
+  supersets: {
+    title: `{quantity} упражнения`,
+    dayTitle: `день {day}. {name}`,
+    editMode: 'Режим редактирования',
+  },
   inputs: {
     phone: 'Номер телефона',
     password: 'Пароль',
@@ -100,6 +105,10 @@ export const ru = {
     addDay: 'Добавить день',
     prev: 'Назад',
     ok: 'Хорошо',
+    moreExercises: 'Выбрать еще упражнения',
+    addExercises: 'Добавить в тренировку',
+    saveChanges: 'Сохранить изменения',
+    edit: 'Редактировать',
   },
   errors: {
     required: 'Заполните обязательное поле',
