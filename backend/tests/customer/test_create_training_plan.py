@@ -167,3 +167,29 @@ async def test_create_training_plan_with_supersets_successfully(
         ).first()
         override_get_db.delete(training_plan)
         override_get_db.commit()
+
+
+@pytest.mark.anyio
+async def test_get_training_plan_with_supersets(
+    create_customer,
+    create_training_plans,
+    create_training_exercises,
+    override_get_db
+):
+    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
+        auth_token = create_access_token(create_customer.user.username)
+        response = await ac.get(
+            f"/api/customers/{create_customer.id}/training_plans/{create_training_plans[0].id}",
+            headers={
+                "Authorization": f"Bearer {auth_token}"
+            }
+        )
+
+    assert response.status_code == 200
+
+    chest_training = list(filter(lambda x: x["name"] == "Грудь", response.json()["trainings"]))[0]
+    superset_ids_set = set()
+    for exercise in chest_training["exercises"]:
+        superset_ids_set.add(exercise["superset_id"])
+
+    assert len(superset_ids_set) == 1
