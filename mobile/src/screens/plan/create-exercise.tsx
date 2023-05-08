@@ -2,21 +2,24 @@ import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { observer } from 'mobx-react';
+import { useFormik } from 'formik';
 
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { CustomerProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
 import { Checkbox, Input, Text, ViewWithButtons } from '@ui';
+import { createExercise } from '@api';
+import { createExerciseSchema } from '@utils';
+import { Screens, useNavigation } from '@navigation';
 
-import { FontSize, TPlan } from '~types';
+import { FontSize, TPlan, TMuscleGroups } from '~types';
 
 import { PlanScreens } from './plan';
 
 type TProps = {
   params: Record<string, any>;
   customer: CustomerProps;
-  values: TPlan;
   errors: Record<string, any>;
   handleSubmit: () => void;
   handleNavigate: (
@@ -31,7 +34,6 @@ type TProps = {
 export const CreateExerciseScreen = observer(
   ({
     params,
-    values,
     errors,
     handleSubmit,
     handleNavigate,
@@ -41,14 +43,37 @@ export const CreateExerciseScreen = observer(
     const { loading, user } = useStore();
     const isLoading = loading.isLoading;
     const data = user.muscleGroups;
-    const handlePress = () => {
-      '§12';
-    };
-
+    const { navigate } = useNavigation();
+    
     useEffect(() => {
       user.getMuscleGroups();
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const onSubmit = (values: TMuscleGroups) => {
+      createExercise(user.id, {
+        ...values,
+      }).then(() => navigate(Screens.DetailClient, { id: user.id }));
+    };
+  
+    const {
+      handleChange,
+      handleSubmit,
+      errors,
+      values,
+      setValues,
+      validateForm,
+      setErrors,
+    } = useFormik({
+      initialValues: {
+        name: '',
+        muscle_group_id: '',
+      },
+      onSubmit,
+      validationSchema: createExerciseSchema,
+      validateOnChange: false,
+      validateOnBlur: false,
+    });
 
     return (
       <>
@@ -72,21 +97,20 @@ export const CreateExerciseScreen = observer(
         </Text>
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
-          onCancel={() => handleNavigate(PlanScreens.CREATE_DATE_SCREEN)}
-          onConfirm={handleSubmit}
           confirmText={t('buttons.create')}
+          onConfirm={handleSubmit}
           cancelText={t('buttons.cancel')}
+          onCancel={() => handleNavigate(PlanScreens.CREATE_DATE_SCREEN)}
           isLoading={isLoading}
           isScroll={true}
         >
-          {data.map(item => (
+          {data.map((item: { id: string; name: string; }) => (
             <Checkbox
               key={item.id}
               style={[
                 styles.checkbox,
                 item.name != data[0].name && styles.border,
               ]}
-              onChangeCheckbox={() => handlePress()}
               placeholder={item.name}
               value={false}
             />
