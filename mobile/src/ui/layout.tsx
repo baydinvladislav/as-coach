@@ -1,6 +1,12 @@
-import React, { useEffect, useRef } from 'react';
-import { Animated, Easing, StyleProp, View, ViewStyle } from 'react-native';
+import React, { useCallback, useEffect } from 'react';
+import { StyleProp, View, ViewStyle } from 'react-native';
 
+import Reanimated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { Edge, SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components';
 
@@ -23,21 +29,26 @@ export const Layout = ({
   backgroundOpacity = 1,
   edges,
 }: TProps) => {
-  const opacityAnim = useRef(new Animated.Value(backgroundOpacity)).current;
+  const opacity = useSharedValue(backgroundOpacity);
 
-  const changeOpacityUp = () => {
-    Animated.timing(opacityAnim, {
-      toValue: backgroundOpacity,
+  const changeOpacityUp = useCallback(() => {
+    opacity.value = withTiming(backgroundOpacity, {
       duration: 100,
-      useNativeDriver: true,
       easing: Easing.linear,
-    }).start();
-  };
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [backgroundOpacity]);
 
   useEffect(() => {
     changeOpacityUp();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [backgroundOpacity]);
+  }, [backgroundOpacity, changeOpacityUp]);
+
+  const animatedStyles = useAnimatedStyle(
+    () => ({
+      opacity: opacity.value,
+    }),
+    [opacity.value],
+  );
 
   return (
     <SafeAreaView style={{ flex: 1 }} edges={edges}>
@@ -45,20 +56,20 @@ export const Layout = ({
       <Background
         blurRadius={backgroundBlurRadius}
         source={BackgroundImage}
-        style={{ opacity: opacityAnim }}
+        style={animatedStyles}
       />
       <Container style={style}>{children}</Container>
     </SafeAreaView>
   );
 };
 
-const Background = styled(Animated.Image)`
+const Background = styled(Reanimated.Image)`
   position: absolute;
   width: ${windowWidth}px;
   height: ${windowHeight}px;
 `;
 
-const BackgroundColor = styled(Animated.View)`
+const BackgroundColor = styled(Reanimated.View)`
   position: absolute;
   width: ${windowWidth}px;
   height: ${windowHeight}px;

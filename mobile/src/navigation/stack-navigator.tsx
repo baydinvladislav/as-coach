@@ -11,6 +11,7 @@ import {
   AddClientScreen,
   ChangePasswordScreen,
   DetailClient,
+  DetailPlanScreen,
   LkScreen,
   LoginScreen,
   NewChangePasswordScreen,
@@ -22,8 +23,7 @@ import {
 } from '@screens';
 import { storage } from '@utils';
 
-const GuestStack = createStackNavigator();
-const UserStack = createStackNavigator();
+export const Stack = createStackNavigator();
 
 export const StackNavigator = observer(() => {
   const { user, customer } = useStore();
@@ -31,75 +31,84 @@ export const StackNavigator = observer(() => {
   const isGuest = !user.hasAccess; // меняем !user.hasAccess на !!!user.hasAccess для разработки. Чтобы открывался сразу лк
 
   useEffect(() => {
+    const getToken = storage.getItem(TOKEN);
+    getToken.then((token?: string) => {
+      token && user.getMe();
+    });
+
     if (!isGuest) {
       customer.getExercises();
-    } else {
-      const getToken = storage.getItem(TOKEN);
-      getToken.then((token?: string) => {
-        token && user.getMe();
-      });
     }
   }, [customer, isGuest, user]);
 
-  return isGuest ? (
-    <GuestStack.Navigator
-      initialRouteName={Screens.WelcomeScreen}
+  return (
+    <Stack.Navigator
+      initialRouteName={isGuest ? Screens.WelcomeScreen : Screens.LkScreen}
       screenOptions={{
         headerShown: false,
         animationEnabled: false,
       }}
     >
-      <GuestStack.Screen
-        name={Screens.WelcomeScreen}
-        component={WelcomeScreen}
-      />
-      <GuestStack.Screen
-        name={Screens.RegistrationScreen}
-        component={RegistrationScreen}
-      />
-      <GuestStack.Screen name={Screens.LoginScreen} component={LoginScreen} />
-      <GuestStack.Screen name={Screens.SmsScreen} component={SmsScreen} />
-    </GuestStack.Navigator>
-  ) : (
-    <UserStack.Navigator
-      initialRouteName={Screens.LkScreen}
-      screenOptions={{ headerShown: false, animationEnabled: false }}
-    >
-      <UserStack.Screen name={Screens.LkScreen} component={LkScreen} />
-      <UserStack.Screen name={Screens.DetailClient} component={DetailClient} />
-      <UserStack.Screen
-        options={{
-          presentation: 'modal',
-          animationEnabled: true,
-        }}
-        name={Screens.AddClientScreen}
-        component={AddClientScreen}
-      />
-      <UserStack.Group
-        screenOptions={{
-          presentation: 'modal',
-          animationEnabled: true,
-        }}
-      >
-        <UserStack.Screen name={Screens.PlanScreen} component={PlanScreen} />
-      </UserStack.Group>
-      <UserStack.Screen name={Screens.SmsScreen} component={SmsScreen} />
-      <UserStack.Screen
-        name={Screens.ProfileScreen}
-        component={ProfileScreen}
-      />
-      <UserStack.Screen
-        name={Screens.ProfileEditScreen}
-        component={ProfileEditScreen}
-      />
-      <UserStack.Screen
-        name={Screens.ChangePasswordScreen}
-        component={ChangePasswordScreen}
-      />
-      <UserStack.Screen
-        name={Screens.NewChangePasswordScreen}
-        component={NewChangePasswordScreen}
-      />
-    </UserStack.Navigator>
+      {isGuest ? (
+        <Stack.Group>
+          <Stack.Screen
+            name={Screens.WelcomeScreen}
+            component={WelcomeScreen}
+          />
+          <Stack.Screen
+            name={Screens.RegistrationScreen}
+            component={RegistrationScreen}
+          />
+          <Stack.Screen name={Screens.LoginScreen} component={LoginScreen} />
+          <Stack.Screen name={Screens.SmsScreen} component={SmsScreen} />
+        </Stack.Group>
+      ) : (
+        <Stack.Group>
+          <Stack.Screen name={Screens.LkScreen} component={LkScreen} />
+          <Stack.Screen name={Screens.DetailClient} component={DetailClient} />
+          <Stack.Screen
+            options={{
+              presentation: 'modal',
+              animationEnabled: true,
+            }}
+            name={Screens.AddClientScreen}
+            component={AddClientScreen}
+          />
+          <Stack.Screen
+            options={{
+              presentation: 'modal',
+              animationEnabled: true,
+            }}
+            name={Screens.DetailPlanScreen}
+            component={DetailPlanScreen}
+          />
+          <Stack.Group
+            screenOptions={{
+              presentation: 'modal',
+              animationEnabled: true,
+            }}
+          >
+            <Stack.Screen name={Screens.PlanScreen} component={PlanScreen} />
+          </Stack.Group>
+          <Stack.Screen name={Screens.SmsScreen} component={SmsScreen} />
+          <Stack.Screen
+            name={Screens.ProfileScreen}
+            component={ProfileScreen}
+          />
+          <Stack.Screen
+            name={Screens.ProfileEditScreen}
+            component={ProfileEditScreen}
+          />
+          <Stack.Screen
+            name={Screens.ChangePasswordScreen}
+            component={ChangePasswordScreen}
+          />
+          <Stack.Screen
+            name={Screens.NewChangePasswordScreen}
+            component={NewChangePasswordScreen}
+          />
+        </Stack.Group>
+      )}
+    </Stack.Navigator>
   );
 });

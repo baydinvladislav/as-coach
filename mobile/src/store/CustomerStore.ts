@@ -105,10 +105,9 @@ export default class CustomerStore {
 
   @action
   @actionLoading()
-  async getCustomerPlanById(customer: CustomerProps) {
+  async getCustomerPlanById(id: string) {
     try {
-      const { data } = await getCustomerPlan(customer.id);
-
+      const { data } = await getCustomerPlan(id);
       return data;
     } catch (e) {
       console.warn(e);

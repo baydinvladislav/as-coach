@@ -9,7 +9,8 @@ from src.customer.schemas import (
     CustomerCreateIn,
     CustomerOut,
     TrainingPlanIn,
-    TrainingPlanOut
+    TrainingPlanOut,
+    TrainingPlanOutFull
 )
 from src.dependencies import get_db
 from src.auth.dependencies import get_current_user
@@ -336,7 +337,7 @@ async def get_all_training_plans(
 
 @customer_router.get(
     "/customers/{customer_id}/training_plans/{training_plan_id}",
-    response_model=TrainingPlanOut,
+    response_model=TrainingPlanOutFull,
     status_code=status.HTTP_200_OK)
 async def get_training_plan(
     training_plan_id: str,
@@ -372,12 +373,43 @@ async def get_training_plan(
             detail=f"training plan with id={training_plan_id} doesn't exist"
         )
 
+    trainings = []
+    for training in training_plan.trainings:
+        training_data = {
+            "id": str(training.id),
+            "name": training.name,
+            "number_of_exercises": len(training.exercises)
+        }
+
+        exercises = []
+        for exercise in training.exercises:
+            exercise_data = {
+                "id": str(exercise.id),
+                "name": exercise.name
+            }
+
+            exercise_on_training = database.query(ExercisesOnTraining).filter(
+                ExercisesOnTraining.training_id == str(training.id),
+                ExercisesOnTraining.exercise_id == str(exercise.id)
+            ).first()
+            if exercise_on_training:
+                exercise_data["sets"] = exercise_on_training.sets
+                exercise_data["superset_id"] = exercise_on_training.superset_id
+                exercises.append(exercise_data)
+
+        training_data["exercises"] = exercises
+
+        trainings.append(training_data)
+
     return {
         "id": str(training_plan.id),
         "start_date": training_plan.start_date.strftime('%Y-%m-%d'),
         "end_date": training_plan.end_date.strftime('%Y-%m-%d'),
-        "number_of_trainings": len(training_plan.trainings),
         "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
         "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
-        "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets])
+        "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets]),
+        "trainings": trainings,
+        "set_rest": training_plan.set_rest,
+        "exercise_rest": training_plan.exercise_rest,
+        "notes": training_plan.notes
     }

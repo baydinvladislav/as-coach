@@ -89,6 +89,13 @@ export const DayExercisesScreen = observer(
             exercises: dayName,
           })}
         </Text>
+        <Text
+          style={styles.exercisesText}
+          color={colors.black4}
+          fontSize={FontSize.S10}
+        >
+          {t('createPlan.exercises')}
+        </Text>
         <View style={styles.searchInput}>
           <SearchInput value={searchValue} onChangeText={setSearchValue} />
         </View>
@@ -104,7 +111,7 @@ export const DayExercisesScreen = observer(
           style={{ justifyContent: 'space-between' }}
           onCancel={handleCancel}
           onConfirm={() =>
-            handleNavigate(PlanScreens.CREATE_PLAN_SCREEN, undefined, true)
+            handleNavigate(PlanScreens.CREATE_SUPERSETS_SCREEN, params, true)
           }
           confirmText={t('buttons.next')}
           isLoading={isLoading}
@@ -136,6 +143,11 @@ export const DayExercisesScreen = observer(
 const styles = StyleSheet.create({
   checkboxGroup: {
     marginTop: normVert(20),
+  },
+  exercisesText: {
+    textTransform: 'uppercase',
+    marginBottom: normVert(40),
+    marginLeft: normHor(16),
   },
   title: {
     marginTop: normVert(14),

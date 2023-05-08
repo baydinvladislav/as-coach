@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { View } from 'react-native';
 
 import styled from 'styled-components';
@@ -8,12 +8,10 @@ import { colors, normHor, normVert } from '@theme';
 import { Keyboard } from '@ui';
 import { isIOS } from '@utils';
 
-type TProps = {
-  children: React.ReactNode;
-  isScroll?: boolean;
-};
-
-export const Layout = ({ children, isScroll = true }: TProps) => {
+export const ModalLayout = ({
+  children,
+  isScroll = true,
+}: PropsWithChildren<{ isScroll?: boolean }>) => {
   const Container = isScroll ? Keyboard : View;
 
   return (

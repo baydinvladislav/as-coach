@@ -28,8 +28,8 @@ export const SearchInput = (props: TInputProps) => {
     <View style={styles.container}>
       <Input
         {...props}
-        onChangeText={handleChangeText}
         key={key}
+        onChangeText={handleChangeText}
         onFocus={handleFocus}
         onBlur={handleBlur}
         width={isFocused ? `${normHor(245)}px` : undefined}

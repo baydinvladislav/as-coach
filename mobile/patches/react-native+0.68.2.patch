@@ -1,5 +1,18 @@
+diff --git a/node_modules/react-native/ReactCommon/yoga/yoga/Yoga.cpp b/node_modules/react-native/ReactCommon/yoga/yoga/Yoga.cpp
+index 9986279..20389d4 100644
+--- a/node_modules/react-native/ReactCommon/yoga/yoga/Yoga.cpp
++++ b/node_modules/react-native/ReactCommon/yoga/yoga/Yoga.cpp
+@@ -2229,7 +2229,7 @@ static float YGDistributeFreeSpaceSecondPass(
+         depth,
+         generationCount);
+     node->setLayoutHadOverflow(
+-        node->getLayout().hadOverflow() |
++        node->getLayout().hadOverflow() ||
+         currentRelativeChild->getLayout().hadOverflow());
+   }
+   return deltaFreeSpace;
 diff --git a/node_modules/react-native/index.js b/node_modules/react-native/index.js
-index e594bbe..edd2224 100644
+index e594bbe..b282200 100644
 --- a/node_modules/react-native/index.js
 +++ b/node_modules/react-native/index.js
 @@ -446,32 +446,16 @@ module.exports = {
@@ -11,7 +24,7 @@ index e594bbe..edd2224 100644
 -        "ColorPropType exported from 'deprecated-react-native-prop-types'.",
 -    );
 -    return require('deprecated-react-native-prop-types').ColorPropType;
-+    return require("deprecated-react-native-prop-types").ColorPropType
++    return require("deprecated-react-native-prop-types").ColorPropType;
    },
    get EdgeInsetsPropType(): $FlowFixMe {
 -    console.warn(
@@ -19,7 +32,7 @@ index e594bbe..edd2224 100644
 -        "EdgeInsetsPropType exported from 'deprecated-react-native-prop-types'.",
 -    );
 -    return require('deprecated-react-native-prop-types').EdgeInsetsPropType;
-+    return require("deprecated-react-native-prop-types").EdgeInsetsPropType
++    return require("deprecated-react-native-prop-types").EdgeInsetsPropType;
    },
    get PointPropType(): $FlowFixMe {
 -    console.warn(
@@ -27,7 +40,7 @@ index e594bbe..edd2224 100644
 -        "PointPropType exported from 'deprecated-react-native-prop-types'.",
 -    );
 -    return require('deprecated-react-native-prop-types').PointPropType;
-+    return require("deprecated-react-native-prop-types").PointPropType
++    return require("deprecated-react-native-prop-types").PointPropType;
    },
    get ViewPropTypes(): $FlowFixMe {
 -    console.warn(
@@ -35,7 +48,14 @@ index e594bbe..edd2224 100644
 -        "ViewPropTypes exported from 'deprecated-react-native-prop-types'.",
 -    );
 -    return require('deprecated-react-native-prop-types').ViewPropTypes;
-+    return require("deprecated-react-native-prop-types").ViewPropTypes
++    return require("deprecated-react-native-prop-types").ViewPropTypes;
    },
  };
  
+diff --git a/node_modules/react-native/scripts/.packager.env b/node_modules/react-native/scripts/.packager.env
+new file mode 100644
+index 0000000..361f5fb
+--- /dev/null
++++ b/node_modules/react-native/scripts/.packager.env
+@@ -0,0 +1 @@
++export RCT_METRO_PORT=8081
