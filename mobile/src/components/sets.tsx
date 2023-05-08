@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: normVert(24),
+    marginBottom: normVert(8),
     flexWrap: 'wrap',
     marginTop: normVert(-16),
     marginLeft: normHor(40),

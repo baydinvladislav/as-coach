@@ -1,4 +1,5 @@
 import os
+import uuid
 from datetime import date, timedelta
 import pytest
 
@@ -10,7 +11,7 @@ from src.auth.utils import get_hashed_password
 from src.dependencies import get_db
 from src.main import app
 from src.auth.models import User
-from src.gym.models import Exercise, MuscleGroup
+from src.gym.models import Exercise, MuscleGroup, Training, ExercisesOnTraining
 from src.customer.utils import generate_random_password
 
 
@@ -23,6 +24,77 @@ TEST_CUSTOMER_LAST_NAME = os.getenv("TEST_CUSTOMER_LAST_NAME")
 TEST_CUSTOMER_USERNAME = os.getenv("TEST_CUSTOMER_USERNAME")
 
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+@pytest.fixture()
+def create_training_exercises(
+        create_trainings,
+        create_exercises,
+        override_get_db
+):
+    training_exercises = override_get_db.query(ExercisesOnTraining).all()
+    if training_exercises:
+        return training_exercises
+
+    training_exercises = []
+    superset_id = uuid.uuid4()
+    for training in create_trainings:
+        available_exercises = [
+            exercise for exercise in create_exercises
+            if exercise.muscle_group.name == training.name
+        ]
+        for exercise in available_exercises:
+            training_exercises.append(
+                ExercisesOnTraining(
+                    training_id=str(training.id),
+                    exercise_id=str(exercise.id),
+                    sets=[10, 10, 10],
+                    # make chest's exercises in superset manner
+                    superset_id=superset_id if training.name == "Грудь" else None
+                )
+            )
+
+    override_get_db.bulk_save_objects(training_exercises)
+    override_get_db.commit()
+
+    return override_get_db.query(ExercisesOnTraining).all()
+
+
+@pytest.fixture()
+def create_trainings(create_training_plans, override_get_db):
+    trainings = override_get_db.query(Training).all()
+    if trainings:
+        return trainings
+
+    training_plan = create_training_plans[0]
+
+    trainings = (
+        Training(
+            name="Грудь",
+            training_plan_id=str(training_plan.id)
+        ),
+        Training(
+            name="Бицепс",
+            training_plan_id=str(training_plan.id)
+        ),
+        Training(
+            name="Спина",
+            training_plan_id=str(training_plan.id)
+        ),
+        Training(
+            name="Трицепс",
+            training_plan_id=str(training_plan.id)
+        ),
+        Training(
+            name="Ноги",
+            training_plan_id=str(training_plan.id)
+        )
+    )
+
+    override_get_db.bulk_save_objects(trainings)
+    override_get_db.commit()
+
+    return override_get_db.query(Training).all()
 
 
 @pytest.fixture()

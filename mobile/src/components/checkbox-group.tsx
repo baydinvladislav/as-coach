@@ -1,9 +1,9 @@
 import React from 'react';
-import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import { StyleProp, View, ViewStyle } from 'react-native';
 
-import { Sets } from '@components';
-import { colors, normVert } from '@theme';
-import { Checkbox, Text } from '@ui';
+import { CheckboxWithSets } from '@components';
+import { colors } from '@theme';
+import { Text } from '@ui';
 import { addExerciseToPlan } from '@utils';
 
 import { FontSize, TExercises, TPlan } from '~types';
@@ -51,34 +51,19 @@ export const CheckboxGroup = ({
               exercise => exercise.id === item.id,
             );
             return (
-              <React.Fragment key={dayNumber + item.id}>
-                <Checkbox
-                  style={[styles.checkbox, key !== 0 && styles.border]}
-                  onChangeCheckbox={() => handlePress(item.id)}
-                  placeholder={item.name}
-                  value={Boolean(exercise)}
-                />
-                {exercise && (
-                  <Sets
-                    errors={errors?.exercises?.[key]?.sets}
-                    val={exercise?.sets}
-                    onChangeText={e => handleChangeSets(item.id, e)}
-                  />
-                )}
-              </React.Fragment>
+              <CheckboxWithSets
+                key={item.id}
+                placeholder={item.name}
+                isFirst={key === 0}
+                handlePress={() => handlePress(item.id)}
+                exercise={exercise}
+                errors={errors}
+                handleChangeSets={e => handleChangeSets(item.id, e)}
+                index={key}
+              />
             );
           })
         : null}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  checkbox: {
-    paddingVertical: normVert(16),
-  },
-  border: {
-    borderTopColor: colors.black3,
-    borderTopWidth: 1,
-  },
-});
