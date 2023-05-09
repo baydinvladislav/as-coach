@@ -8,7 +8,7 @@ import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { CustomerProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
-import { Checkbox, Input, Text, ViewWithButtons } from '@ui';
+import { RadioButtonGroup, Input, Text, ViewWithButtons } from '@ui';
 import { createExercise } from '@api';
 import { createExerciseSchema } from '@utils';
 import { Screens, useNavigation } from '@navigation';
@@ -105,7 +105,7 @@ export const CreateExerciseScreen = observer(
           isScroll={true}
         >
           {data.map((item: { id: string; name: string; }) => (
-            <Checkbox
+            <RadioButtonGroup
               key={item.id}
               style={[
                 styles.checkbox,
