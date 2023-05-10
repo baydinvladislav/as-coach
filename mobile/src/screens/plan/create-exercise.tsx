@@ -1,19 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { observer } from 'mobx-react';
-import { useFormik } from 'formik';
+import RadioGroup from 'react-native-radio-buttons-group';
 
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { CustomerProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
-import { RadioButtonGroup, Input, Text, ViewWithButtons } from '@ui';
-import { createExercise } from '@api';
-import { createExerciseSchema } from '@utils';
-import { Screens, useNavigation } from '@navigation';
+import { Input, Text, ViewWithButtons } from '@ui';
 
-import { FontSize, TPlan, TMuscleGroups } from '~types';
+import { FontSize, TPlan } from '~types';
 
 import { PlanScreens } from './plan';
 
@@ -43,37 +40,26 @@ export const CreateExerciseScreen = observer(
     const { loading, user } = useStore();
     const isLoading = loading.isLoading;
     const data = user.muscleGroups;
-    const { navigate } = useNavigation();
-    
+    const [selectedId, setSelectedId] = useState<string | undefined>();
+
+    // send request to api
     useEffect(() => {
       user.getMuscleGroups();
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const onSubmit = (values: TMuscleGroups) => {
-      createExercise(user.id, {
-        ...values,
-      }).then(() => navigate(Screens.DetailClient, { id: user.id }));
-    };
-  
-    const {
-      handleChange,
-      handleSubmit,
-      errors,
-      values,
-      setValues,
-      validateForm,
-      setErrors,
-    } = useFormik({
-      initialValues: {
-        name: '',
-        muscle_group_id: '',
+    // mapping response
+    const formattedOptions = data.map(option => ({
+      id: option.id,
+      label: option.name,
+      value: option.id,
+      color: colors.green,
+      labelStyle: {
+        color: colors.white,
+        fontSize: 16,
+        paddingVertical: normVert(10),
       },
-      onSubmit,
-      validationSchema: createExerciseSchema,
-      validateOnChange: false,
-      validateOnBlur: false,
-    });
+    }));
 
     return (
       <>
@@ -104,17 +90,12 @@ export const CreateExerciseScreen = observer(
           isLoading={isLoading}
           isScroll={true}
         >
-          {data.map((item: { id: string; name: string; }) => (
-            <RadioButtonGroup
-              key={item.id}
-              style={[
-                styles.checkbox,
-                item.name != data[0].name && styles.border,
-              ]}
-              placeholder={item.name}
-              value={false}
-            />
-          ))}
+          <RadioGroup
+            radioButtons={formattedOptions}
+            onPress={setSelectedId}
+            selectedId={selectedId}
+            containerStyle={styles.radioButton}
+          />
         </ViewWithButtons>
       </>
     );
@@ -122,8 +103,8 @@ export const CreateExerciseScreen = observer(
 );
 
 const styles = StyleSheet.create({
-  checkbox: {
-    paddingVertical: normVert(16),
+  radioButton: {
+    alignItems: 'flex-start',
   },
 
   title: {
