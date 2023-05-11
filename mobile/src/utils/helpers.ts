@@ -10,7 +10,28 @@ export const modifyPlan = (
     trainings: [
       ...values.trainings.map(training => {
         if (training?.name === dayName) {
-          return { ...training, exercises: value };
+          return {
+            ...training,
+            exercises: value.reduce(
+              (acc: TPropsExercises[], item, key, arr) => {
+                const index = acc.findIndex(el => el.id === item.supersetId);
+                delete item.supersetId;
+
+                if (index >= 0) {
+                  if (acc[index]?.supersets) {
+                    acc?.[index]?.supersets?.push(item.id);
+                  } else {
+                    acc[index].supersets = [item.id];
+                  }
+                } else {
+                  acc.push(item);
+                }
+
+                return acc;
+              },
+              [],
+            ),
+          };
         } else {
           return training;
         }
@@ -60,3 +81,17 @@ export const addExerciseToPlan = (
       }),
     ],
   } as TPlan);
+
+export const clearArray = (arr: TPropsExercises[]) =>
+  arr.map(
+    (
+      item,
+      key,
+      arr, // Очищаем массив с упражнениями от значений суперсетов, если упражнение не в суперсете
+    ) =>
+      item.supersetId &&
+      (arr[key - 1]?.supersetId === item.supersetId ||
+        arr[key + 1]?.supersetId === item.supersetId)
+        ? item
+        : { ...item, supersetId: undefined },
+  );

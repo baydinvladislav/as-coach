@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 
 import styled from 'styled-components';
 
@@ -26,7 +26,10 @@ export const ExerciseInfo = ({ exercises, index, name, isLast }: TProps) => (
       <Text fontSize={FontSize.S16} color={colors.white}>
         {name}
       </Text>
-      <View style={[styles.row, styles.sets]}>
+      <ScrollView
+        horizontal={true}
+        contentContainerStyle={[styles.row, styles.sets]}
+      >
         {exercises.sets.map((set, index) => (
           <React.Fragment key={index}>
             <Text fontSize={FontSize.S17} color={colors.black5}>
@@ -39,7 +42,7 @@ export const ExerciseInfo = ({ exercises, index, name, isLast }: TProps) => (
             )}
           </React.Fragment>
         ))}
-      </View>
+      </ScrollView>
     </Column>
   </View>
 );

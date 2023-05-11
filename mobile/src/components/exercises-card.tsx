@@ -18,11 +18,9 @@ import { ArrowDownIcon, ArrowUp2Icon, EditIcon } from '@assets';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { colors, normHor, normVert } from '@theme';
-import { Text } from '@ui';
+import { ExerciseWithSuperset, Text } from '@ui';
 
 import { FontSize, TPropsExercise } from '~types';
-
-import { ExerciseInfo } from './exercise-info';
 
 type TProps = {
   exercises: TPropsExercise;
@@ -79,7 +77,7 @@ export const ExercisesCard = ({
   );
 
   const heightStyles = useAnimatedStyle(() => ({
-    maxHeight: interpolate(derived.value, [0, 1], [height, 100 + 100 * count], {
+    maxHeight: interpolate(derived.value, [0, 1], [height, 150 + 150 * count], {
       extrapolateRight: Extrapolation.CLAMP,
     }),
   }));
@@ -125,6 +123,13 @@ export const ExercisesCard = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
+  const quantity =
+    exercises.exercises.length +
+    exercises.exercises.reduce(
+      (acc, item) => (acc += item.supersets?.length || 0),
+      0,
+    );
+
   return (
     <Reanimated.View style={[styles.box, heightStyles, widthStyles]}>
       <Container
@@ -148,7 +153,7 @@ export const ExercisesCard = ({
               color={colors.black4}
               fontSize={FontSize.S12}
             >
-              {exercises.exercises.length} {t('createPlan.exercises')}
+              {quantity} {t('createPlan.exercises')}
             </Text>
           </View>
           {exercises.exercises.length ? (
@@ -157,19 +162,9 @@ export const ExercisesCard = ({
             </Icon>
           ) : null}
         </View>
-        {!isEndAnimation &&
-          exercises.exercises?.map((exercise, key) => {
-            const { name } = customer.getExerciseById(exercise.id);
-            return (
-              <ExerciseInfo
-                name={name}
-                exercises={exercise}
-                key={key}
-                index={key}
-                isLast={key === exercises.exercises.length - 1}
-              />
-            );
-          })}
+        {!isEndAnimation && (
+          <ExerciseWithSuperset exercises={exercises.exercises} />
+        )}
       </Container>
     </Reanimated.View>
   );
