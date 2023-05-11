@@ -121,9 +121,11 @@ export const DayExercisesScreen = observer(
           isLoading={isLoading}
           isScroll={true}
           circles={
-            <Circle onPress={handleConfirm}>
-              <Text>{exercises.length}</Text>
-            </Circle>
+            exercises.length ? (
+              <Circle onPress={handleConfirm}>
+                <Text>{exercises.length}</Text>
+              </Circle>
+            ) : null
           }
         >
           {!searchValue && data.length ? (

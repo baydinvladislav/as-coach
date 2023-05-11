@@ -69,7 +69,9 @@ export const EditExercisesScreen = observer(
     const handleChangeSets = (id: string, e: React.ChangeEvent<any>) => {
       setData(data =>
         data.map(item =>
-          item.id === id ? { ...item, sets: e.target.value } : item,
+          item.id === id || item.supersetId === id
+            ? { ...item, sets: e.target.value }
+            : item,
         ),
       );
     };
@@ -181,19 +183,19 @@ export const EditExercisesScreen = observer(
 
       let arr: TPropsExercises[] = JSON.parse(JSON.stringify(updated));
 
-      // const changeFirstSupersetId = (supersetId?: string) => {
-      //   arr = arr.map(item => {
-      //     if (item.supersetId === supersetId && item.id !== supersetId) {
-      //       const id = data.find(
-      //         item => item.supersetId === supersetId && item.id !== supersetId,
-      //       )?.id;
-      //       console.log(id);
-      //       return { ...item, supersetId: id };
-      //     }
+      const changeFirstSupersetId = (supersetId?: string) => {
+        arr = arr.map(item => {
+          if (item.supersetId === supersetId && item.id !== supersetId) {
+            const id = data.find(
+              item => item.supersetId === supersetId && item.id !== supersetId,
+            )?.id;
+            console.log(id);
+            return { ...item, supersetId: id };
+          }
 
-      //     return item;
-      //   });
-      // };
+          return item;
+        });
+      };
 
       const supersets = data.reduce(
         (acc: Record<string, any>, item, index, arr) => {
@@ -225,6 +227,7 @@ export const EditExercisesScreen = observer(
       const isFromUp = !isFromDown;
 
       if (data[from].supersetId === data[to].supersetId) {
+        console.log('VAR1');
         // Если перетаскиваем внутри суперсета, и ставим на первую позицию
         for (let i = 0; i < supersetsValues.length; i++) {
           if (to >= supersetsValues[i][0] && to <= supersetsValues[i][1]) {
@@ -243,6 +246,7 @@ export const EditExercisesScreen = observer(
           data?.[to + 1]?.supersetId ||
           data?.[to - 1]?.supersetId)
       ) {
+        console.log('VAR2');
         // Если перетаскиваем из суперсета вне суперсета (перенос суперсета)
         const items = data.filter(
           item => item.supersetId === arr[to].supersetId,
@@ -251,17 +255,23 @@ export const EditExercisesScreen = observer(
         arr.splice(to > from ? to - items.length + 1 : to, 0, ...items);
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       } else if (isFromUp) {
+        console.log('VAR3');
         // Переместили упражнение не из суперсета в суперсет с направления верх
         for (let i = 0; i < supersetsValues.length; i++) {
           if (to >= supersetsValues[i][0] && to < supersetsValues[i][1]) {
+            const supersetId = arr[to].supersetId;
             arr[to].supersetId = supersetsKeys[i];
+            changeFirstSupersetId(supersetId);
           }
         }
       } else if (isFromDown) {
+        console.log('VAR4');
         // Переместили упражнение не из суперсета в суперсет с направления низ
         for (let i = 0; i < supersetsValues.length; i++) {
           if (to > supersetsValues[i][0] && to <= supersetsValues[i][1]) {
+            const supersetId = arr[to].supersetId;
             arr[to].supersetId = supersetsKeys[i];
+            changeFirstSupersetId(supersetId);
           }
         }
       }
@@ -282,7 +292,10 @@ export const EditExercisesScreen = observer(
         <View style={{ backgroundColor: colors.black6 }}>
           <CheckboxWithSets
             key={item.id}
-            placeholder={name}
+            placeholder={
+              // name
+              item.id.slice(0, 3) + ' - ' + item.supersetId?.slice(0, 3)
+            }
             isFirst={!index || (isPrevSuperset && Boolean(item.supersetId))}
             handlePress={() => handlePress(item.id)}
             exercise={item}
@@ -295,7 +308,7 @@ export const EditExercisesScreen = observer(
             onDrag={drag}
           />
           {item.supersetId && item.id !== item.supersetId && (
-            <Line quantity={Math.floor(item.sets.length / 4)} />
+            <Line quantity={Math.ceil(item.sets.length / 4) - 1} />
           )}
         </View>
       );
@@ -392,7 +405,7 @@ const Line = styled(View)<{ quantity: number }>`
   width: 1px;
   height: ${({ quantity }) => normVert(64 + quantity * 64)}px;
   position: absolute;
-  top: ${normVert(-58)}px;
+  top: ${({ quantity }) => normVert(-58 - quantity * 66)}px;
   left: ${normHor(11)}px;
 `;
 

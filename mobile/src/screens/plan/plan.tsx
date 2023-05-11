@@ -70,40 +70,9 @@ export const PlanScreen = ({ route }: RoutesProps) => {
     initialValues: {
       // Server values
       diets: [{ proteins: '', fats: '', carbs: '' }],
-      start_date: '05.05.2023',
-      end_date: '05.05.2023',
-      trainings: [
-        {
-          name: 'test',
-          exercises: [
-            {
-              id: '4283c861-eb38-4be6-ad5a-0d48f54e9415',
-              sets: ['12', '12', '12'],
-            },
-            {
-              id: '7860b296-fe24-4541-84d8-576e4698b7c5',
-              sets: ['12', '12', '12'],
-              supersets: [
-                '33ecc6de-dfc1-4dfb-a07b-637f769e9095',
-                '5414ead9-5d9c-4cee-b4c4-48eebad6f0a5',
-              ],
-            },
-            {
-              id: '7ea243a7-356a-443e-ac44-697320be8f08',
-              sets: ['12', '12', '12'],
-            },
-            {
-              id: '9b811d46-3efc-4ad2-8393-f2633014fa5d',
-              sets: ['12', '12', '12'],
-              supersets: ['844aa04d-d264-4799-a12a-43de7ea03b43'],
-            },
-            {
-              id: '8832fd62-ed9a-4c2a-83f5-ae02bac14f3a',
-              sets: ['12', '12', '12'],
-            },
-          ],
-        },
-      ],
+      start_date: '',
+      end_date: '',
+      trainings: [],
       notes: '',
       set_rest: '0',
       exercise_rest: '0',
