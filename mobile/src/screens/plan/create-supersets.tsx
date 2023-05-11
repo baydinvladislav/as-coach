@@ -5,11 +5,10 @@ import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
 import { Edit2Icon } from '@assets';
-import { ExerciseInfo } from '@components';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { colors, normHor, normVert } from '@theme';
-import { Button, Text, ViewWithButtons } from '@ui';
+import { Button, ExerciseWithSuperset, Text, ViewWithButtons } from '@ui';
 
 import { ButtonType, FontSize, TPlan } from '~types';
 
@@ -43,6 +42,10 @@ export const CreateSupersetsScreen = observer(
     const exercises = values?.trainings?.[params.dayNumber]?.exercises;
     const dayName = values?.trainings?.[params.dayNumber]?.name;
 
+    const quantity =
+      exercises.length +
+      exercises.reduce((acc, item) => (acc += item.supersets?.length || 0), 0);
+
     return (
       <>
         <View style={styles.row}>
@@ -52,7 +55,7 @@ export const CreateSupersetsScreen = observer(
             fontSize={FontSize.S24}
           >
             {t('supersets.title', {
-              quantity: exercises.length,
+              quantity,
             })}
           </Text>
           <Button
@@ -83,40 +86,7 @@ export const CreateSupersetsScreen = observer(
           cancelText={t('buttons.moreExercises')}
           isScroll={true}
         >
-          {exercises.map((exercise, key, arr) => {
-            const { name } = customer.getExerciseById(exercise.id);
-
-            const index =
-              arr.slice(0, key).length +
-              arr
-                .slice(0, key)
-                .reduce((acc, item) => (acc += item.supersets?.length || 0), 0);
-            return (
-              <React.Fragment key={key}>
-                <ExerciseInfo
-                  name={name}
-                  index={index}
-                  isLast={key === exercises.length - 1}
-                  exercises={exercise}
-                />
-                {exercise.supersets?.map?.((superset, i) => {
-                  const { name } = customer.getExerciseById(superset);
-                  return (
-                    <View key={i}>
-                      <Line />
-                      <ExerciseInfo
-                        name={name}
-                        key={i}
-                        index={i + index + 1}
-                        isLast={true}
-                        exercises={exercise}
-                      />
-                    </View>
-                  );
-                })}
-              </React.Fragment>
-            );
-          })}
+          <ExerciseWithSuperset exercises={exercises} />
         </ViewWithButtons>
       </>
     );

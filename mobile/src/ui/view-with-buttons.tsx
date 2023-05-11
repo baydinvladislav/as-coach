@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {
   ScrollView,
   StyleProp,
   StyleSheet,
-  TouchableOpacity,
   View,
   ViewStyle,
 } from 'react-native';
@@ -11,7 +10,6 @@ import {
 import { NestableScrollContainer } from 'react-native-draggable-flatlist';
 import styled from 'styled-components';
 
-import { SupersetIcon, TrashIcon } from '@assets';
 import { t } from '@i18n';
 import { colors, normHor, normVert } from '@theme';
 import { Button } from '@ui';
@@ -34,6 +32,7 @@ type TProps = {
   onSuperset?: () => void;
   isSelected?: boolean;
   isDraggable?: boolean;
+  circles?: ReactNode;
 };
 
 export const ViewWithButtons = ({
@@ -46,9 +45,7 @@ export const ViewWithButtons = ({
   cancelText = t('buttons.cancel'),
   isLoading,
   isScroll = false,
-  onSuperset,
-  onDelete,
-  isSelected,
+  circles: Circles,
   isDraggable,
 }: TProps) => {
   const Container = isScroll
@@ -58,16 +55,7 @@ export const ViewWithButtons = ({
     : View;
   return (
     <ChildrenContainer style={style}>
-      {onSuperset && (
-        <Circle1 activeOpacity={isSelected ? 0.5 : 1} onPress={onSuperset}>
-          <SupersetIcon opacity={isSelected ? 1 : 0.5} />
-        </Circle1>
-      )}
-      {onDelete && (
-        <Circle2 activeOpacity={isSelected ? 0.5 : 1} onPress={onDelete}>
-          <TrashIcon opacity={isSelected ? 1 : 0.5} />
-        </Circle2>
-      )}
+      {Circles}
       <Container
         style={[styles.container, containerStyle]}
         contentContainerStyle={[styles.container, containerStyle]}
@@ -111,30 +99,4 @@ const ButtonsContainer = styled(View)`
   left: -${normHor(16)}px;
   padding-horizontal: ${normHor(16)}px;
   padding-vertical: ${normVert(20)}px;
-`;
-
-const Circle1 = styled(TouchableOpacity)`
-  position: absolute;
-  z-index: 1;
-  right: ${normHor(24)}px;
-  bottom: ${normVert(174)}px;
-  border-radius: 100px;
-  width: ${normHor(52)}px;
-  height: ${normVert(52)}px;
-  background-color: ${colors.grey};
-  justify-content: center;
-  align-items: center;
-`;
-
-const Circle2 = styled(TouchableOpacity)`
-  position: absolute;
-  z-index: 1;
-  right: ${normHor(88)}px;
-  bottom: ${normVert(174)}px;
-  border-radius: 100px;
-  width: ${normHor(52)}px;
-  height: ${normVert(52)}px;
-  background-color: ${colors.grey};
-  justify-content: center;
-  align-items: center;
 `;

@@ -52,9 +52,10 @@ export type TPropsExercise = {
 
 export type TPropsExercises = {
   id: string;
-  name: string;
+  name?: string;
   sets: number[];
   supersets?: string[];
+  supersetId?: string;
 };
 
 export type TPlanType = {
