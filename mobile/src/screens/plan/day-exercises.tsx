@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { debounce, isEmpty } from 'lodash';
 import { observer } from 'mobx-react';
+import styled from 'styled-components';
 
 import { AddIcon } from '@assets';
 import { CheckboxGroup, NotFound, SearchInput } from '@components';
@@ -50,6 +51,7 @@ export const DayExercisesScreen = observer(
     ];
 
     const dayName = values?.trainings?.[params.dayNumber]?.name;
+    const exercises = values?.trainings?.[params.dayNumber]?.exercises;
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const search = useCallback(
@@ -81,6 +83,10 @@ export const DayExercisesScreen = observer(
       handleNavigate(PlanScreens.CREATE_PLAN_SCREEN);
     };
 
+    const handleConfirm = () => {
+      handleNavigate(PlanScreens.CREATE_SUPERSETS_SCREEN, params, true);
+    };
+
     return (
       <>
         <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
@@ -110,12 +116,15 @@ export const DayExercisesScreen = observer(
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
           onCancel={handleCancel}
-          onConfirm={() =>
-            handleNavigate(PlanScreens.CREATE_SUPERSETS_SCREEN, params, true)
-          }
+          onConfirm={handleConfirm}
           confirmText={t('buttons.next')}
           isLoading={isLoading}
           isScroll={true}
+          circles={
+            <Circle onPress={handleConfirm}>
+              <Text>{exercises.length}</Text>
+            </Circle>
+          }
         >
           {!searchValue && data.length ? (
             data.map((item: TExercises[], index) => (
@@ -164,3 +173,16 @@ const styles = StyleSheet.create({
     marginHorizontal: normHor(16),
   },
 });
+
+const Circle = styled(TouchableOpacity)`
+  position: absolute;
+  z-index: 1;
+  background-color: ${colors.green};
+  right: ${normHor(22)}px;
+  bottom: ${normVert(174)}px;
+  border-radius: 100px;
+  width: ${normHor(48)}px;
+  height: ${normVert(48)}px;
+  justify-content: center;
+  align-items: center;
+`;

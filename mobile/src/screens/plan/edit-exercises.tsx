@@ -181,6 +181,20 @@ export const EditExercisesScreen = observer(
 
       let arr: TPropsExercises[] = JSON.parse(JSON.stringify(updated));
 
+      // const changeFirstSupersetId = (supersetId?: string) => {
+      //   arr = arr.map(item => {
+      //     if (item.supersetId === supersetId && item.id !== supersetId) {
+      //       const id = data.find(
+      //         item => item.supersetId === supersetId && item.id !== supersetId,
+      //       )?.id;
+      //       console.log(id);
+      //       return { ...item, supersetId: id };
+      //     }
+
+      //     return item;
+      //   });
+      // };
+
       const supersets = data.reduce(
         (acc: Record<string, any>, item, index, arr) => {
           !item.supersetId && acc;
