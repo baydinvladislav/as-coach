@@ -177,7 +177,7 @@ export const PlanScreen = ({ route }: RoutesProps) => {
 
       case PlanScreens.CREATE_EXERCISE_SCREEN:
         return <CreateExerciseScreen {...formProps} />;
-        
+
       case PlanScreens.CREATE_SUPERSETS_SCREEN:
         return <CreateSupersetsScreen {...formProps} />;
 
