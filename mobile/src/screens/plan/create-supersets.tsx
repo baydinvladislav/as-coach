@@ -2,13 +2,13 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { observer } from 'mobx-react';
+import styled from 'styled-components';
 
 import { Edit2Icon } from '@assets';
-import { ExerciseInfo } from '@components';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { colors, normHor, normVert } from '@theme';
-import { Button, Text, ViewWithButtons } from '@ui';
+import { Button, ExerciseWithSuperset, Text, ViewWithButtons } from '@ui';
 
 import { ButtonType, FontSize, TPlan } from '~types';
 
@@ -42,6 +42,10 @@ export const CreateSupersetsScreen = observer(
     const exercises = values?.trainings?.[params.dayNumber]?.exercises;
     const dayName = values?.trainings?.[params.dayNumber]?.name;
 
+    const quantity =
+      exercises.length +
+      exercises.reduce((acc, item) => (acc += item.supersets?.length || 0), 0);
+
     return (
       <>
         <View style={styles.row}>
@@ -51,7 +55,7 @@ export const CreateSupersetsScreen = observer(
             fontSize={FontSize.S24}
           >
             {t('supersets.title', {
-              quantity: exercises.length,
+              quantity,
             })}
           </Text>
           <Button
@@ -68,7 +72,7 @@ export const CreateSupersetsScreen = observer(
           fontSize={FontSize.S10}
         >
           {t('supersets.dayTitle', {
-            day: params.dayNumber,
+            day: params.dayNumber + 1,
             name: dayName,
           })}
         </Text>
@@ -82,18 +86,7 @@ export const CreateSupersetsScreen = observer(
           cancelText={t('buttons.moreExercises')}
           isScroll={true}
         >
-          {exercises.map((exercise, key) => {
-            const { name } = customer.getExerciseById(exercise.id);
-            return (
-              <ExerciseInfo
-                name={name}
-                key={key}
-                index={key}
-                isLast={key === exercises.length - 1}
-                exercises={exercise}
-              />
-            );
-          })}
+          <ExerciseWithSuperset exercises={exercises} />
         </ViewWithButtons>
       </>
     );
@@ -118,3 +111,12 @@ const styles = StyleSheet.create({
     marginBottom: normVert(16),
   },
 });
+
+const Line = styled(View)`
+  background-color: ${colors.green};
+  width: 1px;
+  height: ${normVert(28)}px;
+  position: absolute;
+  bottom: ${normVert(78)}px;
+  left: ${normHor(10)}px;
+`;
