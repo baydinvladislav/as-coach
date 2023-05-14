@@ -1,10 +1,17 @@
 import { action, computed, makeObservable, observable } from 'mobx';
 
-import { getMuscleGroups, login, me, profileEdit, registration } from '@api';
+import {
+  createExercise,
+  getMuscleGroups,
+  login,
+  me,
+  profileEdit,
+  registration,
+} from '@api';
 import { TOKEN } from '@constants';
 import { storage } from '@utils';
 
-import { TMuscleGroups } from '~types';
+import { TExercises, TMuscleGroups } from '~types';
 
 import { RootStore } from './RootStore';
 import { actionLoading } from './action-loading';
@@ -27,6 +34,11 @@ export default class UserStore {
     makeObservable(this);
   }
 
+  @observable exercise: TExercises = {
+    id: '',
+    muscle_group: '',
+    name: '',
+  };
   @observable isSignedIn = false;
   @observable me: UserProps = {
     first_name: '',
@@ -65,6 +77,11 @@ export default class UserStore {
   }
 
   @action
+  setExercise(data: TExercises) {
+    this.exercise = data;
+  }
+
+  @action
   setMuscleGroups(data: TMuscleGroups[]) {
     this.muscleGroups = data;
   }
@@ -77,6 +94,18 @@ export default class UserStore {
       this.setMuscleGroups(data);
     } catch (e) {
       console.warn(e);
+    }
+  }
+
+  @action
+  @actionLoading()
+  async createExercise(values) {
+    try {
+      const { data } = await createExercise(values);
+      this.setExercise([data]);
+    } catch (e) {
+      console.warn(e);
+      throw e;
     }
   }
 
