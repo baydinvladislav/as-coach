@@ -10,7 +10,7 @@ import { Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
 import { Input, Text, ViewWithButtons } from '@ui';
 
-import { FontSize, TExercises } from '~types';
+import { FontSize } from '~types';
 
 import { PlanScreens } from './plan';
 
@@ -25,7 +25,7 @@ type TProps = {
 export const CreateExerciseScreen = observer(({ handleNavigate }: TProps) => {
   const { loading, user } = useStore();
   const isLoading = loading.isLoading;
-  const data = user.muscleGroups;
+  const muscleGroups = user.muscleGroups;
   const [muscleGroupId, setMuscleGroupId] = useState<string | undefined>();
   const [exerciseName, setExerciseName] = useState('');
   const { navigate } = useNavigation();
@@ -37,7 +37,7 @@ export const CreateExerciseScreen = observer(({ handleNavigate }: TProps) => {
   }, []);
 
   // mapping response to create radio buttons
-  const formattedOptions = data.map(option => ({
+  const formattedOptions = muscleGroups.map(option => ({
     id: option.id,
     label: option.name,
     value: option.id,

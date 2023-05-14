@@ -33,7 +33,7 @@ export const DayExercisesScreen = observer(
   ({ handleNavigate, values, setValues, params, errors }: TProps) => {
     const [searchValue, setSearchValue] = useState<string | undefined>();
 
-    const { loading, customer } = useStore();
+    const { loading, user, customer } = useStore();
 
     const isLoading = loading.isLoading;
 
