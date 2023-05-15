@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { observer } from 'mobx-react';
-import RadioGroup from 'react-native-radio-buttons-group';
+import { RadioButton, RadioGroup } from 'react-native-radio-buttons-group';
 
 import { useStore } from '@hooks';
 import { t } from '@i18n';
@@ -59,6 +59,12 @@ export const CreateExerciseScreen = observer(({ handleNavigate }: TProps) => {
       .then(() => navigate(Screens.DetailClient));
   };
 
+  function handlePress(id: string) {
+    if (id !== muscleGroupId && setMuscleGroupId) {
+      setMuscleGroupId(id);
+    }
+  }
+
   return (
     <>
       <Text style={styles.title} color={colors.white} fontSize={FontSize.S20}>
@@ -87,12 +93,19 @@ export const CreateExerciseScreen = observer(({ handleNavigate }: TProps) => {
         isLoading={isLoading}
         isScroll={true}
       >
-        <RadioGroup
-          radioButtons={formattedOptions}
-          onPress={setMuscleGroupId}
-          selectedId={muscleGroupId}
-          containerStyle={styles.radioButton}
-        />
+        <View>
+          {formattedOptions.map(button => (
+            <RadioButton
+              {...button}
+              key={button.id}
+              containerStyle={[
+                button.value != formattedOptions[0].value && styles.border,
+              ]}
+              selected={button.id === muscleGroupId}
+              onPress={() => handlePress(button.id)}
+            />
+          ))}
+        </View>
       </ViewWithButtons>
     </>
   );
@@ -118,6 +131,7 @@ const styles = StyleSheet.create({
 
   border: {
     borderTopColor: colors.black3,
+    paddingTop: normVert(10),
     borderTopWidth: 1,
   },
 
