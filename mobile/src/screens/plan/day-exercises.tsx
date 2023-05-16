@@ -65,6 +65,11 @@ export const DayExercisesScreen = observer(
       search();
     }, [search, searchValue]);
 
+    useEffect(() => {
+      customer.getExercises();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     const handleCancel = () => {
       if (!params.isExists) {
         setValues(values => ({
@@ -121,7 +126,7 @@ export const DayExercisesScreen = observer(
           isLoading={isLoading}
           isScroll={true}
           circles={
-            exercises.length ? (
+            exercises?.length ? (
               <Circle onPress={handleConfirm}>
                 <Text>{exercises.length}</Text>
               </Circle>
