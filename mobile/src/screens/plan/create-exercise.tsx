@@ -24,20 +24,28 @@ type TProps = {
 
 export const CreateExerciseScreen = observer(
   ({ handleNavigate, params }: TProps) => {
-    const { loading, user } = useStore();
-    const isLoading = loading.isLoading;
-    const muscleGroups = user.muscleGroups;
-    const [muscleGroupId, setMuscleGroupId] = useState<string | undefined>();
-    const [exerciseName, setExerciseName] = useState('');
+    /**
+     * Screen for creating new exercise in library.
+     *
+     * @param handleNavigate - use to move in next screen
+     * @param params - screen params
+     */
 
-    // send request to api to fetch muscle groups
+    const { loading, user } = useStore();
+    const [muscleGroupId, setMuscleGroupId] = useState<string | undefined>();
+    const [exerciseName, setExerciseName] = useState<string | undefined>();
+
     useEffect(() => {
       user.getMuscleGroups();
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // mapping response to create radio buttons
-    const formattedOptions = muscleGroups.map(option => ({
+    const formattedOptions = user.muscleGroups.map(option => ({
+      /**
+       * Formats data for every radio button
+       * based on muscle group
+       */
+
       id: option.id,
       label: option.name,
       value: option.id,
@@ -49,8 +57,13 @@ export const CreateExerciseScreen = observer(
       },
     }));
 
-    // send request to create exercise
     const handleSubmit = () => {
+      /**
+       * If user submits the form,
+       * it sends request to server and moves user
+       * to exercises mapping screen again
+       */
+
       user
         .createExercise({
           name: exerciseName,
@@ -62,7 +75,12 @@ export const CreateExerciseScreen = observer(
     };
 
     function handlePress(id: string) {
-      if (id !== muscleGroupId && setMuscleGroupId) {
+      /**
+       * Changes active element in
+       * muscle group radio button list
+       */
+
+      if (id !== muscleGroupId) {
         setMuscleGroupId(id);
       }
     }
@@ -91,8 +109,14 @@ export const CreateExerciseScreen = observer(
           confirmText={t('buttons.create')}
           onConfirm={handleSubmit}
           cancelText={t('buttons.cancel')}
-          onCancel={() => handleNavigate(PlanScreens.CREATE_DATE_SCREEN)}
-          isLoading={isLoading}
+          onCancel={() =>
+            handleNavigate(
+              PlanScreens.CREATE_DAY_EXERCISES_SCREEN,
+              params,
+              true,
+            )
+          }
+          isLoading={loading.isLoading}
           isScroll={true}
         >
           <View>
