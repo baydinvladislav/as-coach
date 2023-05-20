@@ -21,7 +21,14 @@ import { t } from '@i18n';
 import { useFocusEffect } from '@react-navigation/native';
 import { colors, normHor, normVert } from '@theme';
 import { Text, ViewWithButtons } from '@ui';
-import { clearArray, isIOS, modifyPlan } from '@utils';
+import {
+  changeFirstSupersetId,
+  clearArray,
+  isIOS,
+  modifyPlan,
+  moveExerciseFromDown,
+  moveExerciseFromUp,
+} from '@utils';
 
 import { FontSize, TPlan, TPropsExercises } from '~types';
 
@@ -183,20 +190,6 @@ export const EditExercisesScreen = observer(
 
       let arr: TPropsExercises[] = JSON.parse(JSON.stringify(updated));
 
-      const changeFirstSupersetId = (supersetId?: string) => {
-        arr = arr.map(item => {
-          if (item.supersetId === supersetId && item.id !== supersetId) {
-            const id = data.find(
-              item => item.supersetId === supersetId && item.id !== supersetId,
-            )?.id;
-            console.log(id);
-            return { ...item, supersetId: id };
-          }
-
-          return item;
-        });
-      };
-
       const supersets = data.reduce(
         (acc: Record<string, any>, item, index, arr) => {
           !item.supersetId && acc;
@@ -225,8 +218,15 @@ export const EditExercisesScreen = observer(
 
       const isFromDown = to < from;
       const isFromUp = !isFromDown;
-
-      if (data[from].supersetId === data[to].supersetId) {
+      if (data[from].supersetId === data[from].id) {
+        console.log('VAR5');
+        if (isFromUp) {
+          moveExerciseFromUp(to, data, arr, supersetsKeys, supersetsValues);
+        } else if (isFromDown) {
+          moveExerciseFromDown(to, data, arr, supersetsKeys, supersetsValues);
+        }
+        arr = changeFirstSupersetId(data, arr, data[from].supersetId);
+      } else if (data[from].supersetId === data[to].supersetId) {
         console.log('VAR1');
         // Если перетаскиваем внутри суперсета, и ставим на первую позицию
         for (let i = 0; i < supersetsValues.length; i++) {
@@ -257,23 +257,11 @@ export const EditExercisesScreen = observer(
       } else if (isFromUp) {
         console.log('VAR3');
         // Переместили упражнение не из суперсета в суперсет с направления верх
-        for (let i = 0; i < supersetsValues.length; i++) {
-          if (to >= supersetsValues[i][0] && to < supersetsValues[i][1]) {
-            const supersetId = arr[to].supersetId;
-            arr[to].supersetId = supersetsKeys[i];
-            changeFirstSupersetId(supersetId);
-          }
-        }
+        moveExerciseFromUp(to, data, arr, supersetsKeys, supersetsValues);
       } else if (isFromDown) {
         console.log('VAR4');
         // Переместили упражнение не из суперсета в суперсет с направления низ
-        for (let i = 0; i < supersetsValues.length; i++) {
-          if (to > supersetsValues[i][0] && to <= supersetsValues[i][1]) {
-            const supersetId = arr[to].supersetId;
-            arr[to].supersetId = supersetsKeys[i];
-            changeFirstSupersetId(supersetId);
-          }
-        }
+        moveExerciseFromDown(to, data, arr, supersetsKeys, supersetsValues);
       }
       setData(clearArray(arr));
     };
@@ -293,8 +281,8 @@ export const EditExercisesScreen = observer(
           <CheckboxWithSets
             key={item.id}
             placeholder={
-              // name
-              item.id.slice(0, 3) + ' - ' + item.supersetId?.slice(0, 3)
+              name
+              // item.id.slice(0, 3) + ' - ' + item.supersetId?.slice(0, 3)
             }
             isFirst={!index || (isPrevSuperset && Boolean(item.supersetId))}
             handlePress={() => handlePress(item.id)}
