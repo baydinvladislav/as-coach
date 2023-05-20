@@ -16,6 +16,7 @@ import { FontSize, TPlanType } from '~types';
 type TProps = {
   plan: TPlanType;
   onPress: () => void;
+  withMenu?: boolean;
 };
 
 const ACTIONS = [
@@ -42,7 +43,7 @@ const ACTIONS = [
   },
 ] as MenuAction[];
 
-export const PlanCard = ({ plan, onPress }: TProps) => {
+export const PlanCard = ({ plan, onPress, withMenu = true }: TProps) => {
   const renderNumber = (number: string) => {
     const arr = number.split('/');
 
@@ -62,17 +63,19 @@ export const PlanCard = ({ plan, onPress }: TProps) => {
             {moment(plan.end_date).format('D MMM').slice(0, -1)}
           </Text>
         </View>
-        <MenuView
-          onPressAction={({ nativeEvent }) => {
-            console.log(JSON.stringify(nativeEvent));
-          }}
-          actions={ACTIONS}
-          shouldOpenOnLongPress={true}
-        >
-          <Icon>
-            <MoreIcon stroke={colors.green} />
-          </Icon>
-        </MenuView>
+        {withMenu && (
+          <MenuView
+            onPressAction={({ nativeEvent }) => {
+              console.log(JSON.stringify(nativeEvent));
+            }}
+            actions={ACTIONS}
+            shouldOpenOnLongPress={true}
+          >
+            <Icon>
+              <MoreIcon stroke={colors.green} />
+            </Icon>
+          </MenuView>
+        )}
       </View>
       <ScrollView horizontal={true} contentContainerStyle={styles.row}>
         <NumberContainer>

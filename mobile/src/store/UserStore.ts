@@ -4,10 +4,13 @@ import { login, me, profileEdit, registration } from '@api';
 import { TOKEN } from '@constants';
 import { storage } from '@utils';
 
+import { UserType } from '~types';
+
 import { RootStore } from './RootStore';
 import { actionLoading } from './action-loading';
 
 export type UserProps = {
+  id: string;
   first_name: string;
   last_name: string;
   username: string;
@@ -15,6 +18,7 @@ export type UserProps = {
   gender: string;
   birthday: string;
   email: string;
+  user_type: UserType;
 };
 
 export default class UserStore {
@@ -27,6 +31,8 @@ export default class UserStore {
 
   @observable isSignedIn = false;
   @observable me: UserProps = {
+    id: '',
+    user_type: UserType.CLIENT,
     first_name: '',
     last_name: '',
     username: '',
@@ -55,7 +61,7 @@ export default class UserStore {
     try {
       const { data } = await me();
       this.setHasAccess(true);
-      this.setMe(data);
+      this.setMe({ ...data, user_type: UserType.CLIENT });
     } catch (e) {
       console.warn(e);
     }
