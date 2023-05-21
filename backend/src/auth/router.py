@@ -18,6 +18,7 @@ from src.customer.dependencies import get_coach_or_customer
 
 from .models import User
 from .schemas import LoginResponse, UserRegisterIn, UserRegisterOut
+from .services import auth_coach, auth_customer
 from .utils import (create_access_token, create_refresh_token,
                     get_hashed_password, verify_password, password_context)
 from ..config import STATIC_DIR
@@ -99,21 +100,15 @@ async def login(
     coach = database.query(User).filter(User.username == form_data.username).first()
     customer = database.query(Customer).filter(Customer.username == form_data.username).first()
 
-    user = coach or customer
-
-    if user is None:
+    if coach and auth_coach(coach, form_data.password):
+        user = coach
+    elif customer and auth_customer(customer, form_data.password):
+        user = customer
+    else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User is not found"
         )
-
-    hashed_password = str(user.password)
-    if not verify_password(form_data.password, hashed_password):
-        if customer and customer.password != form_data.password:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Incorrect password"
-            )
 
     return {
         "id": str(user.id),
@@ -121,7 +116,7 @@ async def login(
         "first_name": user.first_name,
         "access_token": create_access_token(str(user.username)),
         "refresh_token": create_refresh_token(str(user.username)),
-        "password_changed": bool(password_context.identify(hashed_password))
+        "password_changed": bool(password_context.identify(user.password))
     }
 
 
