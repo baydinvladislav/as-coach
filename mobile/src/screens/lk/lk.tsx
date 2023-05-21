@@ -35,14 +35,10 @@ export const LkScreen = observer(() => {
   const [data, setData] = useState<Partial<CustomerProps>>({});
   useFocusEffect(
     useCallback(() => {
-      const client = customer.getCustomerById(
-        '3a159423-0595-4673-ab55-d021fcb12daa',
-      );
-      customer
-        .getCustomerPlanById('3a159423-0595-4673-ab55-d021fcb12daa')
-        .then(plans => {
-          setData({ ...data, ...client, plans });
-        });
+      if (isCouch) return;
+      customer.getCustomerPlanById(user.me.id).then(plans => {
+        setData({ ...data, plans });
+      });
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []),
   );
@@ -86,7 +82,12 @@ export const LkScreen = observer(() => {
           searchInputKey={searchInputKey}
         />
       ) : (
-        <Plans data={data} />
+        <Plans
+          data={data}
+          title={t('lk.herePlans')}
+          description={t('lk.hereAddPlans')}
+          withAddButton={false}
+        />
       )}
     </View>
   );

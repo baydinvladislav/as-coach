@@ -17,9 +17,18 @@ import { ButtonType, FontSize, TPlanType, UserType } from '~types';
 type TProps = {
   data: Partial<CustomerProps>;
   setPreviousScreen?: React.Dispatch<React.SetStateAction<Screens>>;
+  title: string;
+  description: string;
+  withAddButton?: boolean;
 };
 
-export const Plans = ({ data, setPreviousScreen }: TProps) => {
+export const Plans = ({
+  data,
+  setPreviousScreen,
+  title,
+  description,
+  withAddButton = true,
+}: TProps) => {
   const { navigate } = useNavigation();
   const { user } = useStore();
 
@@ -71,10 +80,10 @@ export const Plans = ({ data, setPreviousScreen }: TProps) => {
     </>
   ) : (
     <LkEmpty
-      title={t('detailCustomer.herePlans')}
-      description={t('detailCustomer.hereCanAdd')}
+      title={title}
+      description={description}
       onPress={handleNavigatePlan}
-      buttonText={t('buttons.createPlan')}
+      buttonText={withAddButton ? t('buttons.createPlan') : undefined}
     />
   );
 };

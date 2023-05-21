@@ -65,7 +65,12 @@ export const DetailClient = ({ route }: RoutesProps) => {
       <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
         {data.first_name}
       </Text>
-      <Plans data={data} setPreviousScreen={setPreviousScreen} />
+      <Plans
+        data={data}
+        setPreviousScreen={setPreviousScreen}
+        title={t('detailCustomer.herePlans')}
+        description={t('detailCustomer.hereCanAdd')}
+      />
     </View>
   );
 };

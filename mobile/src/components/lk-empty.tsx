@@ -13,7 +13,7 @@ import { ButtonType, FontSize } from '~types';
 type TProps = {
   title: string;
   description: string;
-  buttonText: string;
+  buttonText?: string;
   onPress: () => void;
 };
 
@@ -48,13 +48,15 @@ export const LkEmpty = observer(
           </Text>
         </View>
 
-        <Button
-          type={ButtonType.TEXT}
-          onPress={onPress}
-          leftIcon={<AddIcon fill={colors.green} />}
-        >
-          {buttonText}
-        </Button>
+        {buttonText && (
+          <Button
+            type={ButtonType.TEXT}
+            onPress={onPress}
+            leftIcon={<AddIcon fill={colors.green} />}
+          >
+            {buttonText}
+          </Button>
+        )}
       </>
     );
   },

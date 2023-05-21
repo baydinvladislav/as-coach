@@ -61,7 +61,7 @@ export default class UserStore {
     try {
       const { data } = await me();
       this.setHasAccess(true);
-      this.setMe(data);
+      this.setMe({ ...data });
     } catch (e) {
       console.warn(e);
     }
