@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 
 from src.dependencies import get_db
 from src.models import Gender
-from src.auth.schemas import UserProfile
+from src.auth.schemas import UserProfile, NewUserPassword
 from src.customer.models import Customer
 from src.customer.dependencies import get_coach_or_customer
 
@@ -254,3 +254,56 @@ async def update_profile(
         "username": user.username,
         "photo_path": photo_link
     }
+
+
+@auth_router.post(
+    "/confirm_password",
+    summary="Confirm current user password",
+    status_code=status.HTTP_200_OK)
+async def confirm_password(
+        current_password: str = Form(...),
+        database: Session = Depends(get_db),
+        user: Union[User, Customer] = Depends(get_coach_or_customer)
+) -> dict:
+    """
+    Confirms that user knows current password before it is changed.
+
+    Args:
+        current_password: current user password
+        database: dependency injection for access to database
+        user: user object from get_current_user dependency
+
+    Returns:
+        success or failed response
+    """
+    if verify_password(current_password, user.password):
+        return {"confirmed_password": True}
+
+    return {"confirmed_password": False}
+
+
+@auth_router.patch(
+    "/change_password",
+    summary="Change user password",
+    status_code=status.HTTP_200_OK)
+async def change_password(
+        new_password: NewUserPassword,
+        database: Session = Depends(get_db),
+        user: Union[User, Customer] = Depends(get_coach_or_customer)
+) -> dict:
+    """
+    Changes user password.
+    Validation set in schemas.
+
+    Args:
+        new_password: new user password
+        database: dependency injection for access to database
+        user: user object from get_current_user dependency
+
+    Returns:
+        success response
+    """
+    ex_password = user.password
+    user.password = get_hashed_password(new_password.password)
+    database.commit()
+    return {"changed_password": True if user.password != ex_password else False}
