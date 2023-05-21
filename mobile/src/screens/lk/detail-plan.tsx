@@ -79,13 +79,8 @@ const EXERCISES = [
 ];
 
 export const DetailPlanScreen = ({ route }: RoutesProps) => {
-  const cardsRef = useRef<{
-    setCards: (value: React.SetStateAction<boolean[]>) => void;
-    cards: boolean[];
-    handleOpen: (key: number) => void;
-  }>(null);
   const [data, setData] = useState<any>();
-  const { navigate } = useNavigation();
+  const { goBack } = useNavigation();
 
   const { id, planId } = route.params as { id: string; planId: string };
 
@@ -93,15 +88,11 @@ export const DetailPlanScreen = ({ route }: RoutesProps) => {
     getCustomerPlanDetail(id, planId).then(data => setData(data));
   }, [id, planId]);
 
-  const handleOpen = (key: number) => {
-    cardsRef.current?.handleOpen?.(key);
-  };
-
   return (
     <ModalLayout>
       <ViewWithButtons
         style={{ justifyContent: 'space-between' }}
-        onCancel={() => navigate(Screens.DetailClient)}
+        onCancel={goBack}
         cancelText={t('buttons.ok')}
         isScroll={true}
       >

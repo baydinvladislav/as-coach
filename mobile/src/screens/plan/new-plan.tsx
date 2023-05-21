@@ -83,7 +83,7 @@ type InputsProps = {
 
 // Кнопки вынесены в отдельный компонент, чтобы изменение state не ререндерило календарь
 const Inputs = ({ handlePress, values, errors }: InputsProps) => {
-  const [dateType, setDateType] = useState<'start' | 'end' | null>(null);
+  const [dateType, setDateType] = useState<'start' | 'end' | null>('start');
 
   return (
     <>

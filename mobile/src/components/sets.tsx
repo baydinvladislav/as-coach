@@ -71,6 +71,7 @@ export const Sets = ({ onChangeText, val, errors }: TProps) => {
           >
             <View pointerEvents="none">
               <Input
+                keyboardType="number-pad"
                 isError={Boolean(errors?.[index])}
                 maxLength={3}
                 ref={element => (inputsRefs.current[index] = element)}

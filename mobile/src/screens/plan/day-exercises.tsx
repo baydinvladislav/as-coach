@@ -37,16 +37,14 @@ export const DayExercisesScreen = observer(
 
     const isLoading = loading.isLoading;
 
+    const isEmptySearchExercises = isEmpty(customer.searchExercises);
+
     const [data, keys] = [
       Object.values(
-        isEmpty(customer.searchExercises)
-          ? customer.exercises
-          : customer.searchExercises,
+        isEmptySearchExercises ? customer.exercises : customer.searchExercises,
       ),
       Object.keys(
-        isEmpty(customer.searchExercises)
-          ? customer.exercises
-          : customer.searchExercises,
+        isEmptySearchExercises ? customer.exercises : customer.searchExercises,
       ),
     ];
 
@@ -87,6 +85,9 @@ export const DayExercisesScreen = observer(
       handleNavigate(PlanScreens.CREATE_SUPERSETS_SCREEN, params, true);
     };
 
+    const isNotEmptyExercises =
+      (data.length && !searchValue) || !isEmptySearchExercises;
+
     return (
       <>
         <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
@@ -115,6 +116,7 @@ export const DayExercisesScreen = observer(
         </Button>
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
+          containerStyle={isNotEmptyExercises ? {} : { flex: 1 }}
           onCancel={handleCancel}
           onConfirm={handleConfirm}
           confirmText={t('buttons.next')}
@@ -128,7 +130,7 @@ export const DayExercisesScreen = observer(
             ) : null
           }
         >
-          {!searchValue && data.length ? (
+          {isNotEmptyExercises ? (
             data.map((item: TExercises[], index) => (
               <CheckboxGroup
                 style={styles.checkboxGroup}

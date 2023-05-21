@@ -18,6 +18,11 @@ export enum ButtonType {
   TEXT = 'text',
 }
 
+export enum UserType {
+  COACH = 'coach',
+  CLIENT = 'client',
+}
+
 export type TResponseError = {
   loc?: string[];
   msg: string;

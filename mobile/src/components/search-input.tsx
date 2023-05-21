@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { CrossIcon, SearchIcon } from '@assets';
+import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { normHor } from '@theme';
 import { Button, Input, TInputProps } from '@ui';
@@ -9,6 +10,7 @@ import { Button, Input, TInputProps } from '@ui';
 import { ButtonType } from '~types';
 
 export const SearchInput = (props: TInputProps) => {
+  const { customer } = useStore();
   const [key, setKey] = useState(0);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -49,6 +51,7 @@ export const SearchInput = (props: TInputProps) => {
             handleBlur();
             handleChangeText('');
             setKey(key => key + 1);
+            customer.setSearchCustomer([]);
           }}
         >
           {t('buttons.cancel')}

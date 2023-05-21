@@ -12,3 +12,5 @@ export * from './exercises-list';
 export * from './exercise-info';
 export * from './checkbox-with-sets';
 export * from './checkbox-group';
+export * from './lk-clients';
+export * from './plans';

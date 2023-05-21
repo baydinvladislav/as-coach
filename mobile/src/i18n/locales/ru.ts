@@ -13,6 +13,8 @@ export const ru = {
     welcome: 'Привет, {name}!',
     hereClients: 'Здесь будут ваши клиенты',
     hereCanAdd: 'В этом разделе можно\nдобавлять клиентов',
+    herePlans: 'Здесь будут ваши планы',
+    hereAddPlans: 'В этом разделе тренер\nбудет создавать вам планы',
   },
   detailCustomer: {
     plans: 'Планы',
