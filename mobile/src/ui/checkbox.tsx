@@ -53,7 +53,11 @@ export const Checkbox = ({
         {placeholder}
       </Text>
       {onDrag && (
-        <TouchableOpacity style={{ marginLeft: 'auto' }} onLongPress={onDrag}>
+        <TouchableOpacity
+          style={{ marginLeft: 'auto' }}
+          onLongPress={onDrag}
+          delayLongPress={0}
+        >
           <MenuIcon />
         </TouchableOpacity>
       )}

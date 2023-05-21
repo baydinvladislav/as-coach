@@ -218,16 +218,7 @@ export const EditExercisesScreen = observer(
 
       const isFromDown = to < from;
       const isFromUp = !isFromDown;
-      if (data[from].supersetId === data[from].id) {
-        console.log('VAR5');
-        if (isFromUp) {
-          moveExerciseFromUp(to, data, arr, supersetsKeys, supersetsValues);
-        } else if (isFromDown) {
-          moveExerciseFromDown(to, data, arr, supersetsKeys, supersetsValues);
-        }
-        arr = changeFirstSupersetId(data, arr, data[from].supersetId);
-      } else if (data[from].supersetId === data[to].supersetId) {
-        console.log('VAR1');
+      if (data[from].supersetId === data[to].supersetId) {
         // Если перетаскиваем внутри суперсета, и ставим на первую позицию
         for (let i = 0; i < supersetsValues.length; i++) {
           if (to >= supersetsValues[i][0] && to <= supersetsValues[i][1]) {
@@ -241,12 +232,10 @@ export const EditExercisesScreen = observer(
           }
         }
       } else if (
-        arr[to].supersetId &&
-        (!data[to].supersetId ||
-          data?.[to + 1]?.supersetId ||
-          data?.[to - 1]?.supersetId)
+        !data[to].supersetId ||
+        !data?.[to + 1]?.supersetId ||
+        !data?.[to - 1]?.supersetId
       ) {
-        console.log('VAR2');
         // Если перетаскиваем из суперсета вне суперсета (перенос суперсета)
         const items = data.filter(
           item => item.supersetId === arr[to].supersetId,
@@ -254,12 +243,17 @@ export const EditExercisesScreen = observer(
         arr = data.filter(item => item.supersetId !== arr[to].supersetId);
         arr.splice(to > from ? to - items.length + 1 : to, 0, ...items);
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      } else if (data[from].supersetId === data[from].id) {
+        if (isFromUp) {
+          moveExerciseFromUp(to, data, arr, supersetsKeys, supersetsValues);
+        } else if (isFromDown) {
+          moveExerciseFromDown(to, data, arr, supersetsKeys, supersetsValues);
+        }
+        arr = changeFirstSupersetId(data, arr, data[from].supersetId);
       } else if (isFromUp) {
-        console.log('VAR3');
         // Переместили упражнение не из суперсета в суперсет с направления верх
         moveExerciseFromUp(to, data, arr, supersetsKeys, supersetsValues);
       } else if (isFromDown) {
-        console.log('VAR4');
         // Переместили упражнение не из суперсета в суперсет с направления низ
         moveExerciseFromDown(to, data, arr, supersetsKeys, supersetsValues);
       }
