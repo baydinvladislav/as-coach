@@ -74,8 +74,8 @@ export const PlanScreen = ({ route }: RoutesProps) => {
       end_date: '',
       trainings: [],
       notes: '',
-      set_rest: '0',
-      exercise_rest: '0',
+      set_rest: '120',
+      exercise_rest: '180',
 
       // Locally values
       different_time: false,
