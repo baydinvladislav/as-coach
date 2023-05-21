@@ -75,7 +75,7 @@ type TProps = {
 
 export const Calendar = forwardRef(
   ({ values, onChange, ...props }: TProps, ref) => {
-    const dateType = useRef<'start' | 'end' | null>(null);
+    const dateType = useRef<'start' | 'end' | null>('start');
     const { horizontalView } = props;
 
     const handleChangeDateType = (type: 'start' | 'end') => {
