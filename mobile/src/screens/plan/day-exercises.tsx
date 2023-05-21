@@ -85,6 +85,9 @@ export const DayExercisesScreen = observer(
       handleNavigate(PlanScreens.CREATE_SUPERSETS_SCREEN, params, true);
     };
 
+    const isNotEmptyExercises =
+      (data.length && !searchValue) || !isEmptySearchExercises;
+
     return (
       <>
         <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
@@ -113,6 +116,7 @@ export const DayExercisesScreen = observer(
         </Button>
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
+          containerStyle={isNotEmptyExercises ? {} : { flex: 1 }}
           onCancel={handleCancel}
           onConfirm={handleConfirm}
           confirmText={t('buttons.next')}
@@ -126,7 +130,7 @@ export const DayExercisesScreen = observer(
             ) : null
           }
         >
-          {(data.length && !searchValue) || !isEmptySearchExercises ? (
+          {isNotEmptyExercises ? (
             data.map((item: TExercises[], index) => (
               <CheckboxGroup
                 style={styles.checkboxGroup}
