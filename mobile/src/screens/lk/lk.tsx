@@ -23,28 +23,27 @@ import { FontSize, FontWeight, UserType } from '~types';
 moment.locale('ru');
 
 export const LkScreen = observer(() => {
-  const [searchInputKey, setSearchInputKey] = useState(0);
-
   const { user, customer } = useStore();
   const { top } = useSafeAreaInsets();
 
   const isCouch = user.me.user_type === UserType.COACH;
+  const isClient = user.me.user_type === UserType.CLIENT;
 
   const { navigate } = useNavigation();
 
   const [data, setData] = useState<Partial<CustomerProps>>({});
   useFocusEffect(
     useCallback(() => {
-      if (isCouch) return;
-      customer.getCustomerPlanById(user.me.id).then(plans => {
-        setData({ ...data, plans });
-      });
+      if (isClient) {
+        customer.getCustomerPlanById(user.me.id).then(plans => {
+          setData({ ...data, plans });
+        });
+      }
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []),
   );
 
   const handleNavigateProfileScreen = () => {
-    setSearchInputKey(key => key + 1);
     navigate(Screens.ProfileScreen);
   };
 
@@ -77,10 +76,7 @@ export const LkScreen = observer(() => {
       </Flex>
 
       {isCouch ? (
-        <LkClients
-          setSearchInputKey={setSearchInputKey}
-          searchInputKey={searchInputKey}
-        />
+        <LkClients />
       ) : (
         <Plans
           data={data}

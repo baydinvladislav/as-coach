@@ -80,7 +80,7 @@ export default class CustomerStore {
 
   @action
   setSearchCustomer(data: CustomerProps[]) {
-    this.searchCustomers = [...data];
+    this.searchCustomers = data;
   }
 
   @action

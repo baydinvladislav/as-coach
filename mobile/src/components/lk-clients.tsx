@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { FlatList, ListRenderItemInfo, StyleSheet, View } from 'react-native';
 
 import { debounce } from 'lodash';
+import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
 import { AddIcon } from '@assets';
@@ -9,21 +10,24 @@ import { ClientCard, LkEmpty, NotFound, SearchInput } from '@components';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
+import { useFocusEffect } from '@react-navigation/native';
 import { CustomerProps } from '@store';
 import { colors, normVert } from '@theme';
 import { Button, Text } from '@ui';
 
 import { ButtonType, FontSize } from '~types';
 
-type TProps = {
-  searchInputKey?: number;
-  setSearchInputKey: React.Dispatch<React.SetStateAction<number>>;
-};
-
-export const LkClients = ({ searchInputKey, setSearchInputKey }: TProps) => {
+export const LkClients = observer(() => {
+  const [searchInputKey, setSearchInputKey] = useState(0);
   const [searchValue, setSearchValue] = useState<string | undefined>();
 
   const { customer, loading } = useStore();
+
+  const clearSearch = () => {
+    setSearchInputKey(key => key + 1);
+    setSearchValue(undefined);
+    customer.setSearchCustomer([]);
+  };
 
   const { navigate } = useNavigation();
 
@@ -31,6 +35,9 @@ export const LkClients = ({ searchInputKey, setSearchInputKey }: TProps) => {
     customer.getCustomers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useFocusEffect(useCallback(() => () => clearSearch(), []));
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const search = useCallback(
@@ -48,7 +55,7 @@ export const LkClients = ({ searchInputKey, setSearchInputKey }: TProps) => {
   const searchCustomers = customer.searchCustomers;
 
   const handleNavigateDetailClient = (id: string) => {
-    setSearchInputKey(key => key + 1);
+    clearSearch();
     loading.increaseLoadingStatus();
     navigate(Screens.DetailClient, {
       id,
@@ -57,7 +64,7 @@ export const LkClients = ({ searchInputKey, setSearchInputKey }: TProps) => {
   };
 
   const handleNavigateAddClientScreen = () => {
-    setSearchInputKey(key => key + 1);
+    clearSearch();
     navigate(Screens.AddClientScreen);
   };
 
@@ -69,7 +76,7 @@ export const LkClients = ({ searchInputKey, setSearchInputKey }: TProps) => {
       onPress={() => handleNavigateDetailClient(customer.item.id)}
     />
   );
-
+  console.log('searchCustomers', searchValue, searchCustomers.length);
   return customers.length ? (
     <>
       <TopContainer>
@@ -113,7 +120,7 @@ export const LkClients = ({ searchInputKey, setSearchInputKey }: TProps) => {
       buttonText={t('buttons.addClient')}
     />
   );
-};
+});
 
 const styles = StyleSheet.create({
   searchInput: {
