@@ -116,6 +116,7 @@ export const ProfileEditScreen = observer(() => {
           value={values.username}
           onChangeText={handleChange('username')}
           error={errors.username}
+          isDisabled={true}
         />
       </ViewWithButtons>
     </Keyboard>

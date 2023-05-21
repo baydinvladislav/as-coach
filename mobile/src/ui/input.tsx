@@ -33,6 +33,7 @@ export type TInputProps = {
   onBlur?: () => void;
   onPress?: () => void;
   isFocused?: boolean;
+  isDisabled?: boolean;
 } & TextInputProps;
 
 export const Input = ({
@@ -49,6 +50,7 @@ export const Input = ({
   onPress,
   showError = true,
   isFocused,
+  isDisabled = false,
   ...props
 }: TInputProps) => {
   const [isLocallyFocused, setIsLocallyFocused] = useState(false);
@@ -78,7 +80,7 @@ export const Input = ({
   const direction = (leftIcon && 'left') || (rightIcon && 'right') || null;
 
   return (
-    <View style={style}>
+    <View style={style} pointerEvents={isDisabled ? 'none' : undefined}>
       <InputContainer
         error={error ?? ''}
         isTextarea={isTextarea}
@@ -92,6 +94,7 @@ export const Input = ({
         <InputRN
           {...props}
           {...maskedInputProps}
+          isDisabled={isDisabled}
           placeholder=""
           style={{ paddingVertical: 0 }}
           clearTextOnFocus={false}
@@ -166,9 +169,9 @@ const Icon = styled(View)<{ dir: 'left' | 'right' }>`
     dir === 'left' ? `left: ${normHor(16)}px` : `right: ${normHor(16)}px`}
 `;
 
-const InputRN = styled(TextInput)`
+const InputRN = styled(TextInput)<{ isDisabled: boolean }>`
   font-size: ${FontSize.S16};
   width: 100%;
   height: 100%;
-  color: ${colors.white};
+  color: ${({ isDisabled }) => (isDisabled ? colors.black4 : colors.white)};
 `;
