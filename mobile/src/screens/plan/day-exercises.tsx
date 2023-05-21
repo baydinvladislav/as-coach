@@ -37,16 +37,14 @@ export const DayExercisesScreen = observer(
 
     const isLoading = loading.isLoading;
 
+    const isEmptySearchExercises = isEmpty(customer.searchExercises);
+
     const [data, keys] = [
       Object.values(
-        isEmpty(customer.searchExercises)
-          ? customer.exercises
-          : customer.searchExercises,
+        isEmptySearchExercises ? customer.exercises : customer.searchExercises,
       ),
       Object.keys(
-        isEmpty(customer.searchExercises)
-          ? customer.exercises
-          : customer.searchExercises,
+        isEmptySearchExercises ? customer.exercises : customer.searchExercises,
       ),
     ];
 
@@ -128,7 +126,7 @@ export const DayExercisesScreen = observer(
             ) : null
           }
         >
-          {!searchValue && data.length ? (
+          {(data.length && !searchValue) || !isEmptySearchExercises ? (
             data.map((item: TExercises[], index) => (
               <CheckboxGroup
                 style={styles.checkboxGroup}
