@@ -35,5 +35,5 @@ export const dayNames = [
   'Суббота',
   'Воскресенье',
 ];
-export const dayNamesShort = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СС', 'ВС'];
+export const dayNamesShort = ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС'];
 export const today = 'Сегодня';
