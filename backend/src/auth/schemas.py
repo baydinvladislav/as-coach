@@ -55,7 +55,7 @@ class UserProfile(BaseModel):
     birthday: Optional[date]
     email: Optional[str]
     username: Optional[str]
-    photo_path: Optional[str]
+    photo_link: Optional[str]
 
 
 class LoginResponse(BaseModel):
