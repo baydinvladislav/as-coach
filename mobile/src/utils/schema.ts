@@ -22,7 +22,6 @@ export const changePasswordSchema = () =>
     newPassword: yup
       .string()
       .oneOf([yup.ref('password')], t('errors.passwordNotMatch'))
-      .min(PASSWORD_MIN, t('errors.minPassword'))
       .required(t('errors.required')),
   });
 
