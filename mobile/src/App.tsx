@@ -7,10 +7,12 @@
  */
 import React, { useRef, useState } from 'react';
 
+import moment from 'moment';
 import 'moment/locale/ru';
 import { Edge, SafeAreaProvider } from 'react-native-safe-area-context';
 import { enableScreens } from 'react-native-screens';
 
+import { monthNamesShort } from '@constants';
 import { Screens, StackNavigator } from '@navigation';
 import {
   DefaultTheme,
@@ -19,6 +21,11 @@ import {
 } from '@react-navigation/native';
 import { colors } from '@theme';
 import { Layout } from '@ui';
+
+moment.locale('ru');
+moment.updateLocale('ru', {
+  monthsShort: monthNamesShort,
+});
 
 const App = () => {
   enableScreens(true);

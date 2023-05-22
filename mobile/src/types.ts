@@ -74,7 +74,10 @@ export type TPlanType = {
   end_date: string;
   fats: string;
   id: string;
-  number_of_trainings: number;
+  trainings: TPropsExercise[];
   proteins: string;
   start_date: string;
+  set_rest: number;
+  exercise_rest: number;
+  notes: string;
 };

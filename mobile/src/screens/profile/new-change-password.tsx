@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useFormik } from 'formik';
+import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
@@ -17,7 +18,7 @@ import { changePasswordSchema } from '@utils';
 
 import { ButtonType, FontSize } from '~types';
 
-export const NewChangePasswordScreen = () => {
+export const NewChangePasswordScreen = observer(() => {
   const { user, loading } = useStore();
   const { navigate } = useNavigation();
 
@@ -92,7 +93,7 @@ export const NewChangePasswordScreen = () => {
       </Button>
     </Keyboard>
   );
-};
+});
 
 const styles = StyleSheet.create({
   title: {

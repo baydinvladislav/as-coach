@@ -31,7 +31,7 @@ export const ProfileEditScreen = observer(() => {
       .profileEdit({
         ...values,
         birthday: values.birthday
-          ? moment(values.birthday, 'DD.mm.yy').format('yyyy-mm-DD')
+          ? moment(values.birthday, 'DD.mm.yy').format('yyyy-M-DD')
           : '',
         username: transformPhone(values?.username),
       })
@@ -46,7 +46,7 @@ export const ProfileEditScreen = observer(() => {
       username: formatWithMask({ text: user.me.username, mask: PHONE_MASK })
         .masked,
       birthday: user.me.birthday
-        ? moment(user.me.birthday, 'yyyy-mm-DD').format('DD.mm.yy')
+        ? moment(user.me.birthday, 'yyyy-M-DD').format('DD.mm.yy')
         : '',
     },
     onSubmit: handleEdit,

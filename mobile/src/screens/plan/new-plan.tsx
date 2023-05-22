@@ -93,7 +93,7 @@ const Inputs = ({ handlePress, values, errors }: InputsProps) => {
             placeholder={t('inputs.startDate')}
             value={
               values.start_date
-                ? moment(values.start_date, 'yyyy-mm-DD').format('DD MMM ddd')
+                ? moment(values.start_date, 'yyyy-M-DD').format('DD MMM ddd')
                 : undefined
             }
             isFocused={dateType === 'start'}
@@ -109,7 +109,7 @@ const Inputs = ({ handlePress, values, errors }: InputsProps) => {
             isFocused={dateType === 'end'}
             value={
               values.end_date
-                ? moment(values.end_date, 'yyyy-mm-DD').format('DD MMM ddd')
+                ? moment(values.end_date, 'yyyy-M-DD').format('DD MMM ddd')
                 : undefined
             }
             error={errors.end_date}
