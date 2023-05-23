@@ -16,7 +16,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { CustomerProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
 import { Text } from '@ui';
-import { windowHeight, windowWidth } from '@utils';
+import { makeAvatarLink, windowHeight, windowWidth } from '@utils';
 
 import { FontSize, FontWeight, UserType } from '~types';
 
@@ -69,7 +69,13 @@ export const LkScreen = observer(() => {
           <Biceps source={BicepsImage} />
         </Flex>
         <TouchableOpacity onPress={handleNavigateProfileScreen}>
-          <Avatar source={DefaultAvatarImage} />
+          <Avatar
+            source={
+              user.me.photo_path
+                ? { uri: makeAvatarLink(user.me.photo_path) }
+                : DefaultAvatarImage
+            }
+          />
         </TouchableOpacity>
       </Flex>
 

@@ -1,4 +1,10 @@
+import { Asset } from 'react-native-image-picker';
+
+import { URL_ANDROID, URL_IOS } from '@constants';
+
 import { TPlan, TPropsExercises } from '~types';
+
+import { isIOS } from './constants';
 
 export const modifyPlan = (
   values: TPlan,
@@ -143,4 +149,27 @@ export const moveExerciseFromDown = (
       changeFirstSupersetId(data, arr, supersetId);
     }
   }
+};
+
+export const createFormData = (photo?: Asset, body = {}) => {
+  const data = new FormData();
+  if (photo) {
+    data.append('photo', {
+      name: photo.fileName,
+      type: photo.type,
+      uri: isIOS ? photo?.uri?.replace('file://', '') : photo.uri,
+    });
+  }
+  Object.keys(body).forEach(key => {
+    if (key !== 'photo') {
+      data.append(key, (body as any)[key]);
+    }
+  });
+
+  return data;
+};
+
+export const makeAvatarLink = (link: string | null) => {
+  const api = isIOS ? URL_IOS : URL_ANDROID;
+  return link ? api + link.split('/code')[1] : '';
 };

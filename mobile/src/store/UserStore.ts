@@ -26,6 +26,12 @@ export type UserProps = {
   birthday: string;
   email: string;
   user_type: UserType;
+  photo_path: string | null;
+  photo: {
+    name?: string;
+    type?: string;
+    uri?: string;
+  };
 };
 
 export default class UserStore {
@@ -47,6 +53,8 @@ export default class UserStore {
     gender: '',
     birthday: '',
     email: '',
+    photo_path: null,
+    photo: {},
   };
 
   @action
@@ -115,7 +123,7 @@ export default class UserStore {
       const { data } = await profileEdit(values);
       this.setMe(data);
     } catch (e) {
-      console.warn(e);
+      console.warn(JSON.stringify(e));
       throw e;
     }
   }
