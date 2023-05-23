@@ -20,6 +20,7 @@ import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
 import { Switch, Text } from '@ui';
+import { makeAvatarLink } from '@utils';
 
 import { FontSize } from '~types';
 
@@ -88,7 +89,13 @@ export const ProfileScreen = observer(() => {
       <Text align="center" fontSize={FontSize.S17} color={colors.white}>
         {t('profile.profileTitle')}
       </Text>
-      <Avatar source={DefaultAvatarImage} />
+      <Avatar
+        source={
+          user.me.photo_path
+            ? { uri: makeAvatarLink(user.me.photo_path) }
+            : DefaultAvatarImage
+        }
+      />
       <Text
         style={styles.text}
         align="center"

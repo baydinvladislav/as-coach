@@ -23,3 +23,4 @@ export * from './edit2';
 export * from './superset';
 export * from './trash';
 export * from './menu';
+export * from './camera';
