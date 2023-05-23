@@ -1,3 +1,5 @@
+import { UserProps } from '@store';
+
 export enum FontWeight {
   'Regular' = 'Ubuntu Regular',
   'Medium' = 'Ubuntu Medium',
@@ -28,6 +30,10 @@ export type TResponseError = {
   msg: string;
   type: string;
 }[];
+
+export type TResponseConfirmPassword = {
+  confirmed_password: boolean;
+};
 
 export type TPlan = {
   diets: { proteins: string; fats: string; carbs: string }[];
@@ -68,7 +74,10 @@ export type TPlanType = {
   end_date: string;
   fats: string;
   id: string;
-  number_of_trainings: number;
+  trainings: TPropsExercise[];
   proteins: string;
   start_date: string;
+  set_rest: number;
+  exercise_rest: number;
+  notes: string;
 };

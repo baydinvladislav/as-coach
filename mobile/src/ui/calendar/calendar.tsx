@@ -10,6 +10,13 @@ import { StyleSheet, TextStyle, View } from 'react-native';
 
 import { CalendarList, LocaleConfig } from 'react-native-calendars';
 
+import {
+  dayNames,
+  dayNamesShort,
+  monthNames,
+  monthNamesShort,
+  today,
+} from '@constants';
 import { colors, normHor, normVert } from '@theme';
 import { windowWidth } from '@utils';
 
@@ -17,45 +24,11 @@ import { Text } from '../text';
 import { CustomDay } from './day';
 
 LocaleConfig.locales['ru'] = {
-  monthNames: [
-    'Январь',
-    'Февраль',
-    'Март',
-    'Апрель',
-    'Май',
-    'Июнь',
-    'Июль',
-    'Август',
-    'Сентябрь',
-    'Октябрь',
-    'Ноябрь',
-    'Декабрь',
-  ],
-  monthNamesShort: [
-    'янв.',
-    'февр.',
-    'март',
-    'апр.',
-    'май',
-    'июнь',
-    'июль',
-    'авг.',
-    'сент.',
-    'окт.',
-    'нояб.',
-    'дек.',
-  ],
-  dayNames: [
-    'Понедельник',
-    'Вторник',
-    'Среда',
-    'Четверг',
-    'Пятница',
-    'Суббота',
-    'Воскресенье',
-  ],
-  dayNamesShort: ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СС', 'ВС'],
-  today: 'Сегодня',
+  monthNames,
+  monthNamesShort,
+  dayNames,
+  dayNamesShort,
+  today,
 };
 
 LocaleConfig.defaultLocale = 'ru';

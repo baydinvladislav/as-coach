@@ -40,23 +40,22 @@ export const LkEmpty = observer(
           </Text>
           <Text
             align="center"
-            style={{ lineHeight: 24 }}
+            style={{ lineHeight: 24, marginBottom: normVert(24) }}
             fontSize={FontSize.S17}
             color={colors.black4}
           >
             {description}
           </Text>
+          {buttonText && (
+            <Button
+              type={ButtonType.TEXT}
+              onPress={onPress}
+              leftIcon={<AddIcon fill={colors.green} />}
+            >
+              {buttonText}
+            </Button>
+          )}
         </View>
-
-        {buttonText && (
-          <Button
-            type={ButtonType.TEXT}
-            onPress={onPress}
-            leftIcon={<AddIcon fill={colors.green} />}
-          >
-            {buttonText}
-          </Button>
-        )}
       </>
     );
   },
@@ -64,7 +63,7 @@ export const LkEmpty = observer(
 
 const styles = StyleSheet.create({
   text: {
-    marginTop: normVert(213),
-    marginBottom: normVert(24),
+    flex: 1,
+    justifyContent: 'center',
   },
 });

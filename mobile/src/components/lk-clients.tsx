@@ -76,7 +76,7 @@ export const LkClients = observer(() => {
       onPress={() => handleNavigateDetailClient(customer.item.id)}
     />
   );
-  console.log('searchCustomers', searchValue, searchCustomers.length);
+
   return customers.length ? (
     <>
       <TopContainer>

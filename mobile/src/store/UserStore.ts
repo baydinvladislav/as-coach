@@ -1,6 +1,13 @@
 import { action, computed, makeObservable, observable } from 'mobx';
 
-import { login, me, profileEdit, registration } from '@api';
+import {
+  changePassword,
+  confirmPassword,
+  login,
+  me,
+  profileEdit,
+  registration,
+} from '@api';
 import { TOKEN } from '@constants';
 import { storage } from '@utils';
 
@@ -107,6 +114,30 @@ export default class UserStore {
     try {
       const { data } = await profileEdit(values);
       this.setMe(data);
+    } catch (e) {
+      console.warn(e);
+      throw e;
+    }
+  }
+
+  @action
+  @actionLoading()
+  async confirmPassword(values: Pick<UserProps, 'password'>) {
+    try {
+      const { data } = await confirmPassword(values);
+      return data;
+    } catch (e) {
+      console.warn(e);
+      throw e;
+    }
+  }
+
+  @action
+  @actionLoading()
+  async changePassword(values: Pick<UserProps, 'password'>) {
+    try {
+      const { data } = await changePassword(values);
+      return data;
     } catch (e) {
       console.warn(e);
       throw e;

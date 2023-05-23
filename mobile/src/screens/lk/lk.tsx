@@ -20,8 +20,6 @@ import { windowHeight, windowWidth } from '@utils';
 
 import { FontSize, FontWeight, UserType } from '~types';
 
-moment.locale('ru');
-
 export const LkScreen = observer(() => {
   const { user, customer } = useStore();
   const { top } = useSafeAreaInsets();

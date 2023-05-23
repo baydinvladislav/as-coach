@@ -117,6 +117,9 @@ export const ru = {
     phoneError: 'Некорректный номер телефона',
     birthdayError: 'Некорректная дата рождения',
     emailError: 'Некорректная почта',
+    confirmPasswordError: 'Вы ввели неправильный пароль',
+    minPassword: 'Минимальная длина пароля 8 символов',
+    passwordNotMatch: 'Пароли не совпадают',
   },
   common: {
     nonePlan: 'Нет плана',

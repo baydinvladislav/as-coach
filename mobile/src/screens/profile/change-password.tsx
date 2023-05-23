@@ -1,20 +1,48 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { useFormik } from 'formik';
+import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
 import { PasswordInput } from '@components';
 import { TOP_PADDING } from '@constants';
+import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
+import { UserProps } from '@store';
 import { colors, normVert } from '@theme';
 import { Button, Keyboard, Text } from '@ui';
+import { confirmPasswordSchema } from '@utils';
 
 import { ButtonType, FontSize } from '~types';
 
-export const ChangePasswordScreen = () => {
+export const ChangePasswordScreen = observer(() => {
+  const { user, loading } = useStore();
   const { navigate } = useNavigation();
+
+  const isLoading = loading.isLoading;
+
+  const handleConfirmPassword = (values: Pick<UserProps, 'password'>) => {
+    user.confirmPassword(values).then(data => {
+      if (data.confirmed_password) {
+        navigate(Screens.NewChangePasswordScreen);
+      } else {
+        setErrors({ password: t('errors.confirmPasswordError') });
+      }
+    });
+  };
+
+  const { setErrors, errors, handleChange, handleSubmit, values } = useFormik({
+    initialValues: {
+      password: '',
+    },
+    validationSchema: confirmPasswordSchema,
+    onSubmit: handleConfirmPassword,
+    validateOnChange: false,
+    validateOnBlur: false,
+  });
 
   return (
     <Keyboard style={{ flex: 1, paddingTop: TOP_PADDING }}>
@@ -31,12 +59,16 @@ export const ChangePasswordScreen = () => {
         <PasswordInput
           style={styles.input}
           placeholder={t('inputs.password')}
+          value={values.password}
+          onChangeText={handleChange('password')}
+          error={errors.password}
         />
       </Inputs>
       <Button
         style={styles.button}
         type={ButtonType.PRIMARY}
-        onPress={() => navigate(Screens.NewChangePasswordScreen)}
+        onPress={() => handleSubmit()}
+        isLoading={isLoading}
       >
         {t('buttons.continue')}
       </Button>
@@ -51,7 +83,7 @@ export const ChangePasswordScreen = () => {
       </Button>
     </Keyboard>
   );
-};
+});
 
 const styles = StyleSheet.create({
   title: {

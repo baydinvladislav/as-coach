@@ -17,4 +17,4 @@ export const getCustomerPlan = (id: string) =>
   axiosBase.get<TPlanType[]>(`/customers/${id}/training_plans`);
 
 export const getCustomerPlanDetail = (id: string, planId: string) =>
-  axiosBase.get<TPlanType[]>(`/customers/${id}/training_plans/${planId}`);
+  axiosBase.get<TPlanType>(`/customers/${id}/training_plans/${planId}`);
