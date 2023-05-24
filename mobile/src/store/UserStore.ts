@@ -25,7 +25,7 @@ export type UserProps = {
   gender: string;
   birthday: string;
   email: string;
-  user_type: UserType;
+  user_type: UserType | null;
   photo_path: string | null;
   photo: {
     name?: string;
@@ -45,7 +45,7 @@ export default class UserStore {
   @observable isSignedIn = false;
   @observable me: UserProps = {
     id: '',
-    user_type: UserType.CLIENT,
+    user_type: null,
     first_name: '',
     last_name: '',
     username: '',
@@ -63,8 +63,8 @@ export default class UserStore {
   }
 
   @action
-  setMe(me: UserProps) {
-    this.me = me;
+  setMe(me: Partial<UserProps>) {
+    this.me = me as UserProps;
   }
 
   @computed get hasAccess() {
@@ -157,6 +157,7 @@ export default class UserStore {
     try {
       storage.removeItem(TOKEN);
       this.isSignedIn = false;
+      this.setMe({});
     } catch (e) {
       console.warn(e);
       throw e;

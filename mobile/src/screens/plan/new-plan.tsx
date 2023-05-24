@@ -11,24 +11,19 @@ import { useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
 import { Calendar, Input, Text, ViewWithButtons } from '@ui';
 
-import { FontSize, TPlan } from '~types';
+import { FontSize, TFormProps, TPlan } from '~types';
 
 import { PlanScreens } from './plan';
 
-type TProps = {
-  clearErrors: () => void;
-  errors: Record<string, any>;
-  values: TPlan;
-  handleChange: (e: string | React.ChangeEvent<any>) => () => void;
-  handleNavigate: (
-    nextScreen: PlanScreens,
-    params?: Record<string, any>,
-    withValidate?: boolean,
-  ) => void;
-};
-
 export const NewPlanScreen = observer(
-  ({ values, handleChange, handleNavigate, errors, clearErrors }: TProps) => {
+  ({
+    values,
+    handleChange,
+    handleNavigate,
+    errors,
+    clearErrors,
+    isValidateLoading,
+  }: TFormProps) => {
     const calendarRef = useRef<{
       handleChangeDateType: (type: 'start' | 'end') => void;
     }>();
@@ -57,7 +52,7 @@ export const NewPlanScreen = observer(
             handleNavigate(PlanScreens.CREATE_PLAN_SCREEN, undefined, true)
           }
           confirmText={t('buttons.next')}
-          isLoading={isLoading}
+          isLoading={isLoading || isValidateLoading}
           style={{ justifyContent: 'space-between' }}
           containerStyle={{ flex: 1 }}
         >

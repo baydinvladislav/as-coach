@@ -12,25 +12,12 @@ import { t } from '@i18n';
 import { colors, normHor, normVert } from '@theme';
 import { Button, Text, ViewWithButtons } from '@ui';
 
-import { ButtonType, FontSize, TExercises, TPlan } from '~types';
+import { ButtonType, FontSize, TExercises, TFormProps, TPlan } from '~types';
 
 import { PlanScreens } from './plan';
 
-type TProps = {
-  handleNavigate: (
-    nextScreen: PlanScreens,
-    params?: Record<string, any>,
-    withValidate?: boolean,
-  ) => void;
-  values: TPlan;
-  handleChange: (e: string | React.ChangeEvent<any>) => () => void;
-  setValues: React.Dispatch<React.SetStateAction<TPlan>>;
-  params: Record<string, any>;
-  errors: Record<string, any>;
-};
-
 export const DayExercisesScreen = observer(
-  ({ handleNavigate, values, setValues, params, errors }: TProps) => {
+  ({ handleNavigate, values, setValues, params, errors }: TFormProps) => {
     const [searchValue, setSearchValue] = useState<string | undefined>();
 
     const { loading, customer } = useStore();

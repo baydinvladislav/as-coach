@@ -30,29 +30,16 @@ import {
   moveExerciseFromUp,
 } from '@utils';
 
-import { FontSize, TPlan, TPropsExercises } from '~types';
+import { FontSize, TFormProps, TPropsExercises } from '~types';
 
 import { PlanScreens } from './plan';
-
-type TProps = {
-  handleNavigate: (
-    nextScreen: PlanScreens,
-    params?: Record<string, any>,
-    withValidate?: boolean,
-  ) => void;
-  values: TPlan;
-  handleChange: (e: string | React.ChangeEvent<any>) => () => void;
-  setValues: React.Dispatch<React.SetStateAction<TPlan>>;
-  params: Record<string, any>;
-  errors: Record<string, any>;
-};
 
 if (!isIOS && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
 export const EditExercisesScreen = observer(
-  ({ handleNavigate, values, setValues, params, errors }: TProps) => {
+  ({ handleNavigate, values, setValues, params, errors }: TFormProps) => {
     const [data, setData] = useState<TPropsExercises[]>([]);
     const [selected, setSelected] = useState<string[]>([]);
     const { customer } = useStore();

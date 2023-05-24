@@ -33,6 +33,7 @@ export const PlanScreen = ({ route }: RoutesProps) => {
   const [currentScreen, setCurrentScreen] = useState(
     PlanScreens.CREATE_DATE_SCREEN,
   );
+  const [isValidateLoading, setIsValidateLoading] = useState(false);
 
   const [params, setParams] = useState({});
 
@@ -90,7 +91,7 @@ export const PlanScreen = ({ route }: RoutesProps) => {
     setErrors({});
   };
 
-  const handleNavigate = (
+  const handleNavigate = async (
     nextScreen: PlanScreens,
     params?: Record<string, any>,
     withValidate = false,
@@ -101,8 +102,11 @@ export const PlanScreen = ({ route }: RoutesProps) => {
       setParams(params || {});
     }
     if (withValidate) {
-      if (currentScreen === PlanScreens.CREATE_DATE_SCREEN) {
-        validateForm().then(data => {
+      setIsValidateLoading(true);
+      try {
+        const data = await validateForm();
+
+        if (currentScreen === PlanScreens.CREATE_DATE_SCREEN) {
           if (
             !Object.keys(data).includes('start_date') &&
             !Object.keys(data).includes('end_date')
@@ -111,27 +115,25 @@ export const PlanScreen = ({ route }: RoutesProps) => {
             setCurrentScreen(nextScreen);
             setParams(params || {});
           }
-        });
-      } else if (currentScreen === PlanScreens.CREATE_DAY_SCREEN) {
-        validateForm().then(data => {
+        } else if (currentScreen === PlanScreens.CREATE_DAY_SCREEN) {
           if (!Object.keys(data).includes('trainings')) {
             clearErrors();
             setCurrentScreen(nextScreen);
             setParams(params || {});
           }
-        });
-      } else if (currentScreen === PlanScreens.CREATE_DAY_EXERCISES_SCREEN) {
-        validateForm().then(data => {
+        } else if (currentScreen === PlanScreens.CREATE_DAY_EXERCISES_SCREEN) {
           if (!Object.keys(data).includes('trainings')) {
             clearErrors();
             setCurrentScreen(nextScreen);
             setParams(params || {});
           }
-        });
-      } else {
-        clearErrors();
-        setCurrentScreen(nextScreen);
-        setParams(params || {});
+        } else {
+          clearErrors();
+          setCurrentScreen(nextScreen);
+          setParams(params || {});
+        }
+      } finally {
+        setIsValidateLoading(false);
       }
     }
   };
@@ -150,6 +152,7 @@ export const PlanScreen = ({ route }: RoutesProps) => {
       e: string | React.ChangeEvent<any>,
     ) => () => void,
     clearErrors,
+    isValidateLoading,
   };
 
   const renderScreen = () => {

@@ -173,3 +173,13 @@ export const makeAvatarLink = (link: string | null) => {
   const api = isIOS ? URL_IOS : URL_ANDROID;
   return link ? api + link.split('/code')[1] : '';
 };
+
+export const getWeek = (date: Date) => {
+  const firstWeekday = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    1,
+  ).getDay();
+  const offsetDate = date.getDate() + firstWeekday - 1;
+  return Math.floor(offsetDate / 7);
+};

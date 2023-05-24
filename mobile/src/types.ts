@@ -1,4 +1,5 @@
-import { UserProps } from '@store';
+import { PlanScreens } from '@screens';
+import { CustomerProps } from '@store';
 
 export enum FontWeight {
   'Regular' = 'Ubuntu Regular',
@@ -80,4 +81,21 @@ export type TPlanType = {
   set_rest: number;
   exercise_rest: number;
   notes: string;
+};
+
+export type TFormProps = {
+  customer: CustomerProps;
+  clearErrors: () => void;
+  errors: Record<string, any>;
+  params: Record<string, any>;
+  values: TPlan;
+  handleSubmit: () => void;
+  handleChange: (e: string | React.ChangeEvent<any>) => () => void;
+  handleNavigate: (
+    nextScreen: PlanScreens,
+    params?: Record<string, any>,
+    withValidate?: boolean,
+  ) => void;
+  setValues: React.Dispatch<React.SetStateAction<TPlan>>;
+  isValidateLoading: boolean;
 };
