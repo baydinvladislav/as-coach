@@ -232,9 +232,10 @@ export const EditExercisesScreen = observer(
           }
         }
       } else if (
-        !data[to].supersetId ||
-        !data?.[to + 1]?.supersetId ||
-        !data?.[to - 1]?.supersetId
+        data[from].supersetId &&
+        (!data[to].supersetId ||
+          !data?.[to + 1]?.supersetId ||
+          !data?.[to - 1]?.supersetId)
       ) {
         // Если перетаскиваем из суперсета вне суперсета (перенос суперсета)
         const items = data.filter(
@@ -244,6 +245,7 @@ export const EditExercisesScreen = observer(
         arr.splice(to > from ? to - items.length + 1 : to, 0, ...items);
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       } else if (data[from].supersetId === data[from].id) {
+        // Переместили первое упражнение суперсета внутрь другого суперсета
         if (isFromUp) {
           moveExerciseFromUp(to, data, arr, supersetsKeys, supersetsValues);
         } else if (isFromDown) {

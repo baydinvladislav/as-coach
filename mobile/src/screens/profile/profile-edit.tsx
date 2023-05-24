@@ -21,7 +21,6 @@ import { UserProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
 import { Input, Keyboard, Select, Text, ViewWithButtons } from '@ui';
 import {
-  isIOS,
   makeAvatarLink,
   profileEditValidationSchema,
   transformPhone,
