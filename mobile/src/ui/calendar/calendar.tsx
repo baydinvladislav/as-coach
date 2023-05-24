@@ -2,6 +2,7 @@ import React, {
   ChangeEvent,
   forwardRef,
   useCallback,
+  useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -21,7 +22,7 @@ import { colors, normHor, normVert } from '@theme';
 import { windowWidth } from '@utils';
 
 import { Text } from '../text';
-import { CustomDay } from './day';
+import CustomDay from './day';
 
 LocaleConfig.locales['ru'] = {
   monthNames,
@@ -33,9 +34,7 @@ LocaleConfig.locales['ru'] = {
 
 LocaleConfig.defaultLocale = 'ru';
 
-const RANGE = 6;
-
-const INITIAL_DATE = '2022-04-20';
+const INITIAL_DATE = new Date().toString();
 
 type TProps = {
   horizontalView?: boolean;
@@ -48,6 +47,7 @@ type TProps = {
 
 export const Calendar = forwardRef(
   ({ values, onChange, ...props }: TProps, ref) => {
+    const listRef = useRef<{ scrollToDay: (date: string) => void }>(null);
     const dateType = useRef<'start' | 'end' | null>('start');
     const { horizontalView } = props;
 
@@ -74,6 +74,16 @@ export const Calendar = forwardRef(
     const isStartEmpty = selected.start === '';
     const isEndEmpty = selected.end === '';
 
+    useEffect(() => {
+      if (selected.start) {
+        setTimeout(() => {
+          listRef?.current?.scrollToDay(selected.start);
+        }, 0);
+      }
+
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     const onDayPress = useCallback(
       (day: string) => {
         const value = {
@@ -99,6 +109,8 @@ export const Calendar = forwardRef(
     return (
       <View style={{ flex: 1 }}>
         <CalendarList
+          ref={listRef}
+          animateScroll={true}
           style={{
             width: windowWidth + normHor(22),
             marginLeft: normHor(-28),
@@ -107,7 +119,6 @@ export const Calendar = forwardRef(
           calendarStyle={styles.calendarStyle}
           current={INITIAL_DATE}
           pastScrollRange={0}
-          futureScrollRange={RANGE}
           theme={theme}
           dayComponent={params => (
             <CustomDay
@@ -119,8 +130,9 @@ export const Calendar = forwardRef(
             />
           )}
           markingType={'period'}
+          disableVirtualization={true}
           renderHeader={!horizontalView ? renderCustomHeader : undefined}
-          calendarHeight={normVert(442)}
+          maxToRenderPerBatch={4}
           horizontal={horizontalView}
           pagingEnabled={horizontalView}
           staticHeader={horizontalView}
@@ -138,7 +150,6 @@ const theme = {
 const styles = StyleSheet.create({
   calendarStyle: {
     width: '100%',
-    marginBottom: normVert(-120),
   },
   header: {
     flexDirection: 'row',

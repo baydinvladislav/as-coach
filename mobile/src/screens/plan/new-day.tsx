@@ -8,22 +8,9 @@ import { t } from '@i18n';
 import { colors, normVert } from '@theme';
 import { Input, Text, ViewWithButtons } from '@ui';
 
-import { FontSize, TPlan } from '~types';
+import { FontSize, TFormProps } from '~types';
 
 import { PlanScreens } from './plan';
-
-type TProps = {
-  values: TPlan;
-  handleChange: (e: string | React.ChangeEvent<any>) => () => void;
-  handleNavigate: (
-    nextScreen: PlanScreens,
-    params?: Record<string, any>,
-    withValidate?: boolean,
-  ) => void;
-  params: Record<string, any>;
-  setValues: React.Dispatch<React.SetStateAction<TPlan>>;
-  errors: Record<string, any>;
-};
 
 export const NewDayScreen = observer(
   ({
@@ -33,7 +20,7 @@ export const NewDayScreen = observer(
     params,
     setValues,
     errors,
-  }: TProps) => {
+  }: TFormProps) => {
     useEffect(() => {
       if (!params.isExists) {
         setValues(values => ({

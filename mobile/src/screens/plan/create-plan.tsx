@@ -9,7 +9,6 @@ import { AddIcon } from '@assets';
 import { CreatePlanItem, ExercisesList } from '@components';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
-import { CustomerProps } from '@store';
 import { colors, normVert } from '@theme';
 import {
   Button,
@@ -20,23 +19,9 @@ import {
   ViewWithButtons,
 } from '@ui';
 
-import { ButtonType, FontSize, TPlan } from '~types';
+import { ButtonType, FontSize, TFormProps } from '~types';
 
 import { PlanScreens } from './plan';
-
-type TProps = {
-  customer: CustomerProps;
-  handleSubmit: () => void;
-  values: TPlan;
-  handleChange: (e: string | React.ChangeEvent<any>) => () => void;
-  handleNavigate: (
-    nextScreen: PlanScreens,
-    params?: Record<string, any>,
-    withValidate?: boolean,
-  ) => void;
-  errors: Record<string, any>;
-  setValues: React.Dispatch<React.SetStateAction<TPlan>>;
-};
 
 export const CreatePlanScreen = observer(
   ({
@@ -47,7 +32,7 @@ export const CreatePlanScreen = observer(
     handleChange,
     errors,
     setValues,
-  }: TProps) => {
+  }: TFormProps) => {
     const { loading } = useStore();
 
     const isLoading = loading.isLoading;
