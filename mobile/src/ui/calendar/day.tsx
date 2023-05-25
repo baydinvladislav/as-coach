@@ -48,7 +48,7 @@ const CustomDay = ({
 
   const isLastDayMonth =
     new Date(date).getDate() ==
-    +moment(date, 'DD.mm.yy').endOf('month').format('DD');
+    +moment(date, 'YYYY-MM-DD').endOf('month').format('DD');
 
   const isFirstDayMonth = new Date(date).getDate() == 1;
 
@@ -66,7 +66,11 @@ const CustomDay = ({
     isVisibleBackground && state !== 'disabled'
       ? {
           style: [
-            !isEndEmpty && !isStartEmpty && styles.selectedBackground,
+            !isEndEmpty &&
+              !isStartEmpty &&
+              (!isSelect || !isLastDayMonth) &&
+              (!isSelect || !isFirstDayMonth) &&
+              styles.selectedBackground,
             isStart && !isLastDay && styles.start,
             isEnd && !isFirstDay && styles.end,
             isBetween && styles.center,

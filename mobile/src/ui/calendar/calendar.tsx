@@ -143,7 +143,7 @@ export const Calendar = forwardRef(
 );
 
 const theme = {
-  calendarBackground: colors.black2,
+  calendarBackground: colors.black6,
   weekVerticalMargin: normVert(6),
 };
 
