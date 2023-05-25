@@ -14,7 +14,7 @@ import { CheckIcon, MenuIcon } from '@assets';
 import { colors, normHor, normVert } from '@theme';
 import { Text } from '@ui';
 
-import { FontSize } from '~types';
+import { FontSize, FontWeight } from '~types';
 
 type TProps = {
   placeholder: string;
@@ -22,6 +22,7 @@ type TProps = {
   onChangeCheckbox: (e: string | React.ChangeEvent<any>) => void;
   value?: boolean;
   onDrag?: () => void;
+  color?: string;
 } & Omit<TextInputProps, 'value'>;
 
 export const Checkbox = ({
@@ -29,6 +30,7 @@ export const Checkbox = ({
   style,
   value,
   onDrag,
+  color = colors.white,
   ...props
 }: TProps) => {
   const [isChecked, setIsChecked] = useState(value ?? false);
@@ -49,7 +51,12 @@ export const Checkbox = ({
       <Square isChecked={value || isChecked}>
         {(value || isChecked) && <CheckIcon />}
       </Square>
-      <Text style={styles.text} fontSize={FontSize.S16} color={colors.white}>
+      <Text
+        style={styles.text}
+        weight={FontWeight.Regular}
+        fontSize={FontSize.S16}
+        color={color}
+      >
         {placeholder}
       </Text>
       {onDrag && (

@@ -17,7 +17,7 @@ export const CreatePlanItem = ({ children, title }: TProps) => (
       color={colors.white}
       weight={FontWeight.Bold}
       style={styles.title}
-      fontSize={FontSize.S24}
+      fontSize={FontSize.S20}
     >
       {title}
     </Text>

@@ -63,20 +63,20 @@ export const CreatePlanScreen = observer(
         isLoading={isLoading}
         isScroll={true}
       >
-        <NameText>
+        <NameText
+          color={colors.black4}
+          fontSize={FontSize.S10}
+          weight={FontWeight.Bold}
+        >
           {customer?.first_name} {customer?.last_name}
         </NameText>
-        <Text
-          style={styles.title}
-          color={colors.white}
-          fontSize={FontSize.S24}
-          weight={FontWeight.Medium}
-        >
+        <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
           {moment(values.start_date).format('D MMM').slice(0, -1)} —{' '}
           {moment(values.end_date).format('D MMM').slice(0, -1)}
         </Text>
         <CreatePlanItem title={t('createPlan.title1')}>
           <Checkbox
+            color={colors.black4}
             style={styles.checkbox}
             value={values.different_time}
             placeholder={t('createPlan.checkboxDescription')}
@@ -216,7 +216,5 @@ const styles = StyleSheet.create({
 
 const NameText = styled(Text)`
   text-transform: uppercase;
-  color: ${colors.black4};
-  font-size: ${FontSize.S10};
   margin-bottom: ${normVert(16)}px;
 `;

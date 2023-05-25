@@ -8,7 +8,7 @@ import { useStore } from '@hooks';
 import { colors, normVert } from '@theme';
 import { Button, Loader, Text } from '@ui';
 
-import { ButtonType, FontSize } from '~types';
+import { ButtonType, FontSize, FontWeight } from '~types';
 
 type TProps = {
   title: string;
@@ -43,6 +43,7 @@ export const LkEmpty = observer(
             style={{ lineHeight: 24, marginBottom: normVert(24) }}
             fontSize={FontSize.S17}
             color={colors.black4}
+            weight={FontWeight.Regular}
           >
             {description}
           </Text>

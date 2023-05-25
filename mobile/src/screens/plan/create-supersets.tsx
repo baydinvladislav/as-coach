@@ -9,7 +9,7 @@ import { t } from '@i18n';
 import { colors, normHor, normVert } from '@theme';
 import { Button, ExerciseWithSuperset, Text, ViewWithButtons } from '@ui';
 
-import { ButtonType, FontSize, TFormProps } from '~types';
+import { ButtonType, FontSize, FontWeight, TFormProps } from '~types';
 
 import { PlanScreens } from './plan';
 
@@ -54,6 +54,7 @@ export const CreateSupersetsScreen = observer(
           style={styles.exercisesText}
           color={colors.black4}
           fontSize={FontSize.S10}
+          weight={FontWeight.Bold}
         >
           {t('supersets.dayTitle', {
             day: params.dayNumber + 1,

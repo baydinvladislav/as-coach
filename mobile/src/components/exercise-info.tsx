@@ -30,7 +30,11 @@ export const ExerciseInfo = ({
 }: TProps) => (
   <View style={[styles.row, styles.exercise]}>
     <Number type={type}>
-      <Text fontSize={FontSize.S16} color={colors.white}>
+      <Text
+        fontSize={FontSize.S16}
+        color={colors.white}
+        weight={FontWeight.Regular}
+      >
         {index + 1}
       </Text>
     </Number>
@@ -53,6 +57,7 @@ export const ExerciseInfo = ({
         {exercises.sets.map((set, index) => (
           <React.Fragment key={index}>
             <Text
+              weight={FontWeight.Regular}
               fontSize={
                 type === ExerciseCardType.FULL ? FontSize.S17 : FontSize.S16
               }
@@ -62,6 +67,7 @@ export const ExerciseInfo = ({
             </Text>
             {index !== exercises.sets.length - 1 && (
               <Text
+                weight={FontWeight.Regular}
                 fontSize={
                   type === ExerciseCardType.FULL ? FontSize.S17 : FontSize.S16
                 }
