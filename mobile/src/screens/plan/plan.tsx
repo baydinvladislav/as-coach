@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 
 import { useFormik } from 'formik';
+import { observer } from 'mobx-react';
 import moment from 'moment';
 
 import { createPlan } from '@api';
+import { useStateCallback } from '@hooks';
 import { RoutesProps, Screens, useNavigation } from '@navigation';
 import { CustomerProps } from '@store';
 import { ModalLayout } from '@ui';
@@ -28,12 +30,13 @@ export enum PlanScreens {
   EDIT_EXERCISES_SCREEN = 'EditExercisesScreen',
 }
 
-export const PlanScreen = ({ route }: RoutesProps) => {
+export const PlanScreen = observer(({ route }: RoutesProps) => {
   const { navigate } = useNavigation();
   const [currentScreen, setCurrentScreen] = useState(
     PlanScreens.CREATE_DATE_SCREEN,
   );
-  const [isValidateLoading, setIsValidateLoading] = useState(false);
+
+  const [isLoading, setIsLoading] = useStateCallback(false);
 
   const [params, setParams] = useState({});
 
@@ -91,21 +94,23 @@ export const PlanScreen = ({ route }: RoutesProps) => {
     setErrors({});
   };
 
-  const handleNavigate = async (
+  const handleNavigate = (
     nextScreen: PlanScreens,
     params?: Record<string, any>,
     withValidate = false,
   ) => {
-    if (!withValidate) {
+    if (withValidate) {
+      setIsLoading(true, () => validate(nextScreen, params));
+    } else {
       clearErrors();
       setCurrentScreen(nextScreen);
       setParams(params || {});
     }
-    if (withValidate) {
-      setIsValidateLoading(true);
-      try {
-        const data = await validateForm();
+  };
 
+  const validate = (nextScreen: PlanScreens, params?: Record<string, any>) => {
+    validateForm()
+      .then(data => {
         if (currentScreen === PlanScreens.CREATE_DATE_SCREEN) {
           if (
             !Object.keys(data).includes('start_date') &&
@@ -127,15 +132,11 @@ export const PlanScreen = ({ route }: RoutesProps) => {
             setCurrentScreen(nextScreen);
             setParams(params || {});
           }
-        } else {
-          clearErrors();
-          setCurrentScreen(nextScreen);
-          setParams(params || {});
         }
-      } finally {
-        setIsValidateLoading(false);
-      }
-    }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const formProps = {
@@ -152,7 +153,7 @@ export const PlanScreen = ({ route }: RoutesProps) => {
       e: string | React.ChangeEvent<any>,
     ) => () => void,
     clearErrors,
-    isValidateLoading,
+    isLoading,
   };
 
   const renderScreen = () => {
@@ -184,4 +185,4 @@ export const PlanScreen = ({ route }: RoutesProps) => {
       {renderScreen()}
     </ModalLayout>
   );
-};
+});

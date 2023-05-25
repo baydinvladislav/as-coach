@@ -97,5 +97,5 @@ export type TFormProps = {
     withValidate?: boolean,
   ) => void;
   setValues: React.Dispatch<React.SetStateAction<TPlan>>;
-  isValidateLoading: boolean;
+  isLoading: boolean;
 };
