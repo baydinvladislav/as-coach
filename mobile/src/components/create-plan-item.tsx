@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { colors, normVert } from '@theme';
 import { Text } from '@ui';
 
-import { FontSize } from '~types';
+import { FontSize, FontWeight } from '~types';
 
 type TProps = {
   children: React.ReactNode;
@@ -13,7 +13,12 @@ type TProps = {
 
 export const CreatePlanItem = ({ children, title }: TProps) => (
   <View>
-    <Text color={colors.white} style={styles.title} fontSize={FontSize.S24}>
+    <Text
+      color={colors.white}
+      weight={FontWeight.Bold}
+      style={styles.title}
+      fontSize={FontSize.S24}
+    >
       {title}
     </Text>
     {children}

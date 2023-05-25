@@ -132,6 +132,10 @@ export const PlanScreen = observer(({ route }: RoutesProps) => {
             setCurrentScreen(nextScreen);
             setParams(params || {});
           }
+        } else {
+          clearErrors();
+          setCurrentScreen(nextScreen);
+          setParams(params || {});
         }
       })
       .finally(() => {

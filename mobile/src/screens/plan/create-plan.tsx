@@ -19,7 +19,7 @@ import {
   ViewWithButtons,
 } from '@ui';
 
-import { ButtonType, FontSize, TFormProps } from '~types';
+import { ButtonType, FontSize, FontWeight, TFormProps } from '~types';
 
 import { PlanScreens } from './plan';
 
@@ -66,7 +66,12 @@ export const CreatePlanScreen = observer(
         <NameText>
           {customer?.first_name} {customer?.last_name}
         </NameText>
-        <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
+        <Text
+          style={styles.title}
+          color={colors.white}
+          fontSize={FontSize.S24}
+          weight={FontWeight.Medium}
+        >
           {moment(values.start_date).format('D MMM').slice(0, -1)} —{' '}
           {moment(values.end_date).format('D MMM').slice(0, -1)}
         </Text>

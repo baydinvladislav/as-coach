@@ -26,6 +26,11 @@ export enum UserType {
   CLIENT = 'client',
 }
 
+export enum ExerciseCardType {
+  SIMPLE = 'simple',
+  FULL = 'full',
+}
+
 export type TResponseError = {
   loc?: string[];
   msg: string;

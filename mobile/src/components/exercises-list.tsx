@@ -40,7 +40,7 @@ export const ExercisesList = forwardRef((props: TProps, ref) => {
     setCards(new Array(props.exercises.length).fill(false));
     setCards(cards => cards.map((_, index) => index === key));
   };
-  return (
+  return props.exercises.length ? (
     <View style={styles.list}>
       {props.exercises.map((exercises, key) => (
         <ExercisesCard
@@ -52,7 +52,7 @@ export const ExercisesList = forwardRef((props: TProps, ref) => {
         />
       ))}
     </View>
-  );
+  ) : null;
 });
 
 const styles = StyleSheet.create({
