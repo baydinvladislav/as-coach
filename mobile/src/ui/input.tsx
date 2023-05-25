@@ -12,7 +12,7 @@ import styled, { css } from 'styled-components';
 
 import { colors, normHor, normVert } from '@theme';
 
-import { FontSize } from '~types';
+import { FontSize, FontWeight } from '~types';
 
 import { Placeholder } from './placeholder';
 import { Text } from './text';
@@ -108,12 +108,21 @@ export const Input = ({
         {rightIcon && <Icon dir="right">{rightIcon}</Icon>}
       </InputContainer>
       {showError && error && (
-        <ErrorText fontSize={FontSize.S12} color={colors.red}>
+        <ErrorText
+          fontSize={FontSize.S12}
+          weight={FontWeight.Regular}
+          color={colors.red}
+        >
           {error}
         </ErrorText>
       )}
       {description && (
-        <ErrorText align="center" fontSize={FontSize.S12} color={colors.black5}>
+        <ErrorText
+          align="center"
+          fontSize={FontSize.S12}
+          color={colors.black5}
+          weight={FontWeight.Regular}
+        >
           {description}
         </ErrorText>
       )}

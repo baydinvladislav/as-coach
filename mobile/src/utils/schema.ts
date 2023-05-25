@@ -17,6 +17,7 @@ export const changePasswordSchema = () =>
   yup.object().shape({
     password: yup
       .string()
+      .oneOf([yup.ref('newPassword')], t('errors.minPassword'))
       .min(PASSWORD_MIN, t('errors.minPassword'))
       .required(t('errors.required')),
     newPassword: yup

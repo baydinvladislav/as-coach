@@ -15,7 +15,7 @@ import { CustomerProps } from '@store';
 import { colors, normVert } from '@theme';
 import { Button, Text } from '@ui';
 
-import { ButtonType, FontSize } from '~types';
+import { ButtonType, FontSize, FontWeight } from '~types';
 
 export const LkClients = observer(() => {
   const [searchInputKey, setSearchInputKey] = useState(0);
@@ -80,7 +80,11 @@ export const LkClients = observer(() => {
   return customers.length ? (
     <>
       <TopContainer>
-        <Text fontSize={FontSize.S20} color={colors.white}>
+        <Text
+          fontSize={FontSize.S20}
+          color={colors.white}
+          weight={FontWeight.Bold}
+        >
           {t('lk.clients')}
         </Text>
         <Button

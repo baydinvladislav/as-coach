@@ -15,10 +15,9 @@ import Reanimated, {
 import styled from 'styled-components';
 
 import { ArrowDownIcon, ArrowUp2Icon, EditIcon } from '@assets';
-import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { colors, normHor, normVert } from '@theme';
-import { ExerciseWithSuperset, Text } from '@ui';
+import { ExerciseWithSupersetSimple, Text } from '@ui';
 
 import { FontSize, TPropsExercise } from '~types';
 
@@ -50,8 +49,6 @@ export const ExercisesCard = ({
       return;
     }
   });
-
-  const { customer } = useStore();
 
   const [isLocallyOpen, setIsLocallyOpen] = useState(false);
   const [isEndAnimation, setIsEndAnimation] = useState(true);
@@ -163,7 +160,7 @@ export const ExercisesCard = ({
           ) : null}
         </View>
         {!isEndAnimation && (
-          <ExerciseWithSuperset exercises={exercises.exercises} />
+          <ExerciseWithSupersetSimple exercises={exercises.exercises} />
         )}
       </Container>
     </Reanimated.View>

@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import { ArrowDownIcon } from '@assets';
 import { colors, normHor, normVert } from '@theme';
 
-import { FontSize } from '~types';
+import { FontSize, FontWeight } from '~types';
 
 import { TInputProps } from './input';
 import { Placeholder } from './placeholder';
@@ -53,6 +53,7 @@ export const Select = ({ placeholder, style, ...props }: TProps) => {
               selected={isSelect}
               color={colors.white}
               fontSize={FontSize.S17}
+              weight={FontWeight.Regular}
             >
               {selectedItem}
             </Row>

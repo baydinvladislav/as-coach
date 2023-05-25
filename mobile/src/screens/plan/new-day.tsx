@@ -8,7 +8,7 @@ import { t } from '@i18n';
 import { colors, normVert } from '@theme';
 import { Input, Text, ViewWithButtons } from '@ui';
 
-import { FontSize, TFormProps } from '~types';
+import { FontSize, FontWeight, TFormProps } from '~types';
 
 import { PlanScreens } from './plan';
 
@@ -55,7 +55,12 @@ export const NewDayScreen = observer(
 
     return (
       <>
-        <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
+        <Text
+          style={styles.title}
+          color={colors.white}
+          fontSize={FontSize.S20}
+          weight={FontWeight.Bold}
+        >
           {t('newDay.title', { day: params.dayNumber + 1 })}
         </Text>
         <ViewWithButtons

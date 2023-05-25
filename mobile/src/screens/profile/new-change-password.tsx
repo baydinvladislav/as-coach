@@ -16,7 +16,7 @@ import { colors, normVert } from '@theme';
 import { Button, Keyboard, Text } from '@ui';
 import { changePasswordSchema } from '@utils';
 
-import { ButtonType, FontSize } from '~types';
+import { ButtonType, FontSize, FontWeight } from '~types';
 
 export const NewChangePasswordScreen = observer(() => {
   const { user, loading } = useStore();
@@ -57,6 +57,7 @@ export const NewChangePasswordScreen = observer(() => {
         style={{ lineHeight: 22 }}
         fontSize={FontSize.S17}
         color={colors.black4}
+        weight={FontWeight.Regular}
       >
         {t('changePassword.changePasswordDescription')}
       </Text>
@@ -67,6 +68,7 @@ export const NewChangePasswordScreen = observer(() => {
           value={values.password}
           onChangeText={handleChange('password')}
           error={errors.password}
+          showError={errors.password !== t('errors.minPassword')}
         />
         <PasswordInput
           style={styles.input}

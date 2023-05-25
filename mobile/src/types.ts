@@ -26,6 +26,11 @@ export enum UserType {
   CLIENT = 'client',
 }
 
+export enum ExerciseCardType {
+  SIMPLE = 'simple',
+  FULL = 'full',
+}
+
 export type TResponseError = {
   loc?: string[];
   msg: string;
@@ -97,5 +102,5 @@ export type TFormProps = {
     withValidate?: boolean,
   ) => void;
   setValues: React.Dispatch<React.SetStateAction<TPlan>>;
-  isValidateLoading: boolean;
+  isLoading: boolean;
 };

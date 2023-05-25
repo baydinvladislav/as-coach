@@ -13,7 +13,7 @@ type TProps = {
   exercises: TPropsExercises[];
 };
 
-export const ExerciseWithSuperset = ({ exercises }: TProps) => {
+export const ExerciseWithSupersetSimple = ({ exercises }: TProps) => {
   const { customer } = useStore();
 
   return (
@@ -30,7 +30,7 @@ export const ExerciseWithSuperset = ({ exercises }: TProps) => {
         return (
           <React.Fragment key={key}>
             <ExerciseInfo
-              type={ExerciseCardType.FULL}
+              type={ExerciseCardType.SIMPLE}
               name={name}
               index={index}
               isLast={
@@ -46,7 +46,7 @@ export const ExerciseWithSuperset = ({ exercises }: TProps) => {
                 <View key={i}>
                   <Line />
                   <ExerciseInfo
-                    type={ExerciseCardType.FULL}
+                    type={ExerciseCardType.SIMPLE}
                     name={name}
                     key={i}
                     index={i + index + 1}
@@ -67,11 +67,11 @@ export const ExerciseWithSuperset = ({ exercises }: TProps) => {
 };
 
 const Line = styled(View)`
-  background-color: ${colors.green};
+  background-color: ${colors.black4};
   width: 1px;
-  height: ${normVert(28)}px;
+  height: ${normVert(24)}px;
   position: absolute;
-  bottom: ${normVert(80)}px;
+  bottom: ${normVert(68)}px;
   left: ${normHor(10)}px;
   border-radius: 100px;
 `;

@@ -22,16 +22,13 @@ export const NewPlanScreen = observer(
     handleNavigate,
     errors,
     clearErrors,
-    isValidateLoading,
+    isLoading,
   }: TFormProps) => {
     const calendarRef = useRef<{
       handleChangeDateType: (type: 'start' | 'end') => void;
     }>();
 
-    const { loading } = useStore();
     const { goBack } = useNavigation();
-
-    const isLoading = loading.isLoading;
 
     const handlePress = (type: 'start' | 'end') => {
       clearErrors();
@@ -52,7 +49,7 @@ export const NewPlanScreen = observer(
             handleNavigate(PlanScreens.CREATE_PLAN_SCREEN, undefined, true)
           }
           confirmText={t('buttons.next')}
-          isLoading={isLoading || isValidateLoading}
+          isLoading={isLoading}
           style={{ justifyContent: 'space-between' }}
           containerStyle={{ flex: 1 }}
         >

@@ -60,7 +60,13 @@ export const LkScreen = observer(() => {
         style={{ opacity: 0.3 }}
       />
 
-      <DateText>{moment().format('dddd, D MMM')}</DateText>
+      <DateText
+        weight={FontWeight.Bold}
+        color={colors.black4}
+        fontSize={FontSize.S10}
+      >
+        {moment().format('dddd, D MMM')}
+      </DateText>
       <Flex>
         <Flex>
           <Text color={colors.white} fontSize={FontSize.S24}>
@@ -113,10 +119,7 @@ const Flex = styled(View)`
 
 const DateText = styled(Text)`
   text-transform: uppercase;
-  color: ${colors.black4};
-  font-size: ${FontSize.S10};
   margin-bottom: ${normVert(16)}px;
-  font-family: ${FontWeight.Bold};
 `;
 
 const Background = styled(Image)`

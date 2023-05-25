@@ -5,20 +5,35 @@ import styled from 'styled-components';
 
 import { colors, normVert } from '@theme';
 
-import { FontSize } from '~types';
+import { FontSize, FontWeight } from '~types';
 
 import { Text } from './text';
 
 type TProps = {
   title: string;
   cells: { title: string; value: string }[];
+  description?: string;
 };
 
-export const RowBorder = ({ title, cells }: TProps) => (
+export const RowBorder = ({ title, cells, description }: TProps) => (
   <View style={styles.rowBorder}>
-    <Text color={colors.white} style={styles.title} fontSize={FontSize.S24}>
+    <Text
+      color={colors.white}
+      style={styles.title}
+      fontSize={FontSize.S20}
+      weight={FontWeight.Bold}
+    >
       {title}
     </Text>
+    {description && (
+      <UppercaseText
+        color={colors.black4}
+        fontSize={FontSize.S10}
+        weight={FontWeight.Bold}
+      >
+        {description}
+      </UppercaseText>
+    )}
     <Row>
       {cells.map((cell, key) => (
         <React.Fragment key={key}>
@@ -27,6 +42,7 @@ export const RowBorder = ({ title, cells }: TProps) => (
               style={styles.cellTitle}
               color={colors.grey9}
               fontSize={FontSize.S12}
+              weight={FontWeight.Regular}
             >
               {cell.title}
             </Text>
@@ -34,6 +50,7 @@ export const RowBorder = ({ title, cells }: TProps) => (
               style={styles.cellValue}
               color={colors.white}
               fontSize={FontSize.S16}
+              weight={FontWeight.Regular}
             >
               {cell.value}
             </Text>
@@ -77,4 +94,9 @@ const Line = styled(View)`
   height: ${normVert(34)}px;
   width: 1px;
   background-color: ${colors.green};
+`;
+
+const UppercaseText = styled(Text)`
+  text-transform: uppercase;
+  margin-bottom: ${normVert(16)}px;
 `;

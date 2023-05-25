@@ -47,7 +47,7 @@ type TProps = {
 
 export const Calendar = forwardRef(
   ({ values, onChange, ...props }: TProps, ref) => {
-    const listRef = useRef<{ scrollToDay: (date: string) => void }>(null);
+    const listRef = useRef<{ scrollToMonth: (date: string) => void }>(null);
     const dateType = useRef<'start' | 'end' | null>('start');
     const { horizontalView } = props;
 
@@ -77,7 +77,7 @@ export const Calendar = forwardRef(
     useEffect(() => {
       if (selected.start) {
         setTimeout(() => {
-          listRef?.current?.scrollToDay(selected.start);
+          listRef?.current?.scrollToMonth(selected.start);
         }, 0);
       }
 
@@ -143,7 +143,7 @@ export const Calendar = forwardRef(
 );
 
 const theme = {
-  calendarBackground: colors.black2,
+  calendarBackground: colors.black6,
   weekVerticalMargin: normVert(6),
 };
 

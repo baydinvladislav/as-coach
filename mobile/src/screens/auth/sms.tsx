@@ -16,7 +16,7 @@ import { RoutesProps, Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
 import { Button, Keyboard, Text } from '@ui';
 
-import { ButtonType, FontSize } from '~types';
+import { ButtonType, FontSize, FontWeight } from '~types';
 
 const CELL_COUNT = 4;
 const PHONE = '+7 (985) 000-00-00';
@@ -48,6 +48,7 @@ export const SmsScreen = ({ route }: RoutesProps) => {
         style={{ lineHeight: 22 }}
         fontSize={FontSize.S17}
         color={colors.black4}
+        weight={FontWeight.Regular}
       >
         {t('auth.smsText1')}
       </Text>
@@ -56,6 +57,7 @@ export const SmsScreen = ({ route }: RoutesProps) => {
         style={{ lineHeight: 22 }}
         fontSize={FontSize.S17}
         color={colors.black5}
+        weight={FontWeight.Regular}
       >
         {PHONE}
       </Text>
@@ -64,6 +66,7 @@ export const SmsScreen = ({ route }: RoutesProps) => {
         align="center"
         fontSize={FontSize.S17}
         color={colors.black4}
+        weight={FontWeight.Regular}
       >
         {t('auth.smsText2')}
       </Text>
@@ -86,7 +89,11 @@ export const SmsScreen = ({ route }: RoutesProps) => {
             </Cell>
           )}
         />
-        <ErrorText fontSize={FontSize.S12} color={colors.red}>
+        <ErrorText
+          fontSize={FontSize.S12}
+          weight={FontWeight.Regular}
+          color={colors.red}
+        >
           Неправильный код, попробуйте ещё раз
         </ErrorText>
       </Inputs>

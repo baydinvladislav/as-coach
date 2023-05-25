@@ -12,7 +12,14 @@ import { t } from '@i18n';
 import { colors, normHor, normVert } from '@theme';
 import { Button, Text, ViewWithButtons } from '@ui';
 
-import { ButtonType, FontSize, TExercises, TFormProps, TPlan } from '~types';
+import {
+  ButtonType,
+  FontSize,
+  FontWeight,
+  TExercises,
+  TFormProps,
+  TPlan,
+} from '~types';
 
 import { PlanScreens } from './plan';
 
@@ -77,7 +84,12 @@ export const DayExercisesScreen = observer(
 
     return (
       <>
-        <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
+        <Text
+          style={styles.title}
+          color={colors.white}
+          fontSize={FontSize.S24}
+          weight={FontWeight.Bold}
+        >
           {t('newDay.exercisesTitle', {
             day: params.dayNumber + 1,
             exercises: dayName,
@@ -87,6 +99,7 @@ export const DayExercisesScreen = observer(
           style={styles.exercisesText}
           color={colors.black4}
           fontSize={FontSize.S10}
+          weight={FontWeight.Bold}
         >
           {t('createPlan.exercises')}
         </Text>

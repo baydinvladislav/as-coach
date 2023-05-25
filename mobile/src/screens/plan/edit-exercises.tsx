@@ -30,7 +30,7 @@ import {
   moveExerciseFromUp,
 } from '@utils';
 
-import { FontSize, TFormProps, TPropsExercises } from '~types';
+import { FontSize, FontWeight, TFormProps, TPropsExercises } from '~types';
 
 import { PlanScreens } from './plan';
 
@@ -297,7 +297,11 @@ export const EditExercisesScreen = observer(
               quantity: data.length,
             })}
           </Text>
-          <Text color={colors.black4} fontSize={FontSize.S12}>
+          <Text
+            color={colors.black4}
+            fontSize={FontSize.S12}
+            weight={FontWeight.Regular}
+          >
             {t('supersets.editMode')}
           </Text>
         </View>
@@ -305,6 +309,7 @@ export const EditExercisesScreen = observer(
           style={styles.exercisesText}
           color={colors.black4}
           fontSize={FontSize.S10}
+          weight={FontWeight.Bold}
         >
           {t('supersets.dayTitle', {
             day: params.dayNumber + 1,
