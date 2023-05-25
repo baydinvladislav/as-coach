@@ -10,7 +10,7 @@ import { RoutesProps, useNavigation } from '@navigation';
 import { colors, normVert } from '@theme';
 import { Loader, ModalLayout, RowBorder, Text, ViewWithButtons } from '@ui';
 
-import { FontSize, TPlanType } from '~types';
+import { FontSize, FontWeight, TPlanType } from '~types';
 
 export const DetailPlanScreen = ({ route }: RoutesProps) => {
   const [data, setData] = useState<TPlanType>();
@@ -21,6 +21,8 @@ export const DetailPlanScreen = ({ route }: RoutesProps) => {
   useEffect(() => {
     getCustomerPlanDetail(id, planId).then(({ data }) => setData(data));
   }, [id, planId]);
+
+  const isDifference = data?.proteins?.indexOf('/') !== -1;
 
   return (
     <ModalLayout>
@@ -34,7 +36,8 @@ export const DetailPlanScreen = ({ route }: RoutesProps) => {
           <Text
             style={styles.title}
             color={colors.white}
-            fontSize={FontSize.S24}
+            fontSize={FontSize.S20}
+            weight={FontWeight.Bold}
           >
             {moment(data.start_date).format('D MMM').slice(0, -1)} —{' '}
             {moment(data.end_date).format('D MMM').slice(0, -1)}
@@ -46,11 +49,15 @@ export const DetailPlanScreen = ({ route }: RoutesProps) => {
               { title: 'Углеводы', value: `${data.carbs} гр` },
               { title: 'Жиры', value: `${data.fats} гр` },
             ]}
+            description={
+              isDifference ? t('createPlan.differenceTime') : undefined
+            }
           />
           <Text
             color={colors.white}
             style={styles.contentTitle}
-            fontSize={FontSize.S24}
+            fontSize={FontSize.S20}
+            weight={FontWeight.Bold}
           >
             Тренировки
           </Text>
@@ -68,11 +75,16 @@ export const DetailPlanScreen = ({ route }: RoutesProps) => {
           <Text
             color={colors.white}
             style={styles.contentTitle}
-            fontSize={FontSize.S24}
+            fontSize={FontSize.S20}
+            weight={FontWeight.Bold}
           >
             Заметки от тренера
           </Text>
-          <Text color={colors.white} fontSize={FontSize.S16}>
+          <Text
+            color={colors.white}
+            fontSize={FontSize.S16}
+            weight={FontWeight.Regular}
+          >
             {data.notes}
           </Text>
         </ViewWithButtons>

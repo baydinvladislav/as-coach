@@ -46,6 +46,7 @@ export const ru = {
     enterText: 'Введи текст',
     days1: 'Дни тренировок',
     days2: 'Дни отдыха',
+    differenceTime: 'Дни тренировок / дни отдыха',
   },
   newDay: {
     title: 'День {day}',
