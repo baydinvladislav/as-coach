@@ -168,7 +168,7 @@ async def get_profile(user: Union[User, Customer] = Depends(get_coach_or_custome
         "birthday": user.birthday,
         "email": user.email,
         "username": user.username,
-        "photo_link": user.photo_path.split('/src')[1] if user.photo_path else None
+        "photo_link": user.photo_path.split('/code')[1] if user.photo_path else None
     }
 
 
@@ -234,7 +234,7 @@ async def update_profile(
     database.refresh(user)
 
     if user.photo_path:
-        photo_link = user.photo_path.split('/src')[1]
+        photo_link = user.photo_path.split('/code')[1]
     else:
         photo_link = None
 
