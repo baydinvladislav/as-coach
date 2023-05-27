@@ -6763,10 +6763,10 @@ react-native-override-color-scheme@1.0.3:
   resolved "https://registry.yarnpkg.com/react-native-override-color-scheme/-/react-native-override-color-scheme-1.0.3.tgz#5b1f04ceb2b583644b60c496169374cd6aa883f4"
   integrity sha512-AMHR0uOMbEJL59m61kl0CMcLKRC+dgo6uozNLd2S70o0kUDMIDhr+EF484/af8UDB22OHI5ehsprGMKLiXIfow==
 
-react-native-radio-buttons@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-radio-buttons/-/react-native-radio-buttons-1.0.0.tgz#be828b85897f80ca66ad66ad7adedb6b1890ab9d"
-  integrity sha512-9qglzqVfpFXph2aeRvpg7obDhb8X8LBexMRugXSjud7+2J1teDMsWyypE8PLbF+WCXoCCtW0K+RpHOuzv7kJjA==
+react-native-radio-buttons-group@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-radio-buttons-group/-/react-native-radio-buttons-group-3.0.1.tgz#d78edf90e67c99394da674129f93da4a3dd467be"
+  integrity sha512-F54i/tt5+BUoZwwbo+9zCf4tKGz9KahcH5g6P+bLwkWC0BC07da5cwGU+8Akru981HaMzx6f7Jgl3ZAhR1Fd4Q==
 
 react-native-reanimated@3.1.0:
   version "3.1.0"
