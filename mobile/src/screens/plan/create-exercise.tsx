@@ -81,7 +81,9 @@ export const CreateExerciseScreen = observer(
       onSubmit: handleCreation,
       validationSchema: createExerciseSchema,
     });
+    // 3 при смене баттона принтит 3 раза
     console.log(values);
+
     function handlePress(id: string) {
       /**
        * Changes active element in
@@ -89,9 +91,6 @@ export const CreateExerciseScreen = observer(
        */
 
       if (id !== values.muscle_group_id) {
-        // 3 при смене баттона принтит 3 раза
-        console.log(id);
-
         setValues(values => ({
           ...values,
           muscle_group_id: id,
