@@ -9,6 +9,7 @@ import { t } from '@i18n';
 import { RoutesProps, useNavigation } from '@navigation';
 import { colors, normVert } from '@theme';
 import { Loader, ModalLayout, RowBorder, Text, ViewWithButtons } from '@ui';
+import { renderNumber } from '@utils';
 
 import { FontSize, FontWeight, TPlanType } from '~types';
 
@@ -45,9 +46,9 @@ export const DetailPlanScreen = ({ route }: RoutesProps) => {
           <RowBorder
             title="Питание"
             cells={[
-              { title: 'Белки', value: `${data.proteins} гр` },
-              { title: 'Углеводы', value: `${data.carbs} гр` },
-              { title: 'Жиры', value: `${data.fats} гр` },
+              { title: 'Белки', value: renderNumber(data.proteins) },
+              { title: 'Углеводы', value: renderNumber(data.carbs) },
+              { title: 'Жиры', value: renderNumber(data.fats) },
             ]}
             description={
               isDifference ? t('createPlan.differenceTime') : undefined

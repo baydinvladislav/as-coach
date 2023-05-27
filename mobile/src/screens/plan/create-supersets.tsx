@@ -26,9 +26,7 @@ export const CreateSupersetsScreen = observer(
     const exercises = values?.trainings?.[params.dayNumber]?.exercises;
     const dayName = values?.trainings?.[params.dayNumber]?.name;
 
-    const quantity =
-      exercises.length +
-      exercises.reduce((acc, item) => (acc += item.supersets?.length || 0), 0);
+    const quantity = exercises.length;
 
     return (
       <>

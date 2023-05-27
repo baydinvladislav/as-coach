@@ -120,12 +120,7 @@ export const ExercisesCard = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
-  const quantity =
-    exercises.exercises.length +
-    exercises.exercises.reduce(
-      (acc, item) => (acc += item.supersets?.length || 0),
-      0,
-    );
+  const quantity = exercises.exercises.length;
 
   return (
     <Reanimated.View style={[styles.box, heightStyles, widthStyles]}>

@@ -30,7 +30,13 @@ import {
   moveExerciseFromUp,
 } from '@utils';
 
-import { FontSize, FontWeight, TFormProps, TPropsExercises } from '~types';
+import {
+  FontSize,
+  FontWeight,
+  TFormProps,
+  TPlan,
+  TPropsExercises,
+} from '~types';
 
 import { PlanScreens } from './plan';
 
@@ -60,13 +66,29 @@ export const EditExercisesScreen = observer(
     const exercises = values?.trainings?.[params.dayNumber]?.exercises;
     const dayName = values?.trainings?.[params.dayNumber]?.name;
 
-    const handleChangeSets = (id: string, e: React.ChangeEvent<any>) => {
+    const handleChangeSets = (
+      id: string,
+      e: React.ChangeEvent<any>,
+      supersetId?: string,
+    ) => {
       setData(data =>
-        data.map(item =>
-          item.id === id || item.supersetId === id
-            ? { ...item, sets: e.target.value }
-            : item,
-        ),
+        data.map(item => {
+          if (item.supersetId === supersetId) {
+            const setsLength = e.target.value.length;
+            if (setsLength) {
+              if (item.sets.length > setsLength) {
+                item.sets.length = setsLength;
+              }
+              if (item.sets.length < setsLength) {
+                item.sets = [...item.sets, ''];
+              }
+            }
+          }
+          if (item.id === id) {
+            item.sets = e.target.value;
+          }
+          return item;
+        }),
       );
     };
 
@@ -75,7 +97,7 @@ export const EditExercisesScreen = observer(
     };
 
     const handleConfirm = () => {
-      setValues(values => modifyPlan(values, dayName, data ?? []));
+      setValues(values => modifyPlan(values, dayName, [...data] ?? []));
       handleNavigate(PlanScreens.CREATE_SUPERSETS_SCREEN, params, true);
     };
 
@@ -83,25 +105,14 @@ export const EditExercisesScreen = observer(
       useCallback(() => {
         console.clear();
         setData(
-          exercises.flatMap(item =>
-            item.supersets
-              ? ([
-                  {
-                    id: item.id,
-                    sets: item.sets,
-                    supersetId: item.supersets.length ? item.id : undefined,
-                  },
-                  ...item.supersets.map(superset => ({
-                    id: superset,
-                    supersetId: item.id,
-                    sets: item.sets,
-                  })),
-                ] as TPropsExercises[])
-              : item,
-          ) as TPropsExercises[],
+          exercises.map(item => {
+            item.supersetId = item?.supersets?.[0];
+            delete item.supersets;
+            return item;
+          }),
         );
         // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [exercises]),
+      }, []),
     );
 
     const handleSuperset = (arr: string[]) => {
@@ -264,15 +275,15 @@ export const EditExercisesScreen = observer(
           <CheckboxWithSets
             key={item.id}
             placeholder={
-              name
-              // item.id.slice(0, 3) + ' - ' + item.supersetId?.slice(0, 3)
+              // name
+              item.id.slice(0, 3) + ' - ' + item.supersetId?.slice(0, 3)
             }
             isFirst={!index || (isPrevSuperset && Boolean(item.supersetId))}
             handlePress={() => handlePress(item.id)}
             exercise={item}
             errors={errors}
             handleChangeSets={e =>
-              handleChangeSets(item.supersetId || item.id, e)
+              handleChangeSets(item.id, e, item.supersetId)
             }
             index={index}
             isSelected={isSelected}

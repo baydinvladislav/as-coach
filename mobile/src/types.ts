@@ -70,7 +70,7 @@ export type TPropsExercise = {
 export type TPropsExercises = {
   id: string;
   name?: string;
-  sets: number[];
+  sets: (number | string)[];
   supersets?: string[];
   supersetId?: string;
 };

@@ -18,25 +18,23 @@ export const modifyPlan = (
         if (training?.name === dayName) {
           return {
             ...training,
-            exercises: value.reduce(
-              (acc: TPropsExercises[], item, key, arr) => {
-                const index = acc.findIndex(el => el.id === item.supersetId);
-                delete item.supersetId;
+            exercises: value.reduce((acc: TPropsExercises[], item, _, arr) => {
+              if (item.supersetId) {
+                item.supersets = [item.supersetId];
 
-                if (index >= 0) {
-                  if (acc[index]?.supersets) {
-                    acc?.[index]?.supersets?.push(item.id);
-                  } else {
-                    acc[index].supersets = [item.id];
+                for (let i = 0; i <= arr.length; i++) {
+                  const el = arr[i];
+                  if (
+                    el?.supersetId === item.supersetId &&
+                    el.id !== item.supersetId
+                  ) {
+                    item.supersets?.push(el.id);
                   }
-                } else {
-                  acc.push(item);
                 }
-
-                return acc;
-              },
-              [],
-            ),
+              }
+              acc.push(item);
+              return acc;
+            }, []),
           };
         } else {
           return training;
@@ -182,4 +180,10 @@ export const getWeek = (date: Date) => {
   ).getDay();
   const offsetDate = date.getDate() + firstWeekday - 1;
   return Math.floor(offsetDate / 7);
+};
+
+export const renderNumber = (number: string) => {
+  const arr = number.split('/');
+
+  return arr.join(' гр / ') + ' гр';
 };

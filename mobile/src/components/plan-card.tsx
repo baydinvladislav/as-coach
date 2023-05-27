@@ -10,6 +10,7 @@ import { t } from '@i18n';
 import { MenuAction, MenuView } from '@react-native-menu/menu';
 import { colors, normHor, normVert } from '@theme';
 import { Text } from '@ui';
+import { renderNumber } from '@utils';
 
 import { FontSize, TPlanType } from '~types';
 
@@ -43,62 +44,50 @@ const ACTIONS = [
   },
 ] as MenuAction[];
 
-export const PlanCard = ({ plan, onPress, withMenu = true }: TProps) => {
-  const renderNumber = (number: string) => {
-    const arr = number.split('/');
-
-    return arr.join(' гр / ') + ' гр';
-  };
-
-  return (
-    <Container onPress={onPress}>
-      <View style={styles.top}>
-        <View pointerEvents="none">
-          <Text
-            style={styles.title}
-            color={colors.white}
-            fontSize={FontSize.S17}
-          >
-            {moment(plan.start_date).format('D MMM').slice(0, -1)} —{' '}
-            {moment(plan.end_date).format('D MMM').slice(0, -1)}
-          </Text>
-        </View>
-        {withMenu && (
-          <MenuView
-            onPressAction={({ nativeEvent }) => {
-              console.log(JSON.stringify(nativeEvent));
-            }}
-            actions={ACTIONS}
-            shouldOpenOnLongPress={true}
-          >
-            <Icon>
-              <MoreIcon stroke={colors.green} />
-            </Icon>
-          </MenuView>
-        )}
+export const PlanCard = ({ plan, onPress, withMenu = true }: TProps) => (
+  <Container onPress={onPress}>
+    <View style={styles.top}>
+      <View pointerEvents="none">
+        <Text style={styles.title} color={colors.white} fontSize={FontSize.S17}>
+          {moment(plan.start_date).format('D MMM').slice(0, -1)} —{' '}
+          {moment(plan.end_date).format('D MMM').slice(0, -1)}
+        </Text>
       </View>
-      <ScrollView horizontal={true} contentContainerStyle={styles.row}>
-        <NumberContainer>
-          <NumberText color={colors.white} fontSize={FontSize.S10}>
-            {t('detailCustomer.proteins', {
-              number: renderNumber(plan.proteins),
-            })}
-          </NumberText>
-        </NumberContainer>
-        <NumberContainer>
-          <NumberText color={colors.white} fontSize={FontSize.S10}>
-            {t('detailCustomer.carbs', { number: renderNumber(plan.carbs) })}
-          </NumberText>
-        </NumberContainer>
-        <NumberContainer isLast={true}>
-          <NumberText color={colors.white} fontSize={FontSize.S10}>
-            {t('detailCustomer.fats', { number: renderNumber(plan.fats) })}
-          </NumberText>
-        </NumberContainer>
-      </ScrollView>
-    </Container>
-  );
-};
+      {withMenu && (
+        <MenuView
+          onPressAction={({ nativeEvent }) => {
+            console.log(JSON.stringify(nativeEvent));
+          }}
+          actions={ACTIONS}
+          shouldOpenOnLongPress={true}
+        >
+          <Icon>
+            <MoreIcon stroke={colors.green} />
+          </Icon>
+        </MenuView>
+      )}
+    </View>
+    <ScrollView horizontal={true} contentContainerStyle={styles.row}>
+      <NumberContainer>
+        <NumberText color={colors.white} fontSize={FontSize.S10}>
+          {t('detailCustomer.proteins', {
+            number: renderNumber(plan.proteins),
+          })}
+        </NumberText>
+      </NumberContainer>
+      <NumberContainer>
+        <NumberText color={colors.white} fontSize={FontSize.S10}>
+          {t('detailCustomer.carbs', { number: renderNumber(plan.carbs) })}
+        </NumberText>
+      </NumberContainer>
+      <NumberContainer isLast={true}>
+        <NumberText color={colors.white} fontSize={FontSize.S10}>
+          {t('detailCustomer.fats', { number: renderNumber(plan.fats) })}
+        </NumberText>
+      </NumberContainer>
+    </ScrollView>
+  </Container>
+);
 
 const styles = StyleSheet.create({
   modal: {

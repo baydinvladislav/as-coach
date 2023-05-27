@@ -20,46 +20,21 @@ export const ExerciseWithSuperset = ({ exercises }: TProps) => {
     <>
       {exercises.map((exercise, key, arr) => {
         const { name } = customer.getExerciseById(exercise.id);
-        const lastIndexSuperset = exercise.supersets?.length || 0;
-        const lastIndexExercises = arr.length + lastIndexSuperset + 1;
-        const index =
-          arr.slice(0, key).length +
-          arr
-            .slice(0, key)
-            .reduce((acc, item) => (acc += item.supersets?.length || 0), 0);
         return (
-          <React.Fragment key={key}>
+          <View key={key}>
+            {exercise?.supersets?.length &&
+              exercise.supersets[0] !== exercise.id && <Line />}
             <ExerciseInfo
               type={ExerciseCardType.FULL}
               name={name}
-              index={index}
+              index={key}
               isLast={
                 Boolean(exercise?.supersets?.length) ||
                 key === exercises.length - 1
               }
               exercises={exercise}
             />
-            {exercise.supersets?.map?.((superset, i) => {
-              const { name } = customer.getExerciseById(superset);
-
-              return (
-                <View key={i}>
-                  <Line />
-                  <ExerciseInfo
-                    type={ExerciseCardType.FULL}
-                    name={name}
-                    key={i}
-                    index={i + index + 1}
-                    isLast={
-                      index !== lastIndexExercises &&
-                      i + 2 === lastIndexSuperset
-                    }
-                    exercises={exercise}
-                  />
-                </View>
-              );
-            })}
-          </React.Fragment>
+          </View>
         );
       })}
     </>
