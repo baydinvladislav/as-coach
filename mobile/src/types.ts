@@ -42,8 +42,9 @@ export type TMuscleGroups = {
 
 export type TExercises = {
   id: string;
-  muscle_group: string;
   name: string;
+  muscle_group: string;
+  muscle_group_id: string;
 };
 
 export type TExercisesEdited = {

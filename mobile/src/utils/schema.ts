@@ -77,7 +77,7 @@ export const createPlanValidationSchema = () =>
     ),
   });
 
-  export const createExerciseSchema = () =>
+export const createExerciseSchema = () =>
   yup.object().shape({
     name: yup.string().required(t('errors.required')),
     muscle_group_id: yup.string().required(t('errors.required')),

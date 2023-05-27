@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { observer } from 'mobx-react';
@@ -8,13 +8,17 @@ import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { colors, normHor, normVert } from '@theme';
 import { Input, Text, ViewWithButtons } from '@ui';
+import { createExerciseSchema } from '@utils';
 
-import { FontSize } from '~types';
+import { FontSize, TExercises } from '~types';
 
 import { PlanScreens } from './plan';
+import { useFormik } from 'formik';
 
 type TProps = {
   params: Record<string, any>;
+  values: TExercises;
+  setValues: React.Dispatch<React.SetStateAction<TExercises>>;
   handleNavigate: (
     nextScreen: PlanScreens,
     params?: Record<string, any>,
@@ -23,7 +27,7 @@ type TProps = {
 };
 
 export const CreateExerciseScreen = observer(
-  ({ handleNavigate, params }: TProps) => {
+  ({ handleNavigate, params, setValues }: TProps) => {
     /**
      * Screen for creating new exercise in library.
      *
@@ -32,8 +36,6 @@ export const CreateExerciseScreen = observer(
      */
 
     const { loading, user } = useStore();
-    const [muscleGroupId, setMuscleGroupId] = useState<string | undefined>();
-    const [exerciseName, setExerciseName] = useState<string | undefined>();
 
     useEffect(() => {
       user.getMuscleGroups();
@@ -57,7 +59,7 @@ export const CreateExerciseScreen = observer(
       },
     }));
 
-    const handleSubmit = () => {
+    const handleCreation = () => {
       /**
        * If user submits the form,
        * it sends request to server and moves user
@@ -66,13 +68,19 @@ export const CreateExerciseScreen = observer(
 
       user
         .createExercise({
-          name: exerciseName,
-          muscle_group_id: muscleGroupId,
+          name: values.name,
+          muscle_group_id: values.muscle_group_id,
         })
         .then(() =>
           handleNavigate(PlanScreens.CREATE_DAY_EXERCISES_SCREEN, params, true),
         );
     };
+
+    const { handleSubmit, handleChange, values, errors } = useFormik({
+      initialValues: {name: '', muscle_group_id: ''},
+      onSubmit: handleCreation,
+      validationSchema: createExerciseSchema,
+    })
 
     function handlePress(id: string) {
       /**
@@ -80,8 +88,11 @@ export const CreateExerciseScreen = observer(
        * muscle group radio button list
        */
 
-      if (id !== muscleGroupId) {
-        setMuscleGroupId(id);
+      if (id !== values.muscle_group_id) {
+        setValues(values => ({
+          ...values,
+          muscle_group_id: values.muscle_group_id,
+        }));
       }
     }
 
@@ -93,8 +104,8 @@ export const CreateExerciseScreen = observer(
         <View style={styles.input}>
           <Input
             placeholder={t('newExercise.placeholder')}
-            onChangeText={setExerciseName}
-            value={exerciseName}
+            onChangeText={handleChange('name')}
+            value={values.name}
           />
         </View>
         <Text
@@ -107,7 +118,7 @@ export const CreateExerciseScreen = observer(
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
           confirmText={t('buttons.create')}
-          onConfirm={handleSubmit}
+          onConfirm={() => handleSubmit()}
           cancelText={t('buttons.cancel')}
           onCancel={() =>
             handleNavigate(
@@ -127,7 +138,7 @@ export const CreateExerciseScreen = observer(
                 containerStyle={[
                   button.value != formattedOptions[0].value && styles.border,
                 ]}
-                selected={button.id === muscleGroupId}
+                selected={button.id === values.muscle_group_id}
                 onPress={() => handlePress(button.id)}
               />
             ))}
