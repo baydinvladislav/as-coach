@@ -34,11 +34,6 @@ export default class UserStore {
     makeObservable(this);
   }
 
-  @observable exercise: TExercises = {
-    id: '',
-    muscle_group: '',
-    name: '',
-  };
   @observable isSignedIn = false;
   @observable me: UserProps = {
     first_name: '',

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useFormik } from 'formik';
@@ -26,28 +26,21 @@ type TProps = {
   ) => void;
 };
 
+/**
+ * Screen for creating new exercise in library.
+ *
+ * @param handleNavigate - use to move in next screen
+ * @param params - screen params
+ */
 export const CreateExerciseScreen = observer(
   ({ handleNavigate, params }: TProps) => {
-    /**
-     * Screen for creating new exercise in library.
-     *
-     * @param handleNavigate - use to move in next screen
-     * @param params - screen params
-     */
-
     const { loading, user } = useStore();
 
-    useEffect(() => {
-      user.getMuscleGroups();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
+    /**
+     * Formats data for every radio button
+     * based on muscle group
+     */
     const formattedOptions = user.muscleGroups.map(option => ({
-      /**
-       * Formats data for every radio button
-       * based on muscle group
-       */
-
       id: option.id,
       label: option.name,
       value: option.id,
@@ -59,13 +52,12 @@ export const CreateExerciseScreen = observer(
       },
     }));
 
+    /**
+     * If user submits the form,
+     * it sends request to server and moves user
+     * to exercises mapping screen again
+     */
     const handleCreation = () => {
-      /**
-       * If user submits the form,
-       * it sends request to server and moves user
-       * to exercises mapping screen again
-       */
-
       user
         .createExercise({
           name: values.name,
@@ -84,12 +76,11 @@ export const CreateExerciseScreen = observer(
     // 3 при смене баттона принтит 3 раза
     console.log(values);
 
+    /**
+     * Changes active element in
+     * muscle group radio button list
+     */
     function handlePress(id: string) {
-      /**
-       * Changes active element in
-       * muscle group radio button list
-       */
-
       if (id !== values.muscle_group_id) {
         setValues(values => ({
           ...values,

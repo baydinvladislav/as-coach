@@ -129,14 +129,6 @@ export const PlanScreen = ({ route }: RoutesProps) => {
             setParams(params || {});
           }
         });
-      } else if (currentScreen === PlanScreens.CREATE_EXERCISE_SCREEN) {
-        validateForm().then(data => {
-          if (!Object.keys(data).includes('trainings')) {
-            clearErrors();
-            setCurrentScreen(nextScreen);
-            setParams(params || {});
-          }
-        });
       } else {
         clearErrors();
         setCurrentScreen(nextScreen);
