@@ -60,16 +60,6 @@ export const EditExercisesScreen = observer(
     const exercises = values?.trainings?.[params.dayNumber]?.exercises;
     const dayName = values?.trainings?.[params.dayNumber]?.name;
 
-    const handleChangeSets = (id: string, e: React.ChangeEvent<any>) => {
-      setData(data =>
-        data.map(item =>
-          item.id === id || item.supersetId === id
-            ? { ...item, sets: e.target.value }
-            : item,
-        ),
-      );
-    };
-
     const handleCancel = () => {
       handleNavigate(PlanScreens.CREATE_SUPERSETS_SCREEN, params);
     };
@@ -83,25 +73,14 @@ export const EditExercisesScreen = observer(
       useCallback(() => {
         console.clear();
         setData(
-          exercises.flatMap(item =>
-            item.supersets
-              ? ([
-                  {
-                    id: item.id,
-                    sets: item.sets,
-                    supersetId: item.supersets.length ? item.id : undefined,
-                  },
-                  ...item.supersets.map(superset => ({
-                    id: superset,
-                    supersetId: item.id,
-                    sets: item.sets,
-                  })),
-                ] as TPropsExercises[])
-              : item,
-          ) as TPropsExercises[],
+          exercises.map(item => {
+            item.supersetId = item?.supersets?.[0];
+            delete item.supersets;
+            return item;
+          }),
         );
         // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [exercises]),
+      }, []),
     );
 
     const handleSuperset = (arr: string[]) => {
@@ -125,10 +104,34 @@ export const EditExercisesScreen = observer(
             const index = Math.min(
               ...arr.map(item => data.findIndex(el => el.id === item)),
             );
-            const { sets, id: supersetId } = data[index];
+            const { id: supersetId } = data[index];
+            const maxSetsLength = data
+              .filter(item => arr.includes(item.id))
+              .reduce(
+                (acc, item) =>
+                  item.sets.length > acc ? item.sets.length : acc,
+                0,
+              );
+
             const items = data
               .filter(item => arr.includes(item.id))
-              .map(item => ({ ...item, sets, supersetId }));
+              .map(item => ({
+                ...item,
+                sets:
+                  maxSetsLength > item.sets.length
+                    ? (() => {
+                        for (
+                          let i = 0;
+                          i <= maxSetsLength - item.sets.length;
+                          i++
+                        ) {
+                          item.sets.push(item.sets[item.sets.length - 1]);
+                        }
+                        return item.sets;
+                      })()
+                    : item.sets,
+                supersetId,
+              }));
             data = data.filter(item => !arr.includes(item.id));
             data.splice(index, 0, ...items);
             return data;
@@ -137,6 +140,33 @@ export const EditExercisesScreen = observer(
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setSelected([]);
       }
+    };
+
+    const handleChangeSets = (
+      id: string,
+      e: React.ChangeEvent<any>,
+      supersetId?: string,
+    ) => {
+      setData(data =>
+        data.map(el => {
+          const item = { ...el };
+          if (item.supersetId === supersetId && supersetId !== undefined) {
+            const setsLength = e.target.value.length;
+            if (setsLength) {
+              if (item.sets.length > setsLength) {
+                item.sets.length = setsLength;
+              }
+              if (item.sets.length < setsLength) {
+                item.sets = [...item.sets, item.sets[item.sets.length - 1]];
+              }
+            }
+          }
+          if (item.id === id) {
+            item.sets = e.target.value;
+          }
+          return item;
+        }),
+      );
     };
 
     const handleDelete = (arr: string[]) => {
@@ -272,7 +302,7 @@ export const EditExercisesScreen = observer(
             exercise={item}
             errors={errors}
             handleChangeSets={e =>
-              handleChangeSets(item.supersetId || item.id, e)
+              handleChangeSets(item.id, e, item.supersetId)
             }
             index={index}
             isSelected={isSelected}

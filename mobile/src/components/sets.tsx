@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useRef, useState } from 'react';
 import {
   Pressable,
   StyleSheet,
@@ -16,29 +16,28 @@ import { FontSize } from '~types';
 
 type TProps = {
   onChangeText: (e: React.ChangeEvent<any>) => void;
-  val?: number[];
+  val?: (number | string)[];
   errors?: string[];
 };
 
 export const Sets = ({ onChangeText, val, errors }: TProps) => {
   const [isRemovable, setIsRemovable] = useState(false);
-  const [value, setValue] = useState<(number | string)[]>(val || ['']);
-
-  useEffect(() => {
-    setValue(val || []);
-  }, [val]);
+  const value = val ? [...val] : [];
 
   const handleChange = (text: string, index: number) => {
-    const arr = value;
-    arr[index] = text;
-    onChangeText({
-      target: { value: arr },
-    } as ChangeEvent<any>);
+    const number = +text;
+    if (value.length && !Number.isNaN(number)) {
+      const arr = [...value];
+      arr[index] = number;
+      onChangeText({
+        target: { value: arr },
+      } as ChangeEvent<any>);
+    }
   };
 
   const handleAdd = () => {
     onChangeText({
-      target: { value: [...value, ''] },
+      target: { value: [...value, value[value.length - 1]] },
     } as ChangeEvent<any>);
   };
 
@@ -57,7 +56,7 @@ export const Sets = ({ onChangeText, val, errors }: TProps) => {
 
   return (
     <View style={styles.row}>
-      {value.map((value, index) => (
+      {value?.map((value, index) => (
         <View key={index} style={styles.cell}>
           {isRemovable && (
             <AbsoluteIcon onPress={() => handleDelete(index)}>
@@ -75,7 +74,7 @@ export const Sets = ({ onChangeText, val, errors }: TProps) => {
                 isError={Boolean(errors?.[index])}
                 maxLength={3}
                 ref={element => (inputsRefs.current[index] = element)}
-                value={String(value)}
+                value={String(value === 0 ? '' : value)}
                 onChangeText={text => handleChange(text, index)}
               />
             </View>
