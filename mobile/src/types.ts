@@ -1,3 +1,6 @@
+import { PlanScreens } from '@screens';
+import { CustomerProps } from '@store';
+
 export enum FontWeight {
   'Regular' = 'Ubuntu Regular',
   'Medium' = 'Ubuntu Medium',
@@ -18,11 +21,25 @@ export enum ButtonType {
   TEXT = 'text',
 }
 
+export enum UserType {
+  COACH = 'coach',
+  CLIENT = 'client',
+}
+
+export enum ExerciseCardType {
+  SIMPLE = 'simple',
+  FULL = 'full',
+}
+
 export type TResponseError = {
   loc?: string[];
   msg: string;
   type: string;
 }[];
+
+export type TResponseConfirmPassword = {
+  confirmed_password: boolean;
+};
 
 export type TPlan = {
   diets: { proteins: string; fats: string; carbs: string }[];
@@ -59,7 +76,7 @@ export type TPropsExercise = {
 export type TPropsExercises = {
   id: string;
   name?: string;
-  sets: number[];
+  sets: (number | string)[];
   supersets?: string[];
   supersetId?: string;
 };
@@ -69,7 +86,27 @@ export type TPlanType = {
   end_date: string;
   fats: string;
   id: string;
-  number_of_trainings: number;
+  trainings: TPropsExercise[];
   proteins: string;
   start_date: string;
+  set_rest: number;
+  exercise_rest: number;
+  notes: string;
+};
+
+export type TFormProps = {
+  customer: CustomerProps;
+  clearErrors: () => void;
+  errors: Record<string, any>;
+  params: Record<string, any>;
+  values: TPlan;
+  handleSubmit: () => void;
+  handleChange: (e: string | React.ChangeEvent<any>) => () => void;
+  handleNavigate: (
+    nextScreen: PlanScreens,
+    params?: Record<string, any>,
+    withValidate?: boolean,
+  ) => void;
+  setValues: React.Dispatch<React.SetStateAction<TPlan>>;
+  isLoading: boolean;
 };

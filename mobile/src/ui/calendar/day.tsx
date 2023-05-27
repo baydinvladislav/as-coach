@@ -5,10 +5,11 @@ import moment from 'moment';
 
 import { colors, normHor, normVert } from '@theme';
 import { Text } from '@ui';
+import { getWeek } from '@utils';
 
 import { FontSize } from '~types';
 
-export const CustomDay = ({
+const CustomDay = ({
   date,
   state,
   start,
@@ -29,15 +30,25 @@ export const CustomDay = ({
   const isStartEmpty = selected.start === '';
   const isEndEmpty = selected.end === '';
 
+  const isToday =
+    moment(new Date(date)).format('YYYY-MM-DD') ===
+    moment(new Date()).format('YYYY-MM-DD');
+
+  if (new Date(date) <= new Date() && !isToday) {
+    state = 'disabled';
+  }
+
   const currentDayOfWeek = new Date(date).getDay();
   const currentDay = new Date(date).getDate();
+
+  const isSixWeek = getWeek(new Date(date)) === 5;
 
   const isFirstDay = currentDayOfWeek === 0;
   const isLastDay = currentDayOfWeek === 6;
 
   const isLastDayMonth =
     new Date(date).getDate() ==
-    +moment(date, 'DD.mm.yy').endOf('month').format('DD');
+    +moment(date, 'YYYY-MM-DD').endOf('month').format('DD');
 
   const isFirstDayMonth = new Date(date).getDate() == 1;
 
@@ -55,7 +66,11 @@ export const CustomDay = ({
     isVisibleBackground && state !== 'disabled'
       ? {
           style: [
-            !isEndEmpty && !isStartEmpty && styles.selectedBackground,
+            !isEndEmpty &&
+              !isStartEmpty &&
+              (!isSelect || !isLastDayMonth) &&
+              (!isSelect || !isFirstDayMonth) &&
+              styles.selectedBackground,
             isStart && !isLastDay && styles.start,
             isEnd && !isFirstDay && styles.end,
             isBetween && styles.center,
@@ -71,6 +86,8 @@ export const CustomDay = ({
         activeOpacity={1}
         style={[
           styles.cell,
+          isSixWeek && styles.marginBottom,
+          isToday && styles.today,
           isSelect && state !== 'disabled' && styles.selected,
         ]}
         onPress={() => onDayPress(date)}
@@ -93,7 +110,12 @@ export const CustomDay = ({
   );
 };
 
+export default memo(CustomDay);
+
 const styles = StyleSheet.create({
+  marginBottom: {
+    marginBottom: normVert(60),
+  },
   cell: {
     width: normHor(32),
     height: normVert(32),
@@ -122,6 +144,11 @@ const styles = StyleSheet.create({
   },
   selected: {
     backgroundColor: colors.green,
+    borderRadius: 100,
+  },
+  today: {
+    borderColor: colors.grey10,
+    borderWidth: 1,
     borderRadius: 100,
   },
   first: {

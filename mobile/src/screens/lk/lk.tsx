@@ -1,95 +1,49 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import {
-  FlatList,
-  Image,
-  ListRenderItemInfo,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { Image, TouchableOpacity, View } from 'react-native';
 
-import { debounce } from 'lodash';
 import { observer } from 'mobx-react';
 import moment from 'moment';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components';
 
-import {
-  AddIcon,
-  BackgroundImage,
-  BicepsImage,
-  DefaultAvatarImage,
-} from '@assets';
-import { ClientCard, LkEmpty, NotFound, SearchInput } from '@components';
+import { BackgroundImage, BicepsImage, DefaultAvatarImage } from '@assets';
+import { LkClients, Plans } from '@components';
 import { TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
+import { useFocusEffect } from '@react-navigation/native';
 import { CustomerProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
-import { Button, Text } from '@ui';
-import { windowHeight, windowWidth } from '@utils';
+import { Text } from '@ui';
+import { makeAvatarLink, windowHeight, windowWidth } from '@utils';
 
-import { ButtonType, FontSize, FontWeight } from '~types';
-
-moment.locale('ru');
+import { FontSize, FontWeight, UserType } from '~types';
 
 export const LkScreen = observer(() => {
-  const [searchInputKey, setSearchInputKey] = useState(0);
-
-  const [searchValue, setSearchValue] = useState<string | undefined>();
-
-  const { user, customer, loading } = useStore();
+  const { user, customer } = useStore();
   const { top } = useSafeAreaInsets();
+
+  const isCouch = user.me.user_type === UserType.COACH;
+  const isClient = user.me.user_type === UserType.CLIENT;
 
   const { navigate } = useNavigation();
 
-  useEffect(() => {
-    customer.getCustomers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const search = useCallback(
-    debounce(() => {
-      customer.searchCustomerByName(searchValue);
-    }, 200),
-    [searchValue],
+  const [data, setData] = useState<Partial<CustomerProps>>({});
+  useFocusEffect(
+    useCallback(() => {
+      if (isClient) {
+        customer.getCustomerPlanById(user.me.id).then(plans => {
+          setData({ ...data, plans });
+        });
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []),
   );
-
-  useEffect(() => {
-    search();
-  }, [customer, search, searchValue]);
-
-  const customers = customer.customers;
-  const searchCustomers = customer.searchCustomers;
-
-  const handleNavigateDetailClient = (id: string) => {
-    setSearchInputKey(key => key + 1);
-    loading.increaseLoadingStatus();
-    navigate(Screens.DetailClient, {
-      id,
-      from: Screens.LkScreen,
-    });
-  };
 
   const handleNavigateProfileScreen = () => {
-    setSearchInputKey(key => key + 1);
     navigate(Screens.ProfileScreen);
   };
-  const handleNavigateAddClientScreen = () => {
-    setSearchInputKey(key => key + 1);
-    navigate(Screens.AddClientScreen);
-  };
-
-  const renderItem = (customer: ListRenderItemInfo<CustomerProps>) => (
-    <ClientCard
-      key={customer.item.id}
-      firstName={customer.item.first_name}
-      lastName={customer.item.last_name}
-      onPress={() => handleNavigateDetailClient(customer.item.id)}
-    />
-  );
 
   return (
     <View
@@ -106,7 +60,13 @@ export const LkScreen = observer(() => {
         style={{ opacity: 0.3 }}
       />
 
-      <DateText>{moment().format('dddd, D MMM')}</DateText>
+      <DateText
+        weight={FontWeight.Bold}
+        color={colors.black4}
+        fontSize={FontSize.S10}
+      >
+        {moment().format('dddd, D MMM')}
+      </DateText>
       <Flex>
         <Flex>
           <Text color={colors.white} fontSize={FontSize.S24}>
@@ -115,61 +75,28 @@ export const LkScreen = observer(() => {
           <Biceps source={BicepsImage} />
         </Flex>
         <TouchableOpacity onPress={handleNavigateProfileScreen}>
-          <Avatar source={DefaultAvatarImage} />
+          <Avatar
+            source={
+              user.me.photo_link
+                ? { uri: makeAvatarLink(user.me.photo_link) }
+                : DefaultAvatarImage
+            }
+          />
         </TouchableOpacity>
       </Flex>
 
-      {customers.length ? (
-        <>
-          <TopContainer>
-            <Text fontSize={FontSize.S20} color={colors.white}>
-              {t('lk.clients')}
-            </Text>
-            <Button
-              type={ButtonType.TEXT}
-              onPress={() => navigate(Screens.AddClientScreen)}
-              leftIcon={<AddIcon fill={colors.green} />}
-            >
-              {t('buttons.addClient')}
-            </Button>
-          </TopContainer>
-          <View style={styles.searchInput}>
-            <SearchInput
-              key={searchInputKey}
-              value={searchValue}
-              onChangeText={setSearchValue}
-            />
-          </View>
-          {(searchValue && searchCustomers.length) || !searchValue ? (
-            <FlatList
-              data={
-                !searchValue && !searchCustomers.length
-                  ? customers
-                  : searchCustomers
-              }
-              renderItem={renderItem}
-              keyExtractor={item => item.id}
-            />
-          ) : (
-            <NotFound />
-          )}
-        </>
+      {isCouch ? (
+        <LkClients />
       ) : (
-        <LkEmpty
-          title={t('lk.hereClients')}
-          description={t('lk.hereCanAdd')}
-          onPress={handleNavigateAddClientScreen}
-          buttonText={t('buttons.addClient')}
+        <Plans
+          data={data}
+          title={t('lk.herePlans')}
+          description={t('lk.hereAddPlans')}
+          withAddButton={false}
         />
       )}
     </View>
   );
-});
-
-const styles = StyleSheet.create({
-  searchInput: {
-    marginBottom: normVert(20),
-  },
 });
 
 const Avatar = styled(Image)`
@@ -192,10 +119,7 @@ const Flex = styled(View)`
 
 const DateText = styled(Text)`
   text-transform: uppercase;
-  color: ${colors.black4};
-  font-size: ${FontSize.S10};
   margin-bottom: ${normVert(16)}px;
-  font-family: ${FontWeight.Bold};
 `;
 
 const Background = styled(Image)`
@@ -209,13 +133,4 @@ const BackgroundColor = styled(View)`
   width: ${windowWidth}px;
   height: ${windowHeight}px;
   background-color: ${colors.black};
-`;
-
-const TopContainer = styled(View)`
-  margin-top: ${normVert(24)}px;
-  margin-bottom: ${normVert(16)}px;
-  padding-vertical: ${normVert(10)}px;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
 `;

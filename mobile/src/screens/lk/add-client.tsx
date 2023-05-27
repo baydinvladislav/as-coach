@@ -14,7 +14,7 @@ import { colors, normHor, normVert } from '@theme';
 import { Input, Keyboard, ModalLayout, Text, ViewWithButtons } from '@ui';
 import { addClientValidationSchema, isIOS, transformPhone } from '@utils';
 
-import { FontSize } from '~types';
+import { FontSize, FontWeight } from '~types';
 
 export const AddClientScreen = observer(() => {
   const { customer, loading } = useStore();
@@ -42,7 +42,12 @@ export const AddClientScreen = observer(() => {
 
   return (
     <ModalLayout>
-      <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
+      <Text
+        style={styles.title}
+        color={colors.white}
+        fontSize={FontSize.S20}
+        weight={FontWeight.Bold}
+      >
         {t('addClient.title')}
       </Text>
       <ViewWithButtons

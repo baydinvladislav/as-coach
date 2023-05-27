@@ -9,7 +9,6 @@ import { AddIcon } from '@assets';
 import { CreatePlanItem, ExercisesList } from '@components';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
-import { CustomerProps } from '@store';
 import { colors, normVert } from '@theme';
 import {
   Button,
@@ -20,23 +19,9 @@ import {
   ViewWithButtons,
 } from '@ui';
 
-import { ButtonType, FontSize, TPlan } from '~types';
+import { ButtonType, FontSize, FontWeight, TFormProps } from '~types';
 
 import { PlanScreens } from './plan';
-
-type TProps = {
-  customer: CustomerProps;
-  handleSubmit: () => void;
-  values: TPlan;
-  handleChange: (e: string | React.ChangeEvent<any>) => () => void;
-  handleNavigate: (
-    nextScreen: PlanScreens,
-    params?: Record<string, any>,
-    withValidate?: boolean,
-  ) => void;
-  errors: Record<string, any>;
-  setValues: React.Dispatch<React.SetStateAction<TPlan>>;
-};
 
 export const CreatePlanScreen = observer(
   ({
@@ -47,7 +32,7 @@ export const CreatePlanScreen = observer(
     handleChange,
     errors,
     setValues,
-  }: TProps) => {
+  }: TFormProps) => {
     const { loading } = useStore();
 
     const isLoading = loading.isLoading;
@@ -78,7 +63,11 @@ export const CreatePlanScreen = observer(
         isLoading={isLoading}
         isScroll={true}
       >
-        <NameText>
+        <NameText
+          color={colors.black4}
+          fontSize={FontSize.S10}
+          weight={FontWeight.Bold}
+        >
           {customer?.first_name} {customer?.last_name}
         </NameText>
         <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
@@ -87,6 +76,7 @@ export const CreatePlanScreen = observer(
         </Text>
         <CreatePlanItem title={t('createPlan.title1')}>
           <Checkbox
+            color={colors.black4}
             style={styles.checkbox}
             value={values.different_time}
             placeholder={t('createPlan.checkboxDescription')}
@@ -226,7 +216,5 @@ const styles = StyleSheet.create({
 
 const NameText = styled(Text)`
   text-transform: uppercase;
-  color: ${colors.black4};
-  font-size: ${FontSize.S10};
   margin-bottom: ${normVert(16)}px;
 `;

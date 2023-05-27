@@ -11,32 +11,24 @@ import { useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
 import { Calendar, Input, Text, ViewWithButtons } from '@ui';
 
-import { FontSize, TPlan } from '~types';
+import { FontSize, TFormProps, TPlan } from '~types';
 
 import { PlanScreens } from './plan';
 
-type TProps = {
-  clearErrors: () => void;
-  errors: Record<string, any>;
-  values: TPlan;
-  handleChange: (e: string | React.ChangeEvent<any>) => () => void;
-  handleNavigate: (
-    nextScreen: PlanScreens,
-    params?: Record<string, any>,
-    withValidate?: boolean,
-  ) => void;
-};
-
 export const NewPlanScreen = observer(
-  ({ values, handleChange, handleNavigate, errors, clearErrors }: TProps) => {
+  ({
+    values,
+    handleChange,
+    handleNavigate,
+    errors,
+    clearErrors,
+    isLoading,
+  }: TFormProps) => {
     const calendarRef = useRef<{
       handleChangeDateType: (type: 'start' | 'end') => void;
     }>();
 
-    const { loading } = useStore();
     const { goBack } = useNavigation();
-
-    const isLoading = loading.isLoading;
 
     const handlePress = (type: 'start' | 'end') => {
       clearErrors();
@@ -83,7 +75,7 @@ type InputsProps = {
 
 // Кнопки вынесены в отдельный компонент, чтобы изменение state не ререндерило календарь
 const Inputs = ({ handlePress, values, errors }: InputsProps) => {
-  const [dateType, setDateType] = useState<'start' | 'end' | null>(null);
+  const [dateType, setDateType] = useState<'start' | 'end' | null>('start');
 
   return (
     <>
@@ -93,7 +85,7 @@ const Inputs = ({ handlePress, values, errors }: InputsProps) => {
             placeholder={t('inputs.startDate')}
             value={
               values.start_date
-                ? moment(values.start_date, 'yyyy-mm-DD').format('DD MMM ddd')
+                ? moment(values.start_date, 'yyyy-M-DD').format('DD MMM ddd')
                 : undefined
             }
             isFocused={dateType === 'start'}
@@ -109,7 +101,7 @@ const Inputs = ({ handlePress, values, errors }: InputsProps) => {
             isFocused={dateType === 'end'}
             value={
               values.end_date
-                ? moment(values.end_date, 'yyyy-mm-DD').format('DD MMM ddd')
+                ? moment(values.end_date, 'yyyy-M-DD').format('DD MMM ddd')
                 : undefined
             }
             error={errors.end_date}

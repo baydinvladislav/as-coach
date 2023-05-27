@@ -13,6 +13,8 @@ export const ru = {
     welcome: 'Привет, {name}!',
     hereClients: 'Здесь будут ваши клиенты',
     hereCanAdd: 'В этом разделе можно\nдобавлять клиентов',
+    herePlans: 'Здесь будут ваши планы',
+    hereAddPlans: 'В этом разделе тренер\nбудет создавать вам планы',
   },
   detailCustomer: {
     plans: 'Планы',
@@ -44,6 +46,7 @@ export const ru = {
     enterText: 'Введи текст',
     days1: 'Дни тренировок',
     days2: 'Дни отдыха',
+    differenceTime: 'Дни тренировок / дни отдыха',
   },
   newDay: {
     title: 'День {day}',
@@ -121,6 +124,9 @@ export const ru = {
     phoneError: 'Некорректный номер телефона',
     birthdayError: 'Некорректная дата рождения',
     emailError: 'Некорректная почта',
+    confirmPasswordError: 'Вы ввели неправильный пароль',
+    minPassword: 'Минимальная длина пароля 8 символов',
+    passwordNotMatch: 'Пароли не совпадают',
   },
   common: {
     nonePlan: 'Нет плана',

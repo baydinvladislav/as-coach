@@ -17,3 +17,4 @@ export * from './calendar';
 export * from './modal-layout';
 export * from './row-border';
 export * from './exercise-with-superset';
+export * from './exercise-with-superset-simple';

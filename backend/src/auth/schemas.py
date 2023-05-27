@@ -8,6 +8,7 @@ from typing import NewType, Optional
 from pydantic import BaseModel, validator
 
 from src.utils import validate_phone_number
+from src.auth.utils import validate_password
 from src.models import Gender
 
 
@@ -28,9 +29,7 @@ class UserRegisterIn(BaseModel):
         """
         Simple password
         """
-        if 7 < len(value) < 129:
-            return value
-        raise ValueError("Password must be greater than 7 symbols and less than 129 symbols")
+        return validate_password(value)
 
 
 class UserRegisterOut(BaseModel):
@@ -56,7 +55,7 @@ class UserProfile(BaseModel):
     birthday: Optional[date]
     email: Optional[str]
     username: Optional[str]
-    photo_path: Optional[str]
+    photo_link: Optional[str]
 
 
 class LoginResponse(BaseModel):
@@ -77,3 +76,14 @@ class TokenPayload(BaseModel):
     """
     sub: str
     exp: int
+
+
+class NewUserPassword(BaseModel):
+    password: str
+
+    @validator("password")
+    def validate_password(cls, value):  # pylint: disable=no-self-argument
+        """
+        Simple password
+        """
+        return validate_password(value)

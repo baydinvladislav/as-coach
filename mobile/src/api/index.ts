@@ -2,7 +2,7 @@ import axios, { AxiosRequestHeaders } from 'axios';
 import { isEmpty } from 'lodash';
 
 import { API_URL_ANDROID, API_URL_IOS, TOKEN } from '@constants';
-import { isIOS, storage } from '@utils';
+import { createFormData, isIOS, storage } from '@utils';
 
 export * from './auth';
 export * from './customer';
@@ -17,7 +17,7 @@ export const axiosBase = axios.create({
 axiosBase.defaults.baseURL = isIOS ? API_URL_IOS : API_URL_ANDROID;
 
 axiosBase.defaults.transformRequest = function (data = {}, headers) {
-  const { isJson = true, ...body } = data;
+  const { isJson = true, isWithImage = false, ...body } = data;
 
   if (isEmpty(body)) return;
 
@@ -30,6 +30,9 @@ axiosBase.defaults.transformRequest = function (data = {}, headers) {
     }
 
     return str.join('&');
+  }
+  if (isWithImage) {
+    return createFormData(body.photo, body);
   }
 
   return JSON.stringify(body);

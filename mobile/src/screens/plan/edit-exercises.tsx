@@ -21,31 +21,25 @@ import { t } from '@i18n';
 import { useFocusEffect } from '@react-navigation/native';
 import { colors, normHor, normVert } from '@theme';
 import { Text, ViewWithButtons } from '@ui';
-import { clearArray, isIOS, modifyPlan } from '@utils';
+import {
+  changeFirstSupersetId,
+  clearArray,
+  isIOS,
+  modifyPlan,
+  moveExerciseFromDown,
+  moveExerciseFromUp,
+} from '@utils';
 
-import { FontSize, TPlan, TPropsExercises } from '~types';
+import { FontSize, FontWeight, TFormProps, TPropsExercises } from '~types';
 
 import { PlanScreens } from './plan';
-
-type TProps = {
-  handleNavigate: (
-    nextScreen: PlanScreens,
-    params?: Record<string, any>,
-    withValidate?: boolean,
-  ) => void;
-  values: TPlan;
-  handleChange: (e: string | React.ChangeEvent<any>) => () => void;
-  setValues: React.Dispatch<React.SetStateAction<TPlan>>;
-  params: Record<string, any>;
-  errors: Record<string, any>;
-};
 
 if (!isIOS && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
 export const EditExercisesScreen = observer(
-  ({ handleNavigate, values, setValues, params, errors }: TProps) => {
+  ({ handleNavigate, values, setValues, params, errors }: TFormProps) => {
     const [data, setData] = useState<TPropsExercises[]>([]);
     const [selected, setSelected] = useState<string[]>([]);
     const { customer } = useStore();
@@ -66,16 +60,6 @@ export const EditExercisesScreen = observer(
     const exercises = values?.trainings?.[params.dayNumber]?.exercises;
     const dayName = values?.trainings?.[params.dayNumber]?.name;
 
-    const handleChangeSets = (id: string, e: React.ChangeEvent<any>) => {
-      setData(data =>
-        data.map(item =>
-          item.id === id || item.supersetId === id
-            ? { ...item, sets: e.target.value }
-            : item,
-        ),
-      );
-    };
-
     const handleCancel = () => {
       handleNavigate(PlanScreens.CREATE_SUPERSETS_SCREEN, params);
     };
@@ -89,25 +73,14 @@ export const EditExercisesScreen = observer(
       useCallback(() => {
         console.clear();
         setData(
-          exercises.flatMap(item =>
-            item.supersets
-              ? ([
-                  {
-                    id: item.id,
-                    sets: item.sets,
-                    supersetId: item.supersets.length ? item.id : undefined,
-                  },
-                  ...item.supersets.map(superset => ({
-                    id: superset,
-                    supersetId: item.id,
-                    sets: item.sets,
-                  })),
-                ] as TPropsExercises[])
-              : item,
-          ) as TPropsExercises[],
+          exercises.map(item => {
+            item.supersetId = item?.supersets?.[0];
+            delete item.supersets;
+            return item;
+          }),
         );
         // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [exercises]),
+      }, []),
     );
 
     const handleSuperset = (arr: string[]) => {
@@ -131,10 +104,34 @@ export const EditExercisesScreen = observer(
             const index = Math.min(
               ...arr.map(item => data.findIndex(el => el.id === item)),
             );
-            const { sets, id: supersetId } = data[index];
+            const { id: supersetId } = data[index];
+            const maxSetsLength = data
+              .filter(item => arr.includes(item.id))
+              .reduce(
+                (acc, item) =>
+                  item.sets.length > acc ? item.sets.length : acc,
+                0,
+              );
+
             const items = data
               .filter(item => arr.includes(item.id))
-              .map(item => ({ ...item, sets, supersetId }));
+              .map(item => ({
+                ...item,
+                sets:
+                  maxSetsLength > item.sets.length
+                    ? (() => {
+                        for (
+                          let i = 0;
+                          i <= maxSetsLength - item.sets.length;
+                          i++
+                        ) {
+                          item.sets.push(item.sets[item.sets.length - 1]);
+                        }
+                        return item.sets;
+                      })()
+                    : item.sets,
+                supersetId,
+              }));
             data = data.filter(item => !arr.includes(item.id));
             data.splice(index, 0, ...items);
             return data;
@@ -143,6 +140,33 @@ export const EditExercisesScreen = observer(
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setSelected([]);
       }
+    };
+
+    const handleChangeSets = (
+      id: string,
+      e: React.ChangeEvent<any>,
+      supersetId?: string,
+    ) => {
+      setData(data =>
+        data.map(el => {
+          const item = { ...el };
+          if (item.supersetId === supersetId && supersetId !== undefined) {
+            const setsLength = e.target.value.length;
+            if (setsLength) {
+              if (item.sets.length > setsLength) {
+                item.sets.length = setsLength;
+              }
+              if (item.sets.length < setsLength) {
+                item.sets = [...item.sets, item.sets[item.sets.length - 1]];
+              }
+            }
+          }
+          if (item.id === id) {
+            item.sets = e.target.value;
+          }
+          return item;
+        }),
+      );
     };
 
     const handleDelete = (arr: string[]) => {
@@ -183,20 +207,6 @@ export const EditExercisesScreen = observer(
 
       let arr: TPropsExercises[] = JSON.parse(JSON.stringify(updated));
 
-      const changeFirstSupersetId = (supersetId?: string) => {
-        arr = arr.map(item => {
-          if (item.supersetId === supersetId && item.id !== supersetId) {
-            const id = data.find(
-              item => item.supersetId === supersetId && item.id !== supersetId,
-            )?.id;
-            console.log(id);
-            return { ...item, supersetId: id };
-          }
-
-          return item;
-        });
-      };
-
       const supersets = data.reduce(
         (acc: Record<string, any>, item, index, arr) => {
           !item.supersetId && acc;
@@ -225,9 +235,7 @@ export const EditExercisesScreen = observer(
 
       const isFromDown = to < from;
       const isFromUp = !isFromDown;
-
       if (data[from].supersetId === data[to].supersetId) {
-        console.log('VAR1');
         // Если перетаскиваем внутри суперсета, и ставим на первую позицию
         for (let i = 0; i < supersetsValues.length; i++) {
           if (to >= supersetsValues[i][0] && to <= supersetsValues[i][1]) {
@@ -241,12 +249,11 @@ export const EditExercisesScreen = observer(
           }
         }
       } else if (
-        arr[to].supersetId &&
+        data[from].supersetId &&
         (!data[to].supersetId ||
-          data?.[to + 1]?.supersetId ||
-          data?.[to - 1]?.supersetId)
+          !data?.[to + 1]?.supersetId ||
+          !data?.[to - 1]?.supersetId)
       ) {
-        console.log('VAR2');
         // Если перетаскиваем из суперсета вне суперсета (перенос суперсета)
         const items = data.filter(
           item => item.supersetId === arr[to].supersetId,
@@ -254,26 +261,20 @@ export const EditExercisesScreen = observer(
         arr = data.filter(item => item.supersetId !== arr[to].supersetId);
         arr.splice(to > from ? to - items.length + 1 : to, 0, ...items);
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+      } else if (data[from].supersetId === data[from].id) {
+        // Переместили первое упражнение суперсета внутрь другого суперсета
+        if (isFromUp) {
+          moveExerciseFromUp(to, data, arr, supersetsKeys, supersetsValues);
+        } else if (isFromDown) {
+          moveExerciseFromDown(to, data, arr, supersetsKeys, supersetsValues);
+        }
+        arr = changeFirstSupersetId(data, arr, data[from].supersetId);
       } else if (isFromUp) {
-        console.log('VAR3');
         // Переместили упражнение не из суперсета в суперсет с направления верх
-        for (let i = 0; i < supersetsValues.length; i++) {
-          if (to >= supersetsValues[i][0] && to < supersetsValues[i][1]) {
-            const supersetId = arr[to].supersetId;
-            arr[to].supersetId = supersetsKeys[i];
-            changeFirstSupersetId(supersetId);
-          }
-        }
+        moveExerciseFromUp(to, data, arr, supersetsKeys, supersetsValues);
       } else if (isFromDown) {
-        console.log('VAR4');
         // Переместили упражнение не из суперсета в суперсет с направления низ
-        for (let i = 0; i < supersetsValues.length; i++) {
-          if (to > supersetsValues[i][0] && to <= supersetsValues[i][1]) {
-            const supersetId = arr[to].supersetId;
-            arr[to].supersetId = supersetsKeys[i];
-            changeFirstSupersetId(supersetId);
-          }
-        }
+        moveExerciseFromDown(to, data, arr, supersetsKeys, supersetsValues);
       }
       setData(clearArray(arr));
     };
@@ -293,15 +294,15 @@ export const EditExercisesScreen = observer(
           <CheckboxWithSets
             key={item.id}
             placeholder={
-              // name
-              item.id.slice(0, 3) + ' - ' + item.supersetId?.slice(0, 3)
+              name
+              // item.id.slice(0, 3) + ' - ' + item.supersetId?.slice(0, 3)
             }
             isFirst={!index || (isPrevSuperset && Boolean(item.supersetId))}
             handlePress={() => handlePress(item.id)}
             exercise={item}
             errors={errors}
             handleChangeSets={e =>
-              handleChangeSets(item.supersetId || item.id, e)
+              handleChangeSets(item.id, e, item.supersetId)
             }
             index={index}
             isSelected={isSelected}
@@ -326,7 +327,11 @@ export const EditExercisesScreen = observer(
               quantity: data.length,
             })}
           </Text>
-          <Text color={colors.black4} fontSize={FontSize.S12}>
+          <Text
+            color={colors.black4}
+            fontSize={FontSize.S12}
+            weight={FontWeight.Regular}
+          >
             {t('supersets.editMode')}
           </Text>
         </View>
@@ -334,6 +339,7 @@ export const EditExercisesScreen = observer(
           style={styles.exercisesText}
           color={colors.black4}
           fontSize={FontSize.S10}
+          weight={FontWeight.Bold}
         >
           {t('supersets.dayTitle', {
             day: params.dayNumber + 1,

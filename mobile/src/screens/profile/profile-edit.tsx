@@ -1,13 +1,18 @@
-import React from 'react';
-import { Image, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { useFormik } from 'formik';
+import { isEmpty } from 'lodash';
 import { observer } from 'mobx-react';
 import moment from 'moment';
+import {
+  ImagePickerResponse,
+  launchImageLibrary,
+} from 'react-native-image-picker';
 import { formatWithMask } from 'react-native-mask-input';
 import styled from 'styled-components';
 
-import { DefaultAvatarImage } from '@assets';
+import { CameraIcon, DefaultAvatarImage } from '@assets';
 import { DATE_MASK, PHONE_MASK } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
@@ -15,11 +20,18 @@ import { Screens, useNavigation } from '@navigation';
 import { UserProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
 import { Input, Keyboard, Select, Text, ViewWithButtons } from '@ui';
-import { profileEditValidationSchema, transformPhone } from '@utils';
+import {
+  makeAvatarLink,
+  profileEditValidationSchema,
+  transformPhone,
+} from '@utils';
 
 import { FontSize } from '~types';
 
 export const ProfileEditScreen = observer(() => {
+  const [response, setResponse] = useState<ImagePickerResponse>();
+  const [uri, setUri] = useState('');
+
   const { navigate } = useNavigation();
 
   const { user, loading } = useStore();
@@ -31,9 +43,10 @@ export const ProfileEditScreen = observer(() => {
       .profileEdit({
         ...values,
         birthday: values.birthday
-          ? moment(values.birthday, 'DD.mm.yy').format('yyyy-mm-DD')
+          ? moment(values.birthday, 'DD.mm.yy').format('yyyy-M-DD')
           : '',
         username: transformPhone(values?.username),
+        photo: response?.assets?.[0],
       })
       .then(() => {
         navigate(Screens.ProfileScreen);
@@ -48,12 +61,31 @@ export const ProfileEditScreen = observer(() => {
       birthday: user.me.birthday
         ? moment(user.me.birthday, 'yyyy-mm-DD').format('DD.mm.yy')
         : '',
+      photo: undefined as unknown as Blob,
     },
     onSubmit: handleEdit,
     validationSchema: profileEditValidationSchema,
     validateOnChange: false,
     validateOnBlur: false,
   });
+
+  const handleChoosePhoto = async () => {
+    await launchImageLibrary(
+      {
+        mediaType: 'photo',
+        includeBase64: false,
+      },
+      async response => {
+        if (!isEmpty(response)) {
+          setResponse(response);
+          setUri(
+            'file:///' +
+              (response.assets && response.assets[0].uri?.split('file:///')[1]),
+          );
+        }
+      },
+    );
+  };
 
   return (
     <Keyboard style={{ flex: 1 }}>
@@ -67,7 +99,25 @@ export const ProfileEditScreen = observer(() => {
         <Text align="center" fontSize={FontSize.S17} color={colors.white}>
           {t('edit.editTitle')}
         </Text>
-        <Avatar source={DefaultAvatarImage} />
+        <AvatarCircle
+          style={{ alignItems: 'center', justifyContent: 'center' }}
+          onPress={handleChoosePhoto}
+        >
+          <View style={styles.photo}>
+            <CameraIcon stroke={colors.green} />
+          </View>
+          <Avatar
+            source={
+              uri
+                ? {
+                    uri: 'file://' + uri,
+                  }
+                : user.me.photo_link
+                ? { uri: makeAvatarLink(user.me.photo_link) }
+                : DefaultAvatarImage
+            }
+          />
+        </AvatarCircle>
         <Input
           style={styles.input}
           placeholder={t('inputs.firstName')}
@@ -116,6 +166,7 @@ export const ProfileEditScreen = observer(() => {
           value={values.username}
           onChangeText={handleChange('username')}
           error={errors.username}
+          isDisabled={true}
         />
       </ViewWithButtons>
     </Keyboard>
@@ -127,13 +178,29 @@ const styles = StyleSheet.create({
   input: {
     marginBottom: normVert(20),
   },
+  photo: {
+    backgroundColor: colors.black8,
+    width: normHor(92),
+    height: normVert(92),
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 100,
+    position: 'absolute',
+    zIndex: 1,
+  },
 });
 
 const Avatar = styled(Image)`
+  width: 100%;
+  height: 100%;
+`;
+
+const AvatarCircle = styled(TouchableOpacity)`
   width: ${normHor(92)}px;
   height: ${normVert(92)}px;
   border-radius: 100px;
   margin-left: auto;
+  overflow: hidden;
   margin-right: auto;
   margin-vertical: ${normVert(32)}px;
 `;

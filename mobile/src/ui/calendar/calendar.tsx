@@ -2,6 +2,7 @@ import React, {
   ChangeEvent,
   forwardRef,
   useCallback,
+  useEffect,
   useImperativeHandle,
   useMemo,
   useRef,
@@ -10,59 +11,30 @@ import { StyleSheet, TextStyle, View } from 'react-native';
 
 import { CalendarList, LocaleConfig } from 'react-native-calendars';
 
+import {
+  dayNames,
+  dayNamesShort,
+  monthNames,
+  monthNamesShort,
+  today,
+} from '@constants';
 import { colors, normHor, normVert } from '@theme';
 import { windowWidth } from '@utils';
 
 import { Text } from '../text';
-import { CustomDay } from './day';
+import CustomDay from './day';
 
 LocaleConfig.locales['ru'] = {
-  monthNames: [
-    'Январь',
-    'Февраль',
-    'Март',
-    'Апрель',
-    'Май',
-    'Июнь',
-    'Июль',
-    'Август',
-    'Сентябрь',
-    'Октябрь',
-    'Ноябрь',
-    'Декабрь',
-  ],
-  monthNamesShort: [
-    'янв.',
-    'февр.',
-    'март',
-    'апр.',
-    'май',
-    'июнь',
-    'июль',
-    'авг.',
-    'сент.',
-    'окт.',
-    'нояб.',
-    'дек.',
-  ],
-  dayNames: [
-    'Понедельник',
-    'Вторник',
-    'Среда',
-    'Четверг',
-    'Пятница',
-    'Суббота',
-    'Воскресенье',
-  ],
-  dayNamesShort: ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СС', 'ВС'],
-  today: 'Сегодня',
+  monthNames,
+  monthNamesShort,
+  dayNames,
+  dayNamesShort,
+  today,
 };
 
 LocaleConfig.defaultLocale = 'ru';
 
-const RANGE = 6;
-
-const INITIAL_DATE = '2022-04-20';
+const INITIAL_DATE = new Date().toString();
 
 type TProps = {
   horizontalView?: boolean;
@@ -75,7 +47,8 @@ type TProps = {
 
 export const Calendar = forwardRef(
   ({ values, onChange, ...props }: TProps, ref) => {
-    const dateType = useRef<'start' | 'end' | null>(null);
+    const listRef = useRef<{ scrollToMonth: (date: string) => void }>(null);
+    const dateType = useRef<'start' | 'end' | null>('start');
     const { horizontalView } = props;
 
     const handleChangeDateType = (type: 'start' | 'end') => {
@@ -100,6 +73,16 @@ export const Calendar = forwardRef(
 
     const isStartEmpty = selected.start === '';
     const isEndEmpty = selected.end === '';
+
+    useEffect(() => {
+      if (selected.start) {
+        setTimeout(() => {
+          listRef?.current?.scrollToMonth(selected.start);
+        }, 0);
+      }
+
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const onDayPress = useCallback(
       (day: string) => {
@@ -126,6 +109,8 @@ export const Calendar = forwardRef(
     return (
       <View style={{ flex: 1 }}>
         <CalendarList
+          ref={listRef}
+          animateScroll={true}
           style={{
             width: windowWidth + normHor(22),
             marginLeft: normHor(-28),
@@ -134,7 +119,6 @@ export const Calendar = forwardRef(
           calendarStyle={styles.calendarStyle}
           current={INITIAL_DATE}
           pastScrollRange={0}
-          futureScrollRange={RANGE}
           theme={theme}
           dayComponent={params => (
             <CustomDay
@@ -146,8 +130,9 @@ export const Calendar = forwardRef(
             />
           )}
           markingType={'period'}
+          disableVirtualization={true}
           renderHeader={!horizontalView ? renderCustomHeader : undefined}
-          calendarHeight={normVert(442)}
+          maxToRenderPerBatch={4}
           horizontal={horizontalView}
           pagingEnabled={horizontalView}
           staticHeader={horizontalView}
@@ -158,14 +143,13 @@ export const Calendar = forwardRef(
 );
 
 const theme = {
-  calendarBackground: colors.black2,
+  calendarBackground: colors.black6,
   weekVerticalMargin: normVert(6),
 };
 
 const styles = StyleSheet.create({
   calendarStyle: {
     width: '100%',
-    marginBottom: normVert(-120),
   },
   header: {
     flexDirection: 'row',

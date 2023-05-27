@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 
 import { useFormik } from 'formik';
+import { observer } from 'mobx-react';
 import moment from 'moment';
 
 import { createPlan } from '@api';
+import { useStateCallback } from '@hooks';
 import { RoutesProps, Screens, useNavigation } from '@navigation';
 import { CustomerProps } from '@store';
 import { ModalLayout } from '@ui';
@@ -29,11 +31,13 @@ export enum PlanScreens {
   EDIT_EXERCISES_SCREEN = 'EditExercisesScreen',
 }
 
-export const PlanScreen = ({ route }: RoutesProps) => {
+export const PlanScreen = observer(({ route }: RoutesProps) => {
   const { navigate } = useNavigation();
   const [currentScreen, setCurrentScreen] = useState(
     PlanScreens.CREATE_DATE_SCREEN,
   );
+
+  const [isLoading, setIsLoading] = useStateCallback(false);
 
   const [params, setParams] = useState({});
 
@@ -42,8 +46,8 @@ export const PlanScreen = ({ route }: RoutesProps) => {
   const onSubmit = (values: TPlan) => {
     createPlan(customer.id, {
       ...values,
-      start_date: moment(values.start_date, 'DD mmm ddd'),
-      end_date: moment(values.end_date, 'DD mmm ddd'),
+      start_date: moment(values.start_date, 'YYYY-MM-DD'),
+      end_date: moment(values.end_date, 'YYYY-MM-DD'),
       diets: values.diets
         .map((diet, index) => {
           if (index !== 0 && !values.different_time) {
@@ -75,8 +79,8 @@ export const PlanScreen = ({ route }: RoutesProps) => {
       end_date: '',
       trainings: [],
       notes: '',
-      set_rest: '0',
-      exercise_rest: '0',
+      set_rest: '120',
+      exercise_rest: '180',
 
       // Locally values
       different_time: false,
@@ -86,7 +90,7 @@ export const PlanScreen = ({ route }: RoutesProps) => {
     validateOnChange: false,
     validateOnBlur: false,
   });
-
+  console.log(values.start_date);
   const clearErrors = () => {
     setErrors({});
   };
@@ -96,14 +100,19 @@ export const PlanScreen = ({ route }: RoutesProps) => {
     params?: Record<string, any>,
     withValidate = false,
   ) => {
-    if (!withValidate) {
+    if (withValidate) {
+      setIsLoading(true, () => validate(nextScreen, params));
+    } else {
       clearErrors();
       setCurrentScreen(nextScreen);
       setParams(params || {});
     }
-    if (withValidate) {
-      if (currentScreen === PlanScreens.CREATE_DATE_SCREEN) {
-        validateForm().then(data => {
+  };
+
+  const validate = (nextScreen: PlanScreens, params?: Record<string, any>) => {
+    validateForm()
+      .then(data => {
+        if (currentScreen === PlanScreens.CREATE_DATE_SCREEN) {
           if (
             !Object.keys(data).includes('start_date') &&
             !Object.keys(data).includes('end_date')
@@ -112,29 +121,27 @@ export const PlanScreen = ({ route }: RoutesProps) => {
             setCurrentScreen(nextScreen);
             setParams(params || {});
           }
-        });
-      } else if (currentScreen === PlanScreens.CREATE_DAY_SCREEN) {
-        validateForm().then(data => {
+        } else if (currentScreen === PlanScreens.CREATE_DAY_SCREEN) {
           if (!Object.keys(data).includes('trainings')) {
             clearErrors();
             setCurrentScreen(nextScreen);
             setParams(params || {});
           }
-        });
-      } else if (currentScreen === PlanScreens.CREATE_DAY_EXERCISES_SCREEN) {
-        validateForm().then(data => {
+        } else if (currentScreen === PlanScreens.CREATE_DAY_EXERCISES_SCREEN) {
           if (!Object.keys(data).includes('trainings')) {
             clearErrors();
             setCurrentScreen(nextScreen);
             setParams(params || {});
           }
-        });
-      } else {
-        clearErrors();
-        setCurrentScreen(nextScreen);
-        setParams(params || {});
-      }
-    }
+        } else {
+          clearErrors();
+          setCurrentScreen(nextScreen);
+          setParams(params || {});
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const formProps = {
@@ -151,6 +158,7 @@ export const PlanScreen = ({ route }: RoutesProps) => {
       e: string | React.ChangeEvent<any>,
     ) => () => void,
     clearErrors,
+    isLoading,
   };
 
   const renderScreen = () => {
@@ -185,4 +193,4 @@ export const PlanScreen = ({ route }: RoutesProps) => {
       {renderScreen()}
     </ModalLayout>
   );
-};
+});

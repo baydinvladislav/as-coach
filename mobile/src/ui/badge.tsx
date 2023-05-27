@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { colors, normHor, normVert } from '@theme';
 
-import { FontSize } from '~types';
+import { FontSize, FontWeight } from '~types';
 
 import { Text } from './text';
 
@@ -27,6 +27,7 @@ export const Badge = ({ text, status }: TProps) => (
       style={{ textTransform: 'uppercase' }}
       fontSize={FontSize.S10}
       color={switchFontColor(status)}
+      weight={FontWeight.Bold}
     >
       {text}
     </Text>

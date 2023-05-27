@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { NotFoundIcon } from '@assets';
 import { t } from '@i18n';
@@ -13,7 +13,7 @@ type TProps = {
 };
 
 export const NotFound = ({ text = t('notFound.client') }: TProps) => (
-  <>
+  <View style={styles.container}>
     <NotFoundIcon style={styles.icon} />
     <Text
       align="center"
@@ -23,10 +23,17 @@ export const NotFound = ({ text = t('notFound.client') }: TProps) => (
     >
       {t('notFound.title', { name: text })}
     </Text>
-  </>
+  </View>
 );
 
 const styles = StyleSheet.create({
-  icon: { marginLeft: 'auto', marginRight: 'auto', marginTop: normVert(125) },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  icon: {
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
   text: { marginTop: normVert(28) },
 });

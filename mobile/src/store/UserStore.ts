@@ -3,6 +3,9 @@ import { action, computed, makeObservable, observable } from 'mobx';
 import {
   createExercise,
   getMuscleGroups,
+  changePassword,
+  confirmPassword,
+  master,
   login,
   me,
   profileEdit,
@@ -12,11 +15,13 @@ import { TOKEN } from '@constants';
 import { storage } from '@utils';
 
 import { TExercises, TMuscleGroups } from '~types';
+import { UserType } from '~types';
 
 import { RootStore } from './RootStore';
 import { actionLoading } from './action-loading';
 
 export type UserProps = {
+  id: string;
   first_name: string;
   last_name: string;
   username: string;
@@ -24,6 +29,13 @@ export type UserProps = {
   gender: string;
   birthday: string;
   email: string;
+  user_type: UserType | null;
+  photo_link: string | null;
+  photo: {
+    name?: string;
+    type?: string;
+    uri?: string;
+  };
 };
 
 export default class UserStore {
@@ -36,6 +48,8 @@ export default class UserStore {
 
   @observable isSignedIn = false;
   @observable me: UserProps = {
+    id: '',
+    user_type: null,
     first_name: '',
     last_name: '',
     username: '',
@@ -43,6 +57,8 @@ export default class UserStore {
     gender: '',
     birthday: '',
     email: '',
+    photo_link: null,
+    photo: {},
   };
   @observable muscleGroups: TMuscleGroups[] = [];
 
@@ -52,8 +68,8 @@ export default class UserStore {
   }
 
   @action
-  setMe(me: UserProps) {
-    this.me = me;
+  setMe(me: Partial<UserProps>) {
+    this.me = me as UserProps;
   }
 
   @computed get hasAccess() {
@@ -65,7 +81,7 @@ export default class UserStore {
     try {
       const { data } = await me();
       this.setHasAccess(true);
-      this.setMe(data);
+      this.setMe({ ...data });
     } catch (e) {
       console.warn(e);
     }
@@ -145,6 +161,30 @@ export default class UserStore {
       const { data } = await profileEdit(values);
       this.setMe(data);
     } catch (e) {
+      console.warn(JSON.stringify(e));
+      throw e;
+    }
+  }
+
+  @action
+  @actionLoading()
+  async confirmPassword(values: Pick<UserProps, 'password'>) {
+    try {
+      const { data } = await confirmPassword(values);
+      return data;
+    } catch (e) {
+      console.warn(e);
+      throw e;
+    }
+  }
+
+  @action
+  @actionLoading()
+  async changePassword(values: Pick<UserProps, 'password'>) {
+    try {
+      const { data } = await changePassword(values);
+      return data;
+    } catch (e) {
       console.warn(e);
       throw e;
     }
@@ -155,6 +195,7 @@ export default class UserStore {
     try {
       storage.removeItem(TOKEN);
       this.isSignedIn = false;
+      this.setMe({});
     } catch (e) {
       console.warn(e);
       throw e;

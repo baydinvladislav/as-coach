@@ -12,41 +12,33 @@ import { t } from '@i18n';
 import { colors, normHor, normVert } from '@theme';
 import { Button, Text, ViewWithButtons } from '@ui';
 
-import { ButtonType, FontSize, TExercises, TPlan } from '~types';
+import {
+  ButtonType,
+  FontSize,
+  FontWeight,
+  TExercises,
+  TFormProps,
+  TPlan,
+} from '~types';
 
 import { PlanScreens } from './plan';
 
-type TProps = {
-  handleNavigate: (
-    nextScreen: PlanScreens,
-    params?: Record<string, any>,
-    withValidate?: boolean,
-  ) => void;
-  values: TPlan;
-  handleChange: (e: string | React.ChangeEvent<any>) => () => void;
-  setValues: React.Dispatch<React.SetStateAction<TPlan>>;
-  params: Record<string, any>;
-  errors: Record<string, any>;
-};
-
 export const DayExercisesScreen = observer(
-  ({ handleNavigate, values, setValues, params, errors }: TProps) => {
+  ({ handleNavigate, values, setValues, params, errors }: TFormProps) => {
     const [searchValue, setSearchValue] = useState<string | undefined>();
 
     const { loading, user, customer } = useStore();
 
     const isLoading = loading.isLoading;
 
+    const isEmptySearchExercises = isEmpty(customer.searchExercises);
+
     const [data, keys] = [
       Object.values(
-        isEmpty(customer.searchExercises)
-          ? customer.exercises
-          : customer.searchExercises,
+        isEmptySearchExercises ? customer.exercises : customer.searchExercises,
       ),
       Object.keys(
-        isEmpty(customer.searchExercises)
-          ? customer.exercises
-          : customer.searchExercises,
+        isEmptySearchExercises ? customer.exercises : customer.searchExercises,
       ),
     ];
 
@@ -92,9 +84,17 @@ export const DayExercisesScreen = observer(
       handleNavigate(PlanScreens.CREATE_SUPERSETS_SCREEN, params, true);
     };
 
+    const isNotEmptyExercises =
+      (data.length && !searchValue) || !isEmptySearchExercises;
+
     return (
       <>
-        <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
+        <Text
+          style={styles.title}
+          color={colors.white}
+          fontSize={FontSize.S24}
+          weight={FontWeight.Bold}
+        >
           {t('newDay.exercisesTitle', {
             day: params.dayNumber + 1,
             exercises: dayName,
@@ -104,6 +104,7 @@ export const DayExercisesScreen = observer(
           style={styles.exercisesText}
           color={colors.black4}
           fontSize={FontSize.S10}
+          weight={FontWeight.Bold}
         >
           {t('createPlan.exercises')}
         </Text>
@@ -122,6 +123,7 @@ export const DayExercisesScreen = observer(
         </Button>
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}
+          containerStyle={isNotEmptyExercises ? {} : { flex: 1 }}
           onCancel={handleCancel}
           onConfirm={handleConfirm}
           confirmText={t('buttons.next')}
@@ -135,7 +137,7 @@ export const DayExercisesScreen = observer(
             ) : null
           }
         >
-          {!searchValue && data.length ? (
+          {isNotEmptyExercises ? (
             data.map((item: TExercises[], index) => (
               <CheckboxGroup
                 style={styles.checkboxGroup}

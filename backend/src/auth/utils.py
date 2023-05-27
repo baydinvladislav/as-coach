@@ -9,7 +9,6 @@ from fastapi import HTTPException, status
 from pydantic import ValidationError
 from passlib.context import CryptContext
 
-from src.auth.schemas import TokenPayload
 from src.auth.config import (ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM,
                          JWT_REFRESH_SECRET_KEY, JWT_SECRET_KEY,
                          REFRESH_TOKEN_EXPIRE_MINUTES)
@@ -88,6 +87,9 @@ def decode_jwt_token(token: str):
     """
     Decodes given token
     """
+    # TODO: fix it
+    from src.auth.schemas import TokenPayload
+
     try:
         payload = jwt.decode(
             token, str(JWT_SECRET_KEY), algorithms=[str(ALGORITHM)]
@@ -109,3 +111,12 @@ def decode_jwt_token(token: str):
             detail="Could not validate credentials",
             headers={"WWW-Authenticate": "Bearer"}
         )
+
+
+def validate_password(password: str):
+    """
+    Password can be at least 8 characters
+    """
+    if 7 < len(password) < 129:
+        return password
+    raise ValueError("Password must be greater than 7 symbols and less than 129 symbols")

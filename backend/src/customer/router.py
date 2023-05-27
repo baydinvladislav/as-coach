@@ -116,9 +116,11 @@ async def get_customers(
     customers = []
 
     for customer in current_user.customers:
-        training_plans = sorted(customer.training_plans, key=lambda x: x.end_date, reverse=True)
+        training_plans = sorted(customer.training_plans,
+                                key=lambda x: x.end_date, reverse=True)
         if training_plans:
-            last_plan_end_date = training_plans[0].end_date.strftime('%Y-%m-%d')
+            last_plan_end_date = training_plans[0].end_date.strftime(
+                '%Y-%m-%d')
         else:
             last_plan_end_date = None
 
@@ -177,7 +179,8 @@ async def get_customer(
             detail="The client belong to another user"
         )
 
-    training_plans = sorted(customer.training_plans, key=lambda x: x.end_date, reverse=True)
+    training_plans = sorted(customer.training_plans,
+                            key=lambda x: x.end_date, reverse=True)
     if training_plans:
         last_plan_end_date = training_plans[0].end_date.strftime('%Y-%m-%d')
     else:
@@ -253,7 +256,7 @@ async def create_training_plan(
             # create exercises on training
             superset_dict = {}
             for exercise_item in training_item.exercises:
-                if len(exercise_item.supersets) > 0:
+                if isinstance(exercise_item.supersets, list) and len(exercise_item.supersets) > 0:
                     if str(exercise_item.id) not in superset_dict:
                         superset_id = str(uuid.uuid4())
 
