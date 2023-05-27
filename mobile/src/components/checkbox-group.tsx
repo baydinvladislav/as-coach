@@ -47,7 +47,7 @@ export const CheckboxGroup = ({
       </Text>
       {data.length
         ? data.map((item, key) => {
-            const exercise = values.trainings[dayNumber].exercises?.find(
+            const exercise = values.trainings[dayNumber]?.exercises?.find(
               exercise => exercise.id === item.id,
             );
             return (

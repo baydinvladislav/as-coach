@@ -38,6 +38,7 @@ export const StackNavigator = observer(() => {
 
     if (!isGuest) {
       customer.getExercises();
+      user.getMuscleGroups();
     }
   }, [customer, isGuest, user]);
 

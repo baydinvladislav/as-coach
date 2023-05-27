@@ -52,10 +52,16 @@ export type TPlan = {
   different_time: boolean;
 };
 
+export type TMuscleGroups = {
+  id: string;
+  name: string;
+};
+
 export type TExercises = {
   id: string;
-  muscle_group: string;
   name: string;
+  muscle_group: string;
+  muscle_group_id: string;
 };
 
 export type TExercisesEdited = {

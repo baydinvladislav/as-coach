@@ -27,7 +27,7 @@ export const DayExercisesScreen = observer(
   ({ handleNavigate, values, setValues, params, errors }: TFormProps) => {
     const [searchValue, setSearchValue] = useState<string | undefined>();
 
-    const { loading, customer } = useStore();
+    const { loading, user, customer } = useStore();
 
     const isLoading = loading.isLoading;
 
@@ -56,6 +56,11 @@ export const DayExercisesScreen = observer(
     useEffect(() => {
       search();
     }, [search, searchValue]);
+
+    useEffect(() => {
+      customer.getExercises();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleCancel = () => {
       if (!params.isExists) {
@@ -109,7 +114,9 @@ export const DayExercisesScreen = observer(
         <Button
           style={styles.addExercisesButton}
           type={ButtonType.TEXT}
-          onPress={() => handleNavigate(PlanScreens.CREATE_EXERCISES_SCREEN)}
+          onPress={() =>
+            handleNavigate(PlanScreens.CREATE_EXERCISE_SCREEN, params, true)
+          }
           leftIcon={<AddIcon fill={colors.green} />}
         >
           {t('buttons.createExercises')}
@@ -123,7 +130,7 @@ export const DayExercisesScreen = observer(
           isLoading={isLoading}
           isScroll={true}
           circles={
-            exercises.length ? (
+            exercises?.length ? (
               <Circle onPress={handleConfirm}>
                 <Text>{exercises.length}</Text>
               </Circle>
