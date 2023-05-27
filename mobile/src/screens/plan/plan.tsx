@@ -45,8 +45,8 @@ export const PlanScreen = observer(({ route }: RoutesProps) => {
   const onSubmit = (values: TPlan) => {
     createPlan(customer.id, {
       ...values,
-      start_date: moment(values.start_date, 'DD mmm ddd'),
-      end_date: moment(values.end_date, 'DD mmm ddd'),
+      start_date: moment(values.start_date, 'YYYY-MM-DD'),
+      end_date: moment(values.end_date, 'YYYY-MM-DD'),
       diets: values.diets
         .map((diet, index) => {
           if (index !== 0 && !values.different_time) {
@@ -89,7 +89,7 @@ export const PlanScreen = observer(({ route }: RoutesProps) => {
     validateOnChange: false,
     validateOnBlur: false,
   });
-
+  console.log(values.start_date);
   const clearErrors = () => {
     setErrors({});
   };

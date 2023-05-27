@@ -49,8 +49,8 @@ export const PlanCard = ({ plan, onPress, withMenu = true }: TProps) => (
     <View style={styles.top}>
       <View pointerEvents="none">
         <Text style={styles.title} color={colors.white} fontSize={FontSize.S17}>
-          {moment(plan.start_date).format('D MMM').slice(0, -1)} —{' '}
-          {moment(plan.end_date).format('D MMM').slice(0, -1)}
+          {moment(plan.start_date, 'YYYY-MM-DD').format('D MMM').slice(0, -1)} —{' '}
+          {moment(plan.end_date, 'YYYY-MM-DD').format('D MMM').slice(0, -1)}
         </Text>
       </View>
       {withMenu && (
