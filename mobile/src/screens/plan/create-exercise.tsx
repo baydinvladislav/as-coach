@@ -73,8 +73,6 @@ export const CreateExerciseScreen = observer(
       onSubmit: handleCreation,
       validationSchema: createExerciseSchema,
     });
-    // 3 при смене баттона принтит 3 раза
-    console.log(values);
 
     /**
      * Changes active element in
