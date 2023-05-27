@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { useFormik } from 'formik';
 import { observer } from 'mobx-react';
 import { RadioButton } from 'react-native-radio-buttons-group';
 
@@ -13,7 +14,6 @@ import { createExerciseSchema } from '@utils';
 import { FontSize, TExercises } from '~types';
 
 import { PlanScreens } from './plan';
-import { useFormik } from 'formik';
 
 type TProps = {
   params: Record<string, any>;
@@ -27,7 +27,7 @@ type TProps = {
 };
 
 export const CreateExerciseScreen = observer(
-  ({ handleNavigate, params, setValues }: TProps) => {
+  ({ handleNavigate, params }: TProps) => {
     /**
      * Screen for creating new exercise in library.
      *
@@ -76,12 +76,12 @@ export const CreateExerciseScreen = observer(
         );
     };
 
-    const { handleSubmit, handleChange, values, errors } = useFormik({
-      initialValues: {name: '', muscle_group_id: ''},
+    const { handleSubmit, handleChange, values, setValues } = useFormik({
+      initialValues: { name: '', muscle_group_id: '' },
       onSubmit: handleCreation,
       validationSchema: createExerciseSchema,
-    })
-
+    });
+    console.log(values);
     function handlePress(id: string) {
       /**
        * Changes active element in
@@ -89,9 +89,12 @@ export const CreateExerciseScreen = observer(
        */
 
       if (id !== values.muscle_group_id) {
+        // 3 при смене баттона принтит 3 раза
+        console.log(id);
+
         setValues(values => ({
           ...values,
-          muscle_group_id: values.muscle_group_id,
+          muscle_group_id: id,
         }));
       }
     }
