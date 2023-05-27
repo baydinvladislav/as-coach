@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   LayoutAnimation,
   StyleSheet,
@@ -30,13 +30,7 @@ import {
   moveExerciseFromUp,
 } from '@utils';
 
-import {
-  FontSize,
-  FontWeight,
-  TFormProps,
-  TPlan,
-  TPropsExercises,
-} from '~types';
+import { FontSize, FontWeight, TFormProps, TPropsExercises } from '~types';
 
 import { PlanScreens } from './plan';
 
@@ -66,38 +60,12 @@ export const EditExercisesScreen = observer(
     const exercises = values?.trainings?.[params.dayNumber]?.exercises;
     const dayName = values?.trainings?.[params.dayNumber]?.name;
 
-    const handleChangeSets = (
-      id: string,
-      e: React.ChangeEvent<any>,
-      supersetId?: string,
-    ) => {
-      setData(data =>
-        data.map(item => {
-          if (item.supersetId === supersetId) {
-            const setsLength = e.target.value.length;
-            if (setsLength) {
-              if (item.sets.length > setsLength) {
-                item.sets.length = setsLength;
-              }
-              if (item.sets.length < setsLength) {
-                item.sets = [...item.sets, ''];
-              }
-            }
-          }
-          if (item.id === id) {
-            item.sets = e.target.value;
-          }
-          return item;
-        }),
-      );
-    };
-
     const handleCancel = () => {
       handleNavigate(PlanScreens.CREATE_SUPERSETS_SCREEN, params);
     };
 
     const handleConfirm = () => {
-      setValues(values => modifyPlan(values, dayName, [...data] ?? []));
+      setValues(values => modifyPlan(values, dayName, data ?? []));
       handleNavigate(PlanScreens.CREATE_SUPERSETS_SCREEN, params, true);
     };
 
@@ -136,10 +104,24 @@ export const EditExercisesScreen = observer(
             const index = Math.min(
               ...arr.map(item => data.findIndex(el => el.id === item)),
             );
-            const { sets, id: supersetId } = data[index];
+            const { id: supersetId } = data[index];
+            const maxSetsLength = data
+              .filter(item => arr.includes(item.id))
+              .reduce(
+                (acc, item) =>
+                  item.sets.length > acc ? item.sets.length : acc,
+                0,
+              );
             const items = data
               .filter(item => arr.includes(item.id))
-              .map(item => ({ ...item, sets, supersetId }));
+              .map(item => ({
+                ...item,
+                sets:
+                  maxSetsLength > item.sets.length
+                    ? [...item.sets, item.sets[item.sets.length - 1]]
+                    : item.sets,
+                supersetId,
+              }));
             data = data.filter(item => !arr.includes(item.id));
             data.splice(index, 0, ...items);
             return data;
@@ -148,6 +130,33 @@ export const EditExercisesScreen = observer(
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setSelected([]);
       }
+    };
+
+    const handleChangeSets = (
+      id: string,
+      e: React.ChangeEvent<any>,
+      supersetId?: string,
+    ) => {
+      setData(data =>
+        data.map(el => {
+          const item = { ...el };
+          if (item.supersetId === supersetId && supersetId !== undefined) {
+            const setsLength = e.target.value.length;
+            if (setsLength) {
+              if (item.sets.length > setsLength) {
+                item.sets.length = setsLength;
+              }
+              if (item.sets.length < setsLength) {
+                item.sets = [...item.sets, ''];
+              }
+            }
+          }
+          if (item.id === id) {
+            item.sets = e.target.value;
+          }
+          return item;
+        }),
+      );
     };
 
     const handleDelete = (arr: string[]) => {
@@ -275,8 +284,8 @@ export const EditExercisesScreen = observer(
           <CheckboxWithSets
             key={item.id}
             placeholder={
-              // name
-              item.id.slice(0, 3) + ' - ' + item.supersetId?.slice(0, 3)
+              name
+              // item.id.slice(0, 3) + ' - ' + item.supersetId?.slice(0, 3)
             }
             isFirst={!index || (isPrevSuperset && Boolean(item.supersetId))}
             handlePress={() => handlePress(item.id)}
