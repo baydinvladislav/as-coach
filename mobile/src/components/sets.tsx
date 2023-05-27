@@ -37,7 +37,7 @@ export const Sets = ({ onChangeText, val, errors }: TProps) => {
 
   const handleAdd = () => {
     onChangeText({
-      target: { value: [...value, ''] },
+      target: { value: [...value, value[value.length - 1]] },
     } as ChangeEvent<any>);
   };
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   LayoutAnimation,
   StyleSheet,
@@ -112,13 +112,23 @@ export const EditExercisesScreen = observer(
                   item.sets.length > acc ? item.sets.length : acc,
                 0,
               );
+
             const items = data
               .filter(item => arr.includes(item.id))
               .map(item => ({
                 ...item,
                 sets:
                   maxSetsLength > item.sets.length
-                    ? [...item.sets, item.sets[item.sets.length - 1]]
+                    ? (() => {
+                        for (
+                          let i = 0;
+                          i <= maxSetsLength - item.sets.length;
+                          i++
+                        ) {
+                          item.sets.push(item.sets[item.sets.length - 1]);
+                        }
+                        return item.sets;
+                      })()
                     : item.sets,
                 supersetId,
               }));
@@ -147,7 +157,7 @@ export const EditExercisesScreen = observer(
                 item.sets.length = setsLength;
               }
               if (item.sets.length < setsLength) {
-                item.sets = [...item.sets, ''];
+                item.sets = [...item.sets, item.sets[item.sets.length - 1]];
               }
             }
           }
