@@ -182,8 +182,8 @@ export const getWeek = (date: Date) => {
   return Math.floor(offsetDate / 7);
 };
 
-export const renderNumber = (number: string) => {
+export const renderNumber = (number: string, join: string) => {
   const arr = number.split('/');
 
-  return arr.join(' гр / ') + ' гр';
+  return arr.join(join) + ' гр';
 };

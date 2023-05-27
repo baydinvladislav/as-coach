@@ -46,9 +46,9 @@ export const DetailPlanScreen = ({ route }: RoutesProps) => {
           <RowBorder
             title="Питание"
             cells={[
-              { title: 'Белки', value: renderNumber(data.proteins) },
-              { title: 'Углеводы', value: renderNumber(data.carbs) },
-              { title: 'Жиры', value: renderNumber(data.fats) },
+              { title: 'Белки', value: renderNumber(data.proteins, ' / ') },
+              { title: 'Углеводы', value: renderNumber(data.carbs, ' / ') },
+              { title: 'Жиры', value: renderNumber(data.fats, ' / ') },
             ]}
             description={
               isDifference ? t('createPlan.differenceTime') : undefined
