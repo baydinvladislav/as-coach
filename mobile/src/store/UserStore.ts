@@ -26,7 +26,7 @@ export type UserProps = {
   birthday: string;
   email: string;
   user_type: UserType | null;
-  photo_path: string | null;
+  photo_link: string | null;
   photo: {
     name?: string;
     type?: string;
@@ -53,7 +53,7 @@ export default class UserStore {
     gender: '',
     birthday: '',
     email: '',
-    photo_path: null,
+    photo_link: null,
     photo: {},
   };
 

@@ -91,8 +91,8 @@ export const ProfileScreen = observer(() => {
       </Text>
       <Avatar
         source={
-          user.me.photo_path
-            ? { uri: makeAvatarLink(user.me.photo_path) }
+          user.me.photo_link
+            ? { uri: makeAvatarLink(user.me.photo_link) }
             : DefaultAvatarImage
         }
       />

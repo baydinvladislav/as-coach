@@ -171,7 +171,7 @@ export const createFormData = (photo?: Asset, body = {}) => {
 
 export const makeAvatarLink = (link: string | null) => {
   const api = isIOS ? URL_IOS : URL_ANDROID;
-  return link ? api + link.split('/code')[1] : '';
+  return link ? api + link : '';
 };
 
 export const getWeek = (date: Date) => {

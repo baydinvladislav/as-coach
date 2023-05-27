@@ -14,7 +14,10 @@ export const registration = (values: Partial<UserProps>) =>
   axiosBase.post('/signup', values);
 
 export const profileEdit = (values: Partial<UserProps>) =>
-  axiosBase.post('/profiles', { ...removeNulls(values), isWithImage: true });
+  axiosBase.post<Partial<UserProps>>('/profiles', {
+    ...removeNulls(values),
+    isWithImage: true,
+  });
 
 export const me = () => axiosBase.get('/profiles');
 

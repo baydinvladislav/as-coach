@@ -112,8 +112,8 @@ export const ProfileEditScreen = observer(() => {
                 ? {
                     uri: 'file://' + uri,
                   }
-                : user.me.photo_path
-                ? { uri: makeAvatarLink(user.me.photo_path) }
+                : user.me.photo_link
+                ? { uri: makeAvatarLink(user.me.photo_link) }
                 : DefaultAvatarImage
             }
           />
