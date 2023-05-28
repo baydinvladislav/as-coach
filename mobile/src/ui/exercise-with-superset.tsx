@@ -15,22 +15,30 @@ type TProps = {
 
 export const ExerciseWithSuperset = ({ exercises }: TProps) => {
   const { customer } = useStore();
-
+  const isFromServer = exercises[0].superset_id !== undefined;
   return (
     <>
       {exercises.map((exercise, key, arr) => {
         const { name } = customer.getExerciseById(exercise.id);
+        const supersets = exercise.supersets;
+
+        const isFirstInSuperset =
+          (exercise.supersets && supersets?.[0] !== exercise.id) ||
+          (arr[key - 1] && exercise.superset_id === arr[key - 1]?.superset_id);
+
+        const isHasLine = isFromServer
+          ? isFirstInSuperset
+          : exercise?.supersets?.length &&
+            exercise.supersets[0] !== exercise.id;
         return (
           <View key={key}>
-            {exercise?.supersets?.length &&
-              exercise.supersets[0] !== exercise.id && <Line />}
+            {isHasLine && <Line />}
             <ExerciseInfo
               type={ExerciseCardType.FULL}
               name={name}
               index={key}
               isLast={
-                Boolean(exercise?.supersets?.length) ||
-                key === exercises.length - 1
+                Boolean(supersets?.length) || key === exercises.length - 1
               }
               exercises={exercise}
             />

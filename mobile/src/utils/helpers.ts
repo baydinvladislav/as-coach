@@ -19,14 +19,14 @@ export const modifyPlan = (
           return {
             ...training,
             exercises: value.reduce((acc: TPropsExercises[], item, _, arr) => {
-              if (item.supersetId) {
-                item.supersets = [item.supersetId];
+              if (item.superset_id) {
+                item.supersets = [item.superset_id];
 
                 for (let i = 0; i <= arr.length; i++) {
                   const el = arr[i];
                   if (
-                    el?.supersetId === item.supersetId &&
-                    el.id !== item.supersetId
+                    el?.superset_id === item.superset_id &&
+                    el.id !== item.superset_id
                   ) {
                     item.supersets?.push(el.id);
                   }
@@ -93,25 +93,25 @@ export const clearArray = (arr: TPropsExercises[]) =>
       key,
       arr, // Очищаем массив с упражнениями от значений суперсетов, если упражнение не в суперсете
     ) =>
-      item.supersetId &&
-      (arr[key - 1]?.supersetId === item.supersetId ||
-        arr[key + 1]?.supersetId === item.supersetId)
+      item.superset_id &&
+      (arr[key - 1]?.superset_id === item.superset_id ||
+        arr[key + 1]?.superset_id === item.superset_id)
         ? item
-        : { ...item, supersetId: undefined },
+        : { ...item, superset_id: undefined },
   );
 
 export const changeFirstSupersetId = (
   data: TPropsExercises[],
   arr: TPropsExercises[],
-  supersetId?: string,
+  superset_id?: string,
 ) =>
-  // Если первая позиция пропадает, то у упражнений суперсета меняем supersetId на тот id, который стал первым в суперсете
+  // Если первая позиция пропадает, то у упражнений суперсета меняем superset_id на тот id, который стал первым в суперсете
   arr.map(item => {
-    if (item.supersetId === supersetId && item.id !== supersetId) {
+    if (item.superset_id === superset_id && item.id !== superset_id) {
       const id = data.find(
-        item => item.supersetId === supersetId && item.id !== supersetId,
+        item => item.superset_id === superset_id && item.id !== superset_id,
       )?.id;
-      return { ...item, supersetId: id };
+      return { ...item, superset_id: id };
     }
 
     return item;
@@ -126,9 +126,9 @@ export const moveExerciseFromUp = (
 ) => {
   for (let i = 0; i < supersetsValues.length; i++) {
     if (to >= supersetsValues[i][0] && to < supersetsValues[i][1]) {
-      const supersetId = arr[to].supersetId;
-      arr[to].supersetId = supersetsKeys[i];
-      changeFirstSupersetId(data, arr, supersetId);
+      const superset_id = arr[to].superset_id;
+      arr[to].superset_id = supersetsKeys[i];
+      changeFirstSupersetId(data, arr, superset_id);
     }
   }
 };
@@ -142,9 +142,9 @@ export const moveExerciseFromDown = (
 ) => {
   for (let i = 0; i < supersetsValues.length; i++) {
     if (to > supersetsValues[i][0] && to <= supersetsValues[i][1]) {
-      const supersetId = arr[to].supersetId;
-      arr[to].supersetId = supersetsKeys[i];
-      changeFirstSupersetId(data, arr, supersetId);
+      const superset_id = arr[to].superset_id;
+      arr[to].superset_id = supersetsKeys[i];
+      changeFirstSupersetId(data, arr, superset_id);
     }
   }
 };

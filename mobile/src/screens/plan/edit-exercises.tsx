@@ -74,7 +74,7 @@ export const EditExercisesScreen = observer(
         console.clear();
         setData(
           exercises.map(item => {
-            item.supersetId = item?.supersets?.[0];
+            item.superset_id = item?.supersets?.[0];
             delete item.supersets;
             return item;
           }),
@@ -85,7 +85,7 @@ export const EditExercisesScreen = observer(
 
     const handleSuperset = (arr: string[]) => {
       const isExist = data.filter(
-        item => arr.includes(item.id) && item.supersetId,
+        item => arr.includes(item.id) && item.superset_id,
       ).length;
 
       if (isSelectedSuperset) {
@@ -93,8 +93,8 @@ export const EditExercisesScreen = observer(
           setData(data =>
             clearArray(
               data.map(item =>
-                arr.includes(item.supersetId ?? '')
-                  ? { ...item, supersetId: undefined }
+                arr.includes(item.superset_id ?? '')
+                  ? { ...item, superset_id: undefined }
                   : item,
               ),
             ),
@@ -104,7 +104,7 @@ export const EditExercisesScreen = observer(
             const index = Math.min(
               ...arr.map(item => data.findIndex(el => el.id === item)),
             );
-            const { id: supersetId } = data[index];
+            const { id: superset_id } = data[index];
             const maxSetsLength = data
               .filter(item => arr.includes(item.id))
               .reduce(
@@ -130,7 +130,7 @@ export const EditExercisesScreen = observer(
                         return item.sets;
                       })()
                     : item.sets,
-                supersetId,
+                superset_id,
               }));
             data = data.filter(item => !arr.includes(item.id));
             data.splice(index, 0, ...items);
@@ -145,12 +145,12 @@ export const EditExercisesScreen = observer(
     const handleChangeSets = (
       id: string,
       e: React.ChangeEvent<any>,
-      supersetId?: string,
+      superset_id?: string,
     ) => {
       setData(data =>
         data.map(el => {
           const item = { ...el };
-          if (item.supersetId === supersetId && supersetId !== undefined) {
+          if (item.superset_id === superset_id && superset_id !== undefined) {
             const setsLength = e.target.value.length;
             if (setsLength) {
               if (item.sets.length > setsLength) {
@@ -177,12 +177,12 @@ export const EditExercisesScreen = observer(
             item => !arr.includes(item.id),
           );
           arr.map(item => {
-            const index = array.findIndex(el => item === el.supersetId);
+            const index = array.findIndex(el => item === el.superset_id);
             array = array.map((el, _, array) =>
-              el.supersetId === array?.[index]?.supersetId
+              el.superset_id === array?.[index]?.superset_id
                 ? {
                     ...el,
-                    supersetId: array?.[index]?.id,
+                    superset_id: array?.[index]?.id,
                   }
                 : el,
             );
@@ -209,19 +209,19 @@ export const EditExercisesScreen = observer(
 
       const supersets = data.reduce(
         (acc: Record<string, any>, item, index, arr) => {
-          !item.supersetId && acc;
+          !item.superset_id && acc;
           if (
-            item.supersetId &&
-            arr?.[index - 1]?.supersetId !== item.supersetId
+            item.superset_id &&
+            arr?.[index - 1]?.superset_id !== item.superset_id
           ) {
-            acc[item.supersetId] = [];
+            acc[item.superset_id] = [];
           }
           if (
-            item.supersetId &&
-            (arr?.[index - 1]?.supersetId !== item.supersetId ||
-              arr?.[index + 1]?.supersetId !== item.supersetId)
+            item.superset_id &&
+            (arr?.[index - 1]?.superset_id !== item.superset_id ||
+              arr?.[index + 1]?.superset_id !== item.superset_id)
           ) {
-            acc[item.supersetId]?.push(index);
+            acc[item.superset_id]?.push(index);
           }
           return acc;
         },
@@ -235,7 +235,7 @@ export const EditExercisesScreen = observer(
 
       const isFromDown = to < from;
       const isFromUp = !isFromDown;
-      if (data[from].supersetId === data[to].supersetId) {
+      if (data[from].superset_id === data[to].superset_id) {
         // Если перетаскиваем внутри суперсета, и ставим на первую позицию
         for (let i = 0; i < supersetsValues.length; i++) {
           if (to >= supersetsValues[i][0] && to <= supersetsValues[i][1]) {
@@ -244,31 +244,31 @@ export const EditExercisesScreen = observer(
               key <= supersetsValues[i][1];
               key++
             ) {
-              arr[key].supersetId = arr[supersetsValues[i][0]].id;
+              arr[key].superset_id = arr[supersetsValues[i][0]].id;
             }
           }
         }
       } else if (
-        data[from].supersetId &&
-        (!data[to].supersetId ||
-          !data?.[to + 1]?.supersetId ||
-          !data?.[to - 1]?.supersetId)
+        data[from].superset_id &&
+        (!data[to].superset_id ||
+          !data?.[to + 1]?.superset_id ||
+          !data?.[to - 1]?.superset_id)
       ) {
         // Если перетаскиваем из суперсета вне суперсета (перенос суперсета)
         const items = data.filter(
-          item => item.supersetId === arr[to].supersetId,
+          item => item.superset_id === arr[to].superset_id,
         );
-        arr = data.filter(item => item.supersetId !== arr[to].supersetId);
+        arr = data.filter(item => item.superset_id !== arr[to].superset_id);
         arr.splice(to > from ? to - items.length + 1 : to, 0, ...items);
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      } else if (data[from].supersetId === data[from].id) {
+      } else if (data[from].superset_id === data[from].id) {
         // Переместили первое упражнение суперсета внутрь другого суперсета
         if (isFromUp) {
           moveExerciseFromUp(to, data, arr, supersetsKeys, supersetsValues);
         } else if (isFromDown) {
           moveExerciseFromDown(to, data, arr, supersetsKeys, supersetsValues);
         }
-        arr = changeFirstSupersetId(data, arr, data[from].supersetId);
+        arr = changeFirstSupersetId(data, arr, data[from].superset_id);
       } else if (isFromUp) {
         // Переместили упражнение не из суперсета в суперсет с направления верх
         moveExerciseFromUp(to, data, arr, supersetsKeys, supersetsValues);
@@ -287,7 +287,7 @@ export const EditExercisesScreen = observer(
       const { name } = customer.getExerciseById(item.id);
       const isSelected = selected.includes(item.id);
       const index = getIndex() ?? 0;
-      const isPrevSuperset = Boolean(data?.[index - 1]?.supersetId);
+      const isPrevSuperset = Boolean(data?.[index - 1]?.superset_id);
 
       return (
         <View style={{ backgroundColor: colors.black6 }}>
@@ -295,20 +295,20 @@ export const EditExercisesScreen = observer(
             key={item.id}
             placeholder={
               name
-              // item.id.slice(0, 3) + ' - ' + item.supersetId?.slice(0, 3)
+              // item.id.slice(0, 3) + ' - ' + item.superset_id?.slice(0, 3)
             }
-            isFirst={!index || (isPrevSuperset && Boolean(item.supersetId))}
+            isFirst={!index || (isPrevSuperset && Boolean(item.superset_id))}
             handlePress={() => handlePress(item.id)}
             exercise={item}
             errors={errors}
             handleChangeSets={e =>
-              handleChangeSets(item.id, e, item.supersetId)
+              handleChangeSets(item.id, e, item.superset_id)
             }
             index={index}
             isSelected={isSelected}
             onDrag={drag}
           />
-          {item.supersetId && item.id !== item.supersetId && (
+          {item.superset_id && item.id !== item.superset_id && (
             <Line quantity={Math.ceil(item.sets.length / 4) - 1} />
           )}
         </View>
