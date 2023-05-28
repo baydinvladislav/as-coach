@@ -18,6 +18,7 @@ export type CustomerProps = {
   last_name: string;
   phone_number: string;
   plans: TPlanType[];
+  last_plan_end_date: string;
 };
 
 export default class CustomerStore {
