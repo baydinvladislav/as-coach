@@ -401,7 +401,7 @@ async def get_training_plan(
             if exercise_on_training:
                 exercise_data["sets"] = exercise_on_training.sets
                 exercise_data["superset_id"] = exercise_on_training.superset_id
-                exercise_data["ordering"] = exercise_on_training.ordering
+                exercise_data["ordering"] = exercise_on_training.ordering or 0
                 exercises.append(exercise_data)
 
         exercises.sort(key=lambda x: x["ordering"])
