@@ -57,7 +57,9 @@ const CustomDay = ({
     new Date(date) < new Date(selected.end);
 
   const isVisibleBackground =
-    ((isSelect && ((isStart && !isLastDay) || (isEnd && !isFirstDay))) ||
+    ((isSelect &&
+      ((isStart && !isLastDayMonth && !isLastDay) ||
+        (isEnd && !isFirstDayMonth && !isFirstDay))) ||
       isBetween) &&
     state !== 'disabled';
 
@@ -66,11 +68,7 @@ const CustomDay = ({
     isVisibleBackground && state !== 'disabled'
       ? {
           style: [
-            !isEndEmpty &&
-              !isStartEmpty &&
-              (!isSelect || !isLastDayMonth) &&
-              (!isSelect || !isFirstDayMonth) &&
-              styles.selectedBackground,
+            !isEndEmpty && !isStartEmpty && styles.selectedBackground,
             isStart && !isLastDay && styles.start,
             isEnd && !isFirstDay && styles.end,
             isBetween && styles.center,
