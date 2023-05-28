@@ -255,6 +255,7 @@ async def create_training_plan(
 
             # create exercises on training
             superset_dict = {}
+            ordering = 0
             for exercise_item in training_item.exercises:
                 if isinstance(exercise_item.supersets, list) and len(exercise_item.supersets) > 0:
                     if str(exercise_item.id) not in superset_dict:
@@ -268,10 +269,12 @@ async def create_training_plan(
                     training_id=str(training.id),
                     exercise_id=str(exercise_item.id),
                     sets=exercise_item.sets,
-                    superset_id=superset_dict.get(str(exercise_item.id))
+                    superset_id=superset_dict.get(str(exercise_item.id)),
+                    ordering=ordering
                 )
                 database.add(exercise_on_training)
                 database.flush()
+                ordering += 1
 
         database.commit()
         database.refresh(training_plan)
@@ -398,8 +401,10 @@ async def get_training_plan(
             if exercise_on_training:
                 exercise_data["sets"] = exercise_on_training.sets
                 exercise_data["superset_id"] = exercise_on_training.superset_id
+                exercise_data["ordering"] = exercise_on_training.ordering or 0
                 exercises.append(exercise_data)
 
+        exercises.sort(key=lambda x: x["ordering"])
         training_data["exercises"] = exercises
 
         trainings.append(training_data)
