@@ -73,6 +73,7 @@ export const LkClients = observer(() => {
       key={customer.item.id}
       firstName={customer.item.first_name}
       lastName={customer.item.last_name}
+      dateEnd={customer.item.last_plan_end_date}
       onPress={() => handleNavigateDetailClient(customer.item.id)}
     />
   );
