@@ -23,10 +23,8 @@ export const ClientCard: React.FC<ClientCardProps> = ({
   dateEnd,
   onPress,
 }) => {
-  const [bageStatus, setBageStatus] = useState<BadgeStatuses>(
-    BadgeStatuses.PLAN_NOT_EXISTS,
-  );
-  const [toCompletion, setToCompletion] = useState<number>(0);
+  const [bageStatus, setBageStatus] = useState(BadgeStatuses.PLAN_NOT_EXISTS);
+  const [toCompletion, setToCompletion] = useState(0);
 
   useEffect(() => {
     setBageStatus(getStatus());
@@ -34,10 +32,8 @@ export const ClientCard: React.FC<ClientCardProps> = ({
   }, []);
 
   const getStatus = () => {
-    let status: BadgeStatuses;
-
     if (!dateEnd) {
-      status = BadgeStatuses.PLAN_NOT_EXISTS;
+      return BadgeStatuses.PLAN_NOT_EXISTS;
     } else {
       const currentDate = moment();
       const dateCompletion = moment(dateEnd);
@@ -47,14 +43,13 @@ export const ClientCard: React.FC<ClientCardProps> = ({
       setToCompletion(differenceInDays);
 
       if (differenceInDays > 3) {
-        status = BadgeStatuses.GOOD;
+        return BadgeStatuses.GOOD;
       } else if (0 < differenceInDays && differenceInDays < 3) {
-        status = BadgeStatuses.WARNING;
+        return BadgeStatuses.WARNING;
       } else {
-        status = BadgeStatuses.EXPIRED;
+        return BadgeStatuses.EXPIRED;
       }
     }
-    return status;
   };
 
   const getLineColor = (status: string) => {
