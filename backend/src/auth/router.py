@@ -16,7 +16,7 @@ from src.auth.schemas import UserProfile, NewUserPassword
 from src.customer.models import Customer
 from src.customer.dependencies import get_coach_or_customer
 
-from .models import User
+from .models import Coach
 from .schemas import LoginResponse, UserRegisterIn, UserRegisterOut
 from .services import auth_coach, auth_customer
 from .utils import (create_access_token, create_refresh_token,
@@ -46,14 +46,14 @@ async def create_user(
         dictionary with just created user,
         id, first_name and username as keys
     """
-    user = database.query(User).filter(User.username == user_data.username).first()
+    user = database.query(Coach).filter(Coach.username == user_data.username).first()
     if user is not None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="User with this username already exist"
         )
 
-    user = User(
+    user = Coach(
         username=user_data.username,
         first_name=user_data.first_name,
         password=get_hashed_password(user_data.password)
@@ -97,7 +97,7 @@ async def login(
             detail="Empty fields"
         )
 
-    coach = database.query(User).filter(User.username == form_data.username).first()
+    coach = database.query(Coach).filter(Coach.username == form_data.username).first()
     customer = database.query(Customer).filter(Customer.username == form_data.username).first()
 
     if coach and auth_coach(coach, form_data.password):
@@ -124,7 +124,7 @@ async def login(
     "/me",
     status_code=status.HTTP_200_OK,
     summary="Get details of currently logged in user")
-async def get_me(user: Union[User, Customer] = Depends(get_coach_or_customer)):
+async def get_me(user: Union[Coach, Customer] = Depends(get_coach_or_customer)):
     """
     Returns info about current user
     Endpoint can be used by both the coach and the customer
@@ -137,7 +137,7 @@ async def get_me(user: Union[User, Customer] = Depends(get_coach_or_customer)):
     """
     return {
         "id": str(user.id),
-        "user_type": "coach" if isinstance(user, User) else "customer",
+        "user_type": "coach" if isinstance(user, Coach) else "customer",
         "username": user.username,
         "first_name": user.first_name
     }
@@ -148,7 +148,7 @@ async def get_me(user: Union[User, Customer] = Depends(get_coach_or_customer)):
     status_code=status.HTTP_200_OK,
     response_model=UserProfile,
     summary="Get user profile")
-async def get_profile(user: Union[User, Customer] = Depends(get_coach_or_customer)):
+async def get_profile(user: Union[Coach, Customer] = Depends(get_coach_or_customer)):
     """
     Returns full info about user
     Endpoint can be used by both the coach and the customer
@@ -163,7 +163,7 @@ async def get_profile(user: Union[User, Customer] = Depends(get_coach_or_custome
         "id": str(user.id),
         "first_name": user.first_name,
         "last_name": user.last_name,
-        "user_type": "coach" if isinstance(user, User) else "customer",
+        "user_type": "coach" if isinstance(user, Coach) else "customer",
         "gender": user.gender,
         "birthday": user.birthday,
         "email": user.email,
@@ -186,7 +186,7 @@ async def update_profile(
         birthday: date = Form(None),
         email: str = Form(None),
         database: Session = Depends(get_db),
-        user: Union[User, Customer] = Depends(get_coach_or_customer)
+        user: Union[Coach, Customer] = Depends(get_coach_or_customer)
 ) -> dict:
     """
     Updated full info about user
@@ -216,8 +216,8 @@ async def update_profile(
 
     user.modified = datetime.now()
 
-    if isinstance(user, User):
-        user_class = User
+    if isinstance(user, Coach):
+        user_class = Coach
     else:
         user_class = Customer
 
@@ -242,7 +242,7 @@ async def update_profile(
         "id": str(user.id),
         "first_name": user.first_name,
         "last_name": user.last_name,
-        "user_type": "coach" if isinstance(user, User) else "customer",
+        "user_type": "coach" if isinstance(user, Coach) else "customer",
         "gender": user.gender,
         "birthday": user.birthday,
         "email": user.email,
@@ -258,7 +258,7 @@ async def update_profile(
 async def confirm_password(
         current_password: str = Form(...),
         database: Session = Depends(get_db),
-        user: Union[User, Customer] = Depends(get_coach_or_customer)
+        user: Union[Coach, Customer] = Depends(get_coach_or_customer)
 ) -> dict:
     """
     Confirms that user knows current password before it is changed.
@@ -284,7 +284,7 @@ async def confirm_password(
 async def change_password(
         new_password: NewUserPassword,
         database: Session = Depends(get_db),
-        user: Union[User, Customer] = Depends(get_coach_or_customer)
+        user: Union[Coach, Customer] = Depends(get_coach_or_customer)
 ) -> dict:
     """
     Changes user password.

@@ -1,7 +1,7 @@
 import pytest
 from httpx import AsyncClient
 
-from src.auth.models import User
+from src.auth.models import Coach
 from src.main import app
 from backend.tests.conftest import (
     TEST_USER_FIRST_NAME, TEST_USER_USERNAME, TEST_USER_PASSWORD
@@ -13,8 +13,8 @@ async def test_signup_successfully(override_get_db):
     """
     Success registration
     """
-    user = override_get_db.query(User).filter(
-        User.username == TEST_USER_USERNAME
+    user = override_get_db.query(Coach).filter(
+        Coach.username == TEST_USER_USERNAME
     ).first()
 
     if user:
@@ -38,8 +38,8 @@ async def test_signup_validation_error(override_get_db):
     """
     Failed registration because of validation error
     """
-    user = override_get_db.query(User).filter(
-        User.username == TEST_USER_USERNAME
+    user = override_get_db.query(Coach).filter(
+        Coach.username == TEST_USER_USERNAME
     ).first()
 
     if user:
@@ -64,8 +64,8 @@ async def test_signup_too_short_password(override_get_db):
     """
     Failed registration because of validation error
     """
-    user = override_get_db.query(User).filter(
-        User.username == TEST_USER_USERNAME
+    user = override_get_db.query(Coach).filter(
+        Coach.username == TEST_USER_USERNAME
     ).first()
 
     if user:

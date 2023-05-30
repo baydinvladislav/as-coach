@@ -19,7 +19,7 @@ async def test_get_all_training_plans(
     Checks training plans order
     """
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_customer.user.username)
+        auth_token = create_access_token(create_customer.coach.username)
         response = await ac.get(
             f"/api/customers/{create_customer.id}/training_plans",
             headers={
@@ -47,7 +47,7 @@ async def test_get_specified_training_plan(
     training_plan = create_training_plans[0]
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_customer.user.username)
+        auth_token = create_access_token(create_customer.coach.username)
         response = await ac.get(
             f"/api/customers/{create_customer.id}/training_plans/{training_plan.id}",
             headers={

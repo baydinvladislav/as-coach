@@ -72,8 +72,8 @@ class Exercise(Base, BaseModel):
 
     name = Column("name", String(50), nullable=False)
     trainings = relationship("Training", secondary="exercisesontraining", back_populates="exercises")
-    user_id = Column(UUID, ForeignKey("user.id"))
-    user = relationship("User", back_populates="exercises")
+    coach_id = Column(UUID, ForeignKey("coach.id"))
+    coach = relationship("Coach", back_populates="exercises")
     muscle_group_id = Column(UUID, ForeignKey("musclegroup.id"), nullable=False)
     muscle_group = relationship("MuscleGroup", back_populates="exercises")
 

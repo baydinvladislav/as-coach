@@ -4,7 +4,7 @@ from typing import Optional, Union
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from src.auth.models import User
+from src.auth.models import Coach
 from src.customer.schemas import (
     CustomerCreateIn,
     CustomerOut,
@@ -78,7 +78,7 @@ async def create_customer(
         last_name=customer_data.last_name,
         username=customer_data.phone_number,
         password=generate_random_password(8),
-        user_id=str(current_user.id)
+        coach_id=str(current_user.id)
     )
 
     # TODO: send sms invite to customer
@@ -173,10 +173,10 @@ async def get_customer(
             detail=f"Customer with id {customer_id} not found"
         )
 
-    if str(customer.user_id) != str(current_user.id):
+    if str(customer.coach_id) != str(current_user.id):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="The client belong to another user"
+            detail="The client belong to another coach"
         )
 
     training_plans = sorted(customer.training_plans,
@@ -304,7 +304,7 @@ async def create_training_plan(
 async def get_all_training_plans(
         customer_id: str,
         database: Session = Depends(get_db),
-        current_user: Union[User, Customer] = Depends(get_coach_or_customer)
+        current_user: Union[Coach, Customer] = Depends(get_coach_or_customer)
 ) -> Union[list[dict], list[None]]:
     """
     Returns all training plans for specific customer
@@ -349,7 +349,7 @@ async def get_training_plan(
     training_plan_id: str,
     customer_id: str,
     database: Session = Depends(get_db),
-    current_user: Union[User, Customer] = Depends(get_coach_or_customer)
+    current_user: Union[Coach, Customer] = Depends(get_coach_or_customer)
 ) -> dict:
     """
     Gets specific training plan by ID

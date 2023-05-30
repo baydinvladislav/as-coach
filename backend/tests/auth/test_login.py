@@ -2,7 +2,7 @@ import pytest
 from httpx import AsyncClient
 
 from src.auth.utils import get_hashed_password
-from src.auth.models import User
+from src.auth.models import Coach
 from src.main import app
 from backend.tests.conftest import (
     TEST_USER_FIRST_NAME, TEST_USER_USERNAME, TEST_USER_PASSWORD
@@ -14,12 +14,12 @@ async def test_login_successfully(override_get_db):
     """
     Tests success user login
     """
-    user = override_get_db.query(User).filter(
-        User.username == TEST_USER_USERNAME
+    user = override_get_db.query(Coach).filter(
+        Coach.username == TEST_USER_USERNAME
     ).first()
 
     if not user:
-        user = User(
+        user = Coach(
             username=TEST_USER_USERNAME,
             first_name=TEST_USER_FIRST_NAME,
             password=get_hashed_password(TEST_USER_PASSWORD)

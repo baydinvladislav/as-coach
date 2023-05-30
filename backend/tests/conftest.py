@@ -10,7 +10,7 @@ from src.customer.models import Customer, TrainingPlan
 from src.auth.utils import get_hashed_password
 from src.dependencies import get_db
 from src.main import app
-from src.auth.models import User
+from src.auth.models import Coach
 from src.gym.models import Exercise, MuscleGroup, Training, ExercisesOnTraining
 from src.customer.utils import generate_random_password
 
@@ -242,8 +242,8 @@ def create_customer(create_user, override_get_db):
     """
     Creates test customer
     """
-    test_user = override_get_db.query(User).filter(
-        User.username == create_user.username
+    test_user = override_get_db.query(Coach).filter(
+        Coach.username == create_user.username
     ).first()
 
     if not test_user.customers:
@@ -252,7 +252,7 @@ def create_customer(create_user, override_get_db):
             first_name=TEST_CUSTOMER_FIRST_NAME,
             last_name=TEST_CUSTOMER_LAST_NAME,
             password=generate_random_password(8),
-            user_id=str(create_user.id)
+            coach_id=str(create_user.id)
         )
 
         override_get_db.add(test_customer)
@@ -267,12 +267,12 @@ def create_user(override_get_db):
     """
     Creates test user
     """
-    test_user = override_get_db.query(User).filter(
-        User.username == TEST_USER_USERNAME
+    test_user = override_get_db.query(Coach).filter(
+        Coach.username == TEST_USER_USERNAME
     ).first()
 
     if not test_user:
-        test_user = User(
+        test_user = Coach(
             username=TEST_USER_USERNAME,
             first_name=TEST_USER_FIRST_NAME,
             password=get_hashed_password(TEST_USER_PASSWORD)

@@ -32,12 +32,12 @@ async def create_exercise(
         current_user: returns current application user
 
     Returns:
-        dictionary with just created exercise id, name, user_id as keys
+        dictionary with just created exercise id, name, muscle_group's name as keys
     """
     exercise = Exercise(
         name=exercise_data.name,
         muscle_group_id=exercise_data.muscle_group_id,
-        user_id=str(current_user.id)
+        coach_id=str(current_user.id)
     )
 
     database.add(exercise)
@@ -68,7 +68,7 @@ async def get_exercises(
         list of exercises
     """
     exercises = database.query(Exercise).filter(
-        or_(Exercise.user_id.is_(None), Exercise.user_id == str(current_user.id))
+        or_(Exercise.coach_id.is_(None), Exercise.coach_id == str(current_user.id))
     ).all()
 
     response = []
