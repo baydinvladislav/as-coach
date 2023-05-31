@@ -18,6 +18,7 @@ from fastapi import (
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
+from src.auth.dependencies import get_current_user
 from src.dependencies import get_db
 from src.models import Gender
 from src.auth.schemas import (
@@ -28,7 +29,6 @@ from src.auth.schemas import (
     UserRegisterOut
 )
 from src.customer.models import Customer
-from src.customer.dependencies import get_coach_or_customer
 from src.coach.models import Coach
 from src.auth.services import auth_coach, auth_customer
 from src.auth.utils import (
@@ -45,12 +45,12 @@ auth_router = APIRouter()
 
 @auth_router.post(
     "/signup",
-    summary="Create new user",
+    summary="Create new coach",
     status_code=status.HTTP_201_CREATED,
     response_model=UserRegisterOut)
-async def create_user(
+async def register_user(
         user_data: UserRegisterIn,
-        database: Session = Depends(get_db)):
+        database: Session = Depends(get_db)) -> dict:
     """
     Registration endpoint, creates new user in database
 
@@ -95,7 +95,7 @@ async def create_user(
     response_model=LoginResponse)
 async def login(
         form_data: OAuth2PasswordRequestForm = Depends(),
-        database: Session = Depends(get_db)):
+        database: Session = Depends(get_db)) -> dict:
     """
     Login endpoint authenticates user
 
@@ -141,16 +141,17 @@ async def login(
     "/me",
     status_code=status.HTTP_200_OK,
     summary="Get details of currently logged in user")
-async def get_me(user: Union[Coach, Customer] = Depends(get_coach_or_customer)):
+async def get_me(
+        user: Union[Coach, Customer] = Depends(get_current_user)) -> dict:
     """
-    Returns info about current user
-    Endpoint can be used by both the coach and the customer
+    Returns short info about current user
+    Endpoint can be used by both a coach and a customer
 
     Args:
-        user: user object from get_current_user dependency
+        user: coach or customer object from get_current_user dependency
 
     Returns:
-        dictionary with id and username as keys
+        dict: short info about current user
     """
     return {
         "id": str(user.id),
@@ -165,16 +166,17 @@ async def get_me(user: Union[Coach, Customer] = Depends(get_coach_or_customer)):
     status_code=status.HTTP_200_OK,
     response_model=UserProfile,
     summary="Get user profile")
-async def get_profile(user: Union[Coach, Customer] = Depends(get_coach_or_customer)):
+async def get_profile(
+        user: Union[Coach, Customer] = Depends(get_current_user)) -> dict:
     """
     Returns full info about user
     Endpoint can be used by both the coach and the customer
 
     Args:
-        user: user/customer object from get_coach_or_customer dependency
+        user: coach or customer object from get_current_user dependency
 
     Returns:
-        dictionary with full user info
+        dict: full info about current user
     """
     return {
         "id": str(user.id),
@@ -203,7 +205,7 @@ async def update_profile(
         birthday: date = Form(None),
         email: str = Form(None),
         database: Session = Depends(get_db),
-        user: Union[Coach, Customer] = Depends(get_coach_or_customer)
+        user: Union[Coach, Customer] = Depends(get_current_user)
 ) -> dict:
     """
     Updated full info about user
@@ -218,7 +220,7 @@ async def update_profile(
         birthday: client value from body
         email: client value from body
         database: dependency injection for access to database
-        user: user object from get_current_user dependency
+        user: coach or customer object from get_current_user dependency
 
     Returns:
         dictionary with updated full user info
@@ -274,15 +276,13 @@ async def update_profile(
     status_code=status.HTTP_200_OK)
 async def confirm_password(
         current_password: str = Form(...),
-        database: Session = Depends(get_db),
-        user: Union[Coach, Customer] = Depends(get_coach_or_customer)
+        user: Union[Coach, Customer] = Depends(get_current_user)
 ) -> dict:
     """
     Confirms that user knows current password before it is changed.
 
     Args:
         current_password: current user password
-        database: dependency injection for access to database
         user: user object from get_current_user dependency
 
     Returns:
@@ -301,7 +301,7 @@ async def confirm_password(
 async def change_password(
         new_password: NewUserPassword,
         database: Session = Depends(get_db),
-        user: Union[Coach, Customer] = Depends(get_coach_or_customer)
+        user: Union[Coach, Customer] = Depends(get_current_user)
 ) -> dict:
     """
     Changes user password.

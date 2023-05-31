@@ -6,8 +6,8 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
+from src.coach.dependencies import get_current_coach
 from src.dependencies import get_db
-from src.auth.dependencies import get_current_user
 from src.gym.models import Exercise, MuscleGroup
 from src.gym.schemas import ExerciseCreateIn, ExerciseCreateOut
 
@@ -22,9 +22,9 @@ gym_router = APIRouter()
 async def create_exercise(
         exercise_data: ExerciseCreateIn,
         database: Session = Depends(get_db),
-        current_user: Session = Depends(get_current_user)) -> dict:
+        current_user: Session = Depends(get_current_coach)) -> dict:
     """
-    Creates new exercise for user
+    Creates new exercise for coach
 
     Args:
         exercise_data: data to create new exercise
@@ -56,9 +56,9 @@ async def create_exercise(
     status_code=status.HTTP_200_OK)
 async def get_exercises(
         database: Session = Depends(get_db),
-        current_user: Session = Depends(get_current_user)) -> list:
+        current_user: Session = Depends(get_current_coach)) -> list:
     """
-    Returns all exercises for user
+    Returns all exercises for coach
 
     Args:
         database: dependency injection for access to database
@@ -89,9 +89,9 @@ async def get_exercises(
     status_code=status.HTTP_200_OK)
 async def get_muscle_groups(
         database: Session = Depends(get_db),
-        current_user: Session = Depends(get_current_user)) -> list:
+        current_user: Session = Depends(get_current_coach)) -> list:
     """
-    Returns all muscle groups for user
+    Returns all muscle groups for coach
 
     Args:
         database: dependency injection for access to database

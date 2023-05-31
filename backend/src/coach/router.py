@@ -15,7 +15,7 @@ from src import (
     Coach
 )
 from src.auth.dependencies import get_current_user
-from src.customer.dependencies import get_coach_or_customer
+from src.coach.dependencies import get_current_coach
 from src.customer.router import customer_router
 from src.customer.schemas import (
     CustomerOut,
@@ -39,14 +39,14 @@ coach_router = APIRouter()
 async def create_customer(
         customer_data: CustomerCreateIn,
         database: Session = Depends(get_db),
-        current_user: Session = Depends(get_current_user)) -> dict:
+        current_user: Session = Depends(get_current_coach)) -> dict:
     """
-    Creates new customer for user
+    Creates new customer for coach
 
     Args:
         customer_data: data to create new customer
         database: dependency injection for access to database
-        current_user: returns current application user
+        current_user: current application coach
     Raises:
         400 in case if customer with the phone number already created
         400 in case if couple last name and first name already exist
@@ -105,13 +105,13 @@ async def create_customer(
     summary="Gets all user's customers",
     status_code=status.HTTP_200_OK)
 async def get_customers(
-        current_user: Session = Depends(get_current_user)
+        current_user: Session = Depends(get_current_coach)
 ) -> list[Optional[dict]]:
     """
-    Gets all customer for current user
+    Gets all customer for current coach
 
     Args:
-        current_user: returns current application user
+        current_user: current application coach
 
     Returns:
         list of customers
@@ -145,7 +145,7 @@ async def get_customers(
 async def get_customer(
         customer_id: str,
         database: Session = Depends(get_db),
-        current_user: Session = Depends(get_current_user)
+        current_user: Session = Depends(get_current_coach)
 ) -> dict:
     """
     Gets specific customer by ID.
@@ -153,12 +153,12 @@ async def get_customer(
     Args:
         customer_id: str(UUID) of specified customer.
         database: dependency injection for access to database.
-        current_user: returns current application user
+        current_user: current application coach
 
     Raise:
         HTTPException: 400 when passed is not correct UUID as customer_id.
         HTTPException: 404 when customer not found.
-        HTTPException: 400 when specified customer does not belong to the current user.
+        HTTPException: 400 when specified customer does not belong to the current coach.
     """
     if not validate_uuid(customer_id):
         raise HTTPException(
@@ -207,7 +207,7 @@ async def create_training_plan(
         training_plan_data: TrainingPlanIn,
         customer_id: str,
         database: Session = Depends(get_db),
-        current_user: Session = Depends(get_current_user)) -> dict:
+        current_user: Session = Depends(get_current_coach)) -> dict:
     """
     Creates new training plan for specific customer
 
@@ -307,7 +307,7 @@ async def create_training_plan(
 async def get_all_training_plans(
         customer_id: str,
         database: Session = Depends(get_db),
-        current_user: Union[Coach, Customer] = Depends(get_coach_or_customer)
+        current_user: Union[Coach, Customer] = Depends(get_current_user)
 ) -> Union[list[dict], list[None]]:
     """
     Returns all training plans for specific customer
@@ -352,10 +352,10 @@ async def get_training_plan(
     training_plan_id: str,
     customer_id: str,
     database: Session = Depends(get_db),
-    current_user: Union[Coach, Customer] = Depends(get_coach_or_customer)
+    current_user: Union[Coach, Customer] = Depends(get_current_user)
 ) -> dict:
     """
-    Gets specific training plan by ID
+    Gets full info for specific training plan by their ID
     Endpoint can be used by both the coach and the customer
 
     Args:
