@@ -5,7 +5,7 @@ from src.auth.utils import get_hashed_password
 from src.auth.models import Coach
 from src.main import app
 from backend.tests.conftest import (
-    TEST_USER_FIRST_NAME, TEST_USER_USERNAME, TEST_USER_PASSWORD
+    TEST_COACH_FIRST_NAME, TEST_COACH_USERNAME, TEST_COACH_PASSWORD
 )
 
 
@@ -15,22 +15,22 @@ async def test_login_successfully(override_get_db):
     Tests success user login
     """
     user = override_get_db.query(Coach).filter(
-        Coach.username == TEST_USER_USERNAME
+        Coach.username == TEST_COACH_USERNAME
     ).first()
 
     if not user:
         user = Coach(
-            username=TEST_USER_USERNAME,
-            first_name=TEST_USER_FIRST_NAME,
-            password=get_hashed_password(TEST_USER_PASSWORD)
+            username=TEST_COACH_USERNAME,
+            first_name=TEST_COACH_FIRST_NAME,
+            password=get_hashed_password(TEST_COACH_PASSWORD)
         )
 
         override_get_db.add(user)
         override_get_db.commit()
 
     login_data = {
-        "username": TEST_USER_USERNAME,
-        "password": TEST_USER_PASSWORD
+        "username": TEST_COACH_USERNAME,
+        "password": TEST_COACH_PASSWORD
     }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
@@ -50,8 +50,8 @@ async def test_login_failed():
     """
     login_data = {
         "username": "username_do_not_exist",
-        "first_name": TEST_USER_FIRST_NAME,
-        "password": TEST_USER_PASSWORD
+        "first_name": TEST_COACH_FIRST_NAME,
+        "password": TEST_COACH_PASSWORD
     }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:

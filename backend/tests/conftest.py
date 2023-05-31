@@ -15,9 +15,9 @@ from src.gym.models import Exercise, MuscleGroup, Training, ExercisesOnTraining
 from src.customer.utils import generate_random_password
 
 
-TEST_USER_FIRST_NAME = os.getenv("TEST_USER_FIRST_NAME")
-TEST_USER_USERNAME = os.getenv("TEST_USER_USERNAME")
-TEST_USER_PASSWORD = os.getenv("TEST_USER_PASSWORD")
+TEST_COACH_FIRST_NAME = os.getenv("TEST_COACH_FIRST_NAME")
+TEST_COACH_USERNAME = os.getenv("TEST_COACH_USERNAME")
+TEST_COACH_PASSWORD = os.getenv("TEST_COACH_PASSWORD")
 
 TEST_CUSTOMER_FIRST_NAME = os.getenv("TEST_CUSTOMER_FIRST_NAME")
 TEST_CUSTOMER_LAST_NAME = os.getenv("TEST_CUSTOMER_LAST_NAME")
@@ -268,14 +268,14 @@ def create_user(override_get_db):
     Creates test user
     """
     test_user = override_get_db.query(Coach).filter(
-        Coach.username == TEST_USER_USERNAME
+        Coach.username == TEST_COACH_USERNAME
     ).first()
 
     if not test_user:
         test_user = Coach(
-            username=TEST_USER_USERNAME,
-            first_name=TEST_USER_FIRST_NAME,
-            password=get_hashed_password(TEST_USER_PASSWORD)
+            username=TEST_COACH_USERNAME,
+            first_name=TEST_COACH_FIRST_NAME,
+            password=get_hashed_password(TEST_COACH_PASSWORD)
         )
 
         override_get_db.add(test_user)
