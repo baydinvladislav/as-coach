@@ -44,7 +44,7 @@ async def test_create_training_plan_successfully(
     training_plan_data["trainings"] = trainings
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_customer.user.username)
+        auth_token = create_access_token(create_customer.coach.username)
         response = await ac.post(
             f"/api/customers/{create_customer.id}/training_plans",
             json=training_plan_data,
@@ -121,7 +121,7 @@ async def test_create_training_plan_with_supersets_successfully(
     training_plan_data["trainings"][1]["exercises"][2]["supersets"].append(second_exercise_id_in_triset)
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_customer.user.username)
+        auth_token = create_access_token(create_customer.coach.username)
         response = await ac.post(
             f"/api/customers/{create_customer.id}/training_plans",
             json=training_plan_data,
@@ -177,7 +177,7 @@ async def test_get_training_plan_with_supersets(
     override_get_db
 ):
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_customer.user.username)
+        auth_token = create_access_token(create_customer.coach.username)
         response = await ac.get(
             f"/api/customers/{create_customer.id}/training_plans/{create_training_plans[0].id}",
             headers={

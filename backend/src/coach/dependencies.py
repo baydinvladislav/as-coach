@@ -1,5 +1,6 @@
 """
-Dependencies for customer service
+Dependencies for customer service triggered
+during request to only for coach API endpoints
 """
 
 from typing import Union
@@ -8,7 +9,7 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
-from src.customer.models import Customer
+from src.coach.models import Coach
 from src.dependencies import get_db
 from src.auth.utils import decode_jwt_token
 
@@ -18,21 +19,21 @@ reuseable_oauth = OAuth2PasswordBearer(
 )
 
 
-async def get_current_customer(
+async def get_current_coach(
         token: str = Depends(reuseable_oauth),
         database: Session = Depends(get_db)
-) -> Union[Customer, None]:
+) -> Union[Coach, None]:
     """
-    Provides current customer during request to only customer's API endpoints
+    Provides current coach during request to only coach's API endpoints
 
     Args:
         token: jwt token which contains user username
         database: dependency injection for access to database
 
     Return:
-        customer: Customer ORM obj or None if customer wasn't found
+        coach: Coach ORM obj or None if coach wasn't found
     """
     token_data = decode_jwt_token(token)
     token_username = token_data.sub
-    customer = database.query(Customer).filter(Customer.username == token_username).first()
-    return customer
+    coach = database.query(Coach).filter(Coach.username == token_username).first()
+    return coach

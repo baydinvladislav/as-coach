@@ -10,6 +10,7 @@ from starlette.middleware.cors import CORSMiddleware
 
 from src.config import STATIC_DIR
 from src.auth.router import auth_router
+from src.coach.router import coach_router
 from src.customer.router import customer_router
 from src.gym.router import gym_router
 
@@ -38,8 +39,12 @@ def get_application() -> FastAPI:
     )
 
     app_routers = (
-        auth_router, customer_router, gym_router
+        auth_router,
+        coach_router,
+        customer_router,
+        gym_router
     )
+
     for router in app_routers:
         as_coach.include_router(router, prefix="/api")
 

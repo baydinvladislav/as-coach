@@ -37,3 +37,7 @@ class Gender(enum.Enum):
 #     """
 #     __tablename__ = "user"
 #     __table_args__ = {'extend_existing': True}
+#
+#     coach = relationship("Coach", uselist=False, back_populates="user")
+#     customer = relationship("Customer", uselist=False, back_populates="user")
+#

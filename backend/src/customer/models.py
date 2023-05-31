@@ -22,12 +22,14 @@ class Customer(Base, BaseModel):
     first_name = Column("first_name", String(50), nullable=False)
     last_name = Column("last_name", String(50), nullable=False)
     gender: Column = Column("gender", Enum(Gender), nullable=True)
-    user_id = Column(UUID, ForeignKey("user.id"), nullable=False)
-    user = relationship("User", back_populates="customers")
+    coach_id = Column(UUID, ForeignKey("coach.id"), nullable=False)
+    coach = relationship("Coach", back_populates="customers")
     training_plans = relationship("TrainingPlan", cascade="all,delete-orphan", back_populates="customer")
     birthday = Column("birthday", Date, nullable=True)
     photo_path = Column("photo_path", String(255), nullable=True)
     email = Column("email", String(100), nullable=True)
+    
+    # user = relationship("User", back_populates="customer")
 
     def __repr__(self):
         return f"customer: {self.last_name} {self.first_name}"

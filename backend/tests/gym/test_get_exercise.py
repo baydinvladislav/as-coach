@@ -30,4 +30,4 @@ async def test_get_all_exercises(
     for exercise in response.json():
         exercise_in_db = override_get_db.query(Exercise).get(exercise["id"])
         # return only user's and common exercises
-        assert exercise_in_db.user_id in {create_user.id, None}
+        assert exercise_in_db.coach_id in {create_user.id, None}
