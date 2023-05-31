@@ -4,7 +4,7 @@ from typing import Optional, Union
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from src.auth.models import Coach
+from src.coach.models import Coach
 from src.customer.schemas import (
     CustomerCreateIn,
     CustomerOut,

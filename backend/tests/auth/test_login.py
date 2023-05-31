@@ -2,10 +2,12 @@ import pytest
 from httpx import AsyncClient
 
 from src.auth.utils import get_hashed_password
-from src.auth.models import Coach
+from src.coach.models import Coach
 from src.main import app
 from backend.tests.conftest import (
-    TEST_COACH_FIRST_NAME, TEST_COACH_USERNAME, TEST_COACH_PASSWORD
+    TEST_COACH_FIRST_NAME,
+    TEST_COACH_USERNAME,
+    TEST_COACH_PASSWORD
 )
 
 

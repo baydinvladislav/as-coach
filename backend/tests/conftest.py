@@ -10,7 +10,7 @@ from src.customer.models import Customer, TrainingPlan
 from src.auth.utils import get_hashed_password
 from src.dependencies import get_db
 from src.main import app
-from src.auth.models import Coach
+from src.coach.models import Coach
 from src.gym.models import Exercise, MuscleGroup, Training, ExercisesOnTraining
 from src.customer.utils import generate_random_password
 

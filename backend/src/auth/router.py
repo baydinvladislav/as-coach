@@ -6,22 +6,39 @@ import shutil
 from datetime import date, datetime
 from typing import NewType, Union
 
-from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Form
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    status,
+    File,
+    UploadFile,
+    Form
+)
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from src.dependencies import get_db
 from src.models import Gender
-from src.auth.schemas import UserProfile, NewUserPassword
+from src.auth.schemas import (
+    UserProfile,
+    NewUserPassword,
+    LoginResponse,
+    UserRegisterIn,
+    UserRegisterOut
+)
 from src.customer.models import Customer
 from src.customer.dependencies import get_coach_or_customer
-
-from .models import Coach
-from .schemas import LoginResponse, UserRegisterIn, UserRegisterOut
-from .services import auth_coach, auth_customer
-from .utils import (create_access_token, create_refresh_token,
-                    get_hashed_password, verify_password, password_context)
-from ..config import STATIC_DIR
+from src.coach.models import Coach
+from src.auth.services import auth_coach, auth_customer
+from src.auth.utils import (
+    create_access_token,
+    create_refresh_token,
+    get_hashed_password,
+    verify_password,
+    password_context
+)
+from src.config import STATIC_DIR
 
 auth_router = APIRouter()
 
