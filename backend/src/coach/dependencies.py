@@ -3,26 +3,21 @@ Dependencies for customer service triggered
 during request to only for coach API endpoints
 """
 
-from typing import Union
+from typing import Type
 
-from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from src.coach.models import Coach
 from src.dependencies import get_db
 from src.auth.utils import decode_jwt_token
-
-reuseable_oauth = OAuth2PasswordBearer(
-    tokenUrl="/api/login",
-    scheme_name="JWT"
-)
+from src.auth.config import reuseable_oauth
 
 
 async def get_current_coach(
         token: str = Depends(reuseable_oauth),
         database: Session = Depends(get_db)
-) -> Union[Coach, None]:
+) -> Type[Coach]:
     """
     Provides current coach during request to only coach's API endpoints
 
@@ -36,4 +31,11 @@ async def get_current_coach(
     token_data = decode_jwt_token(token)
     token_username = token_data.sub
     coach = database.query(Coach).filter(Coach.username == token_username).first()
+
+    if not coach:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Coach not found"
+        )
+
     return coach

@@ -3,6 +3,13 @@ Auth service config
 """
 
 import os
+from fastapi.security import OAuth2PasswordBearer
+
+
+reuseable_oauth = OAuth2PasswordBearer(
+    tokenUrl="/api/login",
+    scheme_name="JWT"
+)
 
 ACCESS_TOKEN_EXPIRE_MINUTES = os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES")
 REFRESH_TOKEN_EXPIRE_MINUTES = os.environ.get("REFRESH_TOKEN_EXPIRE_MINUTES")
