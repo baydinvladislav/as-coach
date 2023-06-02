@@ -2,26 +2,21 @@
 Dependencies for customer service
 """
 
-from typing import Union
+from typing import Type
 
-from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from src.customer.models import Customer
 from src.dependencies import get_db
 from src.auth.utils import decode_jwt_token
-
-reuseable_oauth = OAuth2PasswordBearer(
-    tokenUrl="/api/login",
-    scheme_name="JWT"
-)
+from src.auth.config import reuseable_oauth
 
 
 async def get_current_customer(
         token: str = Depends(reuseable_oauth),
         database: Session = Depends(get_db)
-) -> Union[Customer, None]:
+) -> Type[Customer]:
     """
     Provides current customer during request to only customer's API endpoints
 
@@ -35,4 +30,11 @@ async def get_current_customer(
     token_data = decode_jwt_token(token)
     token_username = token_data.sub
     customer = database.query(Customer).filter(Customer.username == token_username).first()
+
+    if not customer:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Customer not found"
+        )
+
     return customer
