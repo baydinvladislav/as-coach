@@ -6,8 +6,8 @@ from sqlalchemy import Column, String, ForeignKey, Integer, JSON
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from src.database import Base
-from src.models import BaseModel
+from backend.src.database import Base
+from backend.src.models import BaseModel
 
 
 class Diet(Base, BaseModel):

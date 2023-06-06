@@ -6,8 +6,8 @@ from sqlalchemy import Column, Enum, String, ForeignKey, Date, Text, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from src.database import Base
-from src.models import Gender, BaseModel
+from backend.src.database import Base
+from backend.src.models import Gender, BaseModel
 
 
 class Customer(Base, BaseModel):

@@ -5,8 +5,8 @@ Auth models folder.
 from sqlalchemy import Column, Enum, String, Date
 from sqlalchemy.orm import relationship
 
-from src.database import Base
-from src.models import BaseModel, Gender
+from backend.src.database import Base
+from backend.src.models import BaseModel, Gender
 
 
 class Coach(Base, BaseModel):
