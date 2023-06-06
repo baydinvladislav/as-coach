@@ -18,27 +18,27 @@ from fastapi import (
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-from src.auth.dependencies import get_current_user
-from src.dependencies import get_db
-from src.models import Gender
-from src.auth.schemas import (
+from backend.src.auth.dependencies import get_current_user
+from backend.src.dependencies import get_db
+from backend.src.models import Gender
+from backend.src.auth.schemas import (
     UserProfile,
     NewUserPassword,
     LoginResponse,
     UserRegisterIn,
     UserRegisterOut
 )
-from src.customer.models import Customer
+from backend.src.customer.models import Customer
 from backend.src.coach.models import Coach
-from src.auth.services import auth_coach, auth_customer
-from src.auth.utils import (
+from backend.src.auth.services import auth_coach, auth_customer
+from backend.src.auth.utils import (
     create_access_token,
     create_refresh_token,
     get_hashed_password,
     verify_password,
     password_context
 )
-from src.config import STATIC_DIR
+from backend.src.config import STATIC_DIR
 
 auth_router = APIRouter()
 
