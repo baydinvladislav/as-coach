@@ -29,7 +29,7 @@ from src.auth.schemas import (
     UserRegisterOut
 )
 from src.customer.models import Customer
-from src.coach.models import Coach
+from backend.src.coach.models import Coach
 from src.auth.services import auth_coach, auth_customer
 from src.auth.utils import (
     create_access_token,
