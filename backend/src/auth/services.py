@@ -1,8 +1,8 @@
 from fastapi import HTTPException
 from starlette import status
 
-from src import Coach, Customer
-from src.auth.utils import verify_password
+from backend.src import Coach, Customer
+from backend.src.auth.utils import verify_password
 
 
 def auth_coach(coach: Coach, password: str) -> bool:
@@ -17,7 +17,7 @@ def auth_coach(coach: Coach, password: str) -> bool:
     Returns:
         True in case successfully authorization
     """
-    if verify_password(password, coach.password):
+    if verify_password(password, str(coach.password)):
         return True
     else:
         raise HTTPException(
@@ -40,7 +40,7 @@ def auth_customer(customer: Customer, password: str) -> bool:
         True in case successfully authorization
     """
     if customer.password == password \
-            or verify_password(password, customer.password):
+            or verify_password(password, str(customer.password)):
         return True
     else:
         raise HTTPException(

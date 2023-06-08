@@ -4,7 +4,7 @@ Contains routes for auth service.
 
 import shutil
 from datetime import date, datetime
-from typing import NewType, Union
+from typing import Union, Optional
 
 from fastapi import (
     APIRouter,
@@ -17,28 +17,29 @@ from fastapi import (
 )
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.attributes import set_attribute
 
-from src.auth.dependencies import get_current_user
-from src.dependencies import get_db
-from src.models import Gender
-from src.auth.schemas import (
+from backend.src.auth.dependencies import get_current_user
+from backend.src.dependencies import get_db
+from backend.src.models import Gender
+from backend.src.auth.schemas import (
     UserProfile,
     NewUserPassword,
     LoginResponse,
     UserRegisterIn,
     UserRegisterOut
 )
-from src.customer.models import Customer
-from src.coach.models import Coach
-from src.auth.services import auth_coach, auth_customer
-from src.auth.utils import (
+from backend.src.customer.models import Customer
+from backend.src.coach.models import Coach
+from backend.src.auth.services import auth_coach, auth_customer
+from backend.src.auth.utils import (
     create_access_token,
     create_refresh_token,
     get_hashed_password,
     verify_password,
     password_context
 )
-from src.config import STATIC_DIR
+from backend.src.config import STATIC_DIR
 
 auth_router = APIRouter()
 
@@ -201,7 +202,7 @@ async def update_profile(
         username: str = Form(...),
         last_name: str = Form(None),
         photo: UploadFile = File(None),
-        gender: NewType('Gender', Gender) = Form(None),
+        gender: Optional[Gender] = Form(None),
         birthday: date = Form(None),
         email: str = Form(None),
         database: Session = Depends(get_db),
@@ -231,9 +232,10 @@ async def update_profile(
         photo_path = f"{STATIC_DIR}/{file_name}"
         with open(photo_path, 'wb') as buffer:
             shutil.copyfileobj(photo.file, buffer)
-        user.photo_path = photo_path
 
-    user.modified = datetime.now()
+        set_attribute(user, "photo_path", photo_path)
+
+    set_attribute(user, "modified", datetime.now())
 
     if isinstance(user, Coach):
         user_class = Coach
@@ -288,7 +290,7 @@ async def confirm_password(
     Returns:
         success or failed response
     """
-    if verify_password(current_password, user.password):
+    if verify_password(current_password, str(user.password)):
         return {"confirmed_password": True}
 
     return {"confirmed_password": False}
@@ -316,6 +318,6 @@ async def change_password(
         success response
     """
     ex_password = user.password
-    user.password = get_hashed_password(new_password.password)
+    set_attribute(user, "password", get_hashed_password(new_password.password))
     database.commit()
     return {"changed_password": True if user.password != ex_password else False}

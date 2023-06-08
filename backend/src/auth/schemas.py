@@ -7,9 +7,9 @@ from typing import NewType, Optional
 
 from pydantic import BaseModel, validator
 
-from src.utils import validate_phone_number
-from src.auth.utils import validate_password
-from src.models import Gender
+from backend.src.utils import validate_phone_number
+from backend.src.auth.utils import validate_password
+from backend.src.models import Gender
 
 
 class UserRegisterIn(BaseModel):
@@ -50,7 +50,7 @@ class UserProfile(BaseModel):
     id: str
     first_name: str
     last_name: Optional[str]
-    gender: Optional[NewType('Gender', Gender)]
+    gender: Optional[Gender]
     user_type: str
     birthday: Optional[date]
     email: Optional[str]

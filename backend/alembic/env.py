@@ -11,11 +11,21 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+
 from src import (
-    Base, engine,
-    Coach, Customer,
-    Diet, DietOnTrainingPlan, TrainingPlan, Training,
-    Exercise, ExercisesOnTraining, MuscleGroup
+    Base,
+    engine,
+    Coach,
+    Customer,
+    Diet,
+    DietOnTrainingPlan,
+    TrainingPlan,
+    Training,
+    Exercise,
+    ExercisesOnTraining,
+    MuscleGroup,
+    BaseModel,
+    Gender
 )
 
 target_metadata = Base.metadata

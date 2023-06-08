@@ -6,8 +6,8 @@ from typing import Optional, List, Union
 
 from pydantic import BaseModel, validator
 
-from src.utils import validate_phone_number
-from src.gym.schemas import Diet, Training
+from backend.src.utils import validate_phone_number
+from backend.src.gym.schemas import Diet, Training
 
 
 class CustomerCreateIn(BaseModel):
@@ -42,7 +42,7 @@ class TrainingPlanIn(BaseModel):
     start_date: str
     end_date: str
     diets: List[Diet]
-    trainings: Union[List[Training], List[None]]
+    trainings: List[Training]
     set_rest: int
     exercise_rest: int
     notes: Optional[str]

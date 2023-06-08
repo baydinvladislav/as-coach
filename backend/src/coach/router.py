@@ -1,11 +1,11 @@
 import uuid
-from typing import Optional, Union
+from typing import Union, Any, List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
 
-from src import (
+from backend.src import (
     Customer,
     TrainingPlan,
     Diet,
@@ -14,19 +14,19 @@ from src import (
     ExercisesOnTraining,
     Coach
 )
-from src.auth.dependencies import get_current_user
-from src.coach.dependencies import get_current_coach
-from src.customer.router import customer_router
-from src.customer.schemas import (
+from backend.src.auth.dependencies import get_current_user
+from backend.src.coach.dependencies import get_current_coach
+from backend.src.customer.router import customer_router
+from backend.src.customer.schemas import (
     CustomerOut,
     CustomerCreateIn,
     TrainingPlanOut,
     TrainingPlanIn,
     TrainingPlanOutFull
 )
-from src.customer.utils import generate_random_password
-from src.dependencies import get_db
-from src.utils import validate_uuid
+from backend.src.customer.utils import generate_random_password
+from backend.src.dependencies import get_db
+from backend.src.utils import validate_uuid
 
 coach_router = APIRouter()
 
@@ -39,7 +39,7 @@ coach_router = APIRouter()
 async def create_customer(
         customer_data: CustomerCreateIn,
         database: Session = Depends(get_db),
-        current_user: Session = Depends(get_current_coach)) -> dict:
+        current_user: Coach = Depends(get_current_coach)) -> dict:
     """
     Creates new customer for coach
 
@@ -105,8 +105,8 @@ async def create_customer(
     summary="Gets all user's customers",
     status_code=status.HTTP_200_OK)
 async def get_customers(
-        current_user: Session = Depends(get_current_coach)
-) -> list[Optional[dict]]:
+        current_user: Coach = Depends(get_current_coach)
+) -> List[dict[str, Any]]:
     """
     Gets all customer for current coach
 
@@ -145,7 +145,7 @@ async def get_customers(
 async def get_customer(
         customer_id: str,
         database: Session = Depends(get_db),
-        current_user: Session = Depends(get_current_coach)
+        current_user: Coach = Depends(get_current_coach)
 ) -> dict:
     """
     Gets specific customer by ID.

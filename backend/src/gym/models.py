@@ -6,8 +6,8 @@ from sqlalchemy import Column, String, ForeignKey, Integer, JSON
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from src.database import Base
-from src.models import BaseModel
+from .. import Base
+from .. import BaseModel
 
 
 class Diet(Base, BaseModel):
@@ -19,7 +19,11 @@ class Diet(Base, BaseModel):
     proteins = Column("proteins", Integer, nullable=False)
     fats = Column("fats", Integer, nullable=False)
     carbs = Column("carbs", Integer, nullable=False)
-    training_plans = relationship("TrainingPlan", secondary="dietontrainingplan", back_populates="diets")
+    training_plans = relationship(
+        "TrainingPlan",
+        secondary="dietontrainingplan",
+        back_populates="diets"
+    )
     
     def __repr__(self):
         return f"diet: {self.proteins}/{self.fats}/{self.carbs}"
@@ -45,9 +49,17 @@ class Training(Base, BaseModel):
     __tablename__ = "training"
 
     name = Column("name", String(50), nullable=False)
-    training_plan_id = Column(UUID, ForeignKey("trainingplan.id", ondelete="CASCADE"), nullable=False)
+    training_plan_id = Column(
+        UUID,
+        ForeignKey("trainingplan.id", ondelete="CASCADE"),
+        nullable=False
+    )
     training_plan = relationship("TrainingPlan", back_populates="trainings")
-    exercises = relationship("Exercise", secondary="exercisesontraining", back_populates="trainings")
+    exercises = relationship(
+        "Exercise",
+        secondary="exercisesontraining",
+        back_populates="trainings"
+    )
 
     def __repr__(self):
         return f"training: {self.name}"
@@ -60,18 +72,27 @@ class MuscleGroup(Base, BaseModel):
     __tablename__ = "musclegroup"
 
     name = Column("name", String(50), nullable=False)
-    exercises = relationship("Exercise", back_populates="muscle_group", cascade="all,delete-orphan")
+    exercises = relationship(
+        "Exercise",
+        back_populates="muscle_group",
+        cascade="all,delete-orphan"
+    )
 
 
 class Exercise(Base, BaseModel):
     """
     Represents exercises in training.
-    User can create custom exercises but user can not see custom exercises other users.
+    User can create custom exercises
+    but user can not see custom exercises other users.
     """
     __tablename__ = "exercise"
 
     name = Column("name", String(50), nullable=False)
-    trainings = relationship("Training", secondary="exercisesontraining", back_populates="exercises")
+    trainings = relationship(
+        "Training",
+        secondary="exercisesontraining",
+        back_populates="exercises"
+    )
     coach_id = Column(UUID, ForeignKey("coach.id"))
     coach = relationship("Coach", back_populates="exercises")
     muscle_group_id = Column(UUID, ForeignKey("musclegroup.id"), nullable=False)
