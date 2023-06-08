@@ -42,7 +42,7 @@ class TrainingPlanIn(BaseModel):
     start_date: str
     end_date: str
     diets: List[Diet]
-    trainings: Union[List[Training], List[None]]
+    trainings: List[Training]
     set_rest: int
     exercise_rest: int
     notes: Optional[str]

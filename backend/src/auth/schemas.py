@@ -50,7 +50,7 @@ class UserProfile(BaseModel):
     id: str
     first_name: str
     last_name: Optional[str]
-    gender: Optional[NewType('Gender', Gender)]
+    gender: Optional[Gender]
     user_type: str
     birthday: Optional[date]
     email: Optional[str]

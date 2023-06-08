@@ -1,5 +1,5 @@
 import uuid
-from typing import Optional, Union
+from typing import Union, Any, List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -39,7 +39,7 @@ coach_router = APIRouter()
 async def create_customer(
         customer_data: CustomerCreateIn,
         database: Session = Depends(get_db),
-        current_user: Session = Depends(get_current_coach)) -> dict:
+        current_user: Coach = Depends(get_current_coach)) -> dict:
     """
     Creates new customer for coach
 
@@ -105,8 +105,8 @@ async def create_customer(
     summary="Gets all user's customers",
     status_code=status.HTTP_200_OK)
 async def get_customers(
-        current_user: Session = Depends(get_current_coach)
-) -> list[Optional[dict]]:
+        current_user: Coach = Depends(get_current_coach)
+) -> List[dict[str, Any]]:
     """
     Gets all customer for current coach
 
@@ -145,7 +145,7 @@ async def get_customers(
 async def get_customer(
         customer_id: str,
         database: Session = Depends(get_db),
-        current_user: Session = Depends(get_current_coach)
+        current_user: Coach = Depends(get_current_coach)
 ) -> dict:
     """
     Gets specific customer by ID.

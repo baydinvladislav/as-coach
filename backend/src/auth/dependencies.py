@@ -3,7 +3,7 @@ Dependencies for auth service trigger
 during request to common API endpoints
 """
 
-from typing import Type
+from typing import Type, Union
 
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -18,7 +18,7 @@ from backend.src.dependencies import get_db
 async def get_current_user(
         token: str = Depends(reuseable_oauth),
         database: Session = Depends(get_db)
-) -> Type[Coach | Customer]:
+) -> Union[Coach, Customer, None]:
     """
     Provides current application user during request to common endpoints,
     if neither Coach nor Customer aren't found raises 404 error.

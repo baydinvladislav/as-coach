@@ -51,6 +51,7 @@ def verify_password(password: str, hashed_password: str) -> bool:
     is_verified = password_context.verify(password, hashed_password)
     if is_verified:
         return True
+    return False
 
 
 def create_access_token(subject: str) -> str:

@@ -17,7 +17,7 @@ def auth_coach(coach: Coach, password: str) -> bool:
     Returns:
         True in case successfully authorization
     """
-    if verify_password(password, coach.password):
+    if verify_password(password, str(coach.password)):
         return True
     else:
         raise HTTPException(
@@ -40,7 +40,7 @@ def auth_customer(customer: Customer, password: str) -> bool:
         True in case successfully authorization
     """
     if customer.password == password \
-            or verify_password(password, customer.password):
+            or verify_password(password, str(customer.password)):
         return True
     else:
         raise HTTPException(
