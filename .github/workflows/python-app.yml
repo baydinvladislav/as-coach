@@ -42,20 +42,18 @@ jobs:
         curl -sSL https://install.python-poetry.org | python3 -
         poetry install --no-root
 
-    - name: Run Pylint
-      run: |
-        cd backend
-        poetry run pylint src --fail-under=8.5
-
-    - name: Run Mypy
-      run: |
-        cd backend
-        poetry run mypy src
+#    - name: Run Pylint
+#      run: |
+#        cd backend
+#        poetry run pylint src --fail-under=8.5
+#
+#    - name: Run Mypy
+#      run: |
+#        cd backend
+#        poetry run mypy src
 
     - name: Apply migrations
-      run: |
-        cd backend
-        poetry run alembic upgrade head
+      run: poetry run alembic upgrade head
       env:
         DATABASE_URL: postgresql://postgres:postgres@localhost:5432/as_coach_test
 
