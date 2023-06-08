@@ -1,4 +1,5 @@
 from .database import Base, engine
+from .models import BaseModel, Gender
 from .coach.models import Coach
 from .customer.models import Customer, TrainingPlan
 from .gym.models import (

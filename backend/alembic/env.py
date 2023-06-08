@@ -12,7 +12,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 
-from backend.src import (
+from ..src import (
     Base,
     engine,
     Coach,
@@ -23,7 +23,9 @@ from backend.src import (
     Training,
     Exercise,
     ExercisesOnTraining,
-    MuscleGroup
+    MuscleGroup,
+    BaseModel,
+    Gender
 )
 
 target_metadata = Base.metadata
