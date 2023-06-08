@@ -6,7 +6,7 @@ from sqlalchemy import Column, Enum, String, ForeignKey, Date, Text, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from backend.src.database import Base
+from src import Base
 from backend.src.models import Gender, BaseModel
 
 

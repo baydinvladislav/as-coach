@@ -5,7 +5,7 @@ Auth models folder.
 from sqlalchemy import Column, Enum, String, Date
 from sqlalchemy.orm import relationship
 
-from backend.src.database import Base
+from src import Base
 from backend.src.models import BaseModel, Gender
 
 
