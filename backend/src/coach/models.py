@@ -21,11 +21,19 @@ class Coach(Base, BaseModel):
     first_name = Column("first_name", String(50), nullable=True)
     last_name = Column("last_name", String(50), nullable=True)
     gender: Column = Column("gender", Enum(Gender), nullable=True)
-    customers = relationship("Customer", cascade="all,delete-orphan", back_populates="coach")
+    customers = relationship(
+        "Customer",
+        cascade="all,delete-orphan",
+        back_populates="coach"
+    )
     email = Column("email", String(100), nullable=True)
     birthday = Column("birthday", Date, nullable=True)
     photo_path = Column("photo_path", String(255), nullable=True)
-    exercises = relationship("Exercise", cascade="all,delete-orphan", back_populates="coach")
+    exercises = relationship(
+        "Exercise",
+        cascade="all,delete-orphan",
+        back_populates="coach"
+    )
 
     # user = relationship("User", back_populates="coach")
 

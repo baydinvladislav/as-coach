@@ -24,7 +24,11 @@ class Customer(Base, BaseModel):
     gender: Column = Column("gender", Enum(Gender), nullable=True)
     coach_id = Column(UUID, ForeignKey("coach.id"), nullable=False)
     coach = relationship("Coach", back_populates="customers")
-    training_plans = relationship("TrainingPlan", cascade="all,delete-orphan", back_populates="customer")
+    training_plans = relationship(
+        "TrainingPlan",
+        cascade="all,delete-orphan",
+        back_populates="customer"
+    )
     birthday = Column("birthday", Date, nullable=True)
     photo_path = Column("photo_path", String(255), nullable=True)
     email = Column("email", String(100), nullable=True)
@@ -43,10 +47,18 @@ class TrainingPlan(Base, BaseModel):
 
     start_date = Column("start_date", Date)
     end_date = Column("end_date", Date)
-    diets = relationship("Diet", secondary="dietontrainingplan", back_populates="training_plans")
+    diets = relationship(
+        "Diet",
+        secondary="dietontrainingplan",
+        back_populates="training_plans"
+    )
     customer_id = Column(UUID, ForeignKey("customer.id"), nullable=False)
     customer = relationship("Customer", back_populates="training_plans")
-    trainings = relationship("Training", cascade="all,delete-orphan", back_populates="training_plan")
+    trainings = relationship(
+        "Training",
+        cascade="all,delete-orphan",
+        back_populates="training_plan"
+    )
     notes = Column("notes", Text, nullable=True)
     set_rest = Column("set_rest", Integer, default=60)
     exercise_rest = Column("exercise_rest", Integer, default=120)
