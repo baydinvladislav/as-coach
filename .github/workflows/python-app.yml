@@ -57,7 +57,7 @@ jobs:
         cd backend
         poetry run alembic upgrade head
       env:
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/as_coach_test
+        DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
 
     - name: Run tests
       run: |
