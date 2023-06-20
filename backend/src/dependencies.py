@@ -2,7 +2,7 @@
 Common dependencies for application
 """
 
-from backend.src.database import SessionLocal
+from src.database import SessionLocal
 
 
 def get_db():

@@ -6,11 +6,11 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
-from backend.src.coach.dependencies import get_current_coach
-from backend.src.dependencies import get_db
-from backend.src.gym.models import Exercise, MuscleGroup
-from backend.src.gym.schemas import ExerciseCreateIn, ExerciseCreateOut
-from backend.src.coach.models import Coach
+from src.coach.dependencies import get_current_coach
+from src.dependencies import get_db
+from src.gym.models import Exercise, MuscleGroup
+from src.gym.schemas import ExerciseCreateIn, ExerciseCreateOut
+from src.coach.models import Coach
 
 gym_router = APIRouter()
 

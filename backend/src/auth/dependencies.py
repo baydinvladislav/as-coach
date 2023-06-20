@@ -3,16 +3,16 @@ Dependencies for auth service trigger
 during request to common API endpoints
 """
 
-from typing import Type, Union
+from typing import Union
 
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from backend.src.customer.models import Customer
-from backend.src.coach.models import Coach
-from backend.src.auth.utils import decode_jwt_token
-from backend.src.auth.config import reuseable_oauth
-from backend.src.dependencies import get_db
+from src.customer.models import Customer
+from src.coach.models import Coach
+from src.auth.utils import decode_jwt_token
+from src.auth.config import reuseable_oauth
+from src.dependencies import get_db
 
 
 async def get_current_user(
