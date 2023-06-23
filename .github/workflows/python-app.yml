@@ -50,7 +50,7 @@ jobs:
     - name: Run Mypy
       run: |
         cd backend
-        poetry run mypy src
+        poetry run mypy src --explicit-package-bases
 
     - name: Apply migrations
       run: |

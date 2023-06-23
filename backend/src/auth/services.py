@@ -1,8 +1,8 @@
 from fastapi import HTTPException
 from starlette import status
 
-from backend.src import Coach, Customer
-from backend.src.auth.utils import verify_password
+from src import Coach, Customer
+from src.auth.utils import verify_password
 
 
 def auth_coach(coach: Coach, password: str) -> bool:

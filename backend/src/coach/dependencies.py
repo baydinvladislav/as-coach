@@ -8,10 +8,10 @@ from typing import Type
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from backend.src.coach.models import Coach
-from backend.src.dependencies import get_db
-from backend.src.auth.utils import decode_jwt_token
-from backend.src.auth.config import reuseable_oauth
+from src.coach.models import Coach
+from src.dependencies import get_db
+from src.auth.utils import decode_jwt_token
+from src.auth.config import reuseable_oauth
 
 
 async def get_current_coach(

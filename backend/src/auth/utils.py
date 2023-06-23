@@ -9,7 +9,7 @@ from fastapi import HTTPException, status
 from pydantic import ValidationError
 from passlib.context import CryptContext
 
-from backend.src.auth.config import (
+from src.auth.config import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     ALGORITHM,
     JWT_REFRESH_SECRET_KEY,
@@ -93,7 +93,7 @@ def decode_jwt_token(token: str):
     Decodes given token
     """
     # TODO: fix it
-    from backend.src.auth.schemas import TokenPayload
+    from src.auth.schemas import TokenPayload
 
     try:
         payload = jwt.decode(
