@@ -1,3 +1,6 @@
+<h2>Public URL</h2>
+http://54.167.94.215/docs
+
 <h2>Local Testing</h2>
 
 ```bash
