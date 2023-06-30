@@ -16,6 +16,7 @@ from fastapi import (
     Form
 )
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.attributes import set_attribute
 
@@ -64,8 +65,11 @@ async def register_user(
         dictionary with just created user,
         id, first_name and username as keys
     """
-    user = database.query(Coach).filter(Coach.username == user_data.username).first()
-    if user is not None:
+    user = await database.execute(
+        select(Coach).where(Coach.username == user_data.username)
+    )
+
+    if user.scalar() is not None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="User with this username already exist"
@@ -78,7 +82,7 @@ async def register_user(
     )
 
     database.add(user)
-    database.commit()
+    await database.commit()
 
     return {
         "id": str(user.id),
