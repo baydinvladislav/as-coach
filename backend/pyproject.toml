@@ -14,7 +14,8 @@ psycopg2 = "^2.9.5"
 httpx = "^0.23.3"
 passlib = "^1.7.4"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
-sqlalchemy = "^2.0.4"
+asyncpg = "^0.24.0"
+sqlalchemy = "^1.4.22"
 alembic = "^1.10.2"
 python-dotenv = "^1.0.0"
 
