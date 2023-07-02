@@ -4,7 +4,7 @@ Contains every model related to the gym
 
 from sqlalchemy import Column, String, ForeignKey, Integer, JSON
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, RelationshipProperty
 
 from .. import Base
 from .. import BaseModel
@@ -19,7 +19,7 @@ class Diet(Base, BaseModel):
     proteins = Column("proteins", Integer, nullable=False)
     fats = Column("fats", Integer, nullable=False)
     carbs = Column("carbs", Integer, nullable=False)
-    training_plans = relationship(
+    training_plans: RelationshipProperty = relationship(
         "TrainingPlan",
         secondary="dietontrainingplan",
         back_populates="diets"
@@ -54,8 +54,8 @@ class Training(Base, BaseModel):
         ForeignKey("trainingplan.id", ondelete="CASCADE"),
         nullable=False
     )
-    training_plan = relationship("TrainingPlan", back_populates="trainings")
-    exercises = relationship(
+    training_plan: RelationshipProperty = relationship("TrainingPlan", back_populates="trainings")
+    exercises: RelationshipProperty = relationship(
         "Exercise",
         secondary="exercisesontraining",
         back_populates="trainings"
@@ -72,7 +72,7 @@ class MuscleGroup(Base, BaseModel):
     __tablename__ = "musclegroup"
 
     name = Column("name", String(50), nullable=False)
-    exercises = relationship(
+    exercises: RelationshipProperty = relationship(
         "Exercise",
         back_populates="muscle_group",
         cascade="all,delete-orphan"
@@ -88,15 +88,15 @@ class Exercise(Base, BaseModel):
     __tablename__ = "exercise"
 
     name = Column("name", String(50), nullable=False)
-    trainings = relationship(
+    trainings: RelationshipProperty = relationship(
         "Training",
         secondary="exercisesontraining",
         back_populates="exercises"
     )
     coach_id = Column(UUID, ForeignKey("coach.id"))
-    coach = relationship("Coach", back_populates="exercises")
+    coach: RelationshipProperty = relationship("Coach", back_populates="exercises")
     muscle_group_id = Column(UUID, ForeignKey("musclegroup.id"), nullable=False)
-    muscle_group = relationship("MuscleGroup", back_populates="exercises")
+    muscle_group: RelationshipProperty = relationship("MuscleGroup", back_populates="exercises")
 
     def __repr__(self):
         return f"exercise: {self.name}"

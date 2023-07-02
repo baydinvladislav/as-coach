@@ -19,6 +19,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.attributes import set_attribute
+from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 
 from src.auth.dependencies import get_current_user
 from src.dependencies import get_db
@@ -52,7 +53,7 @@ auth_router = APIRouter()
     response_model=UserRegisterOut)
 async def register_user(
         user_data: UserRegisterIn,
-        database: Session = Depends(get_db)) -> dict:
+        database: AsyncSession = Depends(get_db)) -> dict:
     """
     Registration endpoint, creates new user in database
 
