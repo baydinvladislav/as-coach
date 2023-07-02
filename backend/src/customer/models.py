@@ -4,7 +4,7 @@ Customer models.
 
 from sqlalchemy import Column, Enum, String, ForeignKey, Date, Text, Integer
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, RelationshipProperty
 
 from .. import Base
 from .. import BaseModel, Gender
@@ -23,8 +23,8 @@ class Customer(Base, BaseModel):
     last_name = Column("last_name", String(50), nullable=False)
     gender: Column = Column("gender", Enum(Gender), nullable=True)
     coach_id = Column(UUID, ForeignKey("coach.id"), nullable=False)
-    coach = relationship("Coach", back_populates="customers")
-    training_plans = relationship(
+    coach: RelationshipProperty = relationship("Coach", back_populates="customers")
+    training_plans: RelationshipProperty = relationship(
         "TrainingPlan",
         cascade="all,delete-orphan",
         back_populates="customer"
@@ -47,14 +47,14 @@ class TrainingPlan(Base, BaseModel):
 
     start_date = Column("start_date", Date)
     end_date = Column("end_date", Date)
-    diets = relationship(
+    diets: RelationshipProperty = relationship(
         "Diet",
         secondary="dietontrainingplan",
         back_populates="training_plans"
     )
     customer_id = Column(UUID, ForeignKey("customer.id"), nullable=False)
-    customer = relationship("Customer", back_populates="training_plans")
-    trainings = relationship(
+    customer: RelationshipProperty = relationship("Customer", back_populates="training_plans")
+    trainings: RelationshipProperty = relationship(
         "Training",
         cascade="all,delete-orphan",
         back_populates="training_plan"

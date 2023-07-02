@@ -3,7 +3,7 @@ Auth models folder.
 """
 
 from sqlalchemy import Column, Enum, String, Date
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, RelationshipProperty
 
 from .. import Base
 from .. import BaseModel, Gender
@@ -21,7 +21,7 @@ class Coach(Base, BaseModel):
     first_name = Column("first_name", String(50), nullable=True)
     last_name = Column("last_name", String(50), nullable=True)
     gender: Column = Column("gender", Enum(Gender), nullable=True)
-    customers = relationship(
+    customers: RelationshipProperty = relationship(
         "Customer",
         cascade="all,delete-orphan",
         back_populates="coach"
@@ -29,7 +29,7 @@ class Coach(Base, BaseModel):
     email = Column("email", String(100), nullable=True)
     birthday = Column("birthday", Date, nullable=True)
     photo_path = Column("photo_path", String(255), nullable=True)
-    exercises = relationship(
+    exercises: RelationshipProperty = relationship(
         "Exercise",
         cascade="all,delete-orphan",
         back_populates="coach"
