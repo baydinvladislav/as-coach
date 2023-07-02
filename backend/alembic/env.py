@@ -71,13 +71,14 @@ def run_migrations_online() -> None:
     """
     async_engine = create_async_engine('postgresql+asyncpg://postgres:postgres@localhost:5432/as_coach_test')
 
-    with async_engine.begin() as connection:
+    async with async_engine.connect() as connection:
         context.configure(
             connection=connection, target_metadata=target_metadata
         )
 
-        with context.begin_transaction():
+        async with connection.begin() as transaction:
             context.run_migrations()
+            transaction.commit()
 
 
 if context.is_offline_mode():
