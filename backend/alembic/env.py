@@ -77,8 +77,7 @@ async def run_migrations_online() -> None:
         )
 
         async with connection.begin() as transaction:
-            context.run_migrations()
-            transaction.commit()
+            await context.run_migrations()
 
 
 if context.is_offline_mode():
