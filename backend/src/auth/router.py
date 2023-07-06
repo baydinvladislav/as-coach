@@ -70,7 +70,8 @@ async def register_user(
         select(Coach).where(Coach.username == user_data.username)
     )
 
-    if user.scalar() is not None:
+    user_instance = user.scalar()
+    if user_instance is not None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="User with this username already exist"
