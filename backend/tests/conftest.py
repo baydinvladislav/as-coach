@@ -2,8 +2,11 @@ import os
 import uuid
 from datetime import date, timedelta
 import pytest
+import pytest_asyncio
 
+from sqlalchemy import select
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 
 from src import engine
 from src.customer.models import Customer, TrainingPlan
@@ -23,7 +26,7 @@ TEST_CUSTOMER_FIRST_NAME = os.getenv("TEST_CUSTOMER_FIRST_NAME")
 TEST_CUSTOMER_LAST_NAME = os.getenv("TEST_CUSTOMER_LAST_NAME")
 TEST_CUSTOMER_USERNAME = os.getenv("TEST_CUSTOMER_USERNAME")
 
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+TestingSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 
 @pytest.fixture()
@@ -262,16 +265,16 @@ def create_customer(create_user, override_get_db):
         return test_user.customers[0]
 
 
-@pytest.fixture()
-def create_user(override_get_db):
+@pytest_asyncio.fixture()
+async def create_user(override_get_db):
     """
     Creates test user
     """
-    test_user = override_get_db.query(Coach).filter(
-        Coach.username == TEST_COACH_USERNAME
-    ).first()
+    test_user = await override_get_db.execute(
+        select(Coach).where(Coach.username == TEST_COACH_USERNAME)
+    )
 
-    if not test_user:
+    if test_user.scalar() is None:
         test_user = Coach(
             username=TEST_COACH_USERNAME,
             first_name=TEST_COACH_FIRST_NAME,
@@ -279,21 +282,22 @@ def create_user(override_get_db):
         )
 
         override_get_db.add(test_user)
-        override_get_db.commit()
+        await override_get_db.commit()
 
     return test_user
 
 
-@pytest.fixture()
-def override_get_db():
+@pytest_asyncio.fixture()
+async def override_get_db():
     """
     Creates session to testing db
     """
-    try:
-        db = TestingSessionLocal()
-        yield db
-    finally:
-        db.close()
+    async with TestingSessionLocal() as db:
+        try:
+            db = TestingSessionLocal()
+            yield db
+        finally:
+            await db.close()
 
 
 @app.on_event("startup")
