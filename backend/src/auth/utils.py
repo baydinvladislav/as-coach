@@ -33,7 +33,7 @@ def get_hashed_password(password: str) -> str:
     return password_context.hash(password)
 
 
-def verify_password(password: str, hashed_password: str) -> bool:
+async def verify_password(password: str, hashed_password: str) -> bool:
     """
     Checks that string is hashed string
 

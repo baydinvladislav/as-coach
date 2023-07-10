@@ -121,13 +121,22 @@ async def login(
             detail="Empty fields"
         )
 
-    coach = database.query(Coach).filter(Coach.username == form_data.username).first()
-    customer = database.query(Customer).filter(Customer.username == form_data.username).first()
+    coach = await database.execute(
+        select(Coach).where(Coach.username == form_data.username)
+    )
+    customer = await database.execute(
+        select(Customer).where(Customer.username == form_data.username)
+    )
 
-    if coach and auth_coach(coach, form_data.password):
-        user = coach
-    elif customer and auth_customer(customer, form_data.password):
-        user = customer
+    user_in_db = coach.scalar() or customer.scalar()
+
+    hashed_password = user_in_db.password
+    received_password = form_data.password
+
+    if isinstance(user_in_db, Coach) and await auth_coach(hashed_password, received_password):
+        current_user = user_in_db
+    elif isinstance(user_in_db, Customer) and await auth_customer(hashed_password, received_password):
+        current_user = user_in_db
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -135,12 +144,12 @@ async def login(
         )
 
     return {
-        "id": str(user.id),
+        "id": str(current_user.id),
         "user_type": "coach" if coach else "customer",
-        "first_name": user.first_name,
-        "access_token": create_access_token(str(user.username)),
-        "refresh_token": create_refresh_token(str(user.username)),
-        "password_changed": bool(password_context.identify(user.password))
+        "first_name": current_user.first_name,
+        "access_token": create_access_token(str(current_user.username)),
+        "refresh_token": create_refresh_token(str(current_user.username)),
+        "password_changed": bool(password_context.identify(current_user.password))
     }
 
 
