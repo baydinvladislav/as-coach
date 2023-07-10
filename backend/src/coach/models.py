@@ -38,4 +38,4 @@ class Coach(Base, BaseModel):
     # user = relationship("User", back_populates="coach")
 
     def __repr__(self):
-        return f"user: {self.username}"
+        return f"Coach: {self.username}"

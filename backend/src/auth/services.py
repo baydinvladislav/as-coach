@@ -1,23 +1,22 @@
 from fastapi import HTTPException
 from starlette import status
 
-from src import Coach, Customer
 from src.auth.utils import verify_password
 
 
-def auth_coach(coach: Coach, password: str) -> bool:
+async def auth_coach(hashed_password: str, passed_password: str) -> bool:
     """
     Coach authorization
 
     Args:
-        coach: coach SQLAlchemy obj
-        password: password from front-end
+        hashed_password: current hashed password
+        passed_password: password from client
     Raises:
         400 in case if coach exists but incorrect password was passed
     Returns:
         True in case successfully authorization
     """
-    if verify_password(password, str(coach.password)):
+    if await verify_password(passed_password, hashed_password):
         return True
     else:
         raise HTTPException(
@@ -26,21 +25,21 @@ def auth_coach(coach: Coach, password: str) -> bool:
         )
 
 
-def auth_customer(customer: Customer, password: str) -> bool:
+async def auth_customer(hashed_password: str, passed_password: str) -> bool:
     """
     Customer authorization.
     The customer can have a default password or a hashed password
 
     Args:
-        customer: customer SQLAlchemy obj
-        password: password from front-end
+        hashed_password: current hashed password
+        passed_password: password from client
     Raises:
         400 in case if coach exists but incorrect password was passed
     Returns:
         True in case successfully authorization
     """
-    if customer.password == password \
-            or verify_password(password, str(customer.password)):
+    if hashed_password == passed_password \
+            or await verify_password(passed_password, hashed_password):
         return True
     else:
         raise HTTPException(
