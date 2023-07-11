@@ -1,8 +1,6 @@
 import pytest
 from httpx import AsyncClient
 
-from src.auth.utils import get_hashed_password
-from src.coach.models import Coach
 from src.main import app
 from backend.tests.conftest import (
     TEST_COACH_FIRST_NAME,
@@ -11,25 +9,14 @@ from backend.tests.conftest import (
 )
 
 
-@pytest.mark.anyio
-async def test_login_successfully(override_get_db):
+@pytest.mark.asyncio
+async def test_login_successfully(create_user, override_get_db):
     """
-    Tests success user login
+    Tests success user login on /api/login
+    Checks tokens in the response
     """
-    user = override_get_db.query(Coach).filter(
-        Coach.username == TEST_COACH_USERNAME
-    ).first()
 
-    if not user:
-        user = Coach(
-            username=TEST_COACH_USERNAME,
-            first_name=TEST_COACH_FIRST_NAME,
-            password=get_hashed_password(TEST_COACH_PASSWORD)
-        )
-
-        override_get_db.add(user)
-        override_get_db.commit()
-
+    # test user is created by fixture
     login_data = {
         "username": TEST_COACH_USERNAME,
         "password": TEST_COACH_PASSWORD
@@ -44,12 +31,17 @@ async def test_login_successfully(override_get_db):
 
     assert response.status_code == 200
 
+    response = response.json()
+    assert "access_token" in response
+    assert "refresh_token" in response
 
-@pytest.mark.anyio
+
+@pytest.mark.asyncio
 async def test_login_failed():
     """
     Failed because user is not found
     """
+
     login_data = {
         "username": "username_do_not_exist",
         "first_name": TEST_COACH_FIRST_NAME,

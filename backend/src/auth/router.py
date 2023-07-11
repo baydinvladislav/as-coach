@@ -66,6 +66,7 @@ async def register_user(
         dictionary with just created user,
         id, first_name and username as keys
     """
+
     user = await database.execute(
         select(Coach).where(Coach.username == user_data.username)
     )
@@ -115,6 +116,7 @@ async def login(
     Returns:
         access_token and refresh_token inside dictionary
     """
+
     if not form_data.username or not form_data.password:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -130,27 +132,36 @@ async def login(
 
     user_in_db = coach.scalar() or customer.scalar()
 
-    hashed_password = user_in_db.password
-    received_password = form_data.password
+    if user_in_db is not None:
+        hashed_password = user_in_db.password
+        received_password = form_data.password
+        auth_services = {Coach: auth_coach, Customer: auth_customer}
 
-    if isinstance(user_in_db, Coach) and await auth_coach(hashed_password, received_password):
-        current_user = user_in_db
-    elif isinstance(user_in_db, Customer) and await auth_customer(hashed_password, received_password):
-        current_user = user_in_db
+        if isinstance(user_in_db, Coach):
+            service = auth_services[Coach]
+        else:
+            service = auth_services[Customer]
+
+        if await service(hashed_password, received_password):
+            return {
+                "id": str(user_in_db.id),
+                "user_type": "coach" if coach else "customer",
+                "first_name": user_in_db.first_name,
+                "access_token": create_access_token(str(user_in_db.username)),
+                "refresh_token": create_refresh_token(str(user_in_db.username)),
+                "password_changed": bool(password_context.identify(user_in_db.password))
+            }
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Error during authentication user_id: {user_in_db.id}"
+            )
+
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User is not found"
         )
-
-    return {
-        "id": str(current_user.id),
-        "user_type": "coach" if coach else "customer",
-        "first_name": current_user.first_name,
-        "access_token": create_access_token(str(current_user.username)),
-        "refresh_token": create_refresh_token(str(current_user.username)),
-        "password_changed": bool(password_context.identify(current_user.password))
-    }
 
 
 @auth_router.get(
@@ -169,6 +180,7 @@ async def get_me(
     Returns:
         dict: short info about current user
     """
+
     return {
         "id": str(user.id),
         "user_type": "coach" if isinstance(user, Coach) else "customer",
@@ -194,6 +206,7 @@ async def get_profile(
     Returns:
         dict: full info about current user
     """
+
     return {
         "id": str(user.id),
         "first_name": user.first_name,
@@ -241,6 +254,7 @@ async def update_profile(
     Returns:
         dictionary with updated full user info
     """
+
     if photo is not None:
         saving_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
         file_name = f"{user.username}_{saving_time}.jpeg"
@@ -305,6 +319,7 @@ async def confirm_password(
     Returns:
         success or failed response
     """
+
     if verify_password(current_password, str(user.password)):
         return {"confirmed_password": True}
 
@@ -332,6 +347,7 @@ async def change_password(
     Returns:
         success response
     """
+
     ex_password = user.password
     set_attribute(user, "password", get_hashed_password(new_password.password))
     database.commit()
