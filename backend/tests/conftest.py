@@ -19,6 +19,7 @@ from src.customer.utils import generate_random_password
 
 
 TEST_COACH_FIRST_NAME = os.getenv("TEST_COACH_FIRST_NAME")
+TEST_COACH_LAST_NAME = os.getenv("TEST_COACH_LAST_NAME")
 TEST_COACH_USERNAME = os.getenv("TEST_COACH_USERNAME")
 TEST_COACH_PASSWORD = os.getenv("TEST_COACH_PASSWORD")
 
@@ -280,6 +281,7 @@ async def create_user(override_get_db):
         test_user = Coach(
             username=TEST_COACH_USERNAME,
             first_name=TEST_COACH_FIRST_NAME,
+            last_name=TEST_COACH_LAST_NAME,
             password=get_hashed_password(TEST_COACH_PASSWORD)
         )
 

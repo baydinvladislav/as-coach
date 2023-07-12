@@ -71,7 +71,7 @@ async def create_access_token(subject: str) -> str:
     return encoded_jwt
 
 
-def create_refresh_token(subject: str) -> str:
+async def create_refresh_token(subject: str) -> str:
     """
     Creates refresh token
 
