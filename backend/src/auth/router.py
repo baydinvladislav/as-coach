@@ -16,7 +16,7 @@ from fastapi import (
     Form
 )
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.attributes import set_attribute
 from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
@@ -91,8 +91,8 @@ async def register_user(
         "id": str(user.id),
         "first_name": user.first_name,
         "username": user.username,
-        "access_token": create_access_token(str(user.username)),
-        "refresh_token": create_refresh_token(str(user.username))
+        "access_token": await create_access_token(str(user.username)),
+        "refresh_token": await create_refresh_token(str(user.username))
     }
 
 
@@ -147,8 +147,8 @@ async def login(
                 "id": str(user_in_db.id),
                 "user_type": "coach" if coach else "customer",
                 "first_name": user_in_db.first_name,
-                "access_token": create_access_token(str(user_in_db.username)),
-                "refresh_token": create_refresh_token(str(user_in_db.username)),
+                "access_token": await create_access_token(str(user_in_db.username)),
+                "refresh_token": await create_refresh_token(str(user_in_db.username)),
                 "password_changed": bool(password_context.identify(user_in_db.password))
             }
         else:
@@ -195,7 +195,8 @@ async def get_me(
     response_model=UserProfile,
     summary="Get user profile")
 async def get_profile(
-        user: Union[Coach, Customer] = Depends(get_current_user)) -> dict:
+        user: Union[Coach, Customer] = Depends(get_current_user)
+) -> dict:
     """
     Returns full info about user
     Endpoint can be used by both the coach and the customer
@@ -271,17 +272,22 @@ async def update_profile(
     else:
         user_class = Customer
 
-    database.query(user_class).filter(user_class.id == str(user.id)).update({
-        "first_name": first_name,
-        "username": username,
-        "last_name": last_name,
-        "gender": gender,
-        "birthday": birthday,
-        "email": email,
-    })
+    query = (
+        update(user_class)
+        .where(user_class.id == str(user.id))
+        .values(
+            first_name=first_name,
+            username=username,
+            last_name=last_name,
+            gender=gender,
+            birthday=birthday,
+            email=email
+        )
+    )
 
-    database.commit()
-    database.refresh(user)
+    await database.execute(query)
+    await database.commit()
+    await database.refresh(user)
 
     if user.photo_path:
         photo_link = user.photo_path.split('/code')[1]
