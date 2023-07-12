@@ -1,6 +1,6 @@
-![attachment01.png](..%2Fattachment01.png)
-![attachment02.png](..%2Fattachment02.png)
-![attachment03.png](..%2Fattachment03.png)
+![attachment01.png](assets/attachment01.png)
+![attachment02.png](assets/attachment02.png)
+![attachment03.png](assets/attachment03.png)
 
 <h2>Figma</h2>
 https://www.figma.com/file/l8H9Q4ZCd00mEOV9YPLDlP/Ascoach?type=design&node-id=30-16481&mode=design
