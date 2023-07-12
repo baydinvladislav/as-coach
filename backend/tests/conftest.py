@@ -274,7 +274,9 @@ async def create_user(override_get_db):
         select(Coach).where(Coach.username == TEST_COACH_USERNAME)
     )
 
-    if test_user.scalar() is None:
+    test_user = test_user.scalar()
+
+    if test_user is None:
         test_user = Coach(
             username=TEST_COACH_USERNAME,
             first_name=TEST_COACH_FIRST_NAME,
@@ -284,7 +286,7 @@ async def create_user(override_get_db):
         override_get_db.add(test_user)
         await override_get_db.commit()
 
-    return test_user
+    yield test_user
 
 
 @pytest_asyncio.fixture()

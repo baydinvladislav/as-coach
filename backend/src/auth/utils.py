@@ -54,7 +54,7 @@ async def verify_password(password: str, hashed_password: str) -> bool:
     return False
 
 
-def create_access_token(subject: str) -> str:
+async def create_access_token(subject: str) -> str:
     """
     Creates access token
 
@@ -88,7 +88,7 @@ def create_refresh_token(subject: str) -> str:
     return encoded_jwt
 
 
-def decode_jwt_token(token: str):
+async def decode_jwt_token(token: str):
     """
     Decodes given token
     """

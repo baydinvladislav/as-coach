@@ -6,7 +6,8 @@ during request to common API endpoints
 from typing import Union
 
 from fastapi import Depends, HTTPException, status
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 
 from src.customer.models import Customer
 from src.coach.models import Coach
@@ -17,8 +18,8 @@ from src.dependencies import get_db
 
 async def get_current_user(
         token: str = Depends(reuseable_oauth),
-        database: Session = Depends(get_db)
-) -> Union[Coach, Customer, None]:
+        database: AsyncSession = Depends(get_db)
+) -> Union[Coach, Customer]:
     """
     Provides current application user during request to common endpoints,
     if neither Coach nor Customer aren't found raises 404 error.
@@ -30,15 +31,22 @@ async def get_current_user(
     Return:
         user: represented Coach or Customer ORM model
     """
-    token_data = decode_jwt_token(token)
+    token_data = await decode_jwt_token(token)
     token_username = token_data.sub
-    coach = database.query(Coach).filter(Coach.username == token_username).first()
-    customer = database.query(Customer).filter(Customer.username == token_username).first()
 
-    if coach is None and customer is None:
+    coach = await database.execute(
+        select(Coach).where(Coach.username == token_username)
+    )
+    customer = await database.execute(
+        select(Customer).where(Customer.username == token_username)
+    )
+
+    user = coach.scalar() or customer.scalar()
+
+    if user is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Could not find any user"
         )
 
-    return coach or customer
+    return user
