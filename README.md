@@ -1,6 +1,6 @@
-![attachment01.png](assets/attachment01.png)
-![attachment02.png](assets/attachment02.png)
-![attachment03.png](assets/attachment03.png)
+<img src="assets/attachment01.png" alt="attachment01.png" width=50% height=50%>
+<img src="assets/attachment02.png" alt="attachment02.png" width=50% height=50%>
+<img src="assets/attachment03.png" alt="attachment03.png" width=50% height=50%>
 
 <h2>Figma</h2>
 https://www.figma.com/file/l8H9Q4ZCd00mEOV9YPLDlP/Ascoach?type=design&node-id=30-16481&mode=design
