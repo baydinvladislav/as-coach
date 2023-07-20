@@ -2,7 +2,15 @@
 Customer models.
 """
 
-from sqlalchemy import Column, Enum, String, ForeignKey, Date, Text, Integer
+from sqlalchemy import (
+    Column,
+    Enum,
+    String,
+    ForeignKey,
+    Date,
+    Text,
+    Integer
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship, RelationshipProperty
 
@@ -32,11 +40,9 @@ class Customer(Base, BaseModel):
     birthday = Column("birthday", Date, nullable=True)
     photo_path = Column("photo_path", String(255), nullable=True)
     email = Column("email", String(100), nullable=True)
-    
-    # user = relationship("User", back_populates="customer")
 
     def __repr__(self):
-        return f"customer: {self.last_name} {self.first_name}"
+        return f"Customer: {self.last_name} {self.first_name}"
 
 
 class TrainingPlan(Base, BaseModel):
@@ -52,7 +58,7 @@ class TrainingPlan(Base, BaseModel):
         secondary="dietontrainingplan",
         back_populates="training_plans"
     )
-    customer_id = Column(UUID, ForeignKey("customer.id"), nullable=False)
+    customer_id = Column(UUID, ForeignKey("customer.id", ondelete="CASCADE"))
     customer: RelationshipProperty = relationship("Customer", back_populates="training_plans")
     trainings: RelationshipProperty = relationship(
         "Training",
@@ -64,4 +70,4 @@ class TrainingPlan(Base, BaseModel):
     exercise_rest = Column("exercise_rest", Integer, default=120)
 
     def __repr__(self):
-        return f"training_plan:  {self.start_date} до {self.end_date}"
+        return f"Training_plan:  from {self.start_date} to {self.end_date}"

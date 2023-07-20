@@ -99,7 +99,7 @@ class Exercise(Base, BaseModel):
     muscle_group: RelationshipProperty = relationship("MuscleGroup", back_populates="exercises")
 
     def __repr__(self):
-        return f"exercise: {self.name}"
+        return f"Exercise: {self.name}"
 
 
 class ExercisesOnTraining(Base, BaseModel):
@@ -108,11 +108,11 @@ class ExercisesOnTraining(Base, BaseModel):
     """
     __tablename__ = "exercisesontraining"
 
-    training_id = Column(UUID, ForeignKey("training.id"), nullable=False)
-    exercise_id = Column(UUID, ForeignKey("exercise.id"), nullable=False)
+    training_id = Column(UUID, ForeignKey("training.id", ondelete="CASCADE"))
+    exercise_id = Column(UUID, ForeignKey("exercise.id", ondelete="CASCADE"))
     sets = Column("sets", JSON, default=[])
     superset_id = Column(UUID, nullable=True)
     ordering = Column("ordering", Integer, default=0)
 
     def __repr__(self):
-        return f"exercise on training: {self.id}"
+        return f"Exercise on training: {self.id}"
