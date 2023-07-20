@@ -6,6 +6,7 @@ during request to only for coach API endpoints
 from typing import Type
 
 from fastapi import Depends, HTTPException, status
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from src.coach.models import Coach
@@ -28,9 +29,14 @@ async def get_current_coach(
     Return:
         coach: Coach ORM obj or None if coach wasn't found
     """
-    token_data = decode_jwt_token(token)
+    token_data = await decode_jwt_token(token)
     token_username = token_data.sub
-    coach = database.query(Coach).filter(Coach.username == token_username).first()
+
+    coach = await database.execute(
+       select(Coach).where(Coach.username == token_username)
+    )
+
+    coach = coach.scalar()
 
     if not coach:
         raise HTTPException(

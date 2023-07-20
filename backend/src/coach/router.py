@@ -2,6 +2,7 @@ import uuid
 from typing import Union, Any, List
 
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -55,9 +56,10 @@ async def create_customer(
         id, first_name, last_name and phone_number are keys
     """
     if customer_data.phone_number:
-        customer = database.query(Customer).filter(
-            Customer.username == customer_data.phone_number
-        ).first()
+        customer = await database.execute(
+            select(Customer).where(Customer.username == customer_data.phone_number)
+        )
+        customer = customer.scalar()
 
         if customer is not None:
             raise HTTPException(
@@ -66,10 +68,14 @@ async def create_customer(
                        f"with this phone number already exists."
             )
 
-    if database.query(Customer).filter(
-        Customer.first_name == customer_data.first_name,
-        Customer.last_name == customer_data.last_name
-    ).first():
+    customer = await database.execute(
+        select(Customer).where(
+            Customer.first_name == customer_data.first_name,
+            Customer.last_name == customer_data.last_name
+        )
+    )
+    customer = customer.scalar()
+    if customer:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Customer full name: {customer_data.first_name} "
@@ -89,7 +95,7 @@ async def create_customer(
     #     send_sms()
 
     database.add(customer)
-    database.commit()
+    await database.commit()
 
     return {
         "id": str(customer.id),

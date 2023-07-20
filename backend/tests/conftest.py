@@ -241,14 +241,14 @@ def create_exercises(create_muscle_groups, override_get_db):
     return override_get_db.query(Exercise).all()
 
 
-@pytest.fixture()
-def create_customer(create_user, override_get_db):
+@pytest_asyncio.fixture()
+async def create_customer(create_user, override_get_db):
     """
     Creates test customer
     """
-    test_user = override_get_db.query(Coach).filter(
-        Coach.username == create_user.username
-    ).first()
+    test_user = await override_get_db.execute(
+        select(Coach).where(Coach.username == create_user.username)
+    ).scalar()
 
     if not test_user.customers:
         test_customer = Customer(
