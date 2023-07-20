@@ -55,7 +55,7 @@ jobs:
     - name: Apply migrations
       run: |
         cd backend
-        poetry run alembic init -t async migrations
+        poetry run alembic upgrade head
       env:
         DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
 

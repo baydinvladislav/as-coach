@@ -1,6 +1,8 @@
 from logging.config import fileConfig
 
 from alembic import context
+from sqlalchemy import engine_from_config
+from sqlalchemy.pool import NullPool
 from sqlalchemy.ext.asyncio import create_async_engine  # type: ignore
 
 
@@ -62,22 +64,26 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
-async def run_migrations_online() -> None:
+def run_migrations_online() -> None:
     """Run migrations in 'online' mode.
 
     In this scenario we need to create an Engine
     and associate a connection with the context.
 
     """
-    async_engine = create_async_engine('postgresql+asyncpg://postgres:postgres@localhost:5432/as_coach_test')
+    connectable = engine_from_config(
+        config.get_section(config.config_ini_section, {}),
+        prefix="sqlalchemy.",
+        poolclass=NullPool,
+    )
 
-    async with async_engine.connect() as connection:
+    with connectable.connect() as connection:
         context.configure(
             connection=connection, target_metadata=target_metadata
         )
 
-        async with connection.begin() as transaction:
-            await context.run_migrations()
+        with context.begin_transaction():
+            context.run_migrations()
 
 
 if context.is_offline_mode():
