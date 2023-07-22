@@ -30,7 +30,7 @@ class Customer(Base, BaseModel):
     first_name = Column("first_name", String(50), nullable=False)
     last_name = Column("last_name", String(50), nullable=False)
     gender: Column = Column("gender", Enum(Gender), nullable=True)
-    coach_id = Column(UUID, ForeignKey("coach.id"), nullable=False)
+    coach_id = Column(UUID(as_uuid=True), ForeignKey("coach.id", ondelete="CASCADE"))
     coach: RelationshipProperty = relationship("Coach", back_populates="customers")
     training_plans: RelationshipProperty = relationship(
         "TrainingPlan",
@@ -58,7 +58,7 @@ class TrainingPlan(Base, BaseModel):
         secondary="dietontrainingplan",
         back_populates="training_plans"
     )
-    customer_id = Column(UUID, ForeignKey("customer.id", ondelete="CASCADE"))
+    customer_id = Column(UUID(as_uuid=True), ForeignKey("customer.id", ondelete="CASCADE"))
     customer: RelationshipProperty = relationship("Customer", back_populates="training_plans")
     trainings: RelationshipProperty = relationship(
         "Training",

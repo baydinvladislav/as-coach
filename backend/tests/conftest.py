@@ -5,7 +5,7 @@ import pytest
 import pytest_asyncio
 
 from sqlalchemy import select
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, selectinload
 from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 
 from src import engine
@@ -126,9 +126,9 @@ def create_training_plans(create_user, create_customer, override_get_db):
     return override_get_db.query(TrainingPlan).all()
 
 
-@pytest.fixture()
-def create_muscle_groups(override_get_db):
-    muscle_groups = override_get_db.query(MuscleGroup).all()
+@pytest_asyncio.fixture()
+async def create_muscle_groups(override_get_db):
+    muscle_groups = await override_get_db.execute(select(MuscleGroup))
     if muscle_groups:
         return muscle_groups
 
@@ -148,9 +148,10 @@ def create_muscle_groups(override_get_db):
     return override_get_db.query(MuscleGroup).all()
 
 
-@pytest.fixture()
-def create_exercises(create_muscle_groups, override_get_db):
-    exercises = override_get_db.query(Exercise).all()
+@pytest_asyncio.fixture()
+async def create_exercises(create_muscle_groups, override_get_db):
+    exercises = await override_get_db.execute(select(Exercise))
+
     if exercises:
         return exercises
 
@@ -246,11 +247,13 @@ async def create_customer(create_user, override_get_db):
     """
     Creates test customer
     """
-    test_user = await override_get_db.execute(
-        select(Coach).where(Coach.username == create_user.username)
-    ).scalar()
 
-    if not test_user.customers:
+    test_user = await override_get_db.execute(
+        select(Coach).order_by(Coach.username).options(selectinload(Coach.customers))
+    )
+
+    test_user = test_user.scalars().first()
+    if test_user and not test_user.customers:
         test_customer = Customer(
             username=TEST_CUSTOMER_USERNAME,
             first_name=TEST_CUSTOMER_FIRST_NAME,
@@ -260,7 +263,7 @@ async def create_customer(create_user, override_get_db):
         )
 
         override_get_db.add(test_customer)
-        override_get_db.commit()
+        await override_get_db.commit()
         return test_customer
     else:
         return test_user.customers[0]
