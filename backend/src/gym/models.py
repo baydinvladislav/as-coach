@@ -35,8 +35,8 @@ class DietOnTrainingPlan(Base, BaseModel):
     """
     __tablename__ = "dietontrainingplan"
 
-    diet_id = Column(UUID, ForeignKey("diet.id"), nullable=False)
-    training_plan_id = Column(UUID, ForeignKey("trainingplan.id"), nullable=False)
+    diet_id = Column(UUID(as_uuid=True), ForeignKey("diet.id"), nullable=False)
+    training_plan_id = Column(UUID(as_uuid=True), ForeignKey("trainingplan.id"), nullable=False)
 
     def __repr__(self):
         return f"diet on training plan: {self.id}"
@@ -50,7 +50,7 @@ class Training(Base, BaseModel):
 
     name = Column("name", String(50), nullable=False)
     training_plan_id = Column(
-        UUID,
+        UUID(as_uuid=True),
         ForeignKey("trainingplan.id", ondelete="CASCADE"),
         nullable=False
     )
@@ -93,9 +93,9 @@ class Exercise(Base, BaseModel):
         secondary="exercisesontraining",
         back_populates="exercises"
     )
-    coach_id = Column(UUID, ForeignKey("coach.id"))
+    coach_id = Column(UUID(as_uuid=True), ForeignKey("coach.id"))
     coach: RelationshipProperty = relationship("Coach", back_populates="exercises")
-    muscle_group_id = Column(UUID, ForeignKey("musclegroup.id"), nullable=False)
+    muscle_group_id = Column(UUID(as_uuid=True), ForeignKey("musclegroup.id"), nullable=False)
     muscle_group: RelationshipProperty = relationship("MuscleGroup", back_populates="exercises")
 
     def __repr__(self):
@@ -108,10 +108,10 @@ class ExercisesOnTraining(Base, BaseModel):
     """
     __tablename__ = "exercisesontraining"
 
-    training_id = Column(UUID, ForeignKey("training.id", ondelete="CASCADE"))
-    exercise_id = Column(UUID, ForeignKey("exercise.id", ondelete="CASCADE"))
+    training_id = Column(UUID(as_uuid=True), ForeignKey("training.id", ondelete="CASCADE"))
+    exercise_id = Column(UUID(as_uuid=True), ForeignKey("exercise.id", ondelete="CASCADE"))
     sets = Column("sets", JSON, default=[])
-    superset_id = Column(UUID, nullable=True)
+    superset_id = Column(UUID(as_uuid=True), nullable=True)
     ordering = Column("ordering", Integer, default=0)
 
     def __repr__(self):
