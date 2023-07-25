@@ -35,8 +35,8 @@ class DietOnTrainingPlan(Base, BaseModel):
     """
     __tablename__ = "dietontrainingplan"
 
-    diet_id = Column(UUID(as_uuid=True), ForeignKey("diet.id"), nullable=False)
-    training_plan_id = Column(UUID(as_uuid=True), ForeignKey("trainingplan.id"), nullable=False)
+    diet_id = Column(UUID(as_uuid=True), ForeignKey("diet.id", ondelete="CASCADE"))
+    training_plan_id = Column(UUID(as_uuid=True), ForeignKey("trainingplan.id", ondelete="CASCADE"))
 
     def __repr__(self):
         return f"diet on training plan: {self.id}"
