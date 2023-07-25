@@ -1,9 +1,10 @@
 import uuid
+from datetime import datetime
 from typing import Union, Any, List
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from starlette import status
 
 from src import (
@@ -223,18 +224,19 @@ async def create_training_plan(
         database: dependency injection for access to database
         current_user: dependency injection to define a current user
     """
+
     try:
         # create training plan
         training_plan = TrainingPlan(
-            start_date=training_plan_data.start_date,
-            end_date=training_plan_data.end_date,
+            start_date=datetime.strptime(training_plan_data.start_date, '%Y-%m-%d').date(),
+            end_date=datetime.strptime(training_plan_data.end_date, '%Y-%m-%d').date(),
             customer_id=customer_id,
             set_rest=training_plan_data.set_rest,
             exercise_rest=training_plan_data.exercise_rest,
             notes=training_plan_data.notes
         )
         database.add(training_plan)
-        database.flush()
+        await database.flush()
 
         # create diets
         for diet_item in training_plan_data.diets:
@@ -244,7 +246,7 @@ async def create_training_plan(
                 carbs=diet_item.carbs
             )
             database.add(diet)
-            database.flush()
+            await database.flush()
 
             # bound diet with training_plan
             diet_on_training_plan = DietOnTrainingPlan(
@@ -260,7 +262,7 @@ async def create_training_plan(
                 training_plan_id=str(training_plan.id)
             )
             database.add(training)
-            database.flush()
+            await database.flush()
 
             # create exercises on training
             superset_dict = {}
@@ -282,27 +284,36 @@ async def create_training_plan(
                     ordering=ordering
                 )
                 database.add(exercise_on_training)
-                database.flush()
+                await database.flush()
                 ordering += 1
 
-        database.commit()
-        database.refresh(training_plan)
+        await database.commit()
+        await database.refresh(training_plan)
 
     except Exception as e:
-        database.rollback()
+        await database.rollback()
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Error during training plan creation: {e}"
         )
 
+    training_plan_in_db = await database.execute(
+        select(TrainingPlan).where(TrainingPlan.id == training_plan.id).order_by().options(
+            selectinload(TrainingPlan.customer),
+            selectinload(TrainingPlan.diets),
+            selectinload(TrainingPlan.trainings)
+        )
+    )
+    training_plan_in_db = training_plan_in_db.scalar()
+
     return {
-        "id": str(training_plan.id),
-        "start_date": training_plan.start_date,
-        "end_date": training_plan.end_date,
-        "number_of_trainings": len(training_plan.trainings),
-        "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
-        "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
-        "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets])
+        "id": str(training_plan_in_db.id),
+        "start_date": training_plan_in_db.start_date.strftime('%Y-%m-%d'),
+        "end_date": training_plan_in_db.end_date.strftime('%Y-%m-%d'),
+        "number_of_trainings": len(training_plan_in_db.trainings),
+        "proteins": "/".join([str(diet.proteins) for diet in training_plan_in_db.diets]),
+        "fats": "/".join([str(diet.fats) for diet in training_plan_in_db.diets]),
+        "carbs": "/".join([str(diet.carbs) for diet in training_plan_in_db.diets])
     }
 
 
