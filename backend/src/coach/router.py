@@ -388,6 +388,13 @@ async def get_training_plan(
     customer = await database.execute(
         select(Customer).where(Customer.id == customer_id)
     )
+
+    if not customer:
+        raise HTTPException(
+            status_code=404,
+            detail=f"customer with id={customer_id} doesn't exist"
+        )
+
     training_plan = await database.execute(
         select(TrainingPlan).where(
             TrainingPlan.id == training_plan_id
@@ -395,12 +402,6 @@ async def get_training_plan(
             selectinload(TrainingPlan.trainings)
         )
     )
-
-    if not customer:
-        raise HTTPException(
-            status_code=404,
-            detail=f"customer with id={customer_id} doesn't exist"
-        )
 
     if not training_plan:
         raise HTTPException(
@@ -453,7 +454,8 @@ async def get_training_plan(
 
     training_plan_in_db = await database.execute(
         select(TrainingPlan).where(TrainingPlan.id == str(training_plan.id)).options(
-            selectinload(TrainingPlan.diets)
+            selectinload(TrainingPlan.diets),
+            selectinload(TrainingPlan.trainings)
         )
     )
 

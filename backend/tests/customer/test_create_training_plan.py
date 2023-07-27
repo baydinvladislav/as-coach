@@ -184,10 +184,11 @@ async def test_get_training_plan_with_supersets(
     create_training_exercises,
     override_get_db
 ):
+
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
         auth_token = await create_access_token(create_customer.coach.username)
         response = await ac.get(
-            f"/api/customers/{create_customer.id}/training_plans/{create_training_plans.scalars().first().id}",
+            f"/api/customers/{create_customer.id}/training_plans/{create_training_plans[0].id}",
             headers={
                 "Authorization": f"Bearer {auth_token}"
             }
