@@ -177,7 +177,7 @@ async def test_create_training_plan_with_supersets_successfully(
         await override_get_db.commit()
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_get_training_plan_with_supersets(
     create_customer,
     create_training_plans,
@@ -185,9 +185,9 @@ async def test_get_training_plan_with_supersets(
     override_get_db
 ):
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_customer.coach.username)
+        auth_token = await create_access_token(create_customer.coach.username)
         response = await ac.get(
-            f"/api/customers/{create_customer.id}/training_plans/{create_training_plans[0].id}",
+            f"/api/customers/{create_customer.id}/training_plans/{create_training_plans.scalars().first().id}",
             headers={
                 "Authorization": f"Bearer {auth_token}"
             }
