@@ -384,8 +384,17 @@ async def get_training_plan(
     Raise:
         HTTPException: 404 when customer or training plan are not found
     """
-    customer = database.query(Customer).get(customer_id)
-    training_plan = database.query(TrainingPlan).get(training_plan_id)
+
+    customer = await database.execute(
+        select(Customer).where(Customer.id == customer_id)
+    )
+    training_plan = await database.execute(
+        select(TrainingPlan).where(
+            TrainingPlan.id == training_plan_id
+        ).options(
+            selectinload(TrainingPlan.trainings)
+        )
+    )
 
     if not customer:
         raise HTTPException(
@@ -400,24 +409,37 @@ async def get_training_plan(
         )
 
     trainings = []
+    training_plan = training_plan.scalar()
     for training in training_plan.trainings:
+        training_in_db = await database.execute(
+            select(Training).where(
+                Training.id == str(training.id)
+            ).options(
+                selectinload(Training.exercises)
+            )
+        )
+        training_in_db = training_in_db.scalar()
+
         training_data = {
-            "id": str(training.id),
-            "name": training.name,
-            "number_of_exercises": len(training.exercises)
+            "id": str(training_in_db.id),
+            "name": training_in_db.name,
+            "number_of_exercises": len(training_in_db.exercises)
         }
 
         exercises = []
-        for exercise in training.exercises:
+        for exercise in training_in_db.exercises:
             exercise_data = {
                 "id": str(exercise.id),
                 "name": exercise.name
             }
 
-            exercise_on_training = database.query(ExercisesOnTraining).filter(
-                ExercisesOnTraining.training_id == str(training.id),
-                ExercisesOnTraining.exercise_id == str(exercise.id)
-            ).first()
+            exercise_on_training = await database.execute(
+                select(ExercisesOnTraining).where(
+                    ExercisesOnTraining.training_id == str(training.id),
+                    ExercisesOnTraining.exercise_id == str(exercise.id)
+                )
+            )
+            exercise_on_training = exercise_on_training.scalar()
             if exercise_on_training:
                 exercise_data["sets"] = exercise_on_training.sets
                 exercise_data["superset_id"] = exercise_on_training.superset_id
@@ -429,13 +451,20 @@ async def get_training_plan(
 
         trainings.append(training_data)
 
+    training_plan_in_db = await database.execute(
+        select(TrainingPlan).where(TrainingPlan.id == str(training_plan.id)).options(
+            selectinload(TrainingPlan.diets)
+        )
+    )
+
+    training_plan_in_db = training_plan_in_db.scalar()
     return {
         "id": str(training_plan.id),
         "start_date": training_plan.start_date.strftime('%Y-%m-%d'),
         "end_date": training_plan.end_date.strftime('%Y-%m-%d'),
-        "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
-        "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
-        "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets]),
+        "proteins": "/".join([str(diet.proteins) for diet in training_plan_in_db.diets]),
+        "fats": "/".join([str(diet.fats) for diet in training_plan_in_db.diets]),
+        "carbs": "/".join([str(diet.carbs) for diet in training_plan_in_db.diets]),
         "trainings": trainings,
         "set_rest": training_plan.set_rest,
         "exercise_rest": training_plan.exercise_rest,

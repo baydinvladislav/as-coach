@@ -30,21 +30,21 @@ TEST_CUSTOMER_USERNAME = os.getenv("TEST_CUSTOMER_USERNAME")
 TestingSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 
-@pytest.fixture()
-def create_training_exercises(
+@pytest_asyncio.fixture()
+async def create_training_exercises(
         create_trainings,
         create_exercises,
         override_get_db
 ):
-    training_exercises = override_get_db.query(ExercisesOnTraining).all()
-    if training_exercises:
+    training_exercises = await override_get_db.execute(select(ExercisesOnTraining))
+    if training_exercises.scalar() is not None:
         return training_exercises
 
     training_exercises = []
     superset_id = uuid.uuid4()
-    for training in create_trainings:
+    for training in create_trainings.scalars():
         available_exercises = [
-            exercise for exercise in create_exercises
+            exercise for exercise in create_exercises.scalars()
             if exercise.muscle_group.name == training.name
         ]
         for exercise in available_exercises:
@@ -58,15 +58,15 @@ def create_training_exercises(
                 )
             )
 
-    override_get_db.bulk_save_objects(training_exercises)
-    override_get_db.commit()
+    override_get_db.add_all(training_exercises)
+    await override_get_db.commit()
 
-    return override_get_db.query(ExercisesOnTraining).all()
+    return await override_get_db.execute(select(ExercisesOnTraining))
 
 
-@pytest.fixture()
-def create_trainings(create_training_plans, override_get_db):
-    trainings = override_get_db.query(Training).all()
+@pytest_asyncio.fixture()
+async def create_trainings(create_training_plans, override_get_db):
+    trainings = await override_get_db.execute(select(Training))
     if trainings:
         return trainings
 
@@ -98,12 +98,12 @@ def create_trainings(create_training_plans, override_get_db):
     override_get_db.bulk_save_objects(trainings)
     override_get_db.commit()
 
-    return override_get_db.query(Training).all()
+    return await override_get_db.execute(select(Training))
 
 
-@pytest.fixture()
-def create_training_plans(create_user, create_customer, override_get_db):
-    training_plans = override_get_db.query(TrainingPlan).all()
+@pytest_asyncio.fixture()
+async def create_training_plans(create_user, create_customer, override_get_db):
+    training_plans = await override_get_db.execute(select(TrainingPlan))
     if training_plans:
         return training_plans
 
@@ -123,7 +123,7 @@ def create_training_plans(create_user, create_customer, override_get_db):
     override_get_db.bulk_save_objects(training_plans)
     override_get_db.commit()
 
-    return override_get_db.query(TrainingPlan).all()
+    return await override_get_db.execute(select(TrainingPlan))
 
 
 @pytest_asyncio.fixture()
@@ -145,7 +145,7 @@ async def create_muscle_groups(override_get_db):
     override_get_db.bulk_save_objects(muscle_groups)
     override_get_db.commit()
 
-    return override_get_db.query(MuscleGroup).all()
+    return await override_get_db.execute(select(MuscleGroup))
 
 
 @pytest_asyncio.fixture()
