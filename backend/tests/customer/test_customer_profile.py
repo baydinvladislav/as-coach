@@ -5,7 +5,7 @@ from src.main import app
 from src.auth.utils import create_access_token
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_customer_get_profile(create_customer, override_get_db):
     """
     Tests that customer can get profile on /api/profiles
@@ -23,7 +23,7 @@ async def test_customer_get_profile(create_customer, override_get_db):
     assert response.json()["user_type"] == "customer"
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_customer_update_profile(create_customer, override_get_db):
     """
     Tests that customer can update profile on /api/profiles

@@ -4,7 +4,7 @@ from httpx import AsyncClient
 from src.main import app
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_customer_login_successfully(create_customer):
     """
     Tests success customer login
