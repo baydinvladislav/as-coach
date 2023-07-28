@@ -202,3 +202,9 @@ async def test_get_training_plan_with_supersets(
         superset_ids_set.add(exercise["superset_id"])
 
     assert len(superset_ids_set) == 1
+
+    if response.status_code == 200:
+        await override_get_db.execute(
+            delete(TrainingPlan).where(TrainingPlan.id == str(create_training_plans[0].id))
+        )
+        await override_get_db.commit()
