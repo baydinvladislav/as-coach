@@ -36,7 +36,7 @@ async def create_training_exercises(
         create_exercises,
         override_get_db
 ):
-    query = select(Training)
+    query = select(ExercisesOnTraining)
 
     training_exercises = await override_get_db.execute(query)
     training_exercises_in_db = training_exercises.scalars().all()
@@ -45,9 +45,9 @@ async def create_training_exercises(
 
     training_exercises = []
     superset_id = uuid.uuid4()
-    for training in create_trainings.scalars():
+    for training in create_trainings:
         available_exercises = [
-            exercise for exercise in create_exercises.scalars()
+            exercise for exercise in create_exercises
             if exercise.muscle_group.name == training.name
         ]
         for exercise in available_exercises:
@@ -177,11 +177,21 @@ async def create_exercises(create_muscle_groups, override_get_db):
     if exercises_in_db:
         return exercises_in_db
 
-    chest = override_get_db.query(MuscleGroup).filter(MuscleGroup.name == "Грудь").first()
-    biceps = override_get_db.query(MuscleGroup).filter(MuscleGroup.name == "Бицепс").first()
-    back = override_get_db.query(MuscleGroup).filter(MuscleGroup.name == "Спина").first()
-    triceps = override_get_db.query(MuscleGroup).filter(MuscleGroup.name == "Трицепс").first()
-    legs = override_get_db.query(MuscleGroup).filter(MuscleGroup.name == "Ноги").first()
+    chest = await override_get_db.execute(select(MuscleGroup).where(MuscleGroup.name == "Грудь"))
+    chest = chest.scalar()
+
+    biceps = await override_get_db.execute(select(MuscleGroup).where(MuscleGroup.name == "Бицепс"))
+    biceps = biceps.scalar()
+
+    back = await override_get_db.execute(select(MuscleGroup).where(MuscleGroup.name == "Спина"))
+    back = back.scalar()
+
+    triceps = await override_get_db.execute(select(MuscleGroup).where(MuscleGroup.name == "Трицепс"))
+    triceps = triceps.scalar()
+
+    legs = await override_get_db.execute(select(MuscleGroup).where(MuscleGroup.name == "Ноги"))
+    legs = legs.scalar()
+
 
     exercises = (
         Exercise(
