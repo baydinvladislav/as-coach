@@ -6,7 +6,7 @@ from src.customer.models import Customer
 from src.auth.utils import create_access_token
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_get_customers(create_user, override_get_db):
     """
     Gets all user's customers
@@ -59,7 +59,7 @@ async def test_get_customers(create_user, override_get_db):
     override_get_db.commit()
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_get_specific_customer(create_user, override_get_db):
     """
     Gets specific customer
@@ -99,7 +99,7 @@ async def test_get_specific_customer(create_user, override_get_db):
     override_get_db.commit()
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_get_specific_customer_failed_not_valid_uuid(create_user, override_get_db):
     """
     Failed because client sent is not valid UUID

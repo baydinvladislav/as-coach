@@ -7,7 +7,7 @@ from src.main import app
 from src.auth.utils import create_access_token
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_get_all_training_plans(
         create_customer,
         create_exercises,
@@ -34,7 +34,7 @@ async def test_get_all_training_plans(
     assert first_date_end > last_date_end
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_get_specified_training_plan(
         create_customer,
         create_exercises,

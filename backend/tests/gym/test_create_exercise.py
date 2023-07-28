@@ -7,7 +7,7 @@ from src.gym.models import MuscleGroup, Exercise
 from src.auth.utils import create_access_token
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_create_exercise_successfully(
     create_user,
     create_customer,

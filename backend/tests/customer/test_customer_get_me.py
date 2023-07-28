@@ -5,7 +5,7 @@ from src.main import app
 from src.auth.utils import create_access_token
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_customer_get_me(create_customer, override_get_db):
     """
     Tests that customer can get response from /api/me
