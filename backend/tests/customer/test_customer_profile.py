@@ -11,7 +11,7 @@ async def test_customer_get_profile(create_customer, override_get_db):
     Tests that customer can get profile on /api/profiles
     """
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_customer.username)
+        auth_token = await create_access_token(create_customer.username)
         response = await ac.get(
             "/api/profiles",
             headers={
@@ -36,7 +36,7 @@ async def test_customer_update_profile(create_customer, override_get_db):
     }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_customer.username)
+        auth_token = await create_access_token(create_customer.username)
         response = await ac.post(
             "/api/profiles",
             data=updated_profile,

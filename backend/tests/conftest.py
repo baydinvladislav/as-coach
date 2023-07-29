@@ -1,7 +1,6 @@
 import os
 import uuid
 from datetime import date, timedelta
-import pytest
 import pytest_asyncio
 
 from sqlalchemy import select

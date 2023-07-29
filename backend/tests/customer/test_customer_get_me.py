@@ -11,7 +11,7 @@ async def test_customer_get_me(create_customer, override_get_db):
     Tests that customer can get response from /api/me
     """
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_customer.username)
+        auth_token = await create_access_token(create_customer.username)
         response = await ac.get(
             "/api/me",
             headers={
