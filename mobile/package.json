@@ -8,7 +8,8 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "bundle:ios": "react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios"
   },
   "dependencies": {
     "@react-native-menu/menu": "0.7.3",
@@ -30,6 +31,7 @@
     "react-native-anchor-point": "1.0.6",
     "react-native-avoid-softinput": "3.1.5",
     "react-native-calendars": "1.1295.0",
+    "react-native-config": "^1.5.1",
     "react-native-confirmation-code-field": "7.3.1",
     "react-native-draggable-flatlist": "4.0.1",
     "react-native-gesture-handler": "2.4.2",

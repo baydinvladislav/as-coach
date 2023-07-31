@@ -21,6 +21,8 @@ target 'ReactNative' do
 
   pod 'react-native-mmkv', :path => '../node_modules/react-native-mmkv'
 
+  pod 'react-native-config', :path => '../node_modules/react-native-config'
+
   target 'ReactNativeTests' do
     inherit! :complete
     # Pods for testing
