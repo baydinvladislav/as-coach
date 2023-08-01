@@ -1,6 +1,7 @@
 import pytest
 
 from httpx import AsyncClient
+from sqlalchemy import select
 
 from src.main import app
 from src.gym.models import Exercise
@@ -17,7 +18,7 @@ async def test_get_all_exercises(
     Check list of all exercises
     """
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_user.username)
+        auth_token = await create_access_token(create_user.username)
         response = await ac.get(
             f"/api/exercises",
             headers={
@@ -27,7 +28,12 @@ async def test_get_all_exercises(
 
     assert response.status_code == 200
 
+    available_coach_ids = {create_user.id, None}
     for exercise in response.json():
-        exercise_in_db = override_get_db.query(Exercise).get(exercise["id"])
+        exercise_in_db = await override_get_db.execute(
+            select(Exercise).where(
+                Exercise.id == exercise["id"]
+            )
+        )
         # return only user's and common exercises
-        assert exercise_in_db.coach_id in {create_user.id, None}
+        assert exercise_in_db.scalar().coach_id in available_coach_ids

@@ -3,8 +3,8 @@ Gym routing
 """
 
 from fastapi import APIRouter, Depends, status
-from sqlalchemy import or_
-from sqlalchemy.orm import Session
+from sqlalchemy import select, or_
+from sqlalchemy.orm import Session, selectinload
 
 from src.coach.dependencies import get_current_coach
 from src.dependencies import get_db
@@ -68,12 +68,19 @@ async def get_exercises(
     Returns:
         list of exercises
     """
-    exercises = database.query(Exercise).filter(
-        or_(Exercise.coach_id.is_(None), Exercise.coach_id == str(current_user.id))
-    ).all()
+    exercises = await database.execute(
+        select(Exercise).where(
+            or_(
+                Exercise.coach_id.is_(None),
+                Exercise.coach_id == str(current_user.id)
+            )
+        ).options(
+            selectinload(Exercise.muscle_group)
+        )
+    )
 
     response = []
-    for exercise in exercises:
+    for exercise in exercises.scalars():
         response.append({
             "id": str(exercise.id),
             "name": exercise.name,
