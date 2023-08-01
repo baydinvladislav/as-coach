@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Union, Any, List
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from sqlalchemy.orm import Session, selectinload
 from starlette import status
 
@@ -337,19 +337,29 @@ async def get_all_training_plans(
         database: dependency injection for access to database
         current_user: dependency injection to define a current user
     """
-    customer = database.query(Customer).get(customer_id)
+    customer = await database.execute(
+        select(Customer).where(Customer.id == customer_id)
+    )
+    customer = customer.scalar()
     if not customer:
         raise HTTPException(
             status_code=404,
             detail=f"customer with id={customer_id} doesn't exist"
         )
 
-    training_plans = database.query(TrainingPlan).filter(
-        TrainingPlan.customer_id == customer_id
-    ).order_by(TrainingPlan.end_date.desc())
+    training_plans = await database.execute(
+        select(TrainingPlan).where(
+            TrainingPlan.customer_id == customer_id
+        ).options(
+            selectinload(TrainingPlan.trainings),
+            selectinload(TrainingPlan.diets),
+        ).order_by(
+            desc(TrainingPlan.end_date)
+        )
+    )
 
     response = []
-    for training_plan in training_plans:
+    for training_plan in training_plans.scalars():
         response.append({
             "id": str(training_plan.id),
             "start_date": training_plan.start_date.strftime('%Y-%m-%d'),
@@ -455,7 +465,9 @@ async def get_training_plan(
         trainings.append(training_data)
 
     training_plan_in_db = await database.execute(
-        select(TrainingPlan).where(TrainingPlan.id == str(training_plan.id)).options(
+        select(TrainingPlan).where(
+            TrainingPlan.id == str(training_plan.id)
+        ).options(
             selectinload(TrainingPlan.diets),
             selectinload(TrainingPlan.trainings)
         )
