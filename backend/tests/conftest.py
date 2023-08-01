@@ -191,7 +191,6 @@ async def create_exercises(create_muscle_groups, override_get_db):
     legs = await override_get_db.execute(select(MuscleGroup).where(MuscleGroup.name == "Ноги"))
     legs = legs.scalar()
 
-
     exercises = (
         Exercise(
             name='Жим штанги лежа',
@@ -292,12 +291,18 @@ async def create_customer(create_user, override_get_db):
             first_name=TEST_CUSTOMER_FIRST_NAME,
             last_name=TEST_CUSTOMER_LAST_NAME,
             password=generate_random_password(8),
-            coach_id=str(create_user.id)
+            coach=create_user
         )
 
         override_get_db.add(test_customer)
         await override_get_db.commit()
-        return test_customer
+
+        result = await override_get_db.execute(
+            select(Customer).where(Customer.id == str(test_customer.id)).options(
+                selectinload(Customer.coach)
+            )
+        )
+        return result.scalar()
     else:
         return test_user.customers[0]
 
