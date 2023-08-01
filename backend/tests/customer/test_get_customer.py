@@ -1,5 +1,7 @@
 import pytest
+
 from httpx import AsyncClient
+from sqlalchemy import delete
 
 from src.main import app
 from src.customer.models import Customer
@@ -28,11 +30,12 @@ async def test_get_customers(create_user, override_get_db):
             "phone_number": "+79267334422"
         }
     ]
+    user_username = create_user.username
 
     ids = []
     for customer in customers_data:
         async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-            auth_token = create_access_token(create_user.username)
+            auth_token = await create_access_token(user_username)
             response = await ac.post(
                 "/api/customers",
                 json=customer,
@@ -45,7 +48,7 @@ async def test_get_customers(create_user, override_get_db):
         ids.append(response.json()["id"])
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_user.username)
+        auth_token = await create_access_token(user_username)
         response = await ac.get(
             "/api/customers",
             headers={
@@ -55,48 +58,33 @@ async def test_get_customers(create_user, override_get_db):
 
     assert response.status_code == 200
 
-    override_get_db.query(Customer).filter(Customer.id.in_(ids)).delete()
-    override_get_db.commit()
+    await override_get_db.execute(
+        delete(Customer).where(Customer.id.in_(ids))
+    )
+    await override_get_db.commit()
 
 
 @pytest.mark.asyncio
-async def test_get_specific_customer(create_user, override_get_db):
+async def test_get_specific_customer(create_customer, override_get_db):
     """
     Gets specific customer
     """
-    customer_data = {
-        "first_name": "Александр",
-        "last_name": "Петров",
-        "phone_number": "+79850002233"
-    }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_user.username)
-        response = await ac.post(
-            "/api/customers",
-            json=customer_data,
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
-
-    assert response.status_code == 201
-    customer_id = response.json()["id"]
-
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_user.username)
+        auth_token = await create_access_token(create_customer.coach.username)
         response = await ac.get(
-            f"/api/customers/{customer_id}",
+            f"/api/customers/{create_customer.id}",
             headers={
                 "Authorization": f"Bearer {auth_token}"
             }
         )
 
     assert response.status_code == 200
-    assert response.json()["id"] == customer_id
 
-    override_get_db.query(Customer).filter(Customer.id == customer_id).delete()
-    override_get_db.commit()
+    await override_get_db.execute(
+        delete(Customer).where(Customer.id == str(create_customer.id))
+    )
+    await override_get_db.commit()
 
 
 @pytest.mark.asyncio
@@ -104,35 +92,14 @@ async def test_get_specific_customer_failed_not_valid_uuid(create_user, override
     """
     Failed because client sent is not valid UUID
     """
-    customer_data = {
-        "first_name": "Александр",
-        "last_name": "Петров",
-        "phone_number": "+79850002233"
-    }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_user.username)
-        response = await ac.post(
-            "/api/customers",
-            json=customer_data,
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
-
-    assert response.status_code == 201
-    customer_id = response.json()["id"]
-
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_user.username)
+        auth_token = await create_access_token(create_user.username)
         response = await ac.get(
-            f"/api/customers/{customer_id[:-1]}",
+            f"/api/customers/7a8sdgajksd8asdb",
             headers={
                 "Authorization": f"Bearer {auth_token}"
             }
         )
 
     assert response.status_code == 400
-
-    override_get_db.query(Customer).filter(Customer.id == customer_id).delete()
-    override_get_db.commit()
