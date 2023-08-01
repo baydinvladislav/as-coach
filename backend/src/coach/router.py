@@ -126,8 +126,7 @@ async def get_customers(
     customers = []
 
     for customer in current_user.customers:
-        training_plans = sorted(customer.training_plans,
-                                key=lambda x: x.end_date, reverse=True)
+        training_plans = sorted(customer.training_plans, key=lambda x: x.end_date, reverse=True)
         if training_plans:
             last_plan_end_date = training_plans[0].end_date.strftime(
                 '%Y-%m-%d')
@@ -173,15 +172,13 @@ async def get_customer(
             detail="Passed customer_id is not correct UUID value"
         )
 
-    customer = database.query(Customer).filter(
-        Customer.id == customer_id
-    ).first()
-
-    if not customer:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Customer with id {customer_id} not found"
+    customer = await database.execute(
+        select(Customer).where(Customer.id == customer_id).options(
+            selectinload(Customer.training_plans)
         )
+    )
+
+    customer = customer.scalar()
 
     if str(customer.coach_id) != str(current_user.id):
         raise HTTPException(
@@ -189,8 +186,13 @@ async def get_customer(
             detail="The client belong to another coach"
         )
 
-    training_plans = sorted(customer.training_plans,
-                            key=lambda x: x.end_date, reverse=True)
+    if not customer:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Customer with id {customer_id} not found"
+        )
+
+    training_plans = sorted(customer.training_plans, key=lambda x: x.end_date, reverse=True)
     if training_plans:
         last_plan_end_date = training_plans[0].end_date.strftime('%Y-%m-%d')
     else:

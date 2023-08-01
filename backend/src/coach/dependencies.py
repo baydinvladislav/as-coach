@@ -7,7 +7,7 @@ from typing import Type
 
 from fastapi import Depends, HTTPException, status
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from src.coach.models import Coach
 from src.dependencies import get_db
@@ -29,13 +29,15 @@ async def get_current_coach(
     Return:
         coach: Coach ORM obj or None if coach wasn't found
     """
+
     token_data = await decode_jwt_token(token)
     token_username = token_data.sub
 
     coach = await database.execute(
-       select(Coach).where(Coach.username == token_username)
+        select(Coach).where(Coach.username == token_username).options(
+            selectinload(Coach.customers).subqueryload('training_plans')
+        )
     )
-
     coach = coach.scalar()
 
     if not coach:
