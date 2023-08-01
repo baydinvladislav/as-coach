@@ -2,7 +2,7 @@
 Gym routing
 """
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select, or_
 from sqlalchemy.orm import Session, selectinload
 
@@ -35,18 +35,29 @@ async def create_exercise(
     Returns:
         dictionary with just created exercise id, name, muscle_group's name as keys
     """
+    muscle_group = await database.execute(
+        select(MuscleGroup).where(MuscleGroup.id == exercise_data.muscle_group_id)
+    )
+
+    muscle_group = muscle_group.scalar()
+    if not muscle_group:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Muscle group with id={exercise_data.muscle_group_id} not found"
+        )
+
     exercise = Exercise(
         name=exercise_data.name,
-        muscle_group_id=exercise_data.muscle_group_id,
+        muscle_group=muscle_group,
         coach_id=str(current_user.id)
     )
 
     database.add(exercise)
-    database.commit()
+    await database.commit()
 
     return {
         "id": str(exercise.id),
-        "muscle_group": exercise.muscle_group.name,
+        "muscle_group": muscle_group.name,
         "name": exercise.name
     }
 
