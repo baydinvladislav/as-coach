@@ -34,6 +34,13 @@ from src import (
 
 target_metadata = Base.metadata
 
+from src.config import DATABASE_URL, TEST_ENV, TEST_DATABASE_URL
+
+if TEST_ENV:
+    config.set_main_option('sqlalchemy.url', TEST_DATABASE_URL)
+else:
+    config.set_main_option('sqlalchemy.url', DATABASE_URL)
+
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
