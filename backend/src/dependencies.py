@@ -2,10 +2,12 @@
 Common dependencies for application
 """
 
+from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
+
 from src.database import SessionLocal
 
 
-async def get_db():
+async def get_db() -> AsyncSession:
     """
     Creates new database session.
     """

@@ -1,8 +1,8 @@
 """init squashed migration
 
-Revision ID: bca8c168a8a6
+Revision ID: 7ca6bc8f8e69
 Revises: 
-Create Date: 2023-08-03 09:26:23.068190
+Create Date: 2023-08-03 10:23:18.069270
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = 'bca8c168a8a6'
+revision = '7ca6bc8f8e69'
 down_revision = None
 branch_labels = None
 depends_on = None
