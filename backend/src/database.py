@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 from .config import DATABASE_URL, TEST_ENV
 
 
-if bool(TEST_ENV):
+if TEST_ENV == "active":
     load_dotenv()
     TEST_DATABASE_URL = os.environ.get("TEST_DATABASE_URL")
     engine = create_async_engine(
