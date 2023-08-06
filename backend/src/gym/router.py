@@ -119,10 +119,9 @@ async def get_muscle_groups(
     Returns:
         list of muscle groups
     """
-    muscle_groups = database.query(MuscleGroup).all()
-
+    muscle_groups = await database.execute(select(MuscleGroup))
     response = []
-    for muscle_group in muscle_groups:
+    for muscle_group in muscle_groups.scalars():
         response.append({
             "id": str(muscle_group.id),
             "name": muscle_group.name
