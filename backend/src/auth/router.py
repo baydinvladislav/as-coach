@@ -217,7 +217,7 @@ async def get_profile(
         "birthday": user.birthday,
         "email": user.email,
         "username": user.username,
-        "photo_link": user.photo_path.split('/code')[1] if user.photo_path else None
+        "photo_link": user.photo_path.split('/backend')[1] if user.photo_path else None
     }
 
 
@@ -290,7 +290,7 @@ async def update_profile(
     await database.refresh(user)
 
     if user.photo_path:
-        photo_link = user.photo_path.split('/code')[1]
+        photo_link = user.photo_path.split('/backend')[1]
     else:
         photo_link = None
 
