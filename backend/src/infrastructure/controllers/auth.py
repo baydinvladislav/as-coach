@@ -24,7 +24,7 @@ from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 from src.auth.dependencies import get_current_user
 from src.dependencies import get_db
 from src.models import Gender
-from src.auth.schemas import (
+from src.infrastructure.schemas.auth import (
     UserProfile,
     NewUserPassword,
     LoginResponse,

@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session, selectinload
 from src.coach.dependencies import get_current_coach
 from src.dependencies import get_db
 from src.gym.models import Exercise, MuscleGroup
-from src.gym.schemas import ExerciseCreateIn, ExerciseCreateOut
+from src.infrastructure.schemas.training_plan import ExerciseCreateIn, ExerciseCreateOut
 from src.coach.models import Coach
 
 gym_router = APIRouter()
