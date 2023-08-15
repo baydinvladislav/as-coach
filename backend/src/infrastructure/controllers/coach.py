@@ -18,8 +18,8 @@ from src import (
 )
 from src.auth.dependencies import get_current_user
 from src.coach.dependencies import get_current_coach
-from src.customer.router import customer_router
-from src.customer.schemas import (
+from src.infrastructure.controllers.customer import customer_router
+from src.infrastructure.schemas.customer import (
     CustomerOut,
     CustomerCreateIn,
     TrainingPlanOut,
