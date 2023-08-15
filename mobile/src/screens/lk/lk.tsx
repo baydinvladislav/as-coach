@@ -34,11 +34,11 @@ export const LkScreen = observer(() => {
     useCallback(() => {
       if (isClient) {
         customer.getCustomerPlanById(user.me.id).then(plans => {
-          setData({ ...data, plans });
+          setData({ id: user.me.id, plans });
         });
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []),
+    }, [isClient]),
   );
 
   const handleNavigateProfileScreen = () => {

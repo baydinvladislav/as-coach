@@ -23,7 +23,7 @@ export enum ButtonType {
 
 export enum UserType {
   COACH = 'coach',
-  CLIENT = 'client',
+  CLIENT = 'customer',
 }
 
 export enum ExerciseCardType {
@@ -75,7 +75,7 @@ export type TPropsExercise = {
 
 export type TPropsExercises = {
   id: string;
-  name?: string;
+  name: string;
   sets: (number | string)[];
   supersets?: string[];
   superset_id?: string;

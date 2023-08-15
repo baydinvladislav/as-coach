@@ -14,12 +14,11 @@ type TProps = {
 };
 
 export const ExerciseWithSupersetSimple = ({ exercises }: TProps) => {
-  const { customer } = useStore();
   const isFromServer = exercises[0].superset_id !== undefined;
   return (
     <>
       {exercises.map((exercise, key, arr) => {
-        const { name } = customer.getExerciseById(exercise.id);
+        const name = exercise.name;
         const supersets = exercise.supersets;
 
         const isFirstInSuperset =
