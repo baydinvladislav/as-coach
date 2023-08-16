@@ -14,13 +14,12 @@ import {
   UserEditIcon,
 } from '@assets';
 import { ProfileListItem } from '@components';
-import { TOP_PADDING } from '@constants';
+import { BASE_URL, TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
 import { Switch, Text } from '@ui';
-import { makeAvatarLink } from '@utils';
 
 import { FontSize } from '~types';
 
@@ -92,7 +91,7 @@ export const ProfileScreen = observer(() => {
       <Avatar
         source={
           user.me.photo_link
-            ? { uri: makeAvatarLink(user.me.photo_link) }
+            ? { uri: BASE_URL + user.me.photo_link }
             : DefaultAvatarImage
         }
       />
