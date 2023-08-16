@@ -6,6 +6,8 @@ export * from './mask';
 export * from './regexp';
 export * from './date';
 
+export const BASE_URL = Config.BASE_URL;
+
 export const API_URL_IOS = Config.API_URL;
 export const API_URL_ANDROID = Config.API_URL;
 
