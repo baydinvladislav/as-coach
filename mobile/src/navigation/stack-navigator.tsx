@@ -23,12 +23,15 @@ import {
 } from '@screens';
 import { storage } from '@utils';
 
+import { UserType } from '~types';
+
 export const Stack = createStackNavigator();
 
 export const StackNavigator = observer(() => {
   const { user, customer } = useStore();
 
   const isGuest = !user.hasAccess; // меняем !user.hasAccess на !!!user.hasAccess для разработки. Чтобы открывался сразу лк
+  const isCoach = user.me.user_type === UserType.COACH;
 
   useEffect(() => {
     const getToken = storage.getItem(TOKEN);
@@ -36,7 +39,7 @@ export const StackNavigator = observer(() => {
       token && user.getMe();
     });
 
-    if (!isGuest) {
+    if (isCoach) {
       customer.getExercises();
       user.getMuscleGroups();
     }
