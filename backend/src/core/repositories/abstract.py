@@ -1,5 +1,5 @@
 """
-
+Project repositories interface
 """
 
 from abc import ABC, abstractmethod
