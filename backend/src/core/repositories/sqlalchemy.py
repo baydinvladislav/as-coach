@@ -23,11 +23,17 @@ class SQLAlchemyRepository(AbstractRepository):
         Args:
             :params: unknown pairs of attributes and values for new instance
         """
+        invalid_attrs = [attribute for attribute, value in params.items() if attribute not in self.model.__dict__]
+        if invalid_attrs:
+            raise AttributeError(
+                f"Passed invalid column to create new object of {self.model}\n"
+                f"Columns do not exist: " + ", ".join(invalid_attrs)
+            )
 
         new_instance = self.model(**params)
         self.session.add(new_instance)
         await self.session.commit()
-        # or yield?
+
         return new_instance
 
     async def get(self, pk):
