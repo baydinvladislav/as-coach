@@ -5,6 +5,7 @@ Class for interacting with storage through SQLAlchemy interlayer
 from sqlalchemy import select, and_
 
 from src.core.repositories.abstract import AbstractRepository
+from src.utils import validate_uuid
 
 
 class SQLAlchemyRepository(AbstractRepository):
@@ -40,18 +41,21 @@ class SQLAlchemyRepository(AbstractRepository):
         """
         Returns instance by their primary key
         """
+        # TODO: await
+        if not validate_uuid(pk):
+            raise TypeError("Argument is not valid UUID")
 
         instance = await self.session.get(self.model, pk)
         return instance
 
     async def get_all(self):
         """
-        Returns instances from tables
+        Returns all instances from tables
         """
 
         query = select(self.model)
         instances = await self.session.execute(query)
-        return instances
+        return instances.scalars().all()
 
     async def filter(self, **params):
         """

@@ -6,6 +6,7 @@ import pytest
 
 from src.core.repositories.sqlalchemy import SQLAlchemyRepository
 from src.coach.models import Coach
+from src.gym.models import Exercise
 from src.customer.utils import generate_random_password
 
 
@@ -49,3 +50,30 @@ async def test_create_method_raise_attribute_error(override_get_db):
     }
     with pytest.raises(AttributeError):
         await repo.create(**coach_data)
+
+
+@pytest.mark.asyncio
+async def test_get_method(create_customer, override_get_db):
+    """
+    Tests the successful receiving of the object
+    """
+
+    repo = SQLAlchemyRepository(model=Coach, session=override_get_db)
+
+    customer = create_customer
+    result = await repo.get(pk=str(customer.coach.id))
+
+    assert isinstance(result, Coach)
+
+
+@pytest.mark.asyncio
+async def test_get_all_method(create_customer, override_get_db):
+    """
+    Tests the successful receiving of the object
+    """
+
+    repo = SQLAlchemyRepository(model=Exercise, session=override_get_db)
+
+    result = await repo.get_all()
+
+    assert all(list(map(lambda x: isinstance(x, Exercise), result)))
