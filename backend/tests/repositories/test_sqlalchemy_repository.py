@@ -4,6 +4,8 @@ Tests SQLAlchemy repository
 
 import pytest
 
+from sqlalchemy import delete
+
 from src.core.repositories.sqlalchemy import SQLAlchemyRepository
 from src.coach.models import Coach
 from src.gym.models import Exercise
@@ -32,6 +34,11 @@ async def test_create_method_positive(override_get_db):
     assert coach.password is not None
     assert coach.username == coach_data["username"]
     assert coach.first_name == coach_data["first_name"]
+
+    await override_get_db.execute(
+        delete(Coach).where(Coach.username == coach_data["username"])
+    )
+    await override_get_db.commit()
 
 
 @pytest.mark.asyncio
