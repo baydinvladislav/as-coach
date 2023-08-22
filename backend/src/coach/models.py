@@ -14,7 +14,7 @@ class Coach(Base, BaseModel):
     Application user model.
     """
     __tablename__ = "coach"
-    __table_args__ = {'extend_existing': True}
+    __table_args__ = {"extend_existing": True}
 
     username = Column("username", String(100), nullable=False)
     password = Column("password", String, nullable=False)
