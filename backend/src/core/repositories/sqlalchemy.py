@@ -2,7 +2,7 @@
 Class for interacting with storage through SQLAlchemy interlayer
 """
 
-from sqlalchemy import select, and_
+from sqlalchemy import select
 
 from src.core.repositories.abstract import AbstractRepository
 from src.utils import validate_uuid
@@ -57,26 +57,20 @@ class SQLAlchemyRepository(AbstractRepository):
         instances = await self.session.execute(query)
         return instances.scalars().all()
 
-    async def filter(self, **params):
+    async def filter(self, attribute_name, value):
         """
         Forms selection by passed params
 
         Args:
             :params: unknown pairs of attributes and values for selection
         """
+        attribute = getattr(self.model, attribute_name)
+        if not attribute_name:
+            raise
 
-        query = select(self.model)
-        filters = []
+        result = await self.session.execute(
+            select(self.model).where(attribute == value)
+        )
 
-        for field, value in params.items():
-            if hasattr(self.model, field):
-                filters.append(getattr(self.model, field) == value)
-            # raise error if field doesn't exist
-
-        if filters:
-            query = query.where(and_(*filters))
-
-        result = await self.session.execute(query)
-        instances = result.fetchall()
-
+        instances = result.scalars().all()
         return instances

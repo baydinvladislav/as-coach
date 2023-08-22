@@ -67,9 +67,9 @@ async def test_get_method(create_customer, override_get_db):
 
 
 @pytest.mark.asyncio
-async def test_get_all_method(create_customer, override_get_db):
+async def test_get_all_method(override_get_db):
     """
-    Tests the successful receiving of the object
+    Tests the successful receiving all objects from table
     """
 
     repo = SQLAlchemyRepository(model=Exercise, session=override_get_db)
@@ -77,3 +77,17 @@ async def test_get_all_method(create_customer, override_get_db):
     result = await repo.get_all()
 
     assert all(list(map(lambda x: isinstance(x, Exercise), result)))
+
+
+@pytest.mark.asyncio
+async def test_filter_method(create_customer, override_get_db):
+    """
+    Tests the filtering correctness
+    """
+
+    repo = SQLAlchemyRepository(model=Exercise, session=override_get_db)
+
+    result = await repo.filter("name", "Жим штанги лежа")
+
+    for exercise in result:
+        assert exercise.name == "Жим штанги лежа"
