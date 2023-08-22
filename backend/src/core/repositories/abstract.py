@@ -7,10 +7,9 @@ from abc import ABC, abstractmethod
 
 class AbstractRepository(ABC):
     """"""
-    model = None
 
     @abstractmethod
-    def create(self):
+    def create(self, **params):
         """"""
         raise NotImplementedError
 
@@ -25,6 +24,6 @@ class AbstractRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def filter(self, **params):
+    def filter(self, attribute, value):
         """"""
         raise NotImplementedError

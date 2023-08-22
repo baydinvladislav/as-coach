@@ -13,8 +13,9 @@ class SQLAlchemyRepository(AbstractRepository):
     Implements connection to storage
     """
 
-    def __init__(self, model, session):
-        self.model = model
+    model = None
+
+    def __init__(self, session):
         self.session = session
 
     async def create(self, **params):
