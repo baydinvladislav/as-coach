@@ -16,14 +16,15 @@ from fastapi import (
     Form
 )
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy import select, update
+from sqlalchemy import update
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.attributes import set_attribute
 from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 
 from src.auth.dependencies import get_current_user
-from src.coach.dependencies import get_coach_service
-from src.core.services.coach import CoachService, UsernameIsTaken
+from src.coach.dependencies import get_coach_service, get_customer_service
+from src.core.services.coach import CoachService, UsernameIsTaken, NotValidPassword
+from src.core.services.customer import CustomerService
 from src.dependencies import get_db
 from src.models import Gender
 from src.infrastructure.schemas.auth import (
@@ -35,7 +36,6 @@ from src.infrastructure.schemas.auth import (
 )
 from src.customer.models import Customer
 from src.coach.models import Coach
-from src.auth.services import auth_coach, auth_customer
 from src.auth.utils import (
     create_access_token,
     create_refresh_token,
@@ -74,8 +74,8 @@ async def register_user(
         coach = await service.register_coach(coach_data)
     except UsernameIsTaken:
         raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="User with this username already exist"
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User with this username already exist"
         )
 
     return {
@@ -94,13 +94,16 @@ async def register_user(
     response_model=LoginResponse)
 async def login(
         form_data: OAuth2PasswordRequestForm = Depends(),
-        database: Session = Depends(get_db)) -> dict:
+        coach_service: CoachService = Depends(get_coach_service),
+        customer_service: CustomerService = Depends(get_customer_service)
+) -> dict:
     """
     Login endpoint authenticates user
 
     Args:
         form_data: data schema for user login
-        database: dependency injection for access to database
+        coach_service: service for interacting with Coach domain
+        customer_service: service for interacting with Customer domain
     Raises:
         404 if specified user was not found
         400 in case if user is found but password does not match
@@ -114,26 +117,31 @@ async def login(
             detail="Empty fields"
         )
 
-    coach = await database.execute(
-        select(Coach).where(Coach.username == form_data.username)
-    )
-    customer = await database.execute(
-        select(Customer).where(Customer.username == form_data.username)
-    )
+    coach = await coach_service.find_by_username(form_data.username)
+    customer = await customer_service.find_by_username(form_data.username)
 
-    user_in_db = coach.scalar() or customer.scalar()
+    user_in_db = coach or customer
 
-    if user_in_db is not None:
-        hashed_password = user_in_db.password
-        received_password = form_data.password
-        auth_services = {Coach: auth_coach, Customer: auth_customer}
+    if not user_in_db:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Any user is not found"
+        )
 
-        if isinstance(user_in_db, Coach):
-            service = auth_services[Coach]
+    try:
+        if coach:
+            is_auth = await coach_service.authorize(coach, form_data.password)
         else:
-            service = auth_services[Customer]
+            is_auth = await customer_service.authorize(customer, form_data.password)
 
-        if await service(hashed_password, received_password):
+    except NotValidPassword:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Not valid password for user_id: {user_in_db.id}"
+        )
+
+    else:
+        if is_auth:
             return {
                 "id": str(user_in_db.id),
                 "user_type": "coach" if coach else "customer",
@@ -145,14 +153,8 @@ async def login(
         else:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Error during authentication user_id: {user_in_db.id}"
+                detail=f"Unknown error during authentication user_id: {user_in_db.id}"
             )
-
-    else:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User is not found"
-        )
 
 
 @auth_router.get(
