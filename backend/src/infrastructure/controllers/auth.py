@@ -22,14 +22,16 @@ from sqlalchemy.orm.attributes import set_attribute
 from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 
 from src.auth.dependencies import get_current_user
+from src.coach.dependencies import get_coach_service
+from src.core.services.coach import CoachService, UsernameIsTaken
 from src.dependencies import get_db
 from src.models import Gender
 from src.infrastructure.schemas.auth import (
     UserProfile,
     NewUserPassword,
     LoginResponse,
-    UserRegisterIn,
-    UserRegisterOut
+    CoachRegisterIn,
+    CoachRegisterOut
 )
 from src.customer.models import Customer
 from src.coach.models import Coach
@@ -50,16 +52,17 @@ auth_router = APIRouter()
     "/signup",
     summary="Create new coach",
     status_code=status.HTTP_201_CREATED,
-    response_model=UserRegisterOut)
+    response_model=CoachRegisterOut)
 async def register_user(
-        user_data: UserRegisterIn,
-        database: AsyncSession = Depends(get_db)) -> dict:
+        coach_data: CoachRegisterIn,
+        service: CoachService = Depends(get_coach_service)
+) -> dict:
     """
-    Registration endpoint, creates new user in database
+    Registration endpoint, creates new coach in database
 
     Args:
-        user_data: data schema for user registration
-        database: dependency injection for access to database
+        coach_data: data schema for coach registration
+        service: service for interacting with Coach domain
     Raises:
         400 in case if user with the phone number already created
     Returns:
@@ -67,32 +70,20 @@ async def register_user(
         id, first_name and username as keys
     """
 
-    user = await database.execute(
-        select(Coach).where(Coach.username == user_data.username)
-    )
-
-    user_instance = user.scalar()
-    if user_instance is not None:
+    try:
+        coach = await service.register_coach(coach_data)
+    except UsernameIsTaken:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User with this username already exist"
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User with this username already exist"
         )
 
-    user = Coach(
-        username=user_data.username,
-        first_name=user_data.first_name,
-        password=get_hashed_password(user_data.password)
-    )
-
-    database.add(user)
-    await database.commit()
-
     return {
-        "id": str(user.id),
-        "first_name": user.first_name,
-        "username": user.username,
-        "access_token": await create_access_token(str(user.username)),
-        "refresh_token": await create_refresh_token(str(user.username))
+        "id": str(coach.id),
+        "first_name": coach.first_name,
+        "username": coach.username,
+        "access_token": await create_access_token(str(coach.username)),
+        "refresh_token": await create_refresh_token(str(coach.username))
     }
 
 

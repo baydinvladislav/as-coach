@@ -10,6 +10,8 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from src.coach.models import Coach
+from src.core.repositories.repos import CoachRepository
+from src.core.services.coach import CoachService
 from src.dependencies import get_db
 from src.auth.utils import decode_jwt_token
 from src.auth.config import reuseable_oauth
@@ -47,3 +49,8 @@ async def get_current_coach(
         )
 
     return coach
+
+
+async def get_coach_service(database: Session = Depends(get_db)):
+    """"""
+    return CoachService(CoachRepository(database))

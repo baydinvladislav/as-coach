@@ -12,7 +12,7 @@ from src.auth.utils import validate_password
 from src.models import Gender
 
 
-class UserRegisterIn(BaseModel):
+class CoachRegisterIn(BaseModel):
     """
     Schema for user registration
     """
@@ -32,9 +32,9 @@ class UserRegisterIn(BaseModel):
         return validate_password(value)
 
 
-class UserRegisterOut(BaseModel):
+class CoachRegisterOut(BaseModel):
     """
-    Response after success user registration
+    Response after success coach registration
     """
     id: str
     username: str
