@@ -21,15 +21,13 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.attributes import set_attribute
 from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 
-from src.auth.dependencies import get_current_user
-from src.coach.dependencies import get_profile_service
 from src.core.services.profile import (
     ProfileService,
     UsernameIsTaken,
     NotValidPassword,
     UserDoesNotExist
 )
-from src.dependencies import get_db
+from src.dependencies import get_db, get_profile_service, get_current_user
 from src.models import Gender
 from src.infrastructure.schemas.auth import (
     UserProfile,

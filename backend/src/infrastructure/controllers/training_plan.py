@@ -6,8 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select, or_
 from sqlalchemy.orm import Session, selectinload
 
-from src.coach.dependencies import get_current_coach
-from src.dependencies import get_db
+from src.dependencies import get_db, get_current_coach
 from src.gym.models import Exercise, MuscleGroup
 from src.infrastructure.schemas.training_plan import ExerciseCreateIn, ExerciseCreateOut
 from src.coach.models import Coach

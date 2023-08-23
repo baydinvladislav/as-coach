@@ -51,3 +51,6 @@ class ProfileService:
         coach = await self.coach_service.find_coach_by_username(username)
         customer = await self.customer_service.find_customer_by_username(username)
         return {"coach": coach, "customer": customer}
+
+    async def get_current_user(self, token):
+        pass

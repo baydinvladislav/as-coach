@@ -16,8 +16,6 @@ from src import (
     ExercisesOnTraining,
     Coach
 )
-from src.auth.dependencies import get_current_user
-from src.coach.dependencies import get_current_coach
 from src.infrastructure.controllers.customer import customer_router
 from src.infrastructure.schemas.customer import (
     CustomerOut,
@@ -27,7 +25,7 @@ from src.infrastructure.schemas.customer import (
     TrainingPlanOutFull
 )
 from src.customer.utils import generate_random_password
-from src.dependencies import get_db
+from src.dependencies import get_db, get_current_coach, get_current_user
 from src.utils import validate_uuid
 
 coach_router = APIRouter()
