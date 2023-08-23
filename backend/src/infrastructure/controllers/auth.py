@@ -22,9 +22,13 @@ from sqlalchemy.orm.attributes import set_attribute
 from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 
 from src.auth.dependencies import get_current_user
-from src.coach.dependencies import get_coach_service, get_customer_service
-from src.core.services.coach import CoachService, UsernameIsTaken, NotValidPassword
-from src.core.services.customer import CustomerService
+from src.coach.dependencies import get_profile_service
+from src.core.services.profile import (
+    ProfileService,
+    UsernameIsTaken,
+    NotValidPassword,
+    UserDoesNotExist
+)
 from src.dependencies import get_db
 from src.models import Gender
 from src.infrastructure.schemas.auth import (
@@ -55,27 +59,27 @@ auth_router = APIRouter()
     response_model=CoachRegisterOut)
 async def register_user(
         coach_data: CoachRegisterIn,
-        service: CoachService = Depends(get_coach_service)
+        service: ProfileService = Depends(get_profile_service)
 ) -> dict:
     """
-    Registration endpoint, creates new coach in database
+    Registration endpoint, creates new coach in database.
+    Registration for customers implemented through adding coach's invites.
 
     Args:
         coach_data: data schema for coach registration
-        service: service for interacting with Coach domain
+        service: service for interacting with profile
     Raises:
         400 in case if user with the phone number already created
     Returns:
-        dictionary with just created user,
-        id, first_name and username as keys
+        dictionary with just created user
     """
 
     try:
-        coach = await service.register_coach(coach_data)
+        coach = await service.register_user(coach_data)
     except UsernameIsTaken:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User with this username already exist"
+            detail="Coach with this phone number already exist"
         )
 
     return {
@@ -89,24 +93,23 @@ async def register_user(
 
 @auth_router.post(
     "/login",
-    summary="Create access and refresh tokens for user",
+    summary="Authorizes any user, both trainer and customer",
     status_code=status.HTTP_200_OK,
     response_model=LoginResponse)
-async def login(
+async def login_user(
         form_data: OAuth2PasswordRequestForm = Depends(),
-        coach_service: CoachService = Depends(get_coach_service),
-        customer_service: CustomerService = Depends(get_customer_service)
+        service: ProfileService = Depends(get_profile_service)
 ) -> dict:
     """
     Login endpoint authenticates user
 
     Args:
         form_data: data schema for user login
-        coach_service: service for interacting with Coach domain
-        customer_service: service for interacting with Customer domain
+        service: service for interacting with profile
     Raises:
-        404 if specified user was not found
+        400 in case if passed empty fields
         400 in case if user is found but password does not match
+        404 if specified user was not found
     Returns:
         access_token and refresh_token inside dictionary
     """
@@ -117,44 +120,27 @@ async def login(
             detail="Empty fields"
         )
 
-    coach = await coach_service.find_by_username(form_data.username)
-    customer = await customer_service.find_by_username(form_data.username)
-
-    user_in_db = coach or customer
-
-    if not user_in_db:
+    try:
+        user_in_db, user_type = await service.authorize_user(form_data)
+    except NotValidPassword:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Not valid password for: {form_data.username}"
+        )
+    except UserDoesNotExist:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Any user is not found"
         )
 
-    try:
-        if coach:
-            is_auth = await coach_service.authorize(coach, form_data.password)
-        else:
-            is_auth = await customer_service.authorize(customer, form_data.password)
-
-    except NotValidPassword:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Not valid password for user_id: {user_in_db.id}"
-        )
-
-    else:
-        if is_auth:
-            return {
-                "id": str(user_in_db.id),
-                "user_type": "coach" if coach else "customer",
-                "first_name": user_in_db.first_name,
-                "access_token": await create_access_token(str(user_in_db.username)),
-                "refresh_token": await create_refresh_token(str(user_in_db.username)),
-                "password_changed": bool(password_context.identify(user_in_db.password))
-            }
-        else:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Unknown error during authentication user_id: {user_in_db.id}"
-            )
+    return {
+        "id": str(user_in_db.id),
+        "user_type": user_type,
+        "first_name": user_in_db.first_name,
+        "access_token": await create_access_token(str(user_in_db.username)),
+        "refresh_token": await create_refresh_token(str(user_in_db.username)),
+        "password_changed": bool(password_context.identify(user_in_db.password))
+    }
 
 
 @auth_router.get(

@@ -17,14 +17,16 @@ class CustomerService:
     def __init__(self, customer_repo: AbstractRepository):
         self.customer_repo = customer_repo
 
-    async def find_by_username(self, username: str):
-        customer = await self.customer_repo.filter("username", username)
-        if customer:
-            return customer[0]
-
-    async def authorize(self, customer, passed_password: str):
-        if customer.password == passed_password \
-                or await verify_password(passed_password, str(customer.password)):
+    @staticmethod
+    async def authorize_customer(customer, passed_password):
+        password_in_db = str(customer.password)
+        if password_in_db == passed_password \
+                or await verify_password(passed_password, password_in_db):
             return True
         else:
             raise NotValidPassword
+
+    async def find_customer_by_username(self, username: str):
+        customer = await self.customer_repo.filter("username", username)
+        if customer:
+            return customer[0]

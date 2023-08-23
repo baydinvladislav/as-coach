@@ -13,6 +13,7 @@ from src.coach.models import Coach
 from src.core.repositories.repos import CoachRepository, CustomerRepository
 from src.core.services.coach import CoachService
 from src.core.services.customer import CustomerService
+from src.core.services.profile import ProfileService
 from src.dependencies import get_db
 from src.auth.utils import decode_jwt_token
 from src.auth.config import reuseable_oauth
@@ -30,6 +31,16 @@ async def get_customer_service(database: Session = Depends(get_db)) -> CustomerS
     Returns service responsible to interact with Customer domain
     """
     return CustomerService(CustomerRepository(database))
+
+
+async def get_profile_service(
+        coach_service: CoachService = Depends(get_coach_service),
+        customer_service: CustomerService = Depends(get_customer_service),
+) -> ProfileService:
+    """
+    Returns service responsible for user profile operations
+    """
+    return ProfileService(coach_service, customer_service)
 
 
 async def get_current_coach(

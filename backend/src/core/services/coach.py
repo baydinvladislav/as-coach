@@ -1,20 +1,7 @@
 from src.auth.utils import get_hashed_password, verify_password
 from src.core.repositories.abstract import AbstractRepository
+from src.core.services.profile import UsernameIsTaken, NotValidPassword
 from src.infrastructure.schemas.auth import CoachRegisterIn
-
-
-class NotValidPassword(Exception):
-    """
-    Raises when passed not valid password
-    """
-    pass
-
-
-class UsernameIsTaken(Exception):
-    """
-    Raises when user is trying to register with busy username
-    """
-    pass
 
 
 class CoachService:
@@ -26,7 +13,7 @@ class CoachService:
         self.coach_repo = coach_repo
 
     async def register_coach(self, data: CoachRegisterIn):
-        is_registered = await self.find_by_username(data.username)
+        is_registered = await self.find_coach_by_username(data.username)
         if is_registered:
             raise UsernameIsTaken
 
@@ -35,13 +22,15 @@ class CoachService:
 
         return coach
 
-    async def find_by_username(self, username: str):
-        coach = await self.coach_repo.filter("username", username)
-        if coach:
-            return coach[0]
-
-    async def authorize(self, coach, passed_password):
-        if await verify_password(passed_password, str(coach.password)):
+    @staticmethod
+    async def authorize_coach(coach, passed_password):
+        password_in_db = str(coach.password)
+        if await verify_password(passed_password, password_in_db):
             return True
         else:
             raise NotValidPassword
+
+    async def find_coach_by_username(self, username: str):
+        coach = await self.coach_repo.filter("username", username)
+        if coach:
+            return coach[0]
