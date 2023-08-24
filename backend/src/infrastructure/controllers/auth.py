@@ -21,13 +21,18 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.attributes import set_attribute
 from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 
-from src.core.services.profile import (
-    ProfileService,
-    UsernameIsTaken,
-    NotValidPassword,
-    UserDoesNotExist
+from src.core.services.profile import ProfileService
+from src.core.services.exceptions import (
+    UserDoesNotExist,
+    NotValidCredentials,
+    UsernameIsTaken
 )
-from src.dependencies import get_db, get_profile_service, get_current_user
+from src.dependencies import (
+    get_db,
+    get_profile_service,
+    get_current_user,
+    check_jwt_token
+)
 from src.models import Gender
 from src.infrastructure.schemas.auth import (
     UserProfile,
@@ -45,7 +50,6 @@ from src.auth.utils import (
     verify_password,
     password_context
 )
-from src.auth.config import reuseable_oauth
 from src.config import STATIC_DIR
 
 auth_router = APIRouter()
@@ -107,7 +111,7 @@ async def login_user(
         service: service for interacting with profile
     Raises:
         400 in case if passed empty fields
-        400 in case if user is found but password does not match
+        400 in case if user is found but credentials are not valid
         404 if specified user was not found
     Returns:
         access_token and refresh_token inside dictionary
@@ -120,11 +124,11 @@ async def login_user(
         )
 
     try:
-        user_in_db, user_type = await service.authorize_user(form_data)
-    except NotValidPassword:
+        user_in_db = await service.authorize_user(form_data)
+    except NotValidCredentials:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Not valid password for: {form_data.username}"
+            detail=f"Not valid credentials for: {form_data.username}"
         )
     except UserDoesNotExist:
         raise HTTPException(
@@ -134,7 +138,7 @@ async def login_user(
 
     return {
         "id": str(user_in_db.id),
-        "user_type": user_type,
+        "user_type": "coach" if isinstance(user_in_db, Coach) else "customer",
         "first_name": user_in_db.first_name,
         "access_token": await create_access_token(str(user_in_db.username)),
         "refresh_token": await create_refresh_token(str(user_in_db.username)),
@@ -147,7 +151,7 @@ async def login_user(
     status_code=status.HTTP_200_OK,
     summary="Get details of currently logged in user")
 async def get_me(
-        token: str = Depends(reuseable_oauth),
+        username: str = Depends(check_jwt_token),
         service: ProfileService = Depends(get_profile_service)
 ) -> dict:
     """
@@ -155,15 +159,18 @@ async def get_me(
     Endpoint can be used by both a coach and a customer
 
     Args:
-        token: jwt token
+        username: extracted from jwt token
         service: service for interacting with profile
+
+    Raises:
+        404 if specified user was not found
 
     Returns:
         dict: short info about current user
     """
 
     try:
-        user = await service.get_current_user(token)
+        user = await service.get_current_user(username)
     except UserDoesNotExist:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -184,18 +191,31 @@ async def get_me(
     response_model=UserProfile,
     summary="Get user profile")
 async def get_profile(
-        user: Union[Coach, Customer] = Depends(get_current_user)
+        username: str = Depends(check_jwt_token),
+        service: ProfileService = Depends(get_profile_service)
 ) -> dict:
     """
     Returns full info about user
     Endpoint can be used by both the coach and the customer
 
     Args:
-        user: coach or customer object from get_current_user dependency
+        username: extracted from jwt token
+        service: service for interacting with profile
+
+    Raises:
+        404 if specified user was not found
 
     Returns:
         dict: full info about current user
     """
+
+    try:
+        user = await service.get_current_user(username)
+    except UserDoesNotExist:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Could not find any user"
+        )
 
     return {
         "id": str(user.id),

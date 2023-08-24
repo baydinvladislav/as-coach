@@ -1,28 +1,7 @@
 from fastapi.security import OAuth2PasswordRequestForm
 
-from src.auth.utils import decode_jwt_token
+from src.core.services.exceptions import UserDoesNotExist
 from src.infrastructure.schemas.auth import CoachRegisterIn
-
-
-class UserDoesNotExist(Exception):
-    """
-    Raises when user not found
-    """
-    pass
-
-
-class NotValidPassword(Exception):
-    """
-    Raises when passed not valid password
-    """
-    pass
-
-
-class UsernameIsTaken(Exception):
-    """
-    Raises when user is trying to register with busy username
-    """
-    pass
 
 
 class ProfileService:
@@ -37,10 +16,10 @@ class ProfileService:
 
         if coach:
             await self.coach_service.authorize_coach(coach, form_data.password)
-            return coach, "coach"
+            return coach
         elif customer:
             await self.customer_service.authorize_customer(customer, form_data.password)
-            return customer, "customer"
+            return customer
         else:
             raise UserDoesNotExist
 
@@ -53,10 +32,7 @@ class ProfileService:
         customer = await self.customer_service.find_customer_by_username(username)
         return {"coach": coach, "customer": customer}
 
-    async def get_current_user(self, token):
-        token_data = await decode_jwt_token(token)
-        username = token_data.sub
-
+    async def get_current_user(self, username):
         cur_user: dict = await self.get_me(username)
         user = cur_user["coach"] or cur_user["customer"]
 

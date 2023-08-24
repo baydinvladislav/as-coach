@@ -5,7 +5,6 @@ Module for auth utils
 from datetime import datetime, timedelta
 
 from jose import jwt
-from fastapi import HTTPException, status
 from pydantic import ValidationError
 from passlib.context import CryptContext
 
@@ -16,6 +15,7 @@ from src.auth.config import (
     JWT_SECRET_KEY,
     REFRESH_TOKEN_EXPIRE_MINUTES
 )
+from src.core.services.exceptions import TokenExpired, NotValidCredentials
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -103,20 +103,12 @@ async def decode_jwt_token(token: str):
 
         expiration_time = datetime.fromtimestamp(token_data.exp)
         if expiration_time < datetime.now():
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token expired",
-                headers={"WWW-Authenticate": "Bearer"}
-            )
+            raise TokenExpired
 
         return token_data
 
     except (jwt.JWTError, ValidationError):  # type: ignore
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"}
-        )
+        raise NotValidCredentials
 
 
 def validate_password(password: str):

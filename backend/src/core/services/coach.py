@@ -1,6 +1,6 @@
 from src.auth.utils import get_hashed_password, verify_password
 from src.core.repositories.abstract import AbstractRepository
-from src.core.services.profile import UsernameIsTaken, NotValidPassword
+from src.core.services.exceptions import NotValidCredentials, UsernameIsTaken
 from src.infrastructure.schemas.auth import CoachRegisterIn
 
 
@@ -28,7 +28,7 @@ class CoachService:
         if await verify_password(passed_password, password_in_db):
             return True
         else:
-            raise NotValidPassword
+            raise NotValidCredentials
 
     async def find_coach_by_username(self, username: str):
         coach = await self.coach_repo.filter("username", username)

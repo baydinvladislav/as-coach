@@ -17,6 +17,7 @@ from src.auth.utils import decode_jwt_token
 from src.core.repositories.repos import CoachRepository, CustomerRepository
 from src.core.services.coach import CoachService
 from src.core.services.customer import CustomerService
+from src.core.services.exceptions import TokenExpired, NotValidCredentials
 from src.core.services.profile import ProfileService
 
 from src.database import SessionLocal
@@ -55,6 +56,25 @@ async def get_profile_service(
     Returns service responsible for user profile operations
     """
     return ProfileService(coach_service, customer_service)
+
+
+async def check_jwt_token(token: str = Depends(reuseable_oauth)):
+    try:
+        token_data = await decode_jwt_token(token)
+    except TokenExpired:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token expired",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    except NotValidCredentials:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Not valid credentials"
+        )
+    else:
+        username = token_data.sub
+        return username
 
 
 async def get_current_coach(
