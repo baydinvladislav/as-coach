@@ -5,7 +5,7 @@ from src.core.repositories.sqlalchemy import SQLAlchemyRepository
 
 class CoachRepository(SQLAlchemyRepository):
     """
-
+    Access to Coach domain
     """
 
     model = Coach
@@ -13,7 +13,7 @@ class CoachRepository(SQLAlchemyRepository):
 
 class CustomerRepository(SQLAlchemyRepository):
     """
-
+    Access to Customer domain
     """
 
     model = Customer

@@ -1,5 +1,6 @@
 from fastapi.security import OAuth2PasswordRequestForm
 
+from src.auth.utils import decode_jwt_token
 from src.infrastructure.schemas.auth import CoachRegisterIn
 
 
@@ -47,10 +48,19 @@ class ProfileService:
         coach = await self.coach_service.register_coach(data)
         return coach
 
-    async def get_me(self, username):
+    async def get_me(self, username) -> dict:
         coach = await self.coach_service.find_coach_by_username(username)
         customer = await self.customer_service.find_customer_by_username(username)
         return {"coach": coach, "customer": customer}
 
     async def get_current_user(self, token):
-        pass
+        token_data = await decode_jwt_token(token)
+        username = token_data.sub
+
+        cur_user: dict = await self.get_me(username)
+        user = cur_user["coach"] or cur_user["customer"]
+
+        if user is None:
+            raise UserDoesNotExist
+
+        return user

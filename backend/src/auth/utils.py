@@ -101,7 +101,8 @@ async def decode_jwt_token(token: str):
         )
         token_data = TokenPayload(**payload)
 
-        if datetime.fromtimestamp(token_data.exp) < datetime.now():
+        expiration_time = datetime.fromtimestamp(token_data.exp)
+        if expiration_time < datetime.now():
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Token expired",

@@ -45,6 +45,7 @@ from src.auth.utils import (
     verify_password,
     password_context
 )
+from src.auth.config import reuseable_oauth
 from src.config import STATIC_DIR
 
 auth_router = APIRouter()
@@ -146,17 +147,28 @@ async def login_user(
     status_code=status.HTTP_200_OK,
     summary="Get details of currently logged in user")
 async def get_me(
-        user: Union[Coach, Customer] = Depends(get_current_user)) -> dict:
+        token: str = Depends(reuseable_oauth),
+        service: ProfileService = Depends(get_profile_service)
+) -> dict:
     """
     Returns short info about current user
     Endpoint can be used by both a coach and a customer
 
     Args:
-        user: coach or customer object from get_current_user dependency
+        token: jwt token
+        service: service for interacting with profile
 
     Returns:
         dict: short info about current user
     """
+
+    try:
+        user = await service.get_current_user(token)
+    except UserDoesNotExist:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Could not find any user"
+        )
 
     return {
         "id": str(user.id),
