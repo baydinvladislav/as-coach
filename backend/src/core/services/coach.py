@@ -17,7 +17,7 @@ class CoachService:
         if is_registered:
             raise UsernameIsTaken
 
-        data.password = get_hashed_password(data.password)
+        data.password = await get_hashed_password(data.password)
         coach = await self.coach_repo.create(**dict(data))
 
         return coach
@@ -34,3 +34,6 @@ class CoachService:
         coach = await self.coach_repo.filter("username", username)
         if coach:
             return coach[0]
+
+    async def update_coach_profile(self, coach, **params):
+        self.coach_repo.update(str(coach.id), **params)

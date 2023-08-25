@@ -27,3 +27,11 @@ class AbstractRepository(ABC):
     def filter(self, attribute, value):
         """"""
         raise NotImplementedError
+
+    def update(self, pk, **params):
+        """"""
+        raise NotImplementedError
+
+    # def delete(self, pk, **params):
+    #     """"""
+    #     raise NotImplementedError

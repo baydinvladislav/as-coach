@@ -2,9 +2,8 @@
 Contains routes for auth service.
 """
 
-import shutil
-from datetime import date, datetime
-from typing import Union, Optional
+from datetime import date
+from typing import Optional
 
 from fastapi import (
     APIRouter,
@@ -16,9 +15,6 @@ from fastapi import (
     Form
 )
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy import update
-from sqlalchemy.orm import Session
-from sqlalchemy.orm.attributes import set_attribute
 from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 
 from src.core.services.profile import ProfileService
@@ -27,12 +23,7 @@ from src.core.services.exceptions import (
     NotValidCredentials,
     UsernameIsTaken
 )
-from src.dependencies import (
-    get_db,
-    get_profile_service,
-    get_current_user,
-    check_jwt_token
-)
+from src.dependencies import get_profile_service, check_jwt_token
 from src.models import Gender
 from src.infrastructure.schemas.auth import (
     UserProfile,
@@ -41,16 +32,11 @@ from src.infrastructure.schemas.auth import (
     CoachRegisterIn,
     CoachRegisterOut
 )
-from src.customer.models import Customer
-from src.coach.models import Coach
 from src.auth.utils import (
     create_access_token,
     create_refresh_token,
-    get_hashed_password,
-    verify_password,
     password_context
 )
-from src.config import STATIC_DIR
 
 auth_router = APIRouter()
 
@@ -138,7 +124,7 @@ async def login_user(
 
     return {
         "id": str(user_in_db.id),
-        "user_type": "coach" if isinstance(user_in_db, Coach) else "customer",
+        "user_type": service.user_type,
         "first_name": user_in_db.first_name,
         "access_token": await create_access_token(str(user_in_db.username)),
         "refresh_token": await create_refresh_token(str(user_in_db.username)),
@@ -151,7 +137,7 @@ async def login_user(
     status_code=status.HTTP_200_OK,
     summary="Get details of currently logged in user")
 async def get_me(
-        username: str = Depends(check_jwt_token),
+        username_by_token: str = Depends(check_jwt_token),
         service: ProfileService = Depends(get_profile_service)
 ) -> dict:
     """
@@ -159,7 +145,7 @@ async def get_me(
     Endpoint can be used by both a coach and a customer
 
     Args:
-        username: extracted from jwt token
+        username_by_token: extracted from jwt token
         service: service for interacting with profile
 
     Raises:
@@ -170,7 +156,7 @@ async def get_me(
     """
 
     try:
-        user = await service.get_current_user(username)
+        user = await service.get_current_user(username_by_token)
     except UserDoesNotExist:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -179,7 +165,7 @@ async def get_me(
 
     return {
         "id": str(user.id),
-        "user_type": "coach" if isinstance(user, Coach) else "customer",
+        "user_type": service.user_type,
         "username": user.username,
         "first_name": user.first_name
     }
@@ -191,7 +177,7 @@ async def get_me(
     response_model=UserProfile,
     summary="Get user profile")
 async def get_profile(
-        username: str = Depends(check_jwt_token),
+        username_by_token: str = Depends(check_jwt_token),
         service: ProfileService = Depends(get_profile_service)
 ) -> dict:
     """
@@ -199,7 +185,7 @@ async def get_profile(
     Endpoint can be used by both the coach and the customer
 
     Args:
-        username: extracted from jwt token
+        username_by_token: extracted from jwt token
         service: service for interacting with profile
 
     Raises:
@@ -210,7 +196,7 @@ async def get_profile(
     """
 
     try:
-        user = await service.get_current_user(username)
+        user = await service.get_current_user(username_by_token)
     except UserDoesNotExist:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -221,7 +207,7 @@ async def get_profile(
         "id": str(user.id),
         "first_name": user.first_name,
         "last_name": user.last_name,
-        "user_type": "coach" if isinstance(user, Coach) else "customer",
+        "user_type": service.user_type,
         "gender": user.gender,
         "birthday": user.birthday,
         "email": user.email,
@@ -236,21 +222,23 @@ async def get_profile(
     response_model=UserProfile,
     status_code=status.HTTP_200_OK)
 async def update_profile(
+        username_by_token: str = Depends(check_jwt_token),
+        service: ProfileService = Depends(get_profile_service),
         first_name: str = Form(...),
         username: str = Form(...),
         last_name: str = Form(None),
         photo: UploadFile = File(None),
         gender: Optional[Gender] = Form(None),
         birthday: date = Form(None),
-        email: str = Form(None),
-        database: Session = Depends(get_db),
-        user: Union[Coach, Customer] = Depends(get_current_user)
+        email: str = Form(None)
 ) -> dict:
     """
     Updated full info about user
     Endpoint can be used by both the coach and the customer
 
     Args:
+        username_by_token: extracted from jwt token
+        service: service for interacting with profile
         first_name: client value from body
         username: client value from body
         last_name: client value from body
@@ -258,62 +246,40 @@ async def update_profile(
         gender: client value from body
         birthday: client value from body
         email: client value from body
-        database: dependency injection for access to database
-        user: coach or customer object from get_current_user dependency
 
     Returns:
         dictionary with updated full user info
     """
 
-    if photo is not None:
-        saving_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
-        file_name = f"{user.username}_{saving_time}.jpeg"
-        photo_path = f"{STATIC_DIR}/{file_name}"
-        with open(photo_path, 'wb') as buffer:
-            shutil.copyfileobj(photo.file, buffer)
-
-        set_attribute(user, "photo_path", photo_path)
-
-    set_attribute(user, "modified", datetime.now())
-
-    if isinstance(user, Coach):
-        user_class = Coach
-    else:
-        user_class = Customer
-
-    query = (
-        update(user_class)
-        .where(user_class.id == str(user.id))
-        .values(
-            first_name=first_name,
-            username=username,
-            last_name=last_name,
-            gender=gender,
-            birthday=birthday,
-            email=email
-        )
+    user = await service.get_current_user(username_by_token)
+    is_updated = await service.update_user_profile(
+        user=user,
+        first_name=first_name,
+        username=username,
+        last_name=last_name,
+        photo=photo,
+        gender=gender,
+        birthday=birthday,
+        email=email
     )
-
-    await database.execute(query)
-    await database.commit()
-    await database.refresh(user)
 
     if user.photo_path:
         photo_link = user.photo_path.split('/backend')[1]
     else:
         photo_link = None
 
-    return {
-        "id": str(user.id),
-        "first_name": user.first_name,
-        "last_name": user.last_name,
-        "user_type": "coach" if isinstance(user, Coach) else "customer",
-        "gender": user.gender,
-        "birthday": user.birthday,
-        "email": user.email,
-        "username": user.username,
-        "photo_link": photo_link
-    }
+    if is_updated:
+        return {
+            "id": str(user.id),
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "user_type": service.user_type,
+            "gender": user.gender,
+            "birthday": user.birthday,
+            "email": user.email,
+            "username": user.username,
+            "photo_link": photo_link
+        }
 
 
 @auth_router.post(
@@ -322,22 +288,25 @@ async def update_profile(
     status_code=status.HTTP_200_OK)
 async def confirm_password(
         current_password: str = Form(...),
-        user: Union[Coach, Customer] = Depends(get_current_user)
+        username_by_token: str = Depends(check_jwt_token),
+        service: ProfileService = Depends(get_profile_service)
 ) -> dict:
     """
     Confirms that user knows current password before it is changed.
 
     Args:
         current_password: current user password
-        user: user object from get_current_user dependency
+        username_by_token: username extracted from jwt token
+        service: service for interacting with profile
 
     Returns:
         success or failed response
     """
 
-    if verify_password(current_password, str(user.password)):
-        return {"confirmed_password": True}
+    user = await service.get_current_user(username_by_token)
 
+    if await service.confirm_user_password(current_password, user):
+        return {"confirmed_password": True}
     return {"confirmed_password": False}
 
 
@@ -347,8 +316,8 @@ async def confirm_password(
     status_code=status.HTTP_200_OK)
 async def change_password(
         new_password: NewUserPassword,
-        database: Session = Depends(get_db),
-        user: Union[Coach, Customer] = Depends(get_current_user)
+        username_by_token: str = Depends(check_jwt_token),
+        service: ProfileService = Depends(get_profile_service)
 ) -> dict:
     """
     Changes user password.
@@ -356,14 +325,15 @@ async def change_password(
 
     Args:
         new_password: new user password
-        database: dependency injection for access to database
-        user: user object from get_current_user dependency
+        username_by_token: username extracted from jwt token
+        service: service for interacting with profile
 
     Returns:
         success response
     """
 
-    ex_password = user.password
-    set_attribute(user, "password", get_hashed_password(new_password.password))
-    database.commit()
-    return {"changed_password": True if user.password != ex_password else False}
+    user = await service.get_current_user(username_by_token)
+
+    if await service.change_password(new_password, user):
+        return {"changed_password": True}
+    return {"changed_password": False}

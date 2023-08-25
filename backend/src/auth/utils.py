@@ -20,7 +20,7 @@ from src.core.services.exceptions import TokenExpired, NotValidCredentials
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-def get_hashed_password(password: str) -> str:
+async def get_hashed_password(password: str) -> str:
     """
     Hashes password
 

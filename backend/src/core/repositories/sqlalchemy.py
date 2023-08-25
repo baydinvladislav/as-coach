@@ -2,7 +2,7 @@
 Class for interacting with storage through SQLAlchemy interlayer
 """
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from src.core.repositories.abstract import AbstractRepository
 from src.utils import validate_uuid
@@ -58,7 +58,7 @@ class SQLAlchemyRepository(AbstractRepository):
         instances = await self.session.execute(query)
         return instances.scalars().all()
 
-    async def filter(self, attribute_name, value):
+    async def filter(self, attribute_name, attribute_value):
         """
         Forms selection by passed params
 
@@ -70,8 +70,26 @@ class SQLAlchemyRepository(AbstractRepository):
             raise
 
         result = await self.session.execute(
-            select(self.model).where(attribute == value)
+            select(self.model).where(attribute == attribute_value)
         )
 
         instances = result.scalars().all()
         return instances
+
+    async def update(self, pk, **params):
+        instance = await self.get(pk=pk)
+
+        if not instance:
+            return
+
+        query = (
+            update(self.model).where(
+                self.model.id == str(instance.id)
+            ).values(
+                **params
+            )
+        )
+
+        await self.session.execute(query)
+        await self.session.commit()
+        await self.session.refresh(instance)
