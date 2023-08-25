@@ -29,10 +29,10 @@ class ProfileService:
     async def authorize_user(self, form_data: OAuth2PasswordRequestForm):
         user = await self.get_current_user(form_data.username)
 
-        if self.user_type == ProfileType.COACH:
+        if self.user_type == ProfileType.COACH.value:
             await self.coach_service.authorize_coach(user, form_data.password)
             return user
-        elif self.user_type == ProfileType.CUSTOMER:
+        elif self.user_type == ProfileType.CUSTOMER.value:
             await self.customer_service.authorize_customer(user, form_data.password)
             return user
         else:
@@ -47,9 +47,9 @@ class ProfileService:
         customer = await self.customer_service.find_customer_by_username(username)
 
         if coach is not None:
-            self.user_type = ProfileType.COACH
+            self.user_type = ProfileType.COACH.value
         elif customer is not None:
-            self.user_type = ProfileType.CUSTOMER
+            self.user_type = ProfileType.CUSTOMER.value
         else:
             raise UserDoesNotExist
 
