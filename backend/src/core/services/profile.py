@@ -64,21 +64,22 @@ class ProfileService:
     async def update_user_profile(self, user, **params):
         user_updated = False
 
-        if params.get("photo") is not None:
+        photo = params.pop("photo")
+        if photo is not None:
             saving_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
             file_name = f"{user.username}_{saving_time}.jpeg"
             photo_path = f"{STATIC_DIR}/{file_name}"
             with open(photo_path, 'wb') as buffer:
-                shutil.copyfileobj(params.get("photo").file, buffer)
+                shutil.copyfileobj(photo.file, buffer)
 
             set_attribute(user, "photo_path", photo_path)
 
         set_attribute(user, "modified", datetime.now())
 
-        if self.user_type == ProfileType.COACH:
+        if self.user_type == ProfileType.COACH.value:
             await self.coach_service.update_coach_profile(coach=user, **params)
             user_updated = True
-        elif self.user_type == ProfileType.CUSTOMER:
+        elif self.user_type == ProfileType.CUSTOMER.value:
             await self.customer_service.update_customer_profile(customer=user, **params)
             user_updated = True
 

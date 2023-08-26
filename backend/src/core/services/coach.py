@@ -36,4 +36,4 @@ class CoachService:
             return coach[0]
 
     async def update_coach_profile(self, coach, **params):
-        self.coach_repo.update(str(coach.id), **params)
+        await self.coach_repo.update(str(coach.id), **params)

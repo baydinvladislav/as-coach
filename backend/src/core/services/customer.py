@@ -32,4 +32,4 @@ class CustomerService:
             return customer[0]
 
     async def update_customer_profile(self, customer, **params):
-        self.customer_repo.update(str(customer.id), **params)
+        await self.customer_repo.update(str(customer.id), **params)
