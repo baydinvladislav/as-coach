@@ -59,6 +59,19 @@ async def get_profile_service(
 
 
 async def check_jwt_token(token: str = Depends(reuseable_oauth)):
+    """
+    Checks that token from client request is valid
+
+    Args:
+        token: str: token from client request
+
+    Raises:
+        401: HTTPException: in case if token is expired
+        400: HTTPException: in case if credentials are not valid
+
+    Return:
+        username: username from token in case if it valid
+    """
     try:
         token_data = await decode_jwt_token(token)
     except TokenExpired:

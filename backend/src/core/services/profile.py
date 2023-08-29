@@ -20,6 +20,10 @@ class ProfileType(Enum):
 
 class ProfileService:
 
+    """
+    Abstract for services
+    """
+
     def __init__(self, coach_service: CoachService, customer_service: CustomerService):
         self.coach_service = coach_service
         self.customer_service = customer_service
