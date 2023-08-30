@@ -1,35 +1,39 @@
+from fastapi.security import OAuth2PasswordRequestForm
+
 from src.auth.utils import verify_password
 from src.core.repositories.abstract import AbstractRepository
+from src.core.services.exceptions import NotValidCredentials
+from src.core.services.profile import ProfileService, ProfileType
+from src.infrastructure.schemas.auth import UserRegisterIn
 
 
-class NotValidPassword(Exception):
-    """
-    Raises when passed not valid password
-    """
-    pass
-
-
-class CustomerService:
+class CustomerService(ProfileService):
     """
     Implements logic to interact with Customer domain
     """
 
     def __init__(self, customer_repo: AbstractRepository):
+        self.user = None
+        self.user_type = ProfileType.CUSTOMER.value
         self.customer_repo = customer_repo
 
-    @staticmethod
-    async def authorize_customer(customer, passed_password):
-        password_in_db = str(customer.password)
-        if password_in_db == passed_password \
-                or await verify_password(passed_password, password_in_db):
-            return True
-        else:
-            raise NotValidPassword
+    async def register(self, data: UserRegisterIn):
+        ...
 
-    async def find_customer_by_username(self, username: str):
+    async def authorize(self, form_data: OAuth2PasswordRequestForm):
+        password_in_db = str(self.user.password)
+        if password_in_db == form_data.password \
+                or await verify_password(form_data.password, password_in_db):
+            return True
+
+        raise NotValidCredentials
+
+    async def find(self, username: str):
         customer = await self.customer_repo.filter("username", username)
         if customer:
-            return customer[0]
+            self.user = customer[0]
+            return self.user
 
-    async def update_customer_profile(self, customer, **params):
-        await self.customer_repo.update(str(customer.id), **params)
+    async def update(self, **params):
+        await self.handle_profile_photo()
+        await self.customer_repo.update(str(self.user.id), **params)

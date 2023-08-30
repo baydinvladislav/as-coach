@@ -18,8 +18,6 @@ from src.core.repositories.repos import CoachRepository, CustomerRepository
 from src.core.services.coach import CoachService
 from src.core.services.customer import CustomerService
 from src.core.services.exceptions import TokenExpired, NotValidCredentials
-from src.core.services.profile import ProfileService
-
 from src.database import SessionLocal
 
 
@@ -34,36 +32,32 @@ async def get_db() -> AsyncSession:
             await database.close()
 
 
-async def get_coach_service(database: Session = Depends(get_db)) -> CoachService:
+async def provide_coach_service(database: Session = Depends(get_db)) -> CoachService:
     """
     Returns service responsible to interact with Coach domain
     """
     return CoachService(CoachRepository(database))
 
 
-async def get_customer_service(database: Session = Depends(get_db)) -> CustomerService:
+async def provide_customer_service(database: Session = Depends(get_db)) -> CustomerService:
     """
     Returns service responsible to interact with Customer domain
     """
     return CustomerService(CustomerRepository(database))
 
 
-async def get_profile_service(
-        coach_service: CoachService = Depends(get_coach_service),
-        customer_service: CustomerService = Depends(get_customer_service),
-) -> ProfileService:
-    """
-    Returns service responsible for user profile operations
-    """
-    return ProfileService(coach_service, customer_service)
-
-
-async def check_jwt_token(token: str = Depends(reuseable_oauth)):
+async def provide_user_service(
+        token: str = Depends(reuseable_oauth),
+        coach_service: CoachService = Depends(provide_coach_service),
+        customer_service: CustomerService = Depends(provide_customer_service)
+):
     """
     Checks that token from client request is valid
 
     Args:
-        token: str: token from client request
+        token: token from client request
+        coach_service: service for interacting with coach profile
+        customer_service: service for interacting with customer profile
 
     Raises:
         401: HTTPException: in case if token is expired
@@ -87,7 +81,19 @@ async def check_jwt_token(token: str = Depends(reuseable_oauth)):
         )
     else:
         username = token_data.sub
-        return username
+
+        coach = await coach_service.find(username)
+        customer = await customer_service.find(username)
+
+        if coach:
+            return coach_service
+        elif customer:
+            return customer_service
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"User not found"
+            )
 
 
 async def get_current_coach(
@@ -158,30 +164,3 @@ async def get_current_user(
         )
 
     return user
-
-
-async def get_current_customer(
-        token: str = Depends(reuseable_oauth),
-        database: Session = Depends(get_db)
-) -> Type[Customer]:
-    """
-    Provides current customer during request to only customer's API endpoints
-
-    Args:
-        token: jwt token which contains user username
-        database: dependency injection for access to database
-
-    Return:
-        customer: Customer ORM obj or None if customer wasn't found
-    """
-    token_data = decode_jwt_token(token)
-    token_username = token_data.sub
-    customer = database.query(Customer).filter(Customer.username == token_username).first()
-
-    if not customer:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Customer not found"
-        )
-
-    return customer
