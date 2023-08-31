@@ -79,6 +79,13 @@ class SQLAlchemyRepository(AbstractRepository):
         return instances
 
     async def update(self, pk, **params):
+        """
+        Updates instance into storage
+
+        Args:
+             pk: primary key of the instance being updated
+             params: parameters for instance updating
+        """
         instance = await self.get(pk=pk)
 
         if not instance:

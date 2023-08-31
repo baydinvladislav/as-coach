@@ -1,3 +1,7 @@
+"""
+Stores custom repositories for interaction with domains
+"""
+
 from src.coach.models import Coach
 from src.customer.models import Customer
 from src.core.repositories.sqlalchemy import SQLAlchemyRepository

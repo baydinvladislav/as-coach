@@ -1,3 +1,8 @@
+"""
+Stores custom application exceptions
+"""
+
+
 class UserDoesNotExist(Exception):
     """
     Raises when user not found
