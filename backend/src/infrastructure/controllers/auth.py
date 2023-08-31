@@ -236,8 +236,8 @@ async def update_profile(
     """
 
     user = service.user
-    is_updated = await service.update(
-        user=user,
+
+    await service.update(
         first_name=first_name,
         username=username,
         last_name=last_name,
@@ -247,23 +247,17 @@ async def update_profile(
         email=email
     )
 
-    if user.photo_path:
-        photo_link = user.photo_path.split('/backend')[1]
-    else:
-        photo_link = None
-
-    if is_updated:
-        return {
-            "id": str(user.id),
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "user_type": service.user_type,
-            "gender": user.gender,
-            "birthday": user.birthday,
-            "email": user.email,
-            "username": user.username,
-            "photo_link": photo_link
-        }
+    return {
+        "id": str(user.id),
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "user_type": service.user_type,
+        "gender": user.gender,
+        "birthday": user.birthday,
+        "email": user.email,
+        "username": user.username,
+        "photo_link": user.photo_path.split('/backend')[1] if user.photo_path else None
+    }
 
 
 @auth_router.post(

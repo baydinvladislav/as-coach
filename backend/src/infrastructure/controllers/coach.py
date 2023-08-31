@@ -164,7 +164,7 @@ async def get_customer(
         HTTPException: 404 when customer not found.
         HTTPException: 400 when specified customer does not belong to the current coach.
     """
-    if not validate_uuid(customer_id):
+    if not await validate_uuid(customer_id):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Passed customer_id is not correct UUID value"

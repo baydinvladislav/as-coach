@@ -2,6 +2,8 @@
 Class for interacting with storage through SQLAlchemy interlayer
 """
 
+from datetime import datetime
+
 from sqlalchemy import select, update
 
 from src.core.repositories.abstract import AbstractRepository
@@ -42,8 +44,8 @@ class SQLAlchemyRepository(AbstractRepository):
         """
         Returns instance by their primary key
         """
-        # TODO: await
-        if not validate_uuid(pk):
+
+        if not await validate_uuid(pk):
             raise TypeError("Argument is not valid UUID")
 
         instance = await self.session.get(self.model, pk)
@@ -86,7 +88,8 @@ class SQLAlchemyRepository(AbstractRepository):
             update(self.model).where(
                 self.model.id == str(instance.id)
             ).values(
-                **params
+                **params,
+                modified=datetime.now()
             )
         )
 

@@ -42,8 +42,7 @@ class ProfileService(ABC):
     async def update(self, **params):
         raise NotImplementedError
 
-    async def handle_profile_photo(self, **params):
-        photo = params.pop("photo")
+    async def handle_profile_photo(self, photo):
         if photo is not None:
             saving_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
             file_name = f"{self.user.username}_{saving_time}.jpeg"
@@ -52,8 +51,6 @@ class ProfileService(ABC):
                 shutil.copyfileobj(photo.file, buffer)
 
             set_attribute(self.user, "photo_path", photo_path)
-
-        set_attribute(self.user, "modified", datetime.now())
 
     async def confirm_password(self, password) -> bool:
         if await verify_password(password, str(self.user.password)):

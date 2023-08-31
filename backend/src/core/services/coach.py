@@ -41,5 +41,5 @@ class CoachService(ProfileService):
             return self.user
 
     async def update(self, **params):
-        await self.handle_profile_photo()
+        await self.handle_profile_photo(params.pop("photo"))
         await self.coach_repo.update(str(self.user.id), **params)

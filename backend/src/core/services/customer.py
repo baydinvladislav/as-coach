@@ -24,7 +24,7 @@ class CustomerService(ProfileService):
         password_in_db = str(self.user.password)
         if password_in_db == form_data.password \
                 or await verify_password(form_data.password, password_in_db):
-            return True
+            return self.user
 
         raise NotValidCredentials
 
@@ -35,5 +35,5 @@ class CustomerService(ProfileService):
             return self.user
 
     async def update(self, **params):
-        await self.handle_profile_photo()
+        await self.handle_profile_photo(params.pop("photo"))
         await self.customer_repo.update(str(self.user.id), **params)
