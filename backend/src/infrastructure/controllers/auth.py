@@ -60,7 +60,6 @@ async def register_user(
     Returns:
         dictionary with just created user
     """
-
     try:
         user = await service.register(user_data)
     except UsernameIsTaken:
@@ -102,7 +101,6 @@ async def login_user(
     Returns:
         access_token and refresh_token inside dictionary
     """
-
     if not form_data.username or not form_data.password:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -157,7 +155,6 @@ async def get_me(
     Returns:
         dict: short info about current user
     """
-
     user = service.user
 
     return {
@@ -186,7 +183,6 @@ async def get_profile(
     Returns:
         dict: full info about current user
     """
-
     user = service.user
 
     return {
@@ -234,7 +230,6 @@ async def update_profile(
     Returns:
         dictionary with updated full user info
     """
-
     user = service.user
 
     await service.update(
@@ -278,7 +273,6 @@ async def confirm_password(
     Returns:
         success or failed response
     """
-
     user = service.user
 
     is_confirmed = await service.confirm_password(current_password)
@@ -306,7 +300,6 @@ async def change_password(
     Returns:
         success response
     """
-
     user = service.user
 
     is_changed = await service.update(password=new_password)

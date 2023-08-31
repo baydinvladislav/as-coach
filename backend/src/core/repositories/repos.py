@@ -11,7 +11,6 @@ class CoachRepository(SQLAlchemyRepository):
     """
     Access to Coach domain
     """
-
     model = Coach
 
 
@@ -19,5 +18,4 @@ class CustomerRepository(SQLAlchemyRepository):
     """
     Access to Customer domain
     """
-
     model = Customer

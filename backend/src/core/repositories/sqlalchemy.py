@@ -14,7 +14,6 @@ class SQLAlchemyRepository(AbstractRepository):
     """
     Implements connection to storage
     """
-
     model = None
 
     def __init__(self, session):
@@ -44,7 +43,6 @@ class SQLAlchemyRepository(AbstractRepository):
         """
         Returns instance by their primary key
         """
-
         if not await validate_uuid(pk):
             raise TypeError("Argument is not valid UUID")
 
@@ -55,7 +53,6 @@ class SQLAlchemyRepository(AbstractRepository):
         """
         Returns all instances from tables
         """
-
         query = select(self.model)
         instances = await self.session.execute(query)
         return instances.scalars().all()

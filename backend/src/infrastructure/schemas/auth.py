@@ -79,6 +79,9 @@ class TokenPayload(BaseModel):
 
 
 class NewUserPassword(BaseModel):
+    """
+    Schema for changing user password
+    """
     password: str
 
     @validator("password")
