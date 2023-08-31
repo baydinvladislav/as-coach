@@ -2,7 +2,9 @@
 Class for interacting with storage through SQLAlchemy interlayer
 """
 
-from sqlalchemy import select
+from datetime import datetime
+
+from sqlalchemy import select, update
 
 from src.core.repositories.abstract import AbstractRepository
 from src.utils import validate_uuid
@@ -12,9 +14,9 @@ class SQLAlchemyRepository(AbstractRepository):
     """
     Implements connection to storage
     """
+    model = None
 
-    def __init__(self, model, session):
-        self.model = model
+    def __init__(self, session):
         self.session = session
 
     async def create(self, **params):
@@ -41,8 +43,7 @@ class SQLAlchemyRepository(AbstractRepository):
         """
         Returns instance by their primary key
         """
-        # TODO: await
-        if not validate_uuid(pk):
+        if not await validate_uuid(pk):
             raise TypeError("Argument is not valid UUID")
 
         instance = await self.session.get(self.model, pk)
@@ -52,12 +53,11 @@ class SQLAlchemyRepository(AbstractRepository):
         """
         Returns all instances from tables
         """
-
         query = select(self.model)
         instances = await self.session.execute(query)
         return instances.scalars().all()
 
-    async def filter(self, attribute_name, value):
+    async def filter(self, attribute_name, attribute_value):
         """
         Forms selection by passed params
 
@@ -69,8 +69,34 @@ class SQLAlchemyRepository(AbstractRepository):
             raise
 
         result = await self.session.execute(
-            select(self.model).where(attribute == value)
+            select(self.model).where(attribute == attribute_value)
         )
 
         instances = result.scalars().all()
         return instances
+
+    async def update(self, pk, **params):
+        """
+        Updates instance into storage
+
+        Args:
+             pk: primary key of the instance being updated
+             params: parameters for instance updating
+        """
+        instance = await self.get(pk=pk)
+
+        if not instance:
+            return
+
+        query = (
+            update(self.model).where(
+                self.model.id == str(instance.id)
+            ).values(
+                **params,
+                modified=datetime.now()
+            )
+        )
+
+        await self.session.execute(query)
+        await self.session.commit()
+        await self.session.refresh(instance)

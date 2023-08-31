@@ -18,7 +18,8 @@ async def test_create_method_positive(override_get_db):
     Tests method to create new record through SQLAlchemy repo
     """
 
-    repo = SQLAlchemyRepository(model=Coach, session=override_get_db)
+    repo = SQLAlchemyRepository(session=override_get_db)
+    repo.model = Coach
 
     coach_data = {
         "username": "+79253332211",
@@ -47,7 +48,8 @@ async def test_create_method_raise_attribute_error(override_get_db):
     Tests raising error because of invalid attributes
     """
 
-    repo = SQLAlchemyRepository(model=Coach, session=override_get_db)
+    repo = SQLAlchemyRepository(session=override_get_db)
+    repo.model = Coach
 
     coach_data = {
         "username": "+79253332211",
@@ -65,7 +67,8 @@ async def test_get_method(create_customer, override_get_db):
     Tests the successful receiving of the object
     """
 
-    repo = SQLAlchemyRepository(model=Coach, session=override_get_db)
+    repo = SQLAlchemyRepository(session=override_get_db)
+    repo.model = Coach
 
     customer = create_customer
     result = await repo.get(pk=str(customer.coach.id))
@@ -79,7 +82,8 @@ async def test_get_all_method(override_get_db):
     Tests the successful receiving all objects from table
     """
 
-    repo = SQLAlchemyRepository(model=Exercise, session=override_get_db)
+    repo = SQLAlchemyRepository(session=override_get_db)
+    repo.model = Exercise
 
     result = await repo.get_all()
 
@@ -92,7 +96,8 @@ async def test_filter_method(create_customer, override_get_db):
     Tests the filtering correctness
     """
 
-    repo = SQLAlchemyRepository(model=Exercise, session=override_get_db)
+    repo = SQLAlchemyRepository(session=override_get_db)
+    repo.model = Exercise
 
     result = await repo.filter("name", "Жим штанги лежа")
 

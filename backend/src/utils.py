@@ -15,7 +15,7 @@ def validate_phone_number(phone_number: str):
     raise ValueError("Specify correct phone number")
 
 
-def validate_uuid(uuid_value: str):
+async def validate_uuid(uuid_value: str):
     """
     Validates passed uuid
     """

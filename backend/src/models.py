@@ -26,18 +26,3 @@ class Gender(enum.Enum):
     """
     MALE = "male"
     FEMALE = "female"
-
-
-# TODO: merge two user models to one model
-# class User(Base, BaseModel):
-#     """
-#     This is the main application user model,
-#     Coach and Customer models will reference on it
-#     one to one relation
-#     """
-#     __tablename__ = "user"
-#     __table_args__ = {'extend_existing': True}
-#
-#     coach = relationship("Coach", uselist=False, back_populates="user")
-#     customer = relationship("Customer", uselist=False, back_populates="user")
-#

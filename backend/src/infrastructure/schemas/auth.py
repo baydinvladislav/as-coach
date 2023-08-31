@@ -34,7 +34,7 @@ class UserRegisterIn(BaseModel):
 
 class UserRegisterOut(BaseModel):
     """
-    Response after success user registration
+    Response after success coach registration
     """
     id: str
     username: str
@@ -43,7 +43,7 @@ class UserRegisterOut(BaseModel):
     refresh_token: str
 
 
-class UserProfile(BaseModel):
+class UserProfileOut(BaseModel):
     """
     Full user data for profile
     """
@@ -58,7 +58,7 @@ class UserProfile(BaseModel):
     photo_link: Optional[str]
 
 
-class LoginResponse(BaseModel):
+class LoginOut(BaseModel):
     """
     Response after successfully user login
     """
@@ -79,6 +79,9 @@ class TokenPayload(BaseModel):
 
 
 class NewUserPassword(BaseModel):
+    """
+    Schema for changing user password
+    """
     password: str
 
     @validator("password")
