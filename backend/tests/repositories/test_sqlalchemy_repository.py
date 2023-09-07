@@ -99,7 +99,7 @@ async def test_filter_method(create_customer, override_get_db):
     repo = SQLAlchemyRepository(session=override_get_db)
     repo.model = Exercise
 
-    result = await repo.filter("name", "Жим штанги лежа")
+    result = await repo.filter(filters={"name": "Жим штанги лежа"}, foreign_keys=[], sub_queries=[])
 
     for exercise in result:
         assert exercise.name == "Жим штанги лежа"

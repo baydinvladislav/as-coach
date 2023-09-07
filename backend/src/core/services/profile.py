@@ -63,13 +63,13 @@ class ProfileService(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def find(self, username: str):
+    async def find(self, filters: dict):
         """
         Provides user from database in case it is found.
         Save user to user attr.
 
         Args:
-            username: phone number passed by client
+            filters: attributes and these values
         """
         raise NotImplementedError
 

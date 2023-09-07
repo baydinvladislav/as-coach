@@ -82,8 +82,8 @@ async def provide_user_service(
     else:
         username = token_data.sub
 
-        coach = await coach_service.find(username)
-        customer = await customer_service.find(username)
+        coach = await coach_service.find({"username": username})
+        customer = await customer_service.find({"username": username})
 
         if coach:
             return coach_service

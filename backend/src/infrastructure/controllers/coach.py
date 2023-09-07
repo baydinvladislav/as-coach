@@ -16,6 +16,8 @@ from src import (
     ExercisesOnTraining,
     Coach
 )
+from src.core.services.coach import CoachService
+from src.core.services.customer import CustomerService
 from src.infrastructure.controllers.customer import customer_router
 from src.infrastructure.schemas.customer import (
     CustomerOut,
@@ -25,7 +27,12 @@ from src.infrastructure.schemas.customer import (
     TrainingPlanOutFull
 )
 from src.customer.utils import generate_random_password
-from src.dependencies import get_db, get_current_coach, get_current_user
+from src.dependencies import (
+    get_db,
+    get_current_user,
+    provide_customer_service,
+    provide_user_service
+)
 from src.utils import validate_uuid
 
 coach_router = APIRouter()
@@ -38,15 +45,16 @@ coach_router = APIRouter()
     response_model=CustomerOut)
 async def create_customer(
         customer_data: CustomerCreateIn,
-        database: Session = Depends(get_db),
-        current_user: Coach = Depends(get_current_coach)) -> dict:
+        user_service: CoachService = Depends(provide_user_service),
+        customer_service: CustomerService = Depends(provide_customer_service)
+) -> dict:
     """
     Creates new customer for coach
 
     Args:
         customer_data: data to create new customer
-        database: dependency injection for access to database
-        current_user: current application coach
+        user_service: service for interacting with profile
+        customer_service: service for interacting with customer
     Raises:
         400 in case if customer with the phone number already created
         400 in case if couple last name and first name already exist
@@ -54,47 +62,37 @@ async def create_customer(
         dictionary with just created customer
         id, first_name, last_name and phone_number are keys
     """
-    if customer_data.phone_number:
-        customer = await database.execute(
-            select(Customer).where(Customer.username == customer_data.phone_number)
-        )
-        customer = customer.scalar()
+    user = user_service.user
 
-        if customer is not None:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Customer {customer.first_name} {customer.last_name} "
-                       f"with this phone number already exists."
-            )
-
-    customer = await database.execute(
-        select(Customer).where(
-            Customer.first_name == customer_data.first_name,
-            Customer.last_name == customer_data.last_name
+    customer_in_db = await customer_service.find({"username": customer_data.phone_number})
+    if customer_data.phone_number and customer_in_db:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Customer {customer_in_db.first_name} {customer_in_db.last_name} "
+                   f"with this phone number already exists."
         )
+
+    customer_in_db = await customer_service.find(
+        {
+            "first_name": customer_data.first_name,
+            "last_name": customer_data.last_name
+        }
     )
-    customer = customer.scalar()
-    if customer:
+    if customer_in_db:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Customer full name: {customer_data.first_name} "
                    f"{customer_data.last_name} already exists."
         )
 
-    customer = Customer(
-        first_name=customer_data.first_name,
-        last_name=customer_data.last_name,
+    customer = await customer_service.create(
+        coach_id=str(user.id),
         username=customer_data.phone_number,
+        # TODO: make it async
         password=generate_random_password(8),
-        coach_id=str(current_user.id)
+        first_name=customer_data.first_name,
+        last_name=customer_data.last_name
     )
-
-    # TODO: send sms invite to customer
-    # if customer.username:
-    #     send_sms()
-
-    database.add(customer)
-    await database.commit()
 
     return {
         "id": str(customer.id),
@@ -110,33 +108,28 @@ async def create_customer(
     summary="Gets all user's customers",
     status_code=status.HTTP_200_OK)
 async def get_customers(
-        current_user: Coach = Depends(get_current_coach)
+        user_service: CoachService = Depends(provide_user_service),
 ) -> List[dict[str, Any]]:
     """
     Gets all customer for current coach
 
     Args:
-        current_user: current application coach
+        user_service: current application coach
 
     Returns:
         list of customers
     """
+    user = user_service.user
+
     customers = []
-
-    for customer in current_user.customers:
+    for customer in user.customers:
         training_plans = sorted(customer.training_plans, key=lambda x: x.end_date, reverse=True)
-        if training_plans:
-            last_plan_end_date = training_plans[0].end_date.strftime(
-                '%Y-%m-%d')
-        else:
-            last_plan_end_date = None
-
         customers.append({
             "id": str(customer.id),
             "first_name": customer.first_name,
             "last_name": customer.last_name,
             "phone_number": customer.username,
-            "last_plan_end_date": last_plan_end_date
+            "last_plan_end_date": training_plans[0].end_date.strftime("%Y-%m-%d") if training_plans else None
         })
 
     return customers
@@ -148,16 +141,16 @@ async def get_customers(
     status_code=status.HTTP_200_OK)
 async def get_customer(
         customer_id: str,
-        database: Session = Depends(get_db),
-        current_user: Coach = Depends(get_current_coach)
+        user_service: CoachService = Depends(provide_user_service),
+        customer_service: CustomerService = Depends(provide_customer_service)
 ) -> dict:
     """
     Gets specific customer by ID.
 
     Args:
         customer_id: str(UUID) of specified customer.
-        database: dependency injection for access to database.
-        current_user: current application coach
+        user_service: service for interacting with profile
+        customer_service: service for interacting with customer
 
     Raise:
         HTTPException: 400 when passed is not correct UUID as customer_id.
@@ -170,15 +163,9 @@ async def get_customer(
             detail="Passed customer_id is not correct UUID value"
         )
 
-    customer = await database.execute(
-        select(Customer).where(Customer.id == customer_id).options(
-            selectinload(Customer.training_plans)
-        )
-    )
+    customer = await customer_service.find(filters={"id": customer_id})
 
-    customer = customer.scalar()
-
-    if str(customer.coach_id) != str(current_user.id):
+    if str(customer.coach_id) != str(user_service.user.id):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="The client belong to another coach"
@@ -191,17 +178,12 @@ async def get_customer(
         )
 
     training_plans = sorted(customer.training_plans, key=lambda x: x.end_date, reverse=True)
-    if training_plans:
-        last_plan_end_date = training_plans[0].end_date.strftime('%Y-%m-%d')
-    else:
-        last_plan_end_date = None
-
     return {
         "id": str(customer.id),
         "first_name": customer.first_name,
         "last_name": customer.last_name,
         "phone_number": customer.username,
-        "last_plan_end_date": last_plan_end_date
+        "last_plan_end_date": training_plans[0].end_date.strftime('%Y-%m-%d') if training_plans else None
     }
 
 

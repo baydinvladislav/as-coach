@@ -107,8 +107,8 @@ async def login_user(
             detail="Empty fields"
         )
 
-    coach = await coach_service.find(form_data.username)
-    customer = await customer_service.find(form_data.username)
+    coach = await coach_service.find({"username": form_data.username})
+    customer = await customer_service.find({"username": form_data.username})
 
     if coach:
         service = coach_service

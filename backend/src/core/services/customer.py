@@ -53,15 +53,16 @@ class CustomerService(ProfileService):
 
         raise NotValidCredentials
 
-    async def find(self, username: str) -> Optional[Customer]:
+    async def find(self, filters: dict) -> Optional[Customer]:
         """
         Provides customer from database in case it is found.
         Save customer instance to user attr.
 
         Args:
-            username: customer phone number passed by client
+            filters: attributes and these values
         """
-        customer = await self.customer_repo.filter("username", username)
+        customer = await self.customer_repo.filter(filters=filters)
+
         if customer:
             self.user = customer[0]
             return self.user
@@ -75,3 +76,17 @@ class CustomerService(ProfileService):
         """
         await self.handle_profile_photo(params.pop("photo"))
         await self.customer_repo.update(str(self.user.id), **params)
+
+    async def create(self, coach_id: str, **kwargs) -> Customer:
+        """
+        Creates new customer in database
+
+        Args:
+            coach_id: customer's coach
+            kwargs: any required params for customer creating
+
+        Returns:
+            customer: Customer instance
+        """
+        customer = await self.customer_repo.create(coach_id=coach_id, **kwargs)
+        return customer

@@ -5,6 +5,7 @@ Class for interacting with storage through SQLAlchemy interlayer
 from datetime import datetime
 
 from sqlalchemy import select, update
+from sqlalchemy.orm import selectinload
 
 from src.core.repositories.abstract import AbstractRepository
 from src.utils import validate_uuid
@@ -57,19 +58,33 @@ class SQLAlchemyRepository(AbstractRepository):
         instances = await self.session.execute(query)
         return instances.scalars().all()
 
-    async def filter(self, attribute_name, attribute_value):
+    async def filter(self, filters: dict, foreign_keys: list = None, sub_queries: list = None):
         """
         Forms selection by passed params
 
         Args:
-            :params: unknown pairs of attributes and values for selection
+            filters: dictionary with attributes and values
+            foreign_keys: list of foreign keys fields
+            sub_queries: list of fields for sub queries
         """
-        attribute = getattr(self.model, attribute_name)
-        if not attribute_name:
-            raise
+        if foreign_keys is None:
+            foreign_keys = sub_queries = []
+
+        pairs = []
+        for attr, val in filters.items():
+            if not hasattr(self.model, attr):
+                raise
+
+            attribute = getattr(self.model, attr)
+            pairs.append(attribute == val)
+
+        f_keys = []
+        for foreign_key in foreign_keys:
+            for sub_query in sub_queries:
+                f_keys.append(selectinload(getattr(self.model, foreign_key)).subqueryload(sub_query))
 
         result = await self.session.execute(
-            select(self.model).where(attribute == attribute_value)
+            select(self.model).where(*pairs).options(*f_keys)
         )
 
         instances = result.scalars().all()
