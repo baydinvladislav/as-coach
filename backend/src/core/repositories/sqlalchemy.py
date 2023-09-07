@@ -73,7 +73,7 @@ class SQLAlchemyRepository(AbstractRepository):
         pairs = []
         for attr, val in filters.items():
             if not hasattr(self.model, attr):
-                raise
+                raise AttributeError(f"{self.model} model doesn't have field {attr}. \nUpdating canceled")
 
             attribute = getattr(self.model, attr)
             pairs.append(attribute == val)
