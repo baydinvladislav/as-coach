@@ -3,7 +3,8 @@ Stores custom repositories for interaction with domains
 """
 
 from src.coach.models import Coach
-from src.customer.models import Customer
+from src.customer.models import Customer, TrainingPlan
+from src.gym.models import Diet, Training, DietOnTrainingPlan
 from src.core.repositories.sqlalchemy import SQLAlchemyRepository
 
 
@@ -19,3 +20,31 @@ class CustomerRepository(SQLAlchemyRepository):
     Access to Customer domain
     """
     model = Customer
+
+
+class TrainingPlanRepository(SQLAlchemyRepository):
+    """
+    Access to TrainingPlan domain
+    """
+    model = TrainingPlan
+
+
+class TrainingRepository(SQLAlchemyRepository):
+    """
+    Access to Training domain
+    """
+    model = Training
+
+
+class DietRepository(SQLAlchemyRepository):
+    """
+    Access to Diet domain
+    """
+    model = Diet
+
+
+class DietOnTrainingPlanRepository(SQLAlchemyRepository):
+    """
+    Access to DietOnTrainingPlan domain
+    """
+    model = DietOnTrainingPlan

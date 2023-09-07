@@ -11,6 +11,10 @@ class AbstractRepository(ABC):
     """
 
     @abstractmethod
+    def __init__(self, session):
+        self.session = session
+
+    @abstractmethod
     def create(self, **params):
         """
         Creates instance in storage

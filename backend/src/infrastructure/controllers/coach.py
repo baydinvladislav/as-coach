@@ -1,5 +1,3 @@
-import uuid
-from datetime import datetime
 from typing import Union, Any, List
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -10,14 +8,13 @@ from starlette import status
 from src import (
     Customer,
     TrainingPlan,
-    Diet,
-    DietOnTrainingPlan,
     Training,
     ExercisesOnTraining,
     Coach
 )
 from src.core.services.coach import CoachService
 from src.core.services.customer import CustomerService
+from src.core.services.training_plan import TrainingPlanService
 from src.infrastructure.controllers.customer import customer_router
 from src.infrastructure.schemas.customer import (
     CustomerOut,
@@ -31,7 +28,8 @@ from src.dependencies import (
     get_db,
     get_current_user,
     provide_customer_service,
-    provide_user_service
+    provide_user_service,
+    provide_training_plan_service
 )
 from src.utils import validate_uuid
 
@@ -195,108 +193,38 @@ async def get_customer(
 async def create_training_plan(
         training_plan_data: TrainingPlanIn,
         customer_id: str,
-        database: Session = Depends(get_db),
-        current_user: Session = Depends(get_current_coach)) -> dict:
+        training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
+        user_service: CoachService = Depends(provide_user_service)
+) -> dict:
     """
-    Creates new training plan for specific customer
+    Creates new training plan for specified customer
 
     Args:
         training_plan_data: data from application user to create new training plan
         customer_id: customer's str(UUID)
-        database: dependency injection for access to database
-        current_user: dependency injection to define a current user
+        training_plan_service: service for interacting with customer training plans
+        user_service: service for interacting with profile
     """
-
-    try:
-        # create training plan
-        training_plan = TrainingPlan(
-            start_date=datetime.strptime(training_plan_data.start_date, '%Y-%m-%d').date(),
-            end_date=datetime.strptime(training_plan_data.end_date, '%Y-%m-%d').date(),
-            customer_id=customer_id,
-            set_rest=training_plan_data.set_rest,
-            exercise_rest=training_plan_data.exercise_rest,
-            notes=training_plan_data.notes
-        )
-        database.add(training_plan)
-        await database.flush()
-
-        # create diets
-        for diet_item in training_plan_data.diets:
-            diet = Diet(
-                proteins=diet_item.proteins,
-                fats=diet_item.fats,
-                carbs=diet_item.carbs
-            )
-            database.add(diet)
-            await database.flush()
-
-            # bound diet with training_plan
-            diet_on_training_plan = DietOnTrainingPlan(
-                diet_id=str(diet.id),
-                training_plan_id=str(training_plan.id)
-            )
-            database.add(diet_on_training_plan)
-
-        # create trainings
-        for training_item in training_plan_data.trainings:
-            training = Training(
-                name=training_item.name,
-                training_plan_id=str(training_plan.id)
-            )
-            database.add(training)
-            await database.flush()
-
-            # create exercises on training
-            superset_dict = {}
-            ordering = 0
-            for exercise_item in training_item.exercises:
-                if isinstance(exercise_item.supersets, list) and len(exercise_item.supersets) > 0:
-                    if str(exercise_item.id) not in superset_dict:
-                        superset_id = str(uuid.uuid4())
-
-                        superset_dict[str(exercise_item.id)] = superset_id
-                        for e in exercise_item.supersets:
-                            superset_dict[str(e)] = superset_id
-
-                exercise_on_training = ExercisesOnTraining(
-                    training_id=str(training.id),
-                    exercise_id=str(exercise_item.id),
-                    sets=exercise_item.sets,
-                    superset_id=superset_dict.get(str(exercise_item.id)),
-                    ordering=ordering
-                )
-                database.add(exercise_on_training)
-                await database.flush()
-                ordering += 1
-
-        await database.commit()
-        await database.refresh(training_plan)
-
-    except Exception as e:
-        await database.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Error during training plan creation: {e}"
-        )
-
-    training_plan_in_db = await database.execute(
-        select(TrainingPlan).where(TrainingPlan.id == training_plan.id).order_by().options(
-            selectinload(TrainingPlan.customer),
-            selectinload(TrainingPlan.diets),
-            selectinload(TrainingPlan.trainings)
-        )
+    training_plan = await training_plan_service.create(
+        customer_id=customer_id,
+        data=training_plan_data
     )
-    training_plan_in_db = training_plan_in_db.scalar()
 
-    return {
-        "id": str(training_plan_in_db.id),
-        "start_date": training_plan_in_db.start_date.strftime('%Y-%m-%d'),
-        "end_date": training_plan_in_db.end_date.strftime('%Y-%m-%d'),
-        "number_of_trainings": len(training_plan_in_db.trainings),
-        "proteins": "/".join([str(diet.proteins) for diet in training_plan_in_db.diets]),
-        "fats": "/".join([str(diet.fats) for diet in training_plan_in_db.diets]),
-        "carbs": "/".join([str(diet.carbs) for diet in training_plan_in_db.diets])
-    }
+    if training_plan:
+        return {
+            "id": str(training_plan.id),
+            "start_date": training_plan.start_date.strftime('%Y-%m-%d'),
+            "end_date": training_plan.end_date.strftime('%Y-%m-%d'),
+            "number_of_trainings": len(training_plan.trainings),
+            "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
+            "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
+            "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets])
+        }
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400,
+            detail=f"Unknown error during training plan creation"
+        )
 
 
 @customer_router.get(

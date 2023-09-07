@@ -14,10 +14,11 @@ from src import Coach, Customer
 from src.auth.config import reuseable_oauth
 from src.auth.utils import decode_jwt_token
 
-from src.core.repositories.repos import CoachRepository, CustomerRepository
+from src.core.repositories.repos import CoachRepository, CustomerRepository, TrainingPlanRepository
 from src.core.services.coach import CoachService
 from src.core.services.customer import CustomerService
 from src.core.services.exceptions import TokenExpired, NotValidCredentials
+from src.core.services.training_plan import TrainingPlanService
 from src.database import SessionLocal
 
 
@@ -44,6 +45,13 @@ async def provide_customer_service(database: Session = Depends(get_db)) -> Custo
     Returns service responsible to interact with Customer domain
     """
     return CustomerService(CustomerRepository(database))
+
+
+async def provide_training_plan_service(database: Session = Depends(get_db)) -> TrainingPlanService:
+    """
+    Returns service responsible to interact with TrainingPlan domain
+    """
+    return TrainingPlanService(TrainingPlanRepository(database))
 
 
 async def provide_user_service(

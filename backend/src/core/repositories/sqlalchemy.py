@@ -68,7 +68,10 @@ class SQLAlchemyRepository(AbstractRepository):
             sub_queries: list of fields for sub queries
         """
         if foreign_keys is None:
-            foreign_keys = sub_queries = []
+            foreign_keys = []
+
+        if sub_queries is None:
+            sub_queries = []
 
         pairs = []
         for attr, val in filters.items():
@@ -80,8 +83,11 @@ class SQLAlchemyRepository(AbstractRepository):
 
         f_keys = []
         for foreign_key in foreign_keys:
-            for sub_query in sub_queries:
-                f_keys.append(selectinload(getattr(self.model, foreign_key)).subqueryload(sub_query))
+            if sub_queries:
+                for sub_query in sub_queries:
+                    f_keys.append(selectinload(getattr(self.model, foreign_key)).subqueryload(sub_query))
+            else:
+                f_keys.append(selectinload(getattr(self.model, foreign_key)))
 
         result = await self.session.execute(
             select(self.model).where(*pairs).options(*f_keys)
