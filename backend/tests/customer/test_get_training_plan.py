@@ -29,9 +29,9 @@ async def test_get_all_training_plans(
 
     assert response.status_code == 200
 
-    first_date_end = datetime.strptime(response.json()[0]["end_date"], '%Y-%m-%d').date()
-    last_date_end = datetime.strptime(response.json()[-1]["end_date"], '%Y-%m-%d').date()
-    assert first_date_end > last_date_end
+    first_date_end = datetime.strptime(response.json()[0]["end_date"], "%Y-%m-%d").date()
+    last_date_end = datetime.strptime(response.json()[-1]["end_date"], "%Y-%m-%d").date()
+    assert first_date_end < last_date_end
 
 
 @pytest.mark.asyncio

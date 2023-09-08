@@ -27,7 +27,10 @@ class SQLAlchemyRepository(AbstractRepository):
         Args:
             :params: unknown pairs of attributes and values for new instance
         """
-        invalid_attrs = [attribute for attribute, value in params.items() if attribute not in self.model.__dict__]
+        invalid_attrs = [
+            attribute for attribute, value in params.items()
+            if attribute not in self.model.__dict__
+        ]
         if invalid_attrs:
             raise AttributeError(
                 f"Passed invalid column to create new object of {self.model}\n"

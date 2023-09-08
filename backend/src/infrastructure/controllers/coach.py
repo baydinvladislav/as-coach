@@ -213,8 +213,8 @@ async def create_training_plan(
     if training_plan:
         return {
             "id": str(training_plan.id),
-            "start_date": training_plan.start_date.strftime('%Y-%m-%d'),
-            "end_date": training_plan.end_date.strftime('%Y-%m-%d'),
+            "start_date": training_plan.start_date.strftime("%Y-%m-%d"),
+            "end_date": training_plan.end_date.strftime("%Y-%m-%d"),
             "number_of_trainings": len(training_plan.trainings),
             "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
             "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
@@ -233,8 +233,9 @@ async def create_training_plan(
     status_code=status.HTTP_200_OK)
 async def get_all_training_plans(
         customer_id: str,
-        database: Session = Depends(get_db),
-        current_user: Union[Coach, Customer] = Depends(get_current_user)
+        user_service: CoachService = Depends(provide_user_service),
+        training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
+        customer_service: CustomerService = Depends(provide_customer_service)
 ) -> Union[list[dict], list[None]]:
     """
     Returns all training plans for specific customer
@@ -242,36 +243,25 @@ async def get_all_training_plans(
 
     Args:
         customer_id: customer's str(UUID)
-        database: dependency injection for access to database
-        current_user: dependency injection to define a current user
+        user_service: service for interacting with profile
+        training_plan_service: service for interacting with customer training plans
+        customer_service: service for interacting with customer
     """
-    customer = await database.execute(
-        select(Customer).where(Customer.id == customer_id)
-    )
-    customer = customer.scalar()
-    if not customer:
+    customer = await customer_service.find({"id": customer_id})
+    if customer is None:
         raise HTTPException(
             status_code=404,
             detail=f"customer with id={customer_id} doesn't exist"
         )
 
-    training_plans = await database.execute(
-        select(TrainingPlan).where(
-            TrainingPlan.customer_id == customer_id
-        ).options(
-            selectinload(TrainingPlan.trainings),
-            selectinload(TrainingPlan.diets),
-        ).order_by(
-            desc(TrainingPlan.end_date)
-        )
-    )
+    training_plans = customer.training_plans
 
     response = []
-    for training_plan in training_plans.scalars():
+    for training_plan in training_plans:
         response.append({
             "id": str(training_plan.id),
-            "start_date": training_plan.start_date.strftime('%Y-%m-%d'),
-            "end_date": training_plan.end_date.strftime('%Y-%m-%d'),
+            "start_date": training_plan.start_date.strftime("%Y-%m-%d"),
+            "end_date": training_plan.end_date.strftime("%Y-%m-%d"),
             "number_of_trainings": len(training_plan.trainings),
             "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
             "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),

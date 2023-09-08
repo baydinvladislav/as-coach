@@ -61,7 +61,12 @@ class CustomerService(ProfileService):
         Args:
             filters: attributes and these values
         """
-        customer = await self.customer_repo.filter(filters=filters)
+        foreign_keys, sub_queries = ["training_plans"], ["trainings", "diets"]
+        customer = await self.customer_repo.filter(
+            filters=filters,
+            foreign_keys=foreign_keys,
+            sub_queries=sub_queries
+        )
 
         if customer:
             self.user = customer[0]
