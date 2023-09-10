@@ -14,7 +14,7 @@ from src import Coach, Customer
 from src.auth.config import reuseable_oauth
 from src.auth.utils import decode_jwt_token
 
-from src.core.repositories.repos import (
+from src.core.repositories.custom import (
     CoachRepository,
     CustomerRepository,
     TrainingPlanRepository,
@@ -26,7 +26,7 @@ from src.core.repositories.repos import (
 from src.core.services.coach import CoachService
 from src.core.services.customer import CustomerService
 from src.core.services.exceptions import TokenExpired, NotValidCredentials
-from src.core.services.training_plan import Gym, GymInstructor, Nutritionist
+from src.core.services.gym import Gym, GymInstructor, Nutritionist
 from src.database import SessionLocal
 
 

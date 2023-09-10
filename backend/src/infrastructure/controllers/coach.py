@@ -5,7 +5,7 @@ from starlette import status
 
 from src.core.services.coach import CoachService
 from src.core.services.customer import CustomerService
-from src.core.services.training_plan import Gym
+from src.core.services.gym import Gym
 from src.infrastructure.controllers.customer import customer_router
 from src.infrastructure.schemas.customer import (
     CustomerOut,
