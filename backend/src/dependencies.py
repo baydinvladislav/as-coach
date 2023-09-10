@@ -14,11 +14,19 @@ from src import Coach, Customer
 from src.auth.config import reuseable_oauth
 from src.auth.utils import decode_jwt_token
 
-from src.core.repositories.repos import CoachRepository, CustomerRepository, TrainingPlanRepository
+from src.core.repositories.repos import (
+    CoachRepository,
+    CustomerRepository,
+    TrainingPlanRepository,
+    TrainingRepository,
+    DietRepository,
+    DietOnTrainingPlanRepository,
+    ExercisesOnTrainingRepository
+)
 from src.core.services.coach import CoachService
 from src.core.services.customer import CustomerService
 from src.core.services.exceptions import TokenExpired, NotValidCredentials
-from src.core.services.training_plan import TrainingPlanService
+from src.core.services.training_plan import Gym, GymInstructor, Nutritionist
 from src.database import SessionLocal
 
 
@@ -47,11 +55,23 @@ async def provide_customer_service(database: Session = Depends(get_db)) -> Custo
     return CustomerService(CustomerRepository(database))
 
 
-async def provide_training_plan_service(database: Session = Depends(get_db)) -> TrainingPlanService:
+async def provide_gym_service(database: Session = Depends(get_db)) -> Gym:
     """
     Returns service responsible to interact with TrainingPlan domain
     """
-    return TrainingPlanService(TrainingPlanRepository(database))
+    gym_instructor = GymInstructor(
+        repositories={
+            "training_repo": TrainingRepository(database),
+            "exercises_on_training_repo": ExercisesOnTrainingRepository(database)
+        }
+    )
+    nutritionist = Nutritionist(
+        repositories={
+            "diet_repo": DietRepository(database),
+            "diets_on_training_repo": DietOnTrainingPlanRepository(database)
+        }
+    )
+    return Gym({"training_plan": TrainingPlanRepository(database)}, gym_instructor, nutritionist)
 
 
 async def provide_user_service(

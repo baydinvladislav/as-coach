@@ -4,7 +4,7 @@ Stores custom repositories for interaction with domains
 
 from src.coach.models import Coach
 from src.customer.models import Customer, TrainingPlan
-from src.gym.models import Diet, Training, DietOnTrainingPlan
+from src.gym.models import Diet, Training, DietOnTrainingPlan, ExercisesOnTraining
 from src.core.repositories.sqlalchemy import SQLAlchemyRepository
 
 
@@ -48,3 +48,10 @@ class DietOnTrainingPlanRepository(SQLAlchemyRepository):
     Access to DietOnTrainingPlan domain
     """
     model = DietOnTrainingPlan
+
+
+class ExercisesOnTrainingRepository(SQLAlchemyRepository):
+    """
+    Access to ExercisesOnTraining domain
+    """
+    model = ExercisesOnTraining

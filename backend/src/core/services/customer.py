@@ -72,6 +72,7 @@ class CustomerService(ProfileService):
             self.user = customer[0]
             return self.user
 
+    # TODO: return numbers of updated rows
     async def update(self, **params) -> None:
         """
         Updates customer data in database

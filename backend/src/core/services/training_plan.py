@@ -13,11 +13,16 @@ from src.gym.models import DietOnTrainingPlan, ExercisesOnTraining
 
 class Nutritionist:
     """
-    The subdomain of PhysicalCoach to work with nutrition
+    The subdomain of Gym to work with nutritions
+
+    Attributes:
+        diet_repo: repository to store Diet rows
+        diets_on_training_repo: repository to store DietsOnTrainingPlan rows
     """
 
-    def __init__(self, diet_repo: AbstractRepository):
-        self.diet_repo = diet_repo
+    def __init__(self, repositories: dict[str, AbstractRepository]):
+        self.diet_repo = repositories["diet_repo"]
+        self.diets_on_training_repo = repositories["diets_on_training_repo"]
 
     async def create_diets(self, training_plan_id: str, diets: list):
         """
@@ -41,13 +46,20 @@ class Nutritionist:
             self.diet_repo.session.add(diet_on_training_plan)
 
 
-class TrainingManager:
+class GymInstructor:
     """
-    The subdomain of PhysicalCoach to work with trainings
+    The subdomain of Gym to work with trainings
+
+    Attributes:
+        training_repo: repository to store Training rows
+        exercises_on_training_repo: repository to store ExercisesOnTraining rows
+        superset_dict: using to store supersets
+        ordering: make order for supersets
     """
 
-    def __init__(self, training_repo: AbstractRepository, exercises_on_training_repo: AbstractRepository):
-        self.repos = [training_repo, exercises_on_training_repo]
+    def __init__(self, repositories: dict[str, AbstractRepository]):
+        self.training_repo = repositories["training_repo"]
+        self.exercises_on_training_repo = repositories["exercises_on_training_repo"]
         self.superset_dict = {}
         self.ordering = 0
 
@@ -105,18 +117,25 @@ class TrainingManager:
         )
 
 
-class PhysicalCoach:
+class Gym:
     """
     The service to provide fitness services for customers.
 
     Attributes:
         training_plan_repo: repository to store TrainingPlan rows
-        training_manager: TrainingManager: subdomain to work with trainings
+        gym_instructor:
+        nutritionist:
     """
 
-    def __init__(self, training_plan_repo: AbstractRepository):
-        self.training_plan_repo = training_plan_repo
-        self.training_manager = TrainingManager()
+    def __init__(
+            self,
+            repositories: dict[str, AbstractRepository],
+            gym_instructor: GymInstructor,
+            nutritionist: Nutritionist
+    ):
+        self.training_plan_repo = repositories["training_plan"]
+        self.gym_instructor = gym_instructor
+        self.nutritionist = nutritionist
 
     async def create_training_plan(self, customer_id: str, data: TrainingPlanIn) -> TrainingPlan:
         """
@@ -135,11 +154,11 @@ class PhysicalCoach:
             self.training_plan_repo.session.add(training_plan)
             await self.training_plan_repo.session.flush()
 
-            await self.diet_service.create_diets(
+            await self.nutritionist.create_diets(
                 training_plan_id=str(training_plan.id),
                 diets=data.diets
             )
-            await self.training_service.create_trainings(
+            await self.gym_instructor.create_trainings(
                 training_plan_id=str(training_plan.id),
                 trainings=data.trainings
             )

@@ -1,20 +1,11 @@
 from typing import Union, Any, List
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select, desc
-from sqlalchemy.orm import Session, selectinload
 from starlette import status
 
-from src import (
-    Customer,
-    TrainingPlan,
-    Training,
-    ExercisesOnTraining,
-    Coach
-)
 from src.core.services.coach import CoachService
 from src.core.services.customer import CustomerService
-from src.core.services.training_plan import TrainingPlanService
+from src.core.services.training_plan import Gym
 from src.infrastructure.controllers.customer import customer_router
 from src.infrastructure.schemas.customer import (
     CustomerOut,
@@ -24,13 +15,7 @@ from src.infrastructure.schemas.customer import (
     TrainingPlanOutFull
 )
 from src.customer.utils import generate_random_password
-from src.dependencies import (
-    get_db,
-    get_current_user,
-    provide_customer_service,
-    provide_user_service,
-    provide_training_plan_service
-)
+from src.dependencies import provide_customer_service, provide_user_service, provide_gym_service
 from src.utils import validate_uuid
 
 coach_router = APIRouter()
@@ -193,8 +178,8 @@ async def get_customer(
 async def create_training_plan(
         training_plan_data: TrainingPlanIn,
         customer_id: str,
-        training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
-        user_service: CoachService = Depends(provide_user_service)
+        user_service: CoachService = Depends(provide_user_service),
+        gym_instructor: Gym = Depends(provide_gym_service)
 ) -> dict:
     """
     Creates new training plan for specified customer
@@ -202,10 +187,10 @@ async def create_training_plan(
     Args:
         training_plan_data: data from application user to create new training plan
         customer_id: customer's str(UUID)
-        training_plan_service: service for interacting with customer training plans
         user_service: service for interacting with profile
+        gym_instructor: service for interacting with customer training plans
     """
-    training_plan = await training_plan_service.create(
+    training_plan = await gym_instructor.create_training_plan(
         customer_id=customer_id,
         data=training_plan_data
     )
@@ -234,7 +219,6 @@ async def create_training_plan(
 async def get_all_training_plans(
         customer_id: str,
         user_service: CoachService = Depends(provide_user_service),
-        training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
         customer_service: CustomerService = Depends(provide_customer_service)
 ) -> Union[list[dict], list[None]]:
     """
@@ -244,7 +228,6 @@ async def get_all_training_plans(
     Args:
         customer_id: customer's str(UUID)
         user_service: service for interacting with profile
-        training_plan_service: service for interacting with customer training plans
         customer_service: service for interacting with customer
     """
     customer = await customer_service.find({"id": customer_id})
@@ -254,6 +237,7 @@ async def get_all_training_plans(
             detail=f"customer with id={customer_id} doesn't exist"
         )
 
+    # TODO: получить через сервис GymInstructor
     training_plans = customer.training_plans
 
     response = []
@@ -276,10 +260,11 @@ async def get_all_training_plans(
     response_model=TrainingPlanOutFull,
     status_code=status.HTTP_200_OK)
 async def get_training_plan(
-    training_plan_id: str,
-    customer_id: str,
-    database: Session = Depends(get_db),
-    current_user: Union[Coach, Customer] = Depends(get_current_user)
+        training_plan_id: str,
+        customer_id: str,
+        user_service: CoachService = Depends(provide_user_service),
+        gym: Gym = Depends(provide_gym_service),
+        customer_service: CustomerService = Depends(provide_customer_service)
 ) -> dict:
     """
     Gets full info for specific training plan by their ID
@@ -288,98 +273,35 @@ async def get_training_plan(
     Args:
         training_plan_id: str(UUID) of specified training plan
         customer_id: str(UUID) of specified customer
-        database: dependency injection for access to database
-        current_user: returns current application user
+        user_service: service for interacting with profile
+        gym: service for interacting with customer training plans
+        customer_service: service for interacting with customer
 
     Raise:
         HTTPException: 404 when customer or training plan are not found
     """
-
-    customer = await database.execute(
-        select(Customer).where(Customer.id == customer_id)
-    )
-
-    if not customer:
+    customer = await customer_service.find({"id": customer_id})
+    if customer is None:
         raise HTTPException(
             status_code=404,
-            detail=f"customer with id={customer_id} doesn't exist"
+            detail=f"Customer with id={customer_id} doesn't exist"
         )
 
-    training_plan = await database.execute(
-        select(TrainingPlan).where(
-            TrainingPlan.id == training_plan_id
-        ).options(
-            selectinload(TrainingPlan.trainings)
-        )
-    )
-
-    if not training_plan:
+    training_plan = await gym.find_training_plan({"id": training_plan_id})
+    if training_plan is None:
         raise HTTPException(
             status_code=404,
-            detail=f"training plan with id={training_plan_id} doesn't exist"
+            detail=f"Training plan with id={training_plan_id} doesn't exist"
         )
 
-    trainings = []
-    training_plan = training_plan.scalar()
-    for training in training_plan.trainings:
-        training_in_db = await database.execute(
-            select(Training).where(
-                Training.id == str(training.id)
-            ).options(
-                selectinload(Training.exercises)
-            )
-        )
-        training_in_db = training_in_db.scalar()
-
-        training_data = {
-            "id": str(training_in_db.id),
-            "name": training_in_db.name,
-            "number_of_exercises": len(training_in_db.exercises)
-        }
-
-        exercises = []
-        for exercise in training_in_db.exercises:
-            exercise_data = {
-                "id": str(exercise.id),
-                "name": exercise.name
-            }
-
-            exercise_on_training = await database.execute(
-                select(ExercisesOnTraining).where(
-                    ExercisesOnTraining.training_id == str(training.id),
-                    ExercisesOnTraining.exercise_id == str(exercise.id)
-                )
-            )
-            exercise_on_training = exercise_on_training.scalar()
-            if exercise_on_training:
-                exercise_data["sets"] = exercise_on_training.sets
-                exercise_data["superset_id"] = exercise_on_training.superset_id
-                exercise_data["ordering"] = exercise_on_training.ordering or 0
-                exercises.append(exercise_data)
-
-        exercises.sort(key=lambda x: x["ordering"])
-        training_data["exercises"] = exercises
-
-        trainings.append(training_data)
-
-    training_plan_in_db = await database.execute(
-        select(TrainingPlan).where(
-            TrainingPlan.id == str(training_plan.id)
-        ).options(
-            selectinload(TrainingPlan.diets),
-            selectinload(TrainingPlan.trainings)
-        )
-    )
-
-    training_plan_in_db = training_plan_in_db.scalar()
     return {
         "id": str(training_plan.id),
-        "start_date": training_plan.start_date.strftime('%Y-%m-%d'),
-        "end_date": training_plan.end_date.strftime('%Y-%m-%d'),
-        "proteins": "/".join([str(diet.proteins) for diet in training_plan_in_db.diets]),
-        "fats": "/".join([str(diet.fats) for diet in training_plan_in_db.diets]),
-        "carbs": "/".join([str(diet.carbs) for diet in training_plan_in_db.diets]),
-        "trainings": trainings,
+        "start_date": training_plan.start_date.strftime("%Y-%m-%d"),
+        "end_date": training_plan.end_date.strftime("%Y-%m-%d"),
+        "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
+        "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
+        "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets]),
+        "trainings": training_plan.trainings,
         "set_rest": training_plan.set_rest,
         "exercise_rest": training_plan.exercise_rest,
         "notes": training_plan.notes
