@@ -6,27 +6,14 @@ import uuid
 from datetime import datetime
 
 from src.core.repositories.abstract import AbstractRepository
-from src.core.repositories.repos import DietRepository, TrainingRepository, DietOnTrainingPlanRepository
 from src.infrastructure.schemas.customer import TrainingPlanIn
+from src.customer.models import TrainingPlan
 from src.gym.models import DietOnTrainingPlan, ExercisesOnTraining
 
 
-# class DietOnTrainingPlanService:
-#     def __init__(self, diet_on_training_repo: AbstractRepository):
-#         self.diet_on_training_repo = diet_on_training_repo
-#
-#     async def create_diets_in_training_plan(self, training_plan_id: str, diet_id: str):
-#         # bound diet with training_plan
-#         diet_on_training_plan = DietOnTrainingPlan(
-#             diet_id=diet_id,
-#             training_plan_id=training_plan_id
-#         )
-#         self.diet_on_training_repo.session.add(diet_on_training_plan)
-
-
-class DietService:
+class Nutritionist:
     """
-
+    The subdomain of PhysicalCoach to work with nutrition
     """
 
     def __init__(self, diet_repo: AbstractRepository):
@@ -54,13 +41,13 @@ class DietService:
             self.diet_repo.session.add(diet_on_training_plan)
 
 
-class TrainingService:
+class TrainingManager:
+    """
+    The subdomain of PhysicalCoach to work with trainings
     """
 
-    """
-
-    def __init__(self, training_repo: AbstractRepository):
-        self.training_repo = training_repo
+    def __init__(self, training_repo: AbstractRepository, exercises_on_training_repo: AbstractRepository):
+        self.repos = [training_repo, exercises_on_training_repo]
         self.superset_dict = {}
         self.ordering = 0
 
@@ -105,19 +92,33 @@ class TrainingService:
                 await self.training_repo.session.flush()
                 self.ordering += 1
 
+    async def provide_training_exercises(self, training_id, exercise_id):
+        return await self.exercises_on_training_service.get_exercises_on_training(
+            training_id=training_id,
+            exercise_id=exercise_id
+        )
 
-class TrainingPlanService:
+    async def get_training_exercises(self, training_id, exercise_id):
+        await self.training_service.provide_training_exercises(
+            training_id=training_id,
+            exercise_id=exercise_id
+        )
+
+
+class PhysicalCoach:
     """
+    The service to provide fitness services for customers.
 
+    Attributes:
+        training_plan_repo: repository to store TrainingPlan rows
+        training_manager: TrainingManager: subdomain to work with trainings
     """
 
     def __init__(self, training_plan_repo: AbstractRepository):
         self.training_plan_repo = training_plan_repo
+        self.training_manager = TrainingManager()
 
-        self.diet_service = DietService(DietRepository(training_plan_repo.session))
-        self.training_service = TrainingService(TrainingRepository(training_plan_repo.session))
-
-    async def create(self, customer_id: str, data: TrainingPlanIn):
+    async def create_training_plan(self, customer_id: str, data: TrainingPlanIn) -> TrainingPlan:
         """
 
         """
@@ -157,3 +158,17 @@ class TrainingPlanService:
             )
 
             return training_plan_in_db[0] if training_plan_in_db else None
+
+    async def find_training_plan(self, filters: dict) -> TrainingPlan:
+        """
+
+        """
+        foreign_keys, sub_queries = ["trainings"], ["exercises"]
+        training_plan = await self.training_plan_repo.filter(
+            filters=filters,
+            foreign_keys=foreign_keys,
+            sub_queries=sub_queries
+        )
+
+        if training_plan:
+            return training_plan[0]
