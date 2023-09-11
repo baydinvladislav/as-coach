@@ -11,7 +11,7 @@ from src.auth.utils import get_hashed_password, verify_password
 from src.core.repositories.abstract import AbstractRepository
 from src.core.services.exceptions import NotValidCredentials, UsernameIsTaken
 from src.core.services.profile import ProfileService, ProfileType
-from src.infrastructure.schemas.auth import UserRegisterIn
+from src.interfaces.schemas.auth import UserRegisterIn
 
 
 class CoachService(ProfileService):

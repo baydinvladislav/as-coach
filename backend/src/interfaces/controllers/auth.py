@@ -23,7 +23,7 @@ from src.core.services.profile import ProfileService
 from src.core.services.exceptions import NotValidCredentials, UsernameIsTaken
 from src.dependencies import provide_user_service, provide_coach_service, provide_customer_service
 from src.models import Gender
-from src.infrastructure.schemas.auth import (
+from src.interfaces.schemas.auth import (
     UserProfileOut,
     NewUserPassword,
     LoginOut,
