@@ -8,7 +8,7 @@ from typing import Optional
 from pydantic import BaseModel, validator
 
 from src.utils import validate_phone_number, validate_password
-from src.models import Gender
+from src.domain.models import Gender
 
 
 class UserRegisterIn(BaseModel):
