@@ -42,7 +42,10 @@ async def test_create_training_plan_successfully(
     for muscle in muscle_groups.scalars():
         trainings.append({
             "name": muscle.name,
-            "exercises": [dict(id=str(exercise.id), sets=[12, 12, 12], supersets=[]) for exercise in muscle.exercises]
+            "exercises": [
+                dict(id=str(exercise.id), sets=[12, 12, 12], supersets=[])
+                for exercise in muscle.exercises
+            ]
         })
 
     training_plan_data["trainings"] = trainings
