@@ -8,7 +8,7 @@ from sqlalchemy.orm import selectinload
 from src.main import app
 from src.customer.models import TrainingPlan
 from src.gym.models import MuscleGroup, ExercisesOnTraining
-from src.auth.utils import create_access_token
+from src.utils import create_access_token
 
 
 @pytest.mark.asyncio

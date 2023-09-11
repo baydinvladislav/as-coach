@@ -7,7 +7,7 @@ from typing import Optional
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src.coach.models import Coach
-from src.auth.utils import get_hashed_password, verify_password
+from src.utils import get_hashed_password, verify_password
 from src.core.repositories.abstract import AbstractRepository
 from src.core.services.exceptions import NotValidCredentials, UsernameIsTaken
 from src.core.services.profile import ProfileService, ProfileType

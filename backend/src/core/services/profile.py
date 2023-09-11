@@ -11,7 +11,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm.attributes import set_attribute
 
 from src.config import STATIC_DIR
-from src.auth.utils import verify_password
+from src.utils import verify_password
 from src.interfaces.schemas.auth import UserRegisterIn
 
 

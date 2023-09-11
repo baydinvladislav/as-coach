@@ -30,11 +30,7 @@ from src.interfaces.schemas.auth import (
     UserRegisterIn,
     UserRegisterOut
 )
-from src.auth.utils import (
-    create_access_token,
-    create_refresh_token,
-    password_context
-)
+from src.utils import password_context, create_access_token, create_refresh_token
 
 auth_router = APIRouter()
 

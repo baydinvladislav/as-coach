@@ -4,7 +4,7 @@ from datetime import datetime
 from httpx import AsyncClient
 
 from src.main import app
-from src.auth.utils import create_access_token
+from src.utils import create_access_token
 
 
 @pytest.mark.asyncio

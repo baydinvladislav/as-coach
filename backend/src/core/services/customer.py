@@ -7,7 +7,7 @@ from typing import Optional
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src.customer.models import Customer
-from src.auth.utils import verify_password
+from src.utils import verify_password
 from src.core.repositories.abstract import AbstractRepository
 from src.core.services.exceptions import NotValidCredentials
 from src.core.services.profile import ProfileService, ProfileType

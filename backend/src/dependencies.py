@@ -12,7 +12,7 @@ from starlette import status
 
 from src import Coach, Customer
 from src.auth.config import reuseable_oauth
-from src.auth.utils import decode_jwt_token
+from src.utils import decode_jwt_token
 
 from src.core.repositories.custom import (
     CoachRepository,

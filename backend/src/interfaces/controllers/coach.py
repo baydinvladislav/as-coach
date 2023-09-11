@@ -14,9 +14,8 @@ from src.interfaces.schemas.customer import (
     TrainingPlanIn,
     TrainingPlanOutFull
 )
-from src.customer.utils import generate_random_password
 from src.dependencies import provide_customer_service, provide_user_service, provide_gym_service
-from src.utils import validate_uuid
+from src.utils import validate_uuid, generate_random_password
 
 coach_router = APIRouter()
 
