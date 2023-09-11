@@ -23,10 +23,10 @@ from src.core.repositories.custom import (
     DietOnTrainingPlanRepository,
     ExercisesOnTrainingRepository
 )
-from src.core.services.coach import CoachService
-from src.core.services.customer import CustomerService
-from src.core.services.exceptions import TokenExpired, NotValidCredentials
-from src.core.services.gym import Gym, GymInstructor, Nutritionist
+from src.application.services.coach import CoachService
+from src.application.services.customer import CustomerService
+from src.application.services.exceptions import TokenExpired, NotValidCredentials
+from src.application.services.gym import Gym, GymInstructor, Nutritionist
 from src.database import SessionLocal
 
 

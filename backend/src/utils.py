@@ -13,7 +13,7 @@ from pydantic import ValidationError
 
 from src.auth.config import ACCESS_TOKEN_EXPIRE_MINUTES, JWT_SECRET_KEY, ALGORITHM, REFRESH_TOKEN_EXPIRE_MINUTES, \
     JWT_REFRESH_SECRET_KEY
-from src.core.services.exceptions import TokenExpired, NotValidCredentials
+from src.application.services.exceptions import TokenExpired, NotValidCredentials
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

@@ -197,6 +197,7 @@ class Exercise(Base, BaseModel):
     __tablename__ = "exercise"
 
     name = Column("name", String(50), nullable=False)
+    # TODO: delete it
     # trainings: RelationshipProperty = relationship(
     #     "Training",
     #     secondary="exercisesontraining",
