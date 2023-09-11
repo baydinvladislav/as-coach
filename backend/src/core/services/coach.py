@@ -6,7 +6,7 @@ from typing import Optional
 
 from fastapi.security import OAuth2PasswordRequestForm
 
-from src.coach.models import Coach
+from src import Coach
 from src.utils import get_hashed_password, verify_password
 from src.core.repositories.abstract import AbstractRepository
 from src.core.services.exceptions import NotValidCredentials, UsernameIsTaken

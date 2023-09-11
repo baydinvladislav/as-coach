@@ -2,9 +2,7 @@
 Stores custom repositories for interaction with domains
 """
 
-from src.coach.models import Coach
-from src.customer.models import Customer, TrainingPlan
-from src.gym.models import Diet, Training, DietOnTrainingPlan, ExercisesOnTraining
+from src import Coach, Customer, TrainingPlan, Diet, DietOnTrainingPlan, Training, ExercisesOnTraining
 from src.core.repositories.sqlalchemy import SQLAlchemyRepository
 
 

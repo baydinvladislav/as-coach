@@ -3,7 +3,7 @@ import pytest
 from httpx import AsyncClient
 from sqlalchemy import select, delete
 
-from src.coach.models import Coach
+from src import Coach
 from src.main import app
 from backend.tests.conftest import (
     TEST_COACH_FIRST_NAME,

@@ -6,8 +6,7 @@ from sqlalchemy import select, delete
 from sqlalchemy.orm import selectinload
 
 from src.main import app
-from src.customer.models import TrainingPlan
-from src.gym.models import MuscleGroup, ExercisesOnTraining
+from src import TrainingPlan, MuscleGroup, ExercisesOnTraining
 from src.utils import create_access_token
 
 

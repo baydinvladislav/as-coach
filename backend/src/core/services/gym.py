@@ -7,8 +7,7 @@ from datetime import datetime
 
 from src.core.repositories.abstract import AbstractRepository
 from src.interfaces.schemas.customer import TrainingPlanIn
-from src.customer.models import TrainingPlan
-from src.gym.models import DietOnTrainingPlan, ExercisesOnTraining
+from src import TrainingPlan, DietOnTrainingPlan, ExercisesOnTraining
 
 
 class Nutritionist:
