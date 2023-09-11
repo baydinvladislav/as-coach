@@ -3,7 +3,7 @@ Stores custom repositories for interaction with domains
 """
 
 from src import Coach, Customer, TrainingPlan, Diet, DietOnTrainingPlan, Training, ExercisesOnTraining
-from src.core.repositories.sqlalchemy import SQLAlchemyRepository
+from src.domain.repositories.sqlalchemy import SQLAlchemyRepository
 
 
 class CoachRepository(SQLAlchemyRepository):

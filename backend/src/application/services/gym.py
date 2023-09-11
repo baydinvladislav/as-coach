@@ -5,7 +5,7 @@
 import uuid
 from datetime import datetime
 
-from src.core.repositories.abstract import AbstractRepository
+from src.domain.repositories.abstract import AbstractRepository
 from src.interfaces.schemas.customer import TrainingPlanIn
 from src import TrainingPlan, DietOnTrainingPlan, ExercisesOnTraining
 

@@ -14,7 +14,7 @@ from src import Coach, Customer
 from src.auth.config import reuseable_oauth
 from src.utils import decode_jwt_token
 
-from src.core.repositories.custom import (
+from src.domain.repositories.custom import (
     CoachRepository,
     CustomerRepository,
     TrainingPlanRepository,
