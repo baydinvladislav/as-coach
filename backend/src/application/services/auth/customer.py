@@ -10,7 +10,7 @@ from src import Customer
 from src.utils import verify_password
 from src.domain.repositories.abstract import AbstractRepository
 from src.application.services.exceptions import NotValidCredentials
-from src.application.services.profile import ProfileService, ProfileType
+from src.application.services.auth.profile import ProfileService, ProfileType
 from src.interfaces.schemas.auth import UserRegisterIn
 
 

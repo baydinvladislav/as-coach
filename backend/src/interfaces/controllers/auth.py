@@ -17,9 +17,9 @@ from fastapi import (
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 
-from src.application.services.coach import CoachService
-from src.application.services.customer import CustomerService
-from src.application.services.profile import ProfileService
+from src.application.services.auth.coach import CoachService
+from src.application.services.auth.customer import CustomerService
+from src.application.services.auth.profile import ProfileService
 from src.application.services.exceptions import NotValidCredentials, UsernameIsTaken
 from src.dependencies import provide_user_service, provide_coach_service, provide_customer_service
 from src.domain.models import Gender

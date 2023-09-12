@@ -4,12 +4,11 @@ Common application config
 
 import os
 
+from dotenv import load_dotenv
 from fastapi.security import OAuth2PasswordBearer
 
-from dotenv import load_dotenv
 
-
-# Load environment variables from the .env file
+# load environment variables from the .env file
 load_dotenv()
 
 reuseable_oauth = OAuth2PasswordBearer(

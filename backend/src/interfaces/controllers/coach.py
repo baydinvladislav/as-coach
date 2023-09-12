@@ -3,8 +3,8 @@ from typing import Union, Any, List
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
-from src.application.services.coach import CoachService
-from src.application.services.customer import CustomerService
+from src.application.services.auth.coach import CoachService
+from src.application.services.auth.customer import CustomerService
 from src.application.services.gym import Gym
 from src.interfaces.controllers.customer import customer_router
 from src.interfaces.schemas.customer import (
