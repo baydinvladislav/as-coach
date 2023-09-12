@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session, selectinload
 from starlette import status
 
 from src import Coach, Customer
-from src.auth.config import reuseable_oauth
+from src.config import reuseable_oauth
 from src.utils import decode_jwt_token
 
 from src.domain.repositories.custom import (

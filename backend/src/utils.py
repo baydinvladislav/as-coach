@@ -1,6 +1,7 @@
 """
 Common utils for project
 """
+
 import random
 import string
 
@@ -11,7 +12,7 @@ from jose import jwt
 from passlib.context import CryptContext
 from pydantic import ValidationError
 
-from src.auth.config import ACCESS_TOKEN_EXPIRE_MINUTES, JWT_SECRET_KEY, ALGORITHM, REFRESH_TOKEN_EXPIRE_MINUTES, \
+from src.config import ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_MINUTES, ALGORITHM, JWT_SECRET_KEY, \
     JWT_REFRESH_SECRET_KEY
 from src.application.services.exceptions import TokenExpired, NotValidCredentials
 

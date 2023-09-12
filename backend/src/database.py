@@ -9,16 +9,13 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession  # type: ig
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 
-from dotenv import load_dotenv
-
 from .config import DATABASE_URL, TEST_ENV
 
 
 if TEST_ENV == "active":
-    load_dotenv()
     TEST_DATABASE_URL = os.environ.get("TEST_DATABASE_URL")
     engine = create_async_engine(
-        str(TEST_DATABASE_URL), future=True, echo=False, poolclass=NullPool
+        TEST_DATABASE_URL, future=True, echo=False, poolclass=NullPool
     )
 else:
     engine = create_async_engine(
