@@ -79,7 +79,10 @@ class SQLAlchemyRepository(AbstractRepository):
         pairs = []
         for attr, val in filters.items():
             if not hasattr(self.model, attr):
-                raise AttributeError(f"{self.model} model doesn't have field {attr}. \nUpdating canceled")
+                raise AttributeError(
+                    f"{self.model} model doesn't have field {attr}. "
+                    f"Updating canceled"
+                )
 
             attribute = getattr(self.model, attr)
             pairs.append(attribute == val)
@@ -88,7 +91,11 @@ class SQLAlchemyRepository(AbstractRepository):
         for foreign_key in foreign_keys:
             if sub_queries:
                 for sub_query in sub_queries:
-                    f_keys.append(selectinload(getattr(self.model, foreign_key)).subqueryload(sub_query))
+                    f_keys.append(
+                        selectinload(
+                            getattr(self.model, foreign_key)
+                        ).subqueryload(sub_query)
+                    )
             else:
                 f_keys.append(selectinload(getattr(self.model, foreign_key)))
 

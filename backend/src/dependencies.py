@@ -105,7 +105,7 @@ async def provide_user_service(
     except NotValidCredentials:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Not valid credentials"
+            detail="Not valid credentials"
         )
     else:
         username = token_data.sub
@@ -120,7 +120,7 @@ async def provide_user_service(
         else:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"User not found"
+                detail="User not found"
             )
 
 
