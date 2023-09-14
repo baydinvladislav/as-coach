@@ -11,6 +11,10 @@ class AbstractRepository(ABC):
     """
 
     @abstractmethod
+    def __init__(self, session):
+        self.session = session
+
+    @abstractmethod
     def create(self, **params):
         """
         Creates instance in storage
@@ -35,13 +39,14 @@ class AbstractRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def filter(self, attribute, value):
+    def filter(self, filters: dict, foreign_keys: list = None, sub_queries: list = None):
         """
         Filters instances by passed attribute and their value
 
         Args:
-            attribute: name of instance attribute
-            value: attribute's value
+            filters: dictionary with attributes and values
+            foreign_keys: list of foreign keys fields
+            sub_queries: list of fields for sub queries
         """
         raise NotImplementedError
 

@@ -6,10 +6,9 @@ import pytest
 
 from sqlalchemy import delete
 
-from src.core.repositories.sqlalchemy import SQLAlchemyRepository
-from src.coach.models import Coach
-from src.gym.models import Exercise
-from src.customer.utils import generate_random_password
+from src.domain.repositories.sqlalchemy import SQLAlchemyRepository
+from src import Coach, Exercise
+from src.utils import generate_random_password
 
 
 @pytest.mark.asyncio
@@ -99,7 +98,7 @@ async def test_filter_method(create_customer, override_get_db):
     repo = SQLAlchemyRepository(session=override_get_db)
     repo.model = Exercise
 
-    result = await repo.filter("name", "Жим штанги лежа")
+    result = await repo.filter(filters={"name": "Жим штанги лежа"}, foreign_keys=[], sub_queries=[])
 
     for exercise in result:
         assert exercise.name == "Жим штанги лежа"

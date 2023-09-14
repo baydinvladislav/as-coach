@@ -6,12 +6,12 @@ from typing import Optional
 
 from fastapi.security import OAuth2PasswordRequestForm
 
-from src.customer.models import Customer
-from src.auth.utils import verify_password
-from src.core.repositories.abstract import AbstractRepository
-from src.core.services.exceptions import NotValidCredentials
-from src.core.services.profile import ProfileService, ProfileType
-from src.infrastructure.schemas.auth import UserRegisterIn
+from src import Customer
+from src.utils import verify_password
+from src.domain.repositories.abstract import AbstractRepository
+from src.application.services.auth.exceptions import NotValidCredentials
+from src.application.services.auth.profile import ProfileService, ProfileType
+from src.interfaces.schemas.auth import UserRegisterIn
 
 
 class CustomerService(ProfileService):
@@ -53,19 +53,26 @@ class CustomerService(ProfileService):
 
         raise NotValidCredentials
 
-    async def find(self, username: str) -> Optional[Customer]:
+    async def find(self, filters: dict) -> Optional[Customer]:
         """
         Provides customer from database in case it is found.
         Save customer instance to user attr.
 
         Args:
-            username: customer phone number passed by client
+            filters: attributes and these values
         """
-        customer = await self.customer_repo.filter("username", username)
+        foreign_keys, sub_queries = ["training_plans"], ["trainings", "diets"]
+        customer = await self.customer_repo.filter(
+            filters=filters,
+            foreign_keys=foreign_keys,
+            sub_queries=sub_queries
+        )
+
         if customer:
             self.user = customer[0]
             return self.user
 
+    # TODO: return numbers of updated rows
     async def update(self, **params) -> None:
         """
         Updates customer data in database
@@ -75,3 +82,17 @@ class CustomerService(ProfileService):
         """
         await self.handle_profile_photo(params.pop("photo"))
         await self.customer_repo.update(str(self.user.id), **params)
+
+    async def create(self, coach_id: str, **kwargs) -> Customer:
+        """
+        Creates new customer in database
+
+        Args:
+            coach_id: customer's coach
+            kwargs: any required params for customer creating
+
+        Returns:
+            customer: Customer instance
+        """
+        customer = await self.customer_repo.create(coach_id=coach_id, **kwargs)
+        return customer

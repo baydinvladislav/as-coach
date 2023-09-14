@@ -4,8 +4,8 @@ from httpx import AsyncClient
 from sqlalchemy import select
 
 from src.main import app
-from src.gym.models import Exercise
-from src.auth.utils import create_access_token
+from src import Exercise
+from src.utils import create_access_token
 
 
 @pytest.mark.asyncio

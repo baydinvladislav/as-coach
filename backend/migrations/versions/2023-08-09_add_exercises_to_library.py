@@ -9,8 +9,7 @@ Create Date: 2023-08-09 12:40:07.032498
 from alembic import op
 from sqlalchemy.orm import Session
 
-from src.gym.models import MuscleGroup, Exercise
-
+from src.domain.models import MuscleGroup, Exercise
 
 # revision identifiers, used by Alembic.
 revision = '39597fa7b57c'

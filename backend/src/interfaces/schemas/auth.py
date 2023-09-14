@@ -1,5 +1,5 @@
 """
-Schemas for auth service
+Schemas for auth routers
 """
 
 from datetime import date
@@ -7,9 +7,8 @@ from typing import Optional
 
 from pydantic import BaseModel, validator
 
-from src.utils import validate_phone_number
-from src.auth.utils import validate_password
-from src.models import Gender
+from src.utils import validate_phone_number, validate_password
+from src.domain.models import Gender
 
 
 class UserRegisterIn(BaseModel):

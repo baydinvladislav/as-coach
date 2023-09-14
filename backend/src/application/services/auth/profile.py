@@ -11,8 +11,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm.attributes import set_attribute
 
 from src.config import STATIC_DIR
-from src.auth.utils import verify_password
-from src.infrastructure.schemas.auth import UserRegisterIn
+from src.utils import verify_password
+from src.interfaces.schemas.auth import UserRegisterIn
 
 
 class ProfileType(Enum):
@@ -63,13 +63,13 @@ class ProfileService(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def find(self, username: str):
+    async def find(self, filters: dict):
         """
         Provides user from database in case it is found.
         Save user to user attr.
 
         Args:
-            username: phone number passed by client
+            filters: attributes and these values
         """
         raise NotImplementedError
 

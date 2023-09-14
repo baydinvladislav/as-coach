@@ -4,8 +4,8 @@ from httpx import AsyncClient
 from sqlalchemy import select, delete
 
 from src.main import app
-from src.customer.models import Customer
-from src.auth.utils import create_access_token
+from src import Customer
+from src.utils import create_access_token
 from tests.conftest import (
     TEST_CUSTOMER_FIRST_NAME,
     TEST_CUSTOMER_LAST_NAME,

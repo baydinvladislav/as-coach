@@ -7,15 +7,19 @@ from sqlalchemy import select
 from sqlalchemy.orm import sessionmaker, selectinload
 from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 
-from src import engine
-from src.customer.models import Customer, TrainingPlan
-from src.auth.utils import get_hashed_password
+from src import (
+    engine,
+    Coach,
+    Customer,
+    TrainingPlan,
+    Training,
+    MuscleGroup,
+    Exercise,
+    ExercisesOnTraining
+)
+from src.utils import get_hashed_password, generate_random_password
 from src.dependencies import get_db
 from src.main import app
-from src.coach.models import Coach
-from src.gym.models import Exercise, MuscleGroup, Training, ExercisesOnTraining
-from src.customer.utils import generate_random_password
-
 
 TEST_COACH_FIRST_NAME = os.getenv("TEST_COACH_FIRST_NAME")
 TEST_COACH_LAST_NAME = os.getenv("TEST_COACH_LAST_NAME")

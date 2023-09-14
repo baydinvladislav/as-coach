@@ -11,13 +11,22 @@ from sqlalchemy.orm import Session, selectinload
 from starlette import status
 
 from src import Coach, Customer
-from src.auth.config import reuseable_oauth
-from src.auth.utils import decode_jwt_token
+from src.config import reuseable_oauth
+from src.utils import decode_jwt_token
 
-from src.core.repositories.repos import CoachRepository, CustomerRepository
-from src.core.services.coach import CoachService
-from src.core.services.customer import CustomerService
-from src.core.services.exceptions import TokenExpired, NotValidCredentials
+from src.domain.repositories.custom import (
+    CoachRepository,
+    CustomerRepository,
+    TrainingPlanRepository,
+    TrainingRepository,
+    DietRepository,
+    DietOnTrainingPlanRepository,
+    ExercisesOnTrainingRepository
+)
+from src.application.services.auth.coach import CoachService
+from src.application.services.auth.customer import CustomerService
+from src.application.services.auth.exceptions import TokenExpired, NotValidCredentials
+from src.application.services.gym import Gym, GymInstructor, Nutritionist
 from src.database import SessionLocal
 
 
@@ -44,6 +53,25 @@ async def provide_customer_service(database: Session = Depends(get_db)) -> Custo
     Returns service responsible to interact with Customer domain
     """
     return CustomerService(CustomerRepository(database))
+
+
+async def provide_gym_service(database: Session = Depends(get_db)) -> Gym:
+    """
+    Returns service responsible to interact with TrainingPlan domain
+    """
+    gym_instructor = GymInstructor(
+        repositories={
+            "training_repo": TrainingRepository(database),
+            "exercises_on_training_repo": ExercisesOnTrainingRepository(database)
+        }
+    )
+    nutritionist = Nutritionist(
+        repositories={
+            "diet_repo": DietRepository(database),
+            "diets_on_training_repo": DietOnTrainingPlanRepository(database)
+        }
+    )
+    return Gym({"training_plan": TrainingPlanRepository(database)}, gym_instructor, nutritionist)
 
 
 async def provide_user_service(
@@ -77,13 +105,13 @@ async def provide_user_service(
     except NotValidCredentials:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Not valid credentials"
+            detail="Not valid credentials"
         )
     else:
         username = token_data.sub
 
-        coach = await coach_service.find(username)
-        customer = await customer_service.find(username)
+        coach = await coach_service.find({"username": username})
+        customer = await customer_service.find({"username": username})
 
         if coach:
             return coach_service
@@ -92,7 +120,7 @@ async def provide_user_service(
         else:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"User not found"
+                detail="User not found"
             )
 
 

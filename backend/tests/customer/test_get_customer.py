@@ -4,8 +4,8 @@ from httpx import AsyncClient
 from sqlalchemy import delete
 
 from src.main import app
-from src.customer.models import Customer
-from src.auth.utils import create_access_token
+from src import Customer
+from src.utils import create_access_token
 
 
 @pytest.mark.asyncio

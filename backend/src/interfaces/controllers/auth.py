@@ -17,24 +17,20 @@ from fastapi import (
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 
-from src.core.services.coach import CoachService
-from src.core.services.customer import CustomerService
-from src.core.services.profile import ProfileService
-from src.core.services.exceptions import NotValidCredentials, UsernameIsTaken
+from src.application.services.auth.coach import CoachService
+from src.application.services.auth.customer import CustomerService
+from src.application.services.auth.profile import ProfileService
+from src.application.services.auth.exceptions import NotValidCredentials, UsernameIsTaken
 from src.dependencies import provide_user_service, provide_coach_service, provide_customer_service
-from src.models import Gender
-from src.infrastructure.schemas.auth import (
+from src.domain.models import Gender
+from src.interfaces.schemas.auth import (
     UserProfileOut,
     NewUserPassword,
     LoginOut,
     UserRegisterIn,
     UserRegisterOut
 )
-from src.auth.utils import (
-    create_access_token,
-    create_refresh_token,
-    password_context
-)
+from src.utils import password_context, create_access_token, create_refresh_token
 
 auth_router = APIRouter()
 
@@ -107,8 +103,8 @@ async def login_user(
             detail="Empty fields"
         )
 
-    coach = await coach_service.find(form_data.username)
-    customer = await customer_service.find(form_data.username)
+    coach = await coach_service.find({"username": form_data.username})
+    customer = await customer_service.find({"username": form_data.username})
 
     if coach:
         service = coach_service

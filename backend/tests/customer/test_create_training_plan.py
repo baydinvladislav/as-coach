@@ -6,9 +6,8 @@ from sqlalchemy import select, delete
 from sqlalchemy.orm import selectinload
 
 from src.main import app
-from src.customer.models import TrainingPlan
-from src.gym.models import MuscleGroup, ExercisesOnTraining
-from src.auth.utils import create_access_token
+from src import TrainingPlan, MuscleGroup, ExercisesOnTraining
+from src.utils import create_access_token
 
 
 @pytest.mark.asyncio
@@ -42,7 +41,10 @@ async def test_create_training_plan_successfully(
     for muscle in muscle_groups.scalars():
         trainings.append({
             "name": muscle.name,
-            "exercises": [dict(id=str(exercise.id), sets=[12, 12, 12], supersets=[]) for exercise in muscle.exercises]
+            "exercises": [
+                dict(id=str(exercise.id), sets=[12, 12, 12], supersets=[])
+                for exercise in muscle.exercises
+            ]
         })
 
     training_plan_data["trainings"] = trainings

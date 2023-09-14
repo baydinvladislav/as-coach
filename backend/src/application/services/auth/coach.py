@@ -6,12 +6,12 @@ from typing import Optional
 
 from fastapi.security import OAuth2PasswordRequestForm
 
-from src.coach.models import Coach
-from src.auth.utils import get_hashed_password, verify_password
-from src.core.repositories.abstract import AbstractRepository
-from src.core.services.exceptions import NotValidCredentials, UsernameIsTaken
-from src.core.services.profile import ProfileService, ProfileType
-from src.infrastructure.schemas.auth import UserRegisterIn
+from src import Coach
+from src.utils import get_hashed_password, verify_password
+from src.domain.repositories.abstract import AbstractRepository
+from src.application.services.auth.exceptions import NotValidCredentials, UsernameIsTaken
+from src.application.services.auth.profile import ProfileService, ProfileType
+from src.interfaces.schemas.auth import UserRegisterIn
 
 
 class CoachService(ProfileService):
@@ -36,7 +36,7 @@ class CoachService(ProfileService):
         Args:
             data: data for registration passed by client
         """
-        is_registered = await self.find(data.username)
+        is_registered = await self.find({"username": data.username})
         if is_registered:
             raise UsernameIsTaken
 
@@ -61,15 +61,21 @@ class CoachService(ProfileService):
 
         raise NotValidCredentials
 
-    async def find(self, username: str) -> Optional[Coach]:
+    async def find(self, filters: dict) -> Optional[Coach]:
         """
         Provides coach from database in case it is found.
         Save coach instance to user attr.
 
         Args:
-            username: coach phone number passed by client
+            filters: attributes and these values
         """
-        coach = await self.coach_repo.filter("username", username)
+        foreign_keys, sub_queries = ["customers"], ["training_plans"]
+        coach = await self.coach_repo.filter(
+            filters=filters,
+            foreign_keys=foreign_keys,
+            sub_queries=sub_queries
+        )
+
         if coach:
             self.user = coach[0]
             return self.user
