@@ -1,5 +1,5 @@
 """
-Stores custom repositories for interaction with domains
+Stores custom repositories for interaction with data storage
 """
 
 from src import (

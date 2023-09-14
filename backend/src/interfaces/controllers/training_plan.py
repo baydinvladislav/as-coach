@@ -7,7 +7,7 @@ from sqlalchemy import select, or_
 from sqlalchemy.orm import Session, selectinload
 
 from src.dependencies import get_db, get_current_coach
-from src.interfaces.schemas.training_plan import ExerciseCreateIn, ExerciseCreateOut
+from src.interfaces.schemas.gym import ExerciseCreateIn, ExerciseCreateOut
 from src import Coach, MuscleGroup, Exercise
 
 gym_router = APIRouter()

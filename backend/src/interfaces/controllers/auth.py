@@ -20,7 +20,7 @@ from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 from src.application.services.auth.coach import CoachService
 from src.application.services.auth.customer import CustomerService
 from src.application.services.auth.profile import ProfileService
-from src.application.services.exceptions import NotValidCredentials, UsernameIsTaken
+from src.application.services.auth.exceptions import NotValidCredentials, UsernameIsTaken
 from src.dependencies import provide_user_service, provide_coach_service, provide_customer_service
 from src.domain.models import Gender
 from src.interfaces.schemas.auth import (

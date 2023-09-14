@@ -25,7 +25,7 @@ from src.domain.repositories.custom import (
 )
 from src.application.services.auth.coach import CoachService
 from src.application.services.auth.customer import CustomerService
-from src.application.services.exceptions import TokenExpired, NotValidCredentials
+from src.application.services.auth.exceptions import TokenExpired, NotValidCredentials
 from src.application.services.gym import Gym, GymInstructor, Nutritionist
 from src.database import SessionLocal
 

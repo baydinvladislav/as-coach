@@ -9,7 +9,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from src import Coach
 from src.utils import get_hashed_password, verify_password
 from src.domain.repositories.abstract import AbstractRepository
-from src.application.services.exceptions import NotValidCredentials, UsernameIsTaken
+from src.application.services.auth.exceptions import NotValidCredentials, UsernameIsTaken
 from src.application.services.auth.profile import ProfileService, ProfileType
 from src.interfaces.schemas.auth import UserRegisterIn
 

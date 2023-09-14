@@ -1,5 +1,5 @@
 """
-Schemas for auth service
+Schemas for auth routers
 """
 
 from datetime import date

@@ -1,5 +1,5 @@
 """
-
+Contains services related to the Gym functionality
 """
 
 import uuid
@@ -12,7 +12,7 @@ from src import TrainingPlan, DietOnTrainingPlan, ExercisesOnTraining
 
 class Nutritionist:
     """
-    The subdomain of Gym to work with nutritions
+    The service responsible for diets operations
 
     Attributes:
         diet_repo: repository to store Diet rows
@@ -25,7 +25,11 @@ class Nutritionist:
 
     async def create_diets(self, training_plan_id: str, diets: list):
         """
+        Creates diets in customer training plan
 
+        Args:
+            training_plan_id: UUID of training plan
+            diets: data for creating diets
         """
         for diet_data in diets:
             diet = await self.diet_repo.create(
@@ -37,7 +41,6 @@ class Nutritionist:
             self.diet_repo.session.add(diet)
             await self.diet_repo.session.flush()
 
-            # bound diet with training_plan
             diet_on_training_plan = DietOnTrainingPlan(
                 diet_id=str(diet.id),
                 training_plan_id=training_plan_id
@@ -47,7 +50,7 @@ class Nutritionist:
 
 class GymInstructor:
     """
-    The subdomain of Gym to work with trainings
+    The service responsible for trainings operations
 
     Attributes:
         training_repo: repository to store Training rows
@@ -76,7 +79,11 @@ class GymInstructor:
 
     async def create_trainings(self, training_plan_id: str, trainings: list):
         """
+        Creates trainings in customer training plan
 
+        Args:
+            training_plan_id: UUID of training plan
+            trainings: data for creating trainings
         """
         for training_item in trainings:
             training = await self.training_repo.create(
@@ -122,8 +129,8 @@ class Gym:
 
     Attributes:
         training_plan_repo: repository to store TrainingPlan rows
-        gym_instructor:
-        nutritionist:
+        gym_instructor: the service responsible for trainings operations
+        nutritionist: the service responsible for diets operations
     """
 
     def __init__(
@@ -138,7 +145,11 @@ class Gym:
 
     async def create_training_plan(self, customer_id: str, data: TrainingPlanIn) -> TrainingPlan:
         """
+        Creates training plan for customer
 
+        Args:
+            customer_id: UUID of the customer for whom the training plan is being created
+            data: data from client for creating new training plan
         """
         try:
             training_plan = await self.training_plan_repo.create(
@@ -179,7 +190,10 @@ class Gym:
 
     async def find_training_plan(self, filters: dict) -> TrainingPlan:
         """
+        Provides training plan from database in case it is found.
 
+        Args:
+            filters: attributes and these values
         """
         foreign_keys, sub_queries = ["trainings"], ["exercises"]
         training_plan = await self.training_plan_repo.filter(
