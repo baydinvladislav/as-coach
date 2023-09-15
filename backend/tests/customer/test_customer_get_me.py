@@ -2,16 +2,16 @@ import pytest
 from httpx import AsyncClient
 
 from src.main import app
-from src.auth.utils import create_access_token
+from src.utils import create_access_token
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_customer_get_me(create_customer, override_get_db):
     """
     Tests that customer can get response from /api/me
     """
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_customer.username)
+        auth_token = await create_access_token(create_customer.username)
         response = await ac.get(
             "/api/me",
             headers={

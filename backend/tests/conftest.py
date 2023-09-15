@@ -1,21 +1,28 @@
 import os
 import uuid
 from datetime import date, timedelta
-import pytest
+import pytest_asyncio
 
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import select
+from sqlalchemy.orm import sessionmaker, selectinload
+from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 
-from src import engine
-from src.customer.models import Customer, TrainingPlan
-from src.auth.utils import get_hashed_password
+from src import (
+    engine,
+    Coach,
+    Customer,
+    TrainingPlan,
+    Training,
+    MuscleGroup,
+    Exercise,
+    ExercisesOnTraining
+)
+from src.utils import get_hashed_password, generate_random_password
 from src.dependencies import get_db
 from src.main import app
-from src.coach.models import Coach
-from src.gym.models import Exercise, MuscleGroup, Training, ExercisesOnTraining
-from src.customer.utils import generate_random_password
-
 
 TEST_COACH_FIRST_NAME = os.getenv("TEST_COACH_FIRST_NAME")
+TEST_COACH_LAST_NAME = os.getenv("TEST_COACH_LAST_NAME")
 TEST_COACH_USERNAME = os.getenv("TEST_COACH_USERNAME")
 TEST_COACH_PASSWORD = os.getenv("TEST_COACH_PASSWORD")
 
@@ -23,18 +30,21 @@ TEST_CUSTOMER_FIRST_NAME = os.getenv("TEST_CUSTOMER_FIRST_NAME")
 TEST_CUSTOMER_LAST_NAME = os.getenv("TEST_CUSTOMER_LAST_NAME")
 TEST_CUSTOMER_USERNAME = os.getenv("TEST_CUSTOMER_USERNAME")
 
-TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+TestingSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 
-@pytest.fixture()
-def create_training_exercises(
+@pytest_asyncio.fixture()
+async def create_training_exercises(
         create_trainings,
         create_exercises,
         override_get_db
 ):
-    training_exercises = override_get_db.query(ExercisesOnTraining).all()
-    if training_exercises:
-        return training_exercises
+    query = select(ExercisesOnTraining)
+
+    training_exercises = await override_get_db.execute(query)
+    training_exercises_in_db = training_exercises.scalars().all()
+    if training_exercises_in_db:
+        return training_exercises_in_db
 
     training_exercises = []
     superset_id = uuid.uuid4()
@@ -54,17 +64,22 @@ def create_training_exercises(
                 )
             )
 
-    override_get_db.bulk_save_objects(training_exercises)
-    override_get_db.commit()
+    override_get_db.add_all(training_exercises)
+    await override_get_db.commit()
 
-    return override_get_db.query(ExercisesOnTraining).all()
+    training_exercises = await override_get_db.execute(query)
+    training_exercises_in_db = training_exercises.scalars().all()
+    return training_exercises_in_db
 
 
-@pytest.fixture()
-def create_trainings(create_training_plans, override_get_db):
-    trainings = override_get_db.query(Training).all()
-    if trainings:
-        return trainings
+@pytest_asyncio.fixture()
+async def create_trainings(create_training_plans, override_get_db):
+    query = select(Training)
+
+    trainings = await override_get_db.execute(query)
+    trainings_in_db = trainings.scalars().all()
+    if trainings_in_db:
+        return trainings_in_db
 
     training_plan = create_training_plans[0]
 
@@ -91,42 +106,52 @@ def create_trainings(create_training_plans, override_get_db):
         )
     )
 
-    override_get_db.bulk_save_objects(trainings)
-    override_get_db.commit()
+    override_get_db.add_all(trainings)
+    await override_get_db.commit()
 
-    return override_get_db.query(Training).all()
+    trainings = await override_get_db.execute(query)
+    trainings_in_db = trainings.scalars().all()
+    return trainings_in_db
 
 
-@pytest.fixture()
-def create_training_plans(create_user, create_customer, override_get_db):
-    training_plans = override_get_db.query(TrainingPlan).all()
-    if training_plans:
-        return training_plans
+@pytest_asyncio.fixture()
+async def create_training_plans(create_user, create_customer, override_get_db):
+    query = select(TrainingPlan)
+
+    training_plans = await override_get_db.execute(query)
+    training_plans_in_db = training_plans.scalars().all()
+    if training_plans_in_db:
+        return training_plans_in_db
 
     training_plans = [
         TrainingPlan(
-            start_date=date.today().strftime('%Y-%m-%d'),
-            end_date=(date.today() + timedelta(days=6)).strftime('%Y-%m-%d'),
+            start_date=date.today(),
+            end_date=date.today() + timedelta(days=6),
             customer_id=str(create_customer.id)
         ),
         TrainingPlan(
-            start_date=(date.today() + timedelta(days=7)).strftime('%Y-%m-%d'),
-            end_date=(date.today() + timedelta(days=14)).strftime('%Y-%m-%d'),
+            start_date=date.today() + timedelta(days=7),
+            end_date=date.today() + timedelta(days=14),
             customer_id=str(create_customer.id)
         )
     ]
 
-    override_get_db.bulk_save_objects(training_plans)
-    override_get_db.commit()
+    override_get_db.add_all(training_plans)
+    await override_get_db.commit()
 
-    return override_get_db.query(TrainingPlan).all()
+    training_plans = await override_get_db.execute(query)
+    training_plans_in_db = training_plans.scalars().all()
+    return training_plans_in_db
 
 
-@pytest.fixture()
-def create_muscle_groups(override_get_db):
-    muscle_groups = override_get_db.query(MuscleGroup).all()
-    if muscle_groups:
-        return muscle_groups
+@pytest_asyncio.fixture()
+async def create_muscle_groups(override_get_db):
+    query = select(MuscleGroup)
+
+    muscle_groups = await override_get_db.execute(query)
+    muscle_groups_in_db = muscle_groups.scalars().all()
+    if muscle_groups_in_db:
+        return muscle_groups_in_db
 
     muscle_groups = (
         MuscleGroup(name="Грудь"),
@@ -138,23 +163,37 @@ def create_muscle_groups(override_get_db):
         MuscleGroup(name="Ноги")
     )
 
-    override_get_db.bulk_save_objects(muscle_groups)
-    override_get_db.commit()
+    override_get_db.add_all(muscle_groups)
+    await override_get_db.commit()
 
-    return override_get_db.query(MuscleGroup).all()
+    muscle_groups = await override_get_db.execute(query)
+    muscle_groups_in_db = muscle_groups.scalars().all()
+    return muscle_groups_in_db
 
 
-@pytest.fixture()
-def create_exercises(create_muscle_groups, override_get_db):
-    exercises = override_get_db.query(Exercise).all()
-    if exercises:
-        return exercises
+@pytest_asyncio.fixture()
+async def create_exercises(create_muscle_groups, override_get_db):
+    query = select(Exercise)
 
-    chest = override_get_db.query(MuscleGroup).filter(MuscleGroup.name == "Грудь").first()
-    biceps = override_get_db.query(MuscleGroup).filter(MuscleGroup.name == "Бицепс").first()
-    back = override_get_db.query(MuscleGroup).filter(MuscleGroup.name == "Спина").first()
-    triceps = override_get_db.query(MuscleGroup).filter(MuscleGroup.name == "Трицепс").first()
-    legs = override_get_db.query(MuscleGroup).filter(MuscleGroup.name == "Ноги").first()
+    exercises = await override_get_db.execute(query)
+    exercises_in_db = exercises.scalars().all()
+    if exercises_in_db:
+        return exercises_in_db
+
+    chest = await override_get_db.execute(select(MuscleGroup).where(MuscleGroup.name == "Грудь"))
+    chest = chest.scalar()
+
+    biceps = await override_get_db.execute(select(MuscleGroup).where(MuscleGroup.name == "Бицепс"))
+    biceps = biceps.scalar()
+
+    back = await override_get_db.execute(select(MuscleGroup).where(MuscleGroup.name == "Спина"))
+    back = back.scalar()
+
+    triceps = await override_get_db.execute(select(MuscleGroup).where(MuscleGroup.name == "Трицепс"))
+    triceps = triceps.scalar()
+
+    legs = await override_get_db.execute(select(MuscleGroup).where(MuscleGroup.name == "Ноги"))
+    legs = legs.scalar()
 
     exercises = (
         Exercise(
@@ -231,69 +270,83 @@ def create_exercises(create_muscle_groups, override_get_db):
         )
     )
 
-    override_get_db.bulk_save_objects(exercises)
-    override_get_db.commit()
+    override_get_db.add_all(exercises)
+    await override_get_db.commit()
 
-    return override_get_db.query(Exercise).all()
+    exercises = await override_get_db.execute(query)
+    exercises_in_db = exercises.scalars().all()
+    return exercises_in_db
 
 
-@pytest.fixture()
-def create_customer(create_user, override_get_db):
+@pytest_asyncio.fixture()
+async def create_customer(create_user, override_get_db):
     """
     Creates test customer
     """
-    test_user = override_get_db.query(Coach).filter(
-        Coach.username == create_user.username
-    ).first()
 
-    if not test_user.customers:
+    test_user = await override_get_db.execute(
+        select(Coach).order_by(Coach.username).options(selectinload(Coach.customers))
+    )
+
+    test_user = test_user.scalars().first()
+    if test_user and not test_user.customers:
         test_customer = Customer(
             username=TEST_CUSTOMER_USERNAME,
             first_name=TEST_CUSTOMER_FIRST_NAME,
             last_name=TEST_CUSTOMER_LAST_NAME,
             password=generate_random_password(8),
-            coach_id=str(create_user.id)
+            coach=create_user
         )
 
         override_get_db.add(test_customer)
-        override_get_db.commit()
-        return test_customer
+        await override_get_db.commit()
+
+        result = await override_get_db.execute(
+            select(Customer).where(Customer.id == str(test_customer.id)).options(
+                selectinload(Customer.coach)
+            )
+        )
+        return result.scalar()
     else:
         return test_user.customers[0]
 
 
-@pytest.fixture()
-def create_user(override_get_db):
+@pytest_asyncio.fixture()
+async def create_user(override_get_db):
     """
     Creates test user
     """
-    test_user = override_get_db.query(Coach).filter(
-        Coach.username == TEST_COACH_USERNAME
-    ).first()
+    test_user = await override_get_db.execute(
+        select(Coach).where(Coach.username == TEST_COACH_USERNAME)
+    )
 
-    if not test_user:
+    test_user = test_user.scalar()
+
+    if test_user is None:
         test_user = Coach(
             username=TEST_COACH_USERNAME,
             first_name=TEST_COACH_FIRST_NAME,
-            password=get_hashed_password(TEST_COACH_PASSWORD)
+            last_name=TEST_COACH_LAST_NAME,
+            password=await get_hashed_password(TEST_COACH_PASSWORD)
         )
 
         override_get_db.add(test_user)
-        override_get_db.commit()
+        await override_get_db.commit()
 
-    return test_user
+    yield test_user
 
 
-@pytest.fixture()
-def override_get_db():
+@pytest_asyncio.fixture()
+async def override_get_db():
     """
     Creates session to testing db
     """
-    try:
-        db = TestingSessionLocal()
-        yield db
-    finally:
-        db.close()
+    async with TestingSessionLocal() as db:
+        try:
+            db = TestingSessionLocal()
+            yield db
+        finally:
+            await db.close()
 
 
 @app.on_event("startup")

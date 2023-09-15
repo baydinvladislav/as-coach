@@ -1,7 +1,9 @@
 import pytest
-from httpx import AsyncClient
 
-from src.coach.models import Coach
+from httpx import AsyncClient
+from sqlalchemy import select, delete
+
+from src import Coach
 from src.main import app
 from backend.tests.conftest import (
     TEST_COACH_FIRST_NAME,
@@ -10,18 +12,21 @@ from backend.tests.conftest import (
 )
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_signup_successfully(override_get_db):
     """
     Success registration
     """
-    user = override_get_db.query(Coach).filter(
-        Coach.username == TEST_COACH_USERNAME
-    ).first()
+    user = await override_get_db.execute(
+        select(Coach).where(Coach.username == TEST_COACH_USERNAME)
+    )
 
-    if user:
-        override_get_db.delete(user)
-        override_get_db.commit()
+    user_instance = user.scalar()
+    if user_instance:
+        await override_get_db.execute(
+            delete(Coach).where(Coach.username == TEST_COACH_USERNAME)
+        )
+        await override_get_db.commit()
 
     body = {
         "username": TEST_COACH_USERNAME,
@@ -35,18 +40,21 @@ async def test_signup_successfully(override_get_db):
     assert response.status_code == 201
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_signup_validation_error(override_get_db):
     """
     Failed registration because of validation error
     """
-    user = override_get_db.query(Coach).filter(
-        Coach.username == TEST_COACH_USERNAME
-    ).first()
+    user = await override_get_db.execute(
+        select(Coach).where(Coach.username == TEST_COACH_USERNAME)
+    )
 
-    if user:
-        override_get_db.delete(user)
-        override_get_db.commit()
+    user_instance = user.scalar()
+    if user_instance:
+        await override_get_db.execute(
+            delete(Coach).where(Coach.username == TEST_COACH_USERNAME)
+        )
+        await override_get_db.commit()
 
     body = {
         # without "+"
@@ -61,18 +69,21 @@ async def test_signup_validation_error(override_get_db):
     assert response.status_code == 422
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_signup_too_short_password(override_get_db):
     """
     Failed registration because of validation error
     """
-    user = override_get_db.query(Coach).filter(
-        Coach.username == TEST_COACH_USERNAME
-    ).first()
+    user = await override_get_db.execute(
+        select(Coach).where(Coach.username == TEST_COACH_USERNAME)
+    )
 
-    if user:
-        override_get_db.delete(user)
-        override_get_db.commit()
+    user_instance = user.scalar()
+    if user_instance:
+        await override_get_db.execute(
+            delete(Coach).where(Coach.username == TEST_COACH_USERNAME)
+        )
+        await override_get_db.commit()
 
     signup_data = {
         "username": TEST_COACH_USERNAME,
@@ -87,7 +98,7 @@ async def test_signup_too_short_password(override_get_db):
     assert response.status_code == 422
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_signup_failed_username_already_registered(create_user):
     """
     Failed because username already registered

@@ -13,18 +13,14 @@ import { formatWithMask } from 'react-native-mask-input';
 import styled from 'styled-components';
 
 import { CameraIcon, DefaultAvatarImage } from '@assets';
-import { DATE_MASK, PHONE_MASK } from '@constants';
+import { BASE_URL, DATE_MASK, PHONE_MASK } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { UserProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
 import { Input, Keyboard, Select, Text, ViewWithButtons } from '@ui';
-import {
-  makeAvatarLink,
-  profileEditValidationSchema,
-  transformPhone,
-} from '@utils';
+import { profileEditValidationSchema, transformPhone } from '@utils';
 
 import { FontSize } from '~types';
 
@@ -113,7 +109,7 @@ export const ProfileEditScreen = observer(() => {
                     uri: 'file://' + uri,
                   }
                 : user.me.photo_link
-                ? { uri: makeAvatarLink(user.me.photo_link) }
+                ? { uri: BASE_URL + user.me.photo_link }
                 : DefaultAvatarImage
             }
           />

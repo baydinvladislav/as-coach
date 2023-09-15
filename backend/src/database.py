@@ -4,21 +4,26 @@ Database settings module
 
 import os
 
-from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession  # type: ignore
 from sqlalchemy.orm import sessionmaker
-
-from dotenv import load_dotenv
+from sqlalchemy.pool import NullPool
 
 from .config import DATABASE_URL, TEST_ENV
 
 
-if bool(TEST_ENV):
-    load_dotenv()
+if TEST_ENV == "active":
     TEST_DATABASE_URL = os.environ.get("TEST_DATABASE_URL")
-    engine = create_engine(str(TEST_DATABASE_URL))
+    engine = create_async_engine(
+        TEST_DATABASE_URL, future=True, echo=False, poolclass=NullPool
+    )
 else:
-    engine = create_engine(str(DATABASE_URL))
+    engine = create_async_engine(
+        DATABASE_URL, future=True, echo=False, poolclass=NullPool
+    )
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+SessionLocal = sessionmaker(
+    engine, expire_on_commit=False, class_=AsyncSession
+)
+
 Base = declarative_base()

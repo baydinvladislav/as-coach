@@ -2,14 +2,15 @@ from datetime import date, timedelta
 import pytest
 
 from httpx import AsyncClient
+from sqlalchemy import select, delete
+from sqlalchemy.orm import selectinload
 
 from src.main import app
-from src.customer.models import TrainingPlan
-from src.gym.models import MuscleGroup, ExercisesOnTraining
-from src.auth.utils import create_access_token
+from src import TrainingPlan, MuscleGroup, ExercisesOnTraining
+from src.utils import create_access_token
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_create_training_plan_successfully(
         create_customer,
         create_exercises,
@@ -18,7 +19,9 @@ async def test_create_training_plan_successfully(
     """
     Successfully training plan creation
     """
-    muscle_groups = override_get_db.query(MuscleGroup).all()
+    muscle_groups = await override_get_db.execute(
+        select(MuscleGroup).options(selectinload(MuscleGroup.exercises))
+    )
 
     training_plan_data = {
         "start_date": date.today().strftime('%Y-%m-%d'),
@@ -35,16 +38,19 @@ async def test_create_training_plan_successfully(
     }
 
     trainings = []
-    for muscle in muscle_groups:
+    for muscle in muscle_groups.scalars():
         trainings.append({
             "name": muscle.name,
-            "exercises": [dict(id=str(exercise.id), sets=[12, 12, 12], supersets=[]) for exercise in muscle.exercises]
+            "exercises": [
+                dict(id=str(exercise.id), sets=[12, 12, 12], supersets=[])
+                for exercise in muscle.exercises
+            ]
         })
 
     training_plan_data["trainings"] = trainings
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_customer.coach.username)
+        auth_token = await create_access_token(create_customer.coach.username)
         response = await ac.post(
             f"/api/customers/{create_customer.id}/training_plans",
             json=training_plan_data,
@@ -56,14 +62,13 @@ async def test_create_training_plan_successfully(
     assert response.status_code == 201
 
     if response.status_code == 201:
-        training_plan = override_get_db.query(TrainingPlan).filter(
-            TrainingPlan.id == response.json()["id"]
-        ).first()
-        override_get_db.delete(training_plan)
-        override_get_db.commit()
+        await override_get_db.execute(
+            delete(TrainingPlan).where(TrainingPlan.id == response.json()["id"])
+        )
+        await override_get_db.commit()
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_create_training_plan_with_supersets_successfully(
         create_customer,
         create_exercises,
@@ -72,7 +77,9 @@ async def test_create_training_plan_with_supersets_successfully(
     """
     Successfully creating training plan with supersets
     """
-    muscle_groups = override_get_db.query(MuscleGroup).all()
+    muscle_groups = await override_get_db.execute(
+        select(MuscleGroup).options(selectinload(MuscleGroup.exercises))
+    )
 
     training_plan_data = {
         "start_date": date.today().strftime('%Y-%m-%d'),
@@ -89,7 +96,7 @@ async def test_create_training_plan_with_supersets_successfully(
     }
 
     trainings = []
-    for muscle in muscle_groups:
+    for muscle in muscle_groups.scalars():
         trainings.append({
             "name": muscle.name,
             "exercises": [dict(id=str(exercise.id), sets=[12, 12, 12], supersets=[]) for exercise in muscle.exercises],
@@ -121,7 +128,7 @@ async def test_create_training_plan_with_supersets_successfully(
     training_plan_data["trainings"][1]["exercises"][2]["supersets"].append(second_exercise_id_in_triset)
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_customer.coach.username)
+        auth_token = await create_access_token(create_customer.coach.username)
         response = await ac.post(
             f"/api/customers/{create_customer.id}/training_plans",
             json=training_plan_data,
@@ -136,12 +143,14 @@ async def test_create_training_plan_with_supersets_successfully(
         first_exercise_id_in_superset,
         second_exercise_id_in_superset
     )
-    exercises_in_superset = override_get_db.query(ExercisesOnTraining).filter(
-        ExercisesOnTraining.exercise_id.in_(superset_exercises_ids)
-    ).all()
+    exercises_in_superset = await override_get_db.execute(
+        select(ExercisesOnTraining).where(
+            ExercisesOnTraining.exercise_id.in_(superset_exercises_ids)
+        )
+    )
 
     s = set()
-    for e in exercises_in_superset:
+    for e in exercises_in_superset.scalars():
         s.add(e.superset_id)
 
     assert len(s) == 1
@@ -152,32 +161,34 @@ async def test_create_training_plan_with_supersets_successfully(
         second_exercise_id_in_triset,
         third_exercise_id_in_triset
     )
-    exercises_in_triset = override_get_db.query(ExercisesOnTraining).filter(
-        ExercisesOnTraining.exercise_id.in_(triset_exercises_ids)
-    ).all()
+    exercises_in_triset = await override_get_db.execute(
+        select(ExercisesOnTraining).where(
+            ExercisesOnTraining.exercise_id.in_(triset_exercises_ids)
+        )
+    )
 
-    for e in exercises_in_triset:
+    for e in exercises_in_triset.scalars():
         s.add(e.superset_id)
 
     assert len(s) == 1
 
     if response.status_code == 201:
-        training_plan = override_get_db.query(TrainingPlan).filter(
-            TrainingPlan.id == response.json()["id"]
-        ).first()
-        override_get_db.delete(training_plan)
-        override_get_db.commit()
+        await override_get_db.execute(
+            delete(TrainingPlan).where(TrainingPlan.id == response.json()["id"])
+        )
+        await override_get_db.commit()
 
 
-@pytest.mark.anyio
+@pytest.mark.asyncio
 async def test_get_training_plan_with_supersets(
     create_customer,
     create_training_plans,
     create_training_exercises,
     override_get_db
 ):
+
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = create_access_token(create_customer.coach.username)
+        auth_token = await create_access_token(create_customer.coach.username)
         response = await ac.get(
             f"/api/customers/{create_customer.id}/training_plans/{create_training_plans[0].id}",
             headers={
@@ -193,3 +204,9 @@ async def test_get_training_plan_with_supersets(
         superset_ids_set.add(exercise["superset_id"])
 
     assert len(superset_ids_set) == 1
+
+    if response.status_code == 200:
+        await override_get_db.execute(
+            delete(TrainingPlan).where(TrainingPlan.id == str(create_training_plans[0].id))
+        )
+        await override_get_db.commit()

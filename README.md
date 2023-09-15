@@ -11,7 +11,7 @@ http://54.167.94.215/docs
 <h2>Local Testing</h2>
 
 ```bash
-export TEST_ENV=1
+export TEST_ENV=active
 cd backend
 pytest tests
 ```

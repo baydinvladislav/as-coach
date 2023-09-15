@@ -8,7 +8,7 @@ import styled from 'styled-components';
 
 import { BackgroundImage, BicepsImage, DefaultAvatarImage } from '@assets';
 import { LkClients, Plans } from '@components';
-import { TOP_PADDING } from '@constants';
+import { BASE_URL, TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
@@ -16,7 +16,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { CustomerProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
 import { Text } from '@ui';
-import { makeAvatarLink, windowHeight, windowWidth } from '@utils';
+import { windowHeight, windowWidth } from '@utils';
 
 import { FontSize, FontWeight, UserType } from '~types';
 
@@ -34,11 +34,11 @@ export const LkScreen = observer(() => {
     useCallback(() => {
       if (isClient) {
         customer.getCustomerPlanById(user.me.id).then(plans => {
-          setData({ ...data, plans });
+          setData({ id: user.me.id, plans });
         });
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []),
+    }, [isClient]),
   );
 
   const handleNavigateProfileScreen = () => {
@@ -78,7 +78,7 @@ export const LkScreen = observer(() => {
           <Avatar
             source={
               user.me.photo_link
-                ? { uri: makeAvatarLink(user.me.photo_link) }
+                ? { uri: BASE_URL + user.me.photo_link }
                 : DefaultAvatarImage
             }
           />
