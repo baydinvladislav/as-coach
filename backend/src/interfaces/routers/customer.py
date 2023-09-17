@@ -5,8 +5,7 @@ from starlette import status
 
 from src.application.services.auth.coach import CoachService
 from src.application.services.auth.customer import CustomerService
-from src.application.services.gym import Gym
-from src.interfaces.controllers.customer import customer_router
+from src.application.services.gym.gym import Gym
 from src.interfaces.schemas.customer import (
     CustomerOut,
     CustomerCreateIn,
@@ -17,7 +16,7 @@ from src.interfaces.schemas.customer import (
 from src.dependencies import provide_customer_service, provide_user_service, provide_gym_service
 from src.utils import validate_uuid, generate_random_password
 
-coach_router = APIRouter()
+customer_router = APIRouter()
 
 
 @customer_router.post(

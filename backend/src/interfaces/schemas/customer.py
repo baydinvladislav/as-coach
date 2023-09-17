@@ -7,7 +7,7 @@ from typing import Optional, List, Union
 from pydantic import BaseModel, validator
 
 from src.utils import validate_phone_number
-from src.interfaces.schemas.gym import Diet, Training
+from src.interfaces.schemas.library import Diet, Training
 
 
 class CustomerCreateIn(BaseModel):

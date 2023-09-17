@@ -26,7 +26,9 @@ from src.domain.repositories.custom import (
 from src.application.services.auth.coach import CoachService
 from src.application.services.auth.customer import CustomerService
 from src.application.services.auth.exceptions import TokenExpired, NotValidCredentials
-from src.application.services.gym import Gym, GymInstructor, Nutritionist
+from src.application.services.gym.gym import Gym
+from src.application.services.gym.instructor import Instructor
+from src.application.services.gym.nutritionist import Nutritionist
 from src.database import SessionLocal
 
 
@@ -59,7 +61,7 @@ async def provide_gym_service(database: Session = Depends(get_db)) -> Gym:
     """
     Returns service responsible to interact with TrainingPlan domain
     """
-    gym_instructor = GymInstructor(
+    gym_instructor = Instructor(
         repositories={
             "training_repo": TrainingRepository(database),
             "exercises_on_training_repo": ExercisesOnTrainingRepository(database)
