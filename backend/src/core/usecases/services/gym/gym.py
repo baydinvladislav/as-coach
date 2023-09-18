@@ -4,9 +4,9 @@ Contains services related to the Gym functionality
 
 from datetime import datetime
 
-from src.application.services.gym.instructor import Instructor
-from src.application.services.gym.nutritionist import Nutritionist
-from src.domain.repositories.abstract import AbstractRepository
+from src.core.usecases.services.gym.instructor import Instructor
+from src.core.usecases.services.gym.nutritionist import Nutritionist
+from src.core.repositories.abstract import AbstractRepository
 from src.interfaces.schemas.customer import TrainingPlanIn
 from src import TrainingPlan
 

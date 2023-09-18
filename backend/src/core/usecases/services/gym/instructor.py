@@ -1,7 +1,7 @@
 import uuid
 
 from src import ExercisesOnTraining
-from src.domain.repositories.abstract import AbstractRepository
+from src.core.repositories.abstract import AbstractRepository
 
 
 class Instructor:

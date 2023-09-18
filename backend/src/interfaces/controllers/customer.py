@@ -3,9 +3,9 @@ from typing import Union, Any, List
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
-from src.application.services.auth.coach import CoachService
-from src.application.services.auth.customer import CustomerService
-from src.application.services.gym.gym import Gym
+from src.core.usecases.services.auth.coach import CoachService
+from src.core.usecases.services.auth.customer import CustomerService
+from src.core.usecases.services.gym.gym import Gym
 from src.interfaces.schemas.customer import (
     CustomerOut,
     CustomerCreateIn,
