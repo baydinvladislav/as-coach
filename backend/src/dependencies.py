@@ -23,12 +23,12 @@ from src.core.repositories.custom import (
     DietOnTrainingPlanRepository,
     ExercisesOnTrainingRepository
 )
-from src.core.usecases.services.auth.coach import CoachService
-from src.core.usecases.services.auth.customer import CustomerService
-from src.core.usecases.services.auth.exceptions import TokenExpired, NotValidCredentials
-from src.core.usecases.services.gym.gym import Gym
-from src.core.usecases.services.gym.instructor import Instructor
-from src.core.usecases.services.gym.nutritionist import Nutritionist
+from src.core.usecases.coach_usecase import CoachUseCase
+from src.core.usecases.customer_usecase import CustomerUseCase
+from src.core.usecases.exceptions import TokenExpired, NotValidCredentials
+from src.core.usecases.trainingplan_usecase import TrainingPlanUseCase
+from src.core.usecases.services.instructor import Instructor
+from src.core.usecases.services.nutritionist import Nutritionist
 from src.database import SessionLocal
 
 
@@ -43,21 +43,21 @@ async def get_db() -> AsyncSession:
             await database.close()
 
 
-async def provide_coach_service(database: Session = Depends(get_db)) -> CoachService:
+async def provide_coach_service(database: Session = Depends(get_db)) -> CoachUseCase:
     """
     Returns service responsible to interact with Coach domain
     """
-    return CoachService(CoachRepository(database))
+    return CoachUseCase(CoachRepository(database))
 
 
-async def provide_customer_service(database: Session = Depends(get_db)) -> CustomerService:
+async def provide_customer_service(database: Session = Depends(get_db)) -> CustomerUseCase:
     """
     Returns service responsible to interact with Customer domain
     """
-    return CustomerService(CustomerRepository(database))
+    return CustomerUseCase(CustomerRepository(database))
 
 
-async def provide_gym_service(database: Session = Depends(get_db)) -> Gym:
+async def provide_gym_service(database: Session = Depends(get_db)) -> TrainingPlanUseCase:
     """
     Returns service responsible to interact with TrainingPlan domain
     """
@@ -73,13 +73,13 @@ async def provide_gym_service(database: Session = Depends(get_db)) -> Gym:
             "diets_on_training_repo": DietOnTrainingPlanRepository(database)
         }
     )
-    return Gym({"training_plan": TrainingPlanRepository(database)}, gym_instructor, nutritionist)
+    return TrainingPlanUseCase({"training_plan": TrainingPlanRepository(database)}, gym_instructor, nutritionist)
 
 
 async def provide_user_service(
         token: str = Depends(reuseable_oauth),
-        coach_service: CoachService = Depends(provide_coach_service),
-        customer_service: CustomerService = Depends(provide_customer_service)
+        coach_service: CoachUseCase = Depends(provide_coach_service),
+        customer_service: CustomerUseCase = Depends(provide_customer_service)
 ):
     """
     Checks that token from client request is valid

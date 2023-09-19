@@ -17,10 +17,10 @@ from fastapi import (
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 
-from src.core.usecases.services.auth.coach import CoachService
-from src.core.usecases.services.auth.customer import CustomerService
-from src.core.usecases.services.auth.profile import ProfileService
-from src.core.usecases.services.auth.exceptions import NotValidCredentials, UsernameIsTaken
+from src.core.usecases.coach_usecase import CoachUseCase
+from src.core.usecases.customer_usecase import CustomerUseCase
+from src.core.usecases.profile_usecase import ProfileUseCase
+from src.core.usecases.exceptions import NotValidCredentials, UsernameIsTaken
 from src.dependencies import provide_user_service, provide_coach_service, provide_customer_service
 from src.models import Gender
 from src.interfaces.schemas.auth import (
@@ -42,7 +42,7 @@ auth_router = APIRouter()
     response_model=UserRegisterOut)
 async def register_user(
         user_data: UserRegisterIn,
-        service: CoachService = Depends(provide_coach_service)
+        use_case: CoachUseCase = Depends(provide_coach_service)
 ) -> dict:
     """
     Registration endpoint, creates new user in database.
@@ -50,14 +50,14 @@ async def register_user(
 
     Args:
         user_data: data schema for user registration
-        service: service for interacting with profile
+        use_case: service for interacting with profile
     Raises:
         400 in case if user with the phone number already created
     Returns:
         dictionary with just created user
     """
     try:
-        user = await service.register(user_data)
+        user = await use_case.register(user_data)
     except UsernameIsTaken:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -80,16 +80,16 @@ async def register_user(
     response_model=LoginOut)
 async def login_user(
         form_data: OAuth2PasswordRequestForm = Depends(),
-        coach_service: CoachService = Depends(provide_coach_service),
-        customer_service: CustomerService = Depends(provide_customer_service)
+        coach_use_case: CoachUseCase = Depends(provide_coach_service),
+        customer_use_case: CustomerUseCase = Depends(provide_customer_service)
 ) -> dict:
     """
     Login endpoint authenticates user
 
     Args:
         form_data: data schema for user login
-        coach_service: service for interacting with coach profile
-        customer_service: service for interacting with customer profile
+        coach_use_case: service for interacting with coach profile
+        customer_use_case: service for interacting with customer profile
     Raises:
         400 in case if passed empty fields
         404 if specified user was not found
@@ -103,13 +103,13 @@ async def login_user(
             detail="Empty fields"
         )
 
-    coach = await coach_service.find({"username": form_data.username})
-    customer = await customer_service.find({"username": form_data.username})
+    coach = await coach_use_case.find({"username": form_data.username})
+    customer = await customer_use_case.find({"username": form_data.username})
 
     if coach:
-        service = coach_service
+        service = coach_use_case
     elif customer:
-        service = customer_service
+        service = customer_use_case
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -139,23 +139,23 @@ async def login_user(
     status_code=status.HTTP_200_OK,
     summary="Get details of currently logged in user")
 async def get_me(
-        service: ProfileService = Depends(provide_user_service)
+        use_case: ProfileUseCase = Depends(provide_user_service)
 ) -> dict:
     """
     Returns short info about current user
     Endpoint can be used by both a coach and a customer
 
     Args:
-        service: service for interacting with profile
+        use_case: service for interacting with profile
 
     Returns:
         dict: short info about current user
     """
-    user = service.user
+    user = use_case.user
 
     return {
         "id": str(user.id),
-        "user_type": service.user_type,
+        "user_type": use_case.user_type,
         "username": user.username,
         "first_name": user.first_name
     }
@@ -167,25 +167,25 @@ async def get_me(
     response_model=UserProfileOut,
     summary="Get user profile")
 async def get_profile(
-        service: ProfileService = Depends(provide_user_service)
+        use_case: ProfileUseCase = Depends(provide_user_service)
 ) -> dict:
     """
     Returns full info about user
     Endpoint can be used by both the coach and the customer
 
     Args:
-        service: service for interacting with profile
+        use_case: service for interacting with profile
 
     Returns:
         dict: full info about current user
     """
-    user = service.user
+    user = use_case.user
 
     return {
         "id": str(user.id),
         "first_name": user.first_name,
         "last_name": user.last_name,
-        "user_type": service.user_type,
+        "user_type": use_case.user_type,
         "gender": user.gender,
         "birthday": user.birthday,
         "email": user.email,
@@ -200,7 +200,7 @@ async def get_profile(
     response_model=UserProfileOut,
     status_code=status.HTTP_200_OK)
 async def update_profile(
-        service: ProfileService = Depends(provide_user_service),
+        use_case: ProfileUseCase = Depends(provide_user_service),
         first_name: str = Form(...),
         username: str = Form(...),
         last_name: str = Form(None),
@@ -214,7 +214,7 @@ async def update_profile(
     Endpoint can be used by both the coach and the customer
 
     Args:
-        service: service for interacting with profile
+        use_case: service for interacting with profile
         first_name: client value from body
         username: client value from body
         last_name: client value from body
@@ -226,9 +226,9 @@ async def update_profile(
     Returns:
         dictionary with updated full user info
     """
-    user = service.user
+    user = use_case.user
 
-    await service.update(
+    await use_case.update(
         first_name=first_name,
         username=username,
         last_name=last_name,
@@ -242,7 +242,7 @@ async def update_profile(
         "id": str(user.id),
         "first_name": user.first_name,
         "last_name": user.last_name,
-        "user_type": service.user_type,
+        "user_type": use_case.user_type,
         "gender": user.gender,
         "birthday": user.birthday,
         "email": user.email,
@@ -257,21 +257,21 @@ async def update_profile(
     status_code=status.HTTP_200_OK)
 async def confirm_password(
         current_password: str = Form(...),
-        service: ProfileService = Depends(provide_user_service)
+        use_case: ProfileUseCase = Depends(provide_user_service)
 ) -> dict:
     """
     Confirms that user knows current password before it is changed.
 
     Args:
         current_password: current user password
-        service: service for interacting with profile
+        use_case: service for interacting with profile
 
     Returns:
         success or failed response
     """
-    user = service.user
+    user = use_case.user
 
-    is_confirmed = await service.confirm_password(current_password)
+    is_confirmed = await use_case.confirm_password(current_password)
     if is_confirmed:
         return {"user_id": str(user.id), "confirmed_password": True}
     return {"user_id": str(user.id), "confirmed_password": False}
@@ -283,7 +283,7 @@ async def confirm_password(
     status_code=status.HTTP_200_OK)
 async def change_password(
         new_password: NewUserPassword,
-        service: ProfileService = Depends(provide_user_service)
+        use_case: ProfileUseCase = Depends(provide_user_service)
 ) -> dict:
     """
     Changes user password.
@@ -291,14 +291,14 @@ async def change_password(
 
     Args:
         new_password: new user password
-        service: service for interacting with profile
+        use_case: service for interacting with profile
 
     Returns:
         success response
     """
-    user = service.user
+    user = use_case.user
 
-    is_changed = await service.update(password=new_password)
+    is_changed = await use_case.update(password=new_password)
     if await is_changed:
         return {"user_id": str(user.id), "changed_password": True}
     return {"user_id": str(user.id), "changed_password": False}

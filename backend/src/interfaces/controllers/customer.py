@@ -3,9 +3,9 @@ from typing import Union, Any, List
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
-from src.core.usecases.services.auth.coach import CoachService
-from src.core.usecases.services.auth.customer import CustomerService
-from src.core.usecases.services.gym.gym import Gym
+from src.core.usecases.coach_usecase import CoachUseCase
+from src.core.usecases.customer_usecase import CustomerUseCase
+from src.core.usecases.trainingplan_usecase import TrainingPlanUseCase
 from src.interfaces.schemas.customer import (
     CustomerOut,
     CustomerCreateIn,
@@ -26,8 +26,8 @@ customer_router = APIRouter()
     response_model=CustomerOut)
 async def create_customer(
         customer_data: CustomerCreateIn,
-        user_service: CoachService = Depends(provide_user_service),
-        customer_service: CustomerService = Depends(provide_customer_service)
+        user_service: CoachUseCase = Depends(provide_user_service),
+        customer_service: CustomerUseCase = Depends(provide_customer_service)
 ) -> dict:
     """
     Creates new customer for coach
@@ -89,7 +89,7 @@ async def create_customer(
     summary="Gets all user's customers",
     status_code=status.HTTP_200_OK)
 async def get_customers(
-        user_service: CoachService = Depends(provide_user_service),
+        user_service: CoachUseCase = Depends(provide_user_service),
 ) -> List[dict[str, Any]]:
     """
     Gets all customer for current coach
@@ -122,8 +122,8 @@ async def get_customers(
     status_code=status.HTTP_200_OK)
 async def get_customer(
         customer_id: str,
-        user_service: CoachService = Depends(provide_user_service),
-        customer_service: CustomerService = Depends(provide_customer_service)
+        user_service: CoachUseCase = Depends(provide_user_service),
+        customer_service: CustomerUseCase = Depends(provide_customer_service)
 ) -> dict:
     """
     Gets specific customer by ID.
@@ -176,8 +176,8 @@ async def get_customer(
 async def create_training_plan(
         training_plan_data: TrainingPlanIn,
         customer_id: str,
-        user_service: CoachService = Depends(provide_user_service),
-        gym_instructor: Gym = Depends(provide_gym_service)
+        user_service: CoachUseCase = Depends(provide_user_service),
+        gym_instructor: TrainingPlanUseCase = Depends(provide_gym_service)
 ) -> dict:
     """
     Creates new training plan for specified customer
@@ -216,8 +216,8 @@ async def create_training_plan(
     status_code=status.HTTP_200_OK)
 async def get_all_training_plans(
         customer_id: str,
-        user_service: CoachService = Depends(provide_user_service),
-        customer_service: CustomerService = Depends(provide_customer_service)
+        user_service: CoachUseCase = Depends(provide_user_service),
+        customer_service: CustomerUseCase = Depends(provide_customer_service)
 ) -> Union[list[dict], list[None]]:
     """
     Returns all training plans for specific customer
@@ -260,9 +260,9 @@ async def get_all_training_plans(
 async def get_training_plan(
         training_plan_id: str,
         customer_id: str,
-        user_service: CoachService = Depends(provide_user_service),
-        gym: Gym = Depends(provide_gym_service),
-        customer_service: CustomerService = Depends(provide_customer_service)
+        user_service: CoachUseCase = Depends(provide_user_service),
+        gym: TrainingPlanUseCase = Depends(provide_gym_service),
+        customer_service: CustomerUseCase = Depends(provide_customer_service)
 ) -> dict:
     """
     Gets full info for specific training plan by their ID

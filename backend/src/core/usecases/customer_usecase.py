@@ -9,12 +9,12 @@ from fastapi.security import OAuth2PasswordRequestForm
 from src import Customer
 from src.utils import verify_password
 from src.core.repositories.abstract import AbstractRepository
-from src.core.usecases.services.auth.exceptions import NotValidCredentials
-from src.core.usecases.services.auth.profile import ProfileService, ProfileType
+from src.core.usecases.exceptions import NotValidCredentials
+from src.core.usecases.profile_usecase import ProfileUseCase, ProfileType
 from src.interfaces.schemas.auth import UserRegisterIn
 
 
-class CustomerService(ProfileService):
+class CustomerUseCase(ProfileUseCase):
     """
     Implements logic to interact with Customer domain
 

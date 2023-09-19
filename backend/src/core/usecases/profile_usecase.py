@@ -23,7 +23,7 @@ class ProfileType(Enum):
     CUSTOMER = "customer"
 
 
-class ProfileService(ABC):
+class ProfileUseCase(ABC):
     """
     Abstract class for user services.
 

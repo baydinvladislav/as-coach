@@ -18,7 +18,7 @@ from src.config import (
     ALGORITHM, JWT_SECRET_KEY,
     JWT_REFRESH_SECRET_KEY
 )
-from src.core.usecases.services.auth.exceptions import TokenExpired, NotValidCredentials
+from src.core.usecases.exceptions import TokenExpired, NotValidCredentials
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
