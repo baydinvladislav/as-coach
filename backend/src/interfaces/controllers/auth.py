@@ -21,7 +21,7 @@ from src.core.usecases.coach_usecase import CoachUseCase
 from src.core.usecases.customer_usecase import CustomerUseCase
 from src.core.usecases.profile_usecase import ProfileUseCase
 from src.core.usecases.exceptions import NotValidCredentials, UsernameIsTaken
-from src.dependencies import provide_user_service, provide_coach_service, provide_customer_service
+from src.dependencies import define_user_use_case, provide_coach_use_case, provide_customer_use_case
 from src.models import Gender
 from src.interfaces.schemas.auth import (
     UserProfileOut,
@@ -42,7 +42,7 @@ auth_router = APIRouter()
     response_model=UserRegisterOut)
 async def register_user(
         user_data: UserRegisterIn,
-        use_case: CoachUseCase = Depends(provide_coach_service)
+        use_case: CoachUseCase = Depends(provide_coach_use_case)
 ) -> dict:
     """
     Registration endpoint, creates new user in database.
@@ -80,8 +80,8 @@ async def register_user(
     response_model=LoginOut)
 async def login_user(
         form_data: OAuth2PasswordRequestForm = Depends(),
-        coach_use_case: CoachUseCase = Depends(provide_coach_service),
-        customer_use_case: CustomerUseCase = Depends(provide_customer_service)
+        coach_use_case: CoachUseCase = Depends(provide_coach_use_case),
+        customer_use_case: CustomerUseCase = Depends(provide_customer_use_case)
 ) -> dict:
     """
     Login endpoint authenticates user
@@ -139,7 +139,7 @@ async def login_user(
     status_code=status.HTTP_200_OK,
     summary="Get details of currently logged in user")
 async def get_me(
-        use_case: ProfileUseCase = Depends(provide_user_service)
+        use_case: ProfileUseCase = Depends(define_user_use_case)
 ) -> dict:
     """
     Returns short info about current user
@@ -167,7 +167,7 @@ async def get_me(
     response_model=UserProfileOut,
     summary="Get user profile")
 async def get_profile(
-        use_case: ProfileUseCase = Depends(provide_user_service)
+        use_case: ProfileUseCase = Depends(define_user_use_case)
 ) -> dict:
     """
     Returns full info about user
@@ -200,7 +200,7 @@ async def get_profile(
     response_model=UserProfileOut,
     status_code=status.HTTP_200_OK)
 async def update_profile(
-        use_case: ProfileUseCase = Depends(provide_user_service),
+        use_case: ProfileUseCase = Depends(define_user_use_case),
         first_name: str = Form(...),
         username: str = Form(...),
         last_name: str = Form(None),
@@ -257,7 +257,7 @@ async def update_profile(
     status_code=status.HTTP_200_OK)
 async def confirm_password(
         current_password: str = Form(...),
-        use_case: ProfileUseCase = Depends(provide_user_service)
+        use_case: ProfileUseCase = Depends(define_user_use_case)
 ) -> dict:
     """
     Confirms that user knows current password before it is changed.
@@ -283,7 +283,7 @@ async def confirm_password(
     status_code=status.HTTP_200_OK)
 async def change_password(
         new_password: NewUserPassword,
-        use_case: ProfileUseCase = Depends(provide_user_service)
+        use_case: ProfileUseCase = Depends(define_user_use_case)
 ) -> dict:
     """
     Changes user password.

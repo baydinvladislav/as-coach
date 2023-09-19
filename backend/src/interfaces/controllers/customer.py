@@ -13,7 +13,7 @@ from src.interfaces.schemas.customer import (
     TrainingPlanIn,
     TrainingPlanOutFull
 )
-from src.dependencies import provide_customer_service, provide_user_service, provide_gym_service
+from src.dependencies import provide_customer_use_case, define_user_use_case, provide_training_plan_use_case
 from src.utils import validate_uuid, generate_random_password
 
 customer_router = APIRouter()
@@ -26,16 +26,16 @@ customer_router = APIRouter()
     response_model=CustomerOut)
 async def create_customer(
         customer_data: CustomerCreateIn,
-        user_service: CoachUseCase = Depends(provide_user_service),
-        customer_service: CustomerUseCase = Depends(provide_customer_service)
+        user_use_case: CoachUseCase = Depends(define_user_use_case),
+        customer_use_case: CustomerUseCase = Depends(provide_customer_use_case)
 ) -> dict:
     """
     Creates new customer for coach
 
     Args:
         customer_data: data to create new customer
-        user_service: service for interacting with profile
-        customer_service: service for interacting with customer
+        user_use_case: service for interacting with profile
+        customer_use_case: service for interacting with customer
     Raises:
         400 in case if customer with the phone number already created
         400 in case if couple last name and first name already exist
@@ -43,9 +43,9 @@ async def create_customer(
         dictionary with just created customer
         id, first_name, last_name and phone_number are keys
     """
-    user = user_service.user
+    user = user_use_case.user
 
-    customer_in_db = await customer_service.find({"username": customer_data.phone_number})
+    customer_in_db = await customer_use_case.find({"username": customer_data.phone_number})
     if customer_data.phone_number and customer_in_db:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -53,7 +53,7 @@ async def create_customer(
                    f"with this phone number already exists."
         )
 
-    customer_in_db = await customer_service.find(
+    customer_in_db = await customer_use_case.find(
         {
             "first_name": customer_data.first_name,
             "last_name": customer_data.last_name
@@ -66,7 +66,7 @@ async def create_customer(
                    f"{customer_data.last_name} already exists."
         )
 
-    customer = await customer_service.create(
+    customer = await customer_use_case.create(
         coach_id=str(user.id),
         username=customer_data.phone_number,
         # TODO: make it async
@@ -89,18 +89,18 @@ async def create_customer(
     summary="Gets all user's customers",
     status_code=status.HTTP_200_OK)
 async def get_customers(
-        user_service: CoachUseCase = Depends(provide_user_service),
+        user_use_case: CoachUseCase = Depends(define_user_use_case),
 ) -> List[dict[str, Any]]:
     """
     Gets all customer for current coach
 
     Args:
-        user_service: current application coach
+        user_use_case: current application coach
 
     Returns:
         list of customers
     """
-    user = user_service.user
+    user = user_use_case.user
 
     customers = []
     for customer in user.customers:
@@ -122,16 +122,16 @@ async def get_customers(
     status_code=status.HTTP_200_OK)
 async def get_customer(
         customer_id: str,
-        user_service: CoachUseCase = Depends(provide_user_service),
-        customer_service: CustomerUseCase = Depends(provide_customer_service)
+        user_use_case: CoachUseCase = Depends(define_user_use_case),
+        customer_use_case: CustomerUseCase = Depends(provide_customer_use_case)
 ) -> dict:
     """
     Gets specific customer by ID.
 
     Args:
         customer_id: str(UUID) of specified customer.
-        user_service: service for interacting with profile
-        customer_service: service for interacting with customer
+        user_use_case: service for interacting with profile
+        customer_use_case: service for interacting with customer
 
     Raise:
         HTTPException: 400 when passed is not correct UUID as customer_id.
@@ -144,9 +144,9 @@ async def get_customer(
             detail="Passed customer_id is not correct UUID value"
         )
 
-    customer = await customer_service.find(filters={"id": customer_id})
+    customer = await customer_use_case.find(filters={"id": customer_id})
 
-    if str(customer.coach_id) != str(user_service.user.id):
+    if str(customer.coach_id) != str(user_use_case.user.id):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="The client belong to another coach"
@@ -176,8 +176,8 @@ async def get_customer(
 async def create_training_plan(
         training_plan_data: TrainingPlanIn,
         customer_id: str,
-        user_service: CoachUseCase = Depends(provide_user_service),
-        gym_instructor: TrainingPlanUseCase = Depends(provide_gym_service)
+        user_use_case: CoachUseCase = Depends(define_user_use_case),
+        training_plan_use_case: TrainingPlanUseCase = Depends(provide_training_plan_use_case)
 ) -> dict:
     """
     Creates new training plan for specified customer
@@ -185,10 +185,10 @@ async def create_training_plan(
     Args:
         training_plan_data: data from application user to create new training plan
         customer_id: customer's str(UUID)
-        user_service: service for interacting with profile
-        gym_instructor: service for interacting with customer training plans
+        user_use_case: service for interacting with profile
+        training_plan_use_case: service for interacting with customer training plans
     """
-    training_plan = await gym_instructor.create_training_plan(
+    training_plan = await training_plan_use_case.create_training_plan(
         customer_id=customer_id,
         data=training_plan_data
     )
@@ -216,8 +216,8 @@ async def create_training_plan(
     status_code=status.HTTP_200_OK)
 async def get_all_training_plans(
         customer_id: str,
-        user_service: CoachUseCase = Depends(provide_user_service),
-        customer_service: CustomerUseCase = Depends(provide_customer_service)
+        user_use_case: CoachUseCase = Depends(define_user_use_case),
+        customer_use_case: CustomerUseCase = Depends(provide_customer_use_case)
 ) -> Union[list[dict], list[None]]:
     """
     Returns all training plans for specific customer
@@ -225,10 +225,10 @@ async def get_all_training_plans(
 
     Args:
         customer_id: customer's str(UUID)
-        user_service: service for interacting with profile
-        customer_service: service for interacting with customer
+        user_use_case: service for interacting with profile
+        customer_use_case: service for interacting with customer
     """
-    customer = await customer_service.find({"id": customer_id})
+    customer = await customer_use_case.find({"id": customer_id})
     if customer is None:
         raise HTTPException(
             status_code=404,
@@ -260,9 +260,9 @@ async def get_all_training_plans(
 async def get_training_plan(
         training_plan_id: str,
         customer_id: str,
-        user_service: CoachUseCase = Depends(provide_user_service),
-        gym: TrainingPlanUseCase = Depends(provide_gym_service),
-        customer_service: CustomerUseCase = Depends(provide_customer_service)
+        user_use_case: CoachUseCase = Depends(define_user_use_case),
+        training_plan_use_case: TrainingPlanUseCase = Depends(provide_training_plan_use_case),
+        customer_use_case: CustomerUseCase = Depends(provide_customer_use_case)
 ) -> dict:
     """
     Gets full info for specific training plan by their ID
@@ -271,21 +271,21 @@ async def get_training_plan(
     Args:
         training_plan_id: str(UUID) of specified training plan
         customer_id: str(UUID) of specified customer
-        user_service: service for interacting with profile
-        gym: service for interacting with customer training plans
-        customer_service: service for interacting with customer
+        user_use_case: service for interacting with profile
+        training_plan_use_case: service for interacting with customer training plans
+        customer_use_case: service for interacting with customer
 
     Raise:
         HTTPException: 404 when customer or training plan are not found
     """
-    customer = await customer_service.find({"id": customer_id})
+    customer = await customer_use_case.find({"id": customer_id})
     if customer is None:
         raise HTTPException(
             status_code=404,
             detail=f"Customer with id={customer_id} doesn't exist"
         )
 
-    training_plan = await gym.find_training_plan({"id": training_plan_id})
+    training_plan = await training_plan_use_case.find_training_plan({"id": training_plan_id})
     if training_plan is None:
         raise HTTPException(
             status_code=404,

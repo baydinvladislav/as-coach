@@ -43,21 +43,21 @@ async def get_db() -> AsyncSession:
             await database.close()
 
 
-async def provide_coach_service(database: Session = Depends(get_db)) -> CoachUseCase:
+async def provide_coach_use_case(database: Session = Depends(get_db)) -> CoachUseCase:
     """
     Returns service responsible to interact with Coach domain
     """
     return CoachUseCase(CoachRepository(database))
 
 
-async def provide_customer_service(database: Session = Depends(get_db)) -> CustomerUseCase:
+async def provide_customer_use_case(database: Session = Depends(get_db)) -> CustomerUseCase:
     """
     Returns service responsible to interact with Customer domain
     """
     return CustomerUseCase(CustomerRepository(database))
 
 
-async def provide_gym_service(database: Session = Depends(get_db)) -> TrainingPlanUseCase:
+async def provide_training_plan_use_case(database: Session = Depends(get_db)) -> TrainingPlanUseCase:
     """
     Returns service responsible to interact with TrainingPlan domain
     """
@@ -76,18 +76,18 @@ async def provide_gym_service(database: Session = Depends(get_db)) -> TrainingPl
     return TrainingPlanUseCase({"training_plan": TrainingPlanRepository(database)}, gym_instructor, nutritionist)
 
 
-async def provide_user_service(
+async def define_user_use_case(
         token: str = Depends(reuseable_oauth),
-        coach_service: CoachUseCase = Depends(provide_coach_service),
-        customer_service: CustomerUseCase = Depends(provide_customer_service)
+        coach_use_case: CoachUseCase = Depends(provide_coach_use_case),
+        customer_use_case: CustomerUseCase = Depends(provide_customer_use_case)
 ):
     """
     Checks that token from client request is valid
 
     Args:
         token: token from client request
-        coach_service: service for interacting with coach profile
-        customer_service: service for interacting with customer profile
+        coach_use_case: service for interacting with coach profile
+        customer_use_case: service for interacting with customer profile
 
     Raises:
         401: HTTPException: in case if token is expired
@@ -112,13 +112,13 @@ async def provide_user_service(
     else:
         username = token_data.sub
 
-        coach = await coach_service.find({"username": username})
-        customer = await customer_service.find({"username": username})
+        coach = await coach_use_case.find({"username": username})
+        customer = await customer_use_case.find({"username": username})
 
         if coach:
-            return coach_service
+            return coach_use_case
         elif customer:
-            return customer_service
+            return customer_use_case
         else:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
