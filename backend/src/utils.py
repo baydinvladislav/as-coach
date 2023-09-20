@@ -18,7 +18,7 @@ from src.config import (
     ALGORITHM, JWT_SECRET_KEY,
     JWT_REFRESH_SECRET_KEY
 )
-from src.application.services.auth.exceptions import TokenExpired, NotValidCredentials
+from src.application.services.authentication.exceptions import TokenExpired, NotValidCredentials
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -117,7 +117,7 @@ async def decode_jwt_token(token: str):
     Decodes given token
     """
     # TODO: fix it
-    from src.interfaces.schemas.auth import TokenPayload
+    from src.infrastructure.schemas.auth import TokenPayload
 
     try:
         payload = jwt.decode(

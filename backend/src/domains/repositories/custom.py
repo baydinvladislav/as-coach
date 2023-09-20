@@ -11,7 +11,7 @@ from src import (
     Training,
     ExercisesOnTraining
 )
-from src.domain.repositories.sqlalchemy import SQLAlchemyRepository
+from src.domains.repositories.sqlalchemy import SQLAlchemyRepository
 
 
 class CoachRepository(SQLAlchemyRepository):

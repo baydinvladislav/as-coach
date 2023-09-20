@@ -1,5 +1,5 @@
 from src import DietOnTrainingPlan
-from src.domain.repositories.abstract import AbstractRepository
+from src.domains.repositories.abstract import AbstractRepository
 
 
 class Nutritionist:

@@ -12,7 +12,7 @@ from sqlalchemy.orm.attributes import set_attribute
 
 from src.config import STATIC_DIR
 from src.utils import verify_password
-from src.interfaces.schemas.auth import UserRegisterIn
+from src.infrastructure.schemas.auth import UserRegisterIn
 
 
 class ProfileType(Enum):

@@ -14,7 +14,7 @@ from src import Coach, Customer
 from src.config import reuseable_oauth
 from src.utils import decode_jwt_token
 
-from src.domain.repositories.custom import (
+from src.domains.repositories.custom import (
     CoachRepository,
     CustomerRepository,
     TrainingPlanRepository,
@@ -23,12 +23,12 @@ from src.domain.repositories.custom import (
     DietOnTrainingPlanRepository,
     ExercisesOnTrainingRepository
 )
-from src.application.services.auth.coach import CoachService
-from src.application.services.auth.customer import CustomerService
-from src.application.services.auth.exceptions import TokenExpired, NotValidCredentials
-from src.application.services.gym.gym import Gym
-from src.application.services.gym.instructor import Instructor
-from src.application.services.gym.nutritionist import Nutritionist
+from src.application.services.authentication.coach import CoachService
+from src.application.services.authentication.customer import CustomerService
+from src.application.services.authentication.exceptions import TokenExpired, NotValidCredentials
+from src.application.services.training_manager.mvp.manager import MVPTrainingManager
+from src.application.services.training_manager.mvp.instructor import Instructor
+from src.application.services.training_manager.mvp.nutritionist import Nutritionist
 from src.database import SessionLocal
 
 
@@ -57,7 +57,7 @@ async def provide_customer_service(database: Session = Depends(get_db)) -> Custo
     return CustomerService(CustomerRepository(database))
 
 
-async def provide_gym_service(database: Session = Depends(get_db)) -> Gym:
+async def provide_gym_service(database: Session = Depends(get_db)) -> MVPTrainingManager:
     """
     Returns service responsible to interact with TrainingPlan domain
     """
@@ -73,7 +73,7 @@ async def provide_gym_service(database: Session = Depends(get_db)) -> Gym:
             "diets_on_training_repo": DietOnTrainingPlanRepository(database)
         }
     )
-    return Gym({"training_plan": TrainingPlanRepository(database)}, gym_instructor, nutritionist)
+    return MVPTrainingManager({"training_plan": TrainingPlanRepository(database)}, gym_instructor, nutritionist)
 
 
 async def provide_user_service(

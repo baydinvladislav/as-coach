@@ -3,10 +3,10 @@ from typing import Union, Any, List
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
-from src.application.services.auth.coach import CoachService
-from src.application.services.auth.customer import CustomerService
-from src.application.services.gym.gym import Gym
-from src.interfaces.schemas.customer import (
+from src.application.services.authentication.coach import CoachService
+from src.application.services.authentication.customer import CustomerService
+from src.application.services.training_manager.mvp.manager import MVPTrainingManager
+from src.infrastructure.schemas.customer import (
     CustomerOut,
     CustomerCreateIn,
     TrainingPlanOut,
@@ -177,7 +177,7 @@ async def create_training_plan(
         training_plan_data: TrainingPlanIn,
         customer_id: str,
         user_service: CoachService = Depends(provide_user_service),
-        gym_instructor: Gym = Depends(provide_gym_service)
+        gym_instructor: MVPTrainingManager = Depends(provide_gym_service)
 ) -> dict:
     """
     Creates new training plan for specified customer
@@ -261,7 +261,7 @@ async def get_training_plan(
         training_plan_id: str,
         customer_id: str,
         user_service: CoachService = Depends(provide_user_service),
-        gym: Gym = Depends(provide_gym_service),
+        gym: MVPTrainingManager = Depends(provide_gym_service),
         customer_service: CustomerService = Depends(provide_customer_service)
 ) -> dict:
     """
