@@ -3,6 +3,7 @@ Contains abstract training manager
 """
 
 from abc import ABC
+from typing import Optional
 
 from src.infrastructure.schemas.customer import TrainingPlanIn
 from src import TrainingPlan
@@ -23,11 +24,19 @@ class TrainingManagerInterface(ABC):
         """
         raise NotImplementedError
 
-    async def find_training_plan(self, filters: dict) -> TrainingPlan:
+    async def find_training_plan(self, filters: dict) -> Optional[TrainingPlan]:
         """
-        Provides training plan from database in case it is found.
+        Provides some training plan from database in case it is found.
 
         Args:
             filters: attributes and these values
         """
         raise NotImplementedError
+
+    async def get_all_customer_training_plans(self, customer_id: str) -> list:
+        """
+        Gets available training plans for specific customer.
+
+        Args:
+            customer_id: customer row UUID
+        """

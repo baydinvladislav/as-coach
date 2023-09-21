@@ -93,3 +93,13 @@ class MVPTrainingManager(TrainingManagerInterface):
 
         if training_plan:
             return training_plan[0]
+
+    async def get_all_customer_training_plans(self, customer_id: str) -> list:
+        foreign_keys, sub_queries = ["trainings"], ["exercises"]
+        training_plans = await self.training_plan_repo.filter(
+            filters={"customer_id": customer_id},
+            foreign_keys=foreign_keys,
+            sub_queries=sub_queries
+        )
+
+        return training_plans
