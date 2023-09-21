@@ -2,13 +2,12 @@
 Library routing
 """
 
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select, or_
-from sqlalchemy.orm import Session, selectinload
+from fastapi import APIRouter, Depends, status
 
-from src.dependencies import get_db, get_current_coach
+from src.application.services.authentication.coach import CoachService
+from src.application.services.library import Library
+from src.dependencies import provide_user_service, provide_library
 from src.infrastructure.schemas.library import ExerciseCreateIn, ExerciseCreateOut
-from src import Coach, MuscleGroup, Exercise
 
 gym_router = APIRouter()
 
@@ -20,42 +19,30 @@ gym_router = APIRouter()
     response_model=ExerciseCreateOut)
 async def create_exercise(
         exercise_data: ExerciseCreateIn,
-        database: Session = Depends(get_db),
-        current_user: Coach = Depends(get_current_coach)) -> dict:
+        user_service: CoachService = Depends(provide_user_service),
+        library: Library = Depends(provide_library)
+) -> dict:
     """
     Creates new exercise for coach
 
     Args:
         exercise_data: data to create new exercise
-        database: dependency injection for access to database
-        current_user: returns current application user
+        user_service: returns current application user
+        library: service to organize data in gym library
 
     Returns:
         dictionary with just created exercise id, name, muscle_group's name as keys
     """
-    muscle_group = await database.execute(
-        select(MuscleGroup).where(MuscleGroup.id == exercise_data.muscle_group_id)
+    user = user_service.user
+    exercise = await library.create_exercise(
+        exercise_name=exercise_data.name,
+        coach_id=str(user.id),
+        muscle_group_id=exercise_data.muscle_group_id
     )
-
-    muscle_group = muscle_group.scalar()
-    if not muscle_group:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Muscle group with id={exercise_data.muscle_group_id} not found"
-        )
-
-    exercise = Exercise(
-        name=exercise_data.name,
-        muscle_group=muscle_group,
-        coach_id=str(current_user.id)
-    )
-
-    database.add(exercise)
-    await database.commit()
 
     return {
         "id": str(exercise.id),
-        "muscle_group": muscle_group.name,
+        "muscle_group": exercise.muscle_group.name,
         "name": exercise.name
     }
 
@@ -65,31 +52,24 @@ async def create_exercise(
     summary="Returns all exercises",
     status_code=status.HTTP_200_OK)
 async def get_exercises(
-        database: Session = Depends(get_db),
-        current_user: Coach = Depends(get_current_coach)) -> list:
+        user_service: CoachService = Depends(provide_user_service),
+        library: Library = Depends(provide_library)
+) -> list:
     """
     Returns all exercises for coach
 
     Args:
-        database: dependency injection for access to database
-        current_user: returns current application user
+        user_service: returns current application user
+        library: service to organize data in gym library
 
     Returns:
         list of exercises
     """
-    exercises = await database.execute(
-        select(Exercise).where(
-            or_(
-                Exercise.coach_id.is_(None),
-                Exercise.coach_id == str(current_user.id)
-            )
-        ).options(
-            selectinload(Exercise.muscle_group)
-        )
-    )
+    user = user_service.user
+    exercises = await library.get_exercise_list(str(user.id))
 
     response = []
-    for exercise in exercises.scalars():
+    for exercise in exercises:
         response.append({
             "id": str(exercise.id),
             "name": exercise.name,
@@ -105,21 +85,23 @@ async def get_exercises(
     summary="Returns all muscle groups",
     status_code=status.HTTP_200_OK)
 async def get_muscle_groups(
-        database: Session = Depends(get_db),
-        current_user: Session = Depends(get_current_coach)) -> list:
+        user_service: CoachService = Depends(provide_user_service),
+        library: Library = Depends(provide_library)
+) -> list:
     """
     Returns all muscle groups for coach
 
     Args:
-        database: dependency injection for access to database
-        current_user: returns current application user
+        user_service: returns current application user
+        library: service to organize data in gym library
 
     Returns:
         list of muscle groups
     """
-    muscle_groups = await database.execute(select(MuscleGroup))
+    muscle_groups = await library.get_muscle_group_list()
+
     response = []
-    for muscle_group in muscle_groups.scalars():
+    for muscle_group in muscle_groups:
         response.append({
             "id": str(muscle_group.id),
             "name": muscle_group.name

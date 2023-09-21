@@ -2,6 +2,9 @@
 Stores custom repositories for interaction with data storage
 """
 
+from sqlalchemy import select, or_
+from sqlalchemy.orm import selectinload
+
 from src import (
     Coach,
     Customer,
@@ -9,55 +12,94 @@ from src import (
     Diet,
     DietOnTrainingPlan,
     Training,
-    ExercisesOnTraining
+    Exercise,
+    ExercisesOnTraining,
+    MuscleGroup
 )
 from src.domains.repositories.sqlalchemy import SQLAlchemyRepository
 
 
 class CoachRepository(SQLAlchemyRepository):
     """
-    Access to Coach domain
+    Access to Coach storage
     """
     model = Coach
 
 
 class CustomerRepository(SQLAlchemyRepository):
     """
-    Access to Customer domain
+    Access to Customer storage
     """
     model = Customer
 
 
 class TrainingPlanRepository(SQLAlchemyRepository):
     """
-    Access to TrainingPlan domain
+    Access to TrainingPlan storage
     """
     model = TrainingPlan
 
 
 class TrainingRepository(SQLAlchemyRepository):
     """
-    Access to Training domain
+    Access to Training storage
     """
     model = Training
 
 
 class DietRepository(SQLAlchemyRepository):
     """
-    Access to Diet domain
+    Access to Diet storage
     """
     model = Diet
 
 
 class DietOnTrainingPlanRepository(SQLAlchemyRepository):
     """
-    Access to DietOnTrainingPlan domain
+    Access to DietOnTrainingPlan storage
     """
     model = DietOnTrainingPlan
 
 
+class ExerciseRepository(SQLAlchemyRepository):
+    """
+    Access to Exercise storage
+    """
+    model = Exercise
+
+    async def filter(self, filters: dict, foreign_keys: list = None, sub_queries: list = None):
+        """
+        Provides list of exercises for specified coach
+
+        Args:
+            filters: filters to look for coach
+            foreign_keys: list of foreign keys fields
+            sub_queries: list of fields for sub queries
+        """
+        result = await self.session.execute(
+            select(Exercise).where(
+                or_(
+                    Exercise.coach_id.is_(None),
+                    Exercise.coach_id == filters["coach_id"]
+                )
+            ).options(
+                selectinload(Exercise.muscle_group)
+            )
+        )
+
+        instances = result.scalars().all()
+        return instances
+
+
 class ExercisesOnTrainingRepository(SQLAlchemyRepository):
     """
-    Access to ExercisesOnTraining domain
+    Access to ExercisesOnTraining storage
     """
     model = ExercisesOnTraining
+
+
+class MuscleGroupRepository(SQLAlchemyRepository):
+    """
+    Access to MuscleGroup storage
+    """
+    model = MuscleGroup
