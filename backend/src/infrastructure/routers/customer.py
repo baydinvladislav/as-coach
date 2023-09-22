@@ -294,30 +294,14 @@ async def get_training_plan(
         )
 
     return {
-        "id": str(training_plan.id),
-        "start_date": training_plan.start_date.strftime("%Y-%m-%d"),
-        "end_date": training_plan.end_date.strftime("%Y-%m-%d"),
-        "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
-        "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
-        "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets]),
-        "trainings": [
-            {
-                "id": str(training.id),
-                "name": training.name,
-                "number_of_exercises": len(training_plan.trainings),
-                "exercises": [
-                    {
-                        "id": str(exercise),
-                        "name": exercise.exercise.name,
-                        "sets": exercise.sets,
-                        "superset_id": str(exercise.superset_id)
-                    }
-                    for exercise in training.exercises
-                ]
-            }
-            for training in training_plan.trainings
-        ],
-        "set_rest": training_plan.set_rest,
-        "exercise_rest": training_plan.exercise_rest,
-        "notes": training_plan.notes
+        "id": training_plan["id"],
+        "start_date": training_plan["start_date"],
+        "end_date": training_plan["end_date"],
+        "proteins": training_plan["proteins"],
+        "fats": training_plan["fats"],
+        "carbs": training_plan["carbs"],
+        "trainings": training_plan["trainings"],
+        "set_rest": training_plan["set_rest"],
+        "exercise_rest": training_plan["exercise_rest"],
+        "notes": training_plan["notes"]
     }

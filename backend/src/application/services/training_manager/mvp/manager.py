@@ -18,7 +18,7 @@ class MVPTrainingManager(TrainingManagerInterface):
 
     Attributes:
         training_plan_repo: repository to store TrainingPlan rows
-        gym_instructor: the service responsible for trainings operations
+        instructor: the service responsible for trainings operations
         nutritionist: the service responsible for diets operations
     """
 
@@ -29,7 +29,7 @@ class MVPTrainingManager(TrainingManagerInterface):
             nutritionist: Nutritionist
     ):
         self.training_plan_repo = repositories["training_plan"]
-        self.gym_instructor = gym_instructor
+        self.instructor = gym_instructor
         self.nutritionist = nutritionist
 
     async def create_training_plan(self, customer_id: str, data: TrainingPlanIn) -> TrainingPlan:
@@ -57,7 +57,7 @@ class MVPTrainingManager(TrainingManagerInterface):
                 training_plan_id=str(training_plan.id),
                 diets=data.diets
             )
-            await self.gym_instructor.create_trainings(
+            await self.instructor.create_trainings(
                 training_plan_id=str(training_plan.id),
                 trainings=data.trainings
             )
@@ -77,7 +77,7 @@ class MVPTrainingManager(TrainingManagerInterface):
 
             return training_plan_in_db[0] if training_plan_in_db else None
 
-    async def find_training_plan(self, filters: dict) -> TrainingPlan:
+    async def find_training_plan(self, filters: dict) -> dict:
         """
         Provides training plan from database in case it is found.
 
@@ -90,9 +90,49 @@ class MVPTrainingManager(TrainingManagerInterface):
             foreign_keys=foreign_keys,
             sub_queries=sub_queries
         )
+        training_plan = training_plan[0]
+
+        training_ids, exercise_ids = [], []
+        for training in training_plan.trainings:
+            training_ids.append(str(training.id))
+            for exercise in training.exercises:
+                exercise_ids.append(str(exercise.id))
+
+        scheduled_trainings = await self.instructor.provide_scheduled_trainings(
+            training_ids=training_ids,
+            exercise_ids=exercise_ids
+        )
 
         if training_plan:
-            return training_plan[0]
+            return {
+                "id": str(training_plan.id),
+                "start_date": training_plan.start_date.strftime("%Y-%m-%d"),
+                "end_date": training_plan.end_date.strftime("%Y-%m-%d"),
+                "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
+                "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
+                "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets]),
+                "trainings": [
+                    {
+                        "id": str(training.id),
+                        "name": training.name,
+                        "number_of_exercises": len(training_plan.trainings),
+                        "exercises": [
+                            {
+                                "id": str(exercise.id),
+                                "name": exercise.name,
+                                "sets": scheduled_trainings[str(exercise.id)].sets,
+                                "superset_id": str(scheduled_trainings[str(exercise.id)].superset_id),
+                                "ordering": scheduled_trainings[str(exercise.id)].ordering
+                            }
+                            for exercise in training.exercises
+                        ]
+                    }
+                    for training in training_plan.trainings
+                ],
+                "set_rest": training_plan.set_rest,
+                "exercise_rest": training_plan.exercise_rest,
+                "notes": training_plan.notes
+            }
 
     async def get_all_customer_training_plans(self, customer_id: str) -> list:
         foreign_keys, sub_queries = ["trainings"], ["exercises"]

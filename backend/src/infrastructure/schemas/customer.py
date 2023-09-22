@@ -66,6 +66,7 @@ class ExerciseOut(BaseModel):
     name: str
     sets: list
     superset_id: Optional[str]
+    ordering: int
 
 
 class TrainingOut(BaseModel):
