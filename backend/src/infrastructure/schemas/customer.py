@@ -7,7 +7,7 @@ from typing import Optional, List, Union
 from pydantic import BaseModel, validator
 
 from src.utils import validate_phone_number
-from src.interfaces.schemas.library import Diet, Training
+from src.infrastructure.schemas.library import Diet, Training
 
 
 class CustomerCreateIn(BaseModel):
@@ -61,6 +61,21 @@ class TrainingPlanOut(BaseModel):
     carbs: str
 
 
+class ExerciseOut(BaseModel):
+    id: str
+    name: str
+    sets: list
+    superset_id: Optional[str]
+    ordering: int
+
+
+class TrainingOut(BaseModel):
+    id: str
+    name: str
+    number_of_exercises: int
+    exercises: list[ExerciseOut]
+
+
 class TrainingPlanOutFull(BaseModel):
     """
     Full training plan data
@@ -71,7 +86,7 @@ class TrainingPlanOutFull(BaseModel):
     proteins: str
     fats: str
     carbs: str
-    trainings: Optional[list]
+    trainings: Optional[list[TrainingOut]]
     set_rest: int
     exercise_rest: int
     notes: Optional[str]

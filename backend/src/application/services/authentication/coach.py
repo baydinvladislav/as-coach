@@ -8,10 +8,10 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from src import Coach
 from src.utils import get_hashed_password, verify_password
-from src.domain.repositories.abstract import AbstractRepository
-from src.application.services.auth.exceptions import NotValidCredentials, UsernameIsTaken
-from src.application.services.auth.profile import ProfileService, ProfileType
-from src.interfaces.schemas.auth import UserRegisterIn
+from src.domains.repositories.abstract import AbstractRepository
+from src.application.services.authentication.exceptions import NotValidCredentials, UsernameIsTaken
+from src.application.services.authentication.profile import ProfileService, ProfileType
+from src.infrastructure.schemas.authentication import UserRegisterIn
 
 
 class CoachService(ProfileService):

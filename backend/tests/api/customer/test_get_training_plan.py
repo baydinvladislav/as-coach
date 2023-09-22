@@ -28,6 +28,7 @@ async def test_get_all_training_plans(
         )
 
     assert response.status_code == 200
+    assert len(create_training_plans) == len(response.json())
 
     first_date_end = datetime.strptime(response.json()[0]["end_date"], "%Y-%m-%d").date()
     last_date_end = datetime.strptime(response.json()[-1]["end_date"], "%Y-%m-%d").date()

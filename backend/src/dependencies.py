@@ -2,34 +2,33 @@
 Common dependencies for application
 """
 
-from typing import Type, Union
-
 from fastapi import Depends, HTTPException
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
-from sqlalchemy.orm import Session, selectinload
+from sqlalchemy.orm import Session
 from starlette import status
 
-from src import Coach, Customer
+from src.database import SessionLocal
+from src.application.services.library import Library
 from src.config import reuseable_oauth
 from src.utils import decode_jwt_token
 
-from src.domain.repositories.custom import (
+from src.domains.repositories.custom import (
     CoachRepository,
     CustomerRepository,
     TrainingPlanRepository,
     TrainingRepository,
     DietRepository,
     DietOnTrainingPlanRepository,
-    ExercisesOnTrainingRepository
+    ExercisesOnTrainingRepository,
+    ExerciseRepository,
+    MuscleGroupRepository
 )
-from src.application.services.auth.coach import CoachService
-from src.application.services.auth.customer import CustomerService
-from src.application.services.auth.exceptions import TokenExpired, NotValidCredentials
-from src.application.services.gym.gym import Gym
-from src.application.services.gym.instructor import Instructor
-from src.application.services.gym.nutritionist import Nutritionist
-from src.database import SessionLocal
+from src.application.services.authentication.coach import CoachService
+from src.application.services.authentication.customer import CustomerService
+from src.application.services.authentication.exceptions import TokenExpired, NotValidCredentials
+from src.application.services.training_manager.mvp.manager import MVPTrainingManager
+from src.application.services.training_manager.mvp.instructor import Instructor
+from src.application.services.training_manager.mvp.nutritionist import Nutritionist
 
 
 async def get_db() -> AsyncSession:
@@ -57,7 +56,19 @@ async def provide_customer_service(database: Session = Depends(get_db)) -> Custo
     return CustomerService(CustomerRepository(database))
 
 
-async def provide_gym_service(database: Session = Depends(get_db)) -> Gym:
+async def provide_library(database: Session = Depends(get_db)) -> Library:
+    """
+    Returns service to organize data in gym library
+    """
+    return Library(
+        repositories={
+            "exercise": ExerciseRepository(database),
+            "muscle_group": MuscleGroupRepository(database)
+        }
+    )
+
+
+async def provide_gym_service(database: Session = Depends(get_db)) -> MVPTrainingManager:
     """
     Returns service responsible to interact with TrainingPlan domain
     """
@@ -73,7 +84,7 @@ async def provide_gym_service(database: Session = Depends(get_db)) -> Gym:
             "diets_on_training_repo": DietOnTrainingPlanRepository(database)
         }
     )
-    return Gym({"training_plan": TrainingPlanRepository(database)}, gym_instructor, nutritionist)
+    return MVPTrainingManager({"training_plan": TrainingPlanRepository(database)}, gym_instructor, nutritionist)
 
 
 async def provide_user_service(
@@ -124,73 +135,3 @@ async def provide_user_service(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="User not found"
             )
-
-
-async def get_current_coach(
-        token: str = Depends(reuseable_oauth),
-        database: Session = Depends(get_db)
-) -> Type[Coach]:
-    """
-    Provides current coach during request to only coach's API endpoints
-
-    Args:
-        token: jwt token which contains user username
-        database: dependency injection for access to database
-
-    Return:
-        coach: Coach ORM obj or None if coach wasn't found
-    """
-
-    token_data = await decode_jwt_token(token)
-    token_username = token_data.sub
-
-    coach = await database.execute(
-        select(Coach).where(Coach.username == token_username).options(
-            selectinload(Coach.customers).subqueryload('training_plans')
-        )
-    )
-    coach = coach.scalar()
-
-    if not coach:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Coach not found"
-        )
-
-    return coach
-
-
-async def get_current_user(
-        token: str = Depends(reuseable_oauth),
-        database: AsyncSession = Depends(get_db)
-) -> Union[Coach, Customer]:
-    """
-    Provides current application user during request to common endpoints,
-    if neither Coach nor Customer aren't found raises 404 error.
-
-    Args:
-        token: jwt token which contains user username
-        database: dependency injection for access to database
-
-    Return:
-        user: represented Coach or Customer ORM model
-    """
-    token_data = await decode_jwt_token(token)
-    token_username = token_data.sub
-
-    coach = await database.execute(
-        select(Coach).where(Coach.username == token_username)
-    )
-    customer = await database.execute(
-        select(Customer).where(Customer.username == token_username)
-    )
-
-    user = coach.scalar() or customer.scalar()
-
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Could not find any user"
-        )
-
-    return user

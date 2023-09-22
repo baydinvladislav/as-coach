@@ -165,9 +165,9 @@ class Training(Base, BaseModel):
         back_populates="trainings"
     )
     exercises: RelationshipProperty = relationship(
-        "ExercisesOnTraining",
-        # secondary="exercisesontraining",
-        # back_populates="trainings"
+        "Exercise",
+        secondary="exercisesontraining",
+        back_populates="trainings"
     )
 
     def __repr__(self):
@@ -197,16 +197,15 @@ class Exercise(Base, BaseModel):
     __tablename__ = "exercise"
 
     name = Column("name", String(50), nullable=False)
-    # TODO: delete it
-    # trainings: RelationshipProperty = relationship(
-    #     "Training",
-    #     secondary="exercisesontraining",
-    #     back_populates="exercises"
-    # )
-    coach_id = Column(UUID(as_uuid=True), ForeignKey("coach.id"))
+    coach_id = Column(UUID(as_uuid=True), ForeignKey("coach.id", ondelete="CASCADE"))
     coach: RelationshipProperty = relationship("Coach", back_populates="exercises")
     muscle_group_id = Column(UUID(as_uuid=True), ForeignKey("musclegroup.id"), nullable=False)
     muscle_group: RelationshipProperty = relationship("MuscleGroup", back_populates="exercises")
+    trainings: RelationshipProperty = relationship(
+        "Training",
+        secondary="exercisesontraining",
+        back_populates="exercises"
+    )
 
     def __repr__(self):
         return f"Exercise: {self.name}"

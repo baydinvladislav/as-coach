@@ -3,10 +3,10 @@ from typing import Union, Any, List
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
-from src.application.services.auth.coach import CoachService
-from src.application.services.auth.customer import CustomerService
-from src.application.services.gym.gym import Gym
-from src.interfaces.schemas.customer import (
+from src.application.services.authentication.coach import CoachService
+from src.application.services.authentication.customer import CustomerService
+from src.application.services.training_manager.mvp.manager import MVPTrainingManager
+from src.infrastructure.schemas.customer import (
     CustomerOut,
     CustomerCreateIn,
     TrainingPlanOut,
@@ -177,7 +177,7 @@ async def create_training_plan(
         training_plan_data: TrainingPlanIn,
         customer_id: str,
         user_service: CoachService = Depends(provide_user_service),
-        gym_instructor: Gym = Depends(provide_gym_service)
+        training_manager: MVPTrainingManager = Depends(provide_gym_service)
 ) -> dict:
     """
     Creates new training plan for specified customer
@@ -186,9 +186,9 @@ async def create_training_plan(
         training_plan_data: data from application user to create new training plan
         customer_id: customer's str(UUID)
         user_service: service for interacting with profile
-        gym_instructor: service for interacting with customer training plans
+        training_manager: service for interacting with customer training plans
     """
-    training_plan = await gym_instructor.create_training_plan(
+    training_plan = await training_manager.create_training_plan(
         customer_id=customer_id,
         data=training_plan_data
     )
@@ -217,7 +217,8 @@ async def create_training_plan(
 async def get_all_training_plans(
         customer_id: str,
         user_service: CoachService = Depends(provide_user_service),
-        customer_service: CustomerService = Depends(provide_customer_service)
+        customer_service: CustomerService = Depends(provide_customer_service),
+        training_manager: MVPTrainingManager = Depends(provide_gym_service)
 ) -> Union[list[dict], list[None]]:
     """
     Returns all training plans for specific customer
@@ -227,6 +228,7 @@ async def get_all_training_plans(
         customer_id: customer's str(UUID)
         user_service: service for interacting with profile
         customer_service: service for interacting with customer
+        training_manager: service responsible for training plans creation
     """
     customer = await customer_service.find({"id": customer_id})
     if customer is None:
@@ -235,8 +237,7 @@ async def get_all_training_plans(
             detail=f"customer with id={customer_id} doesn't exist"
         )
 
-    # TODO: получить через сервис GymInstructor
-    training_plans = customer.training_plans
+    training_plans = await training_manager.get_all_customer_training_plans(str(customer.id))
 
     response = []
     for training_plan in training_plans:
@@ -261,7 +262,7 @@ async def get_training_plan(
         training_plan_id: str,
         customer_id: str,
         user_service: CoachService = Depends(provide_user_service),
-        gym: Gym = Depends(provide_gym_service),
+        training_manager: MVPTrainingManager = Depends(provide_gym_service),
         customer_service: CustomerService = Depends(provide_customer_service)
 ) -> dict:
     """
@@ -272,7 +273,7 @@ async def get_training_plan(
         training_plan_id: str(UUID) of specified training plan
         customer_id: str(UUID) of specified customer
         user_service: service for interacting with profile
-        gym: service for interacting with customer training plans
+        training_manager: service for interacting with customer training plans
         customer_service: service for interacting with customer
 
     Raise:
@@ -285,7 +286,7 @@ async def get_training_plan(
             detail=f"Customer with id={customer_id} doesn't exist"
         )
 
-    training_plan = await gym.find_training_plan({"id": training_plan_id})
+    training_plan = await training_manager.find_training_plan({"id": training_plan_id})
     if training_plan is None:
         raise HTTPException(
             status_code=404,
@@ -293,14 +294,14 @@ async def get_training_plan(
         )
 
     return {
-        "id": str(training_plan.id),
-        "start_date": training_plan.start_date.strftime("%Y-%m-%d"),
-        "end_date": training_plan.end_date.strftime("%Y-%m-%d"),
-        "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
-        "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
-        "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets]),
-        "trainings": training_plan.trainings,
-        "set_rest": training_plan.set_rest,
-        "exercise_rest": training_plan.exercise_rest,
-        "notes": training_plan.notes
+        "id": training_plan["id"],
+        "start_date": training_plan["start_date"],
+        "end_date": training_plan["end_date"],
+        "proteins": training_plan["proteins"],
+        "fats": training_plan["fats"],
+        "carbs": training_plan["carbs"],
+        "trainings": training_plan["trainings"],
+        "set_rest": training_plan["set_rest"],
+        "exercise_rest": training_plan["exercise_rest"],
+        "notes": training_plan["notes"]
     }

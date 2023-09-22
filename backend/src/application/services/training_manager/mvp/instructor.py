@@ -1,7 +1,7 @@
 import uuid
 
 from src import ExercisesOnTraining
-from src.domain.repositories.abstract import AbstractRepository
+from src.domains.repositories.abstract import AbstractRepository
 
 
 class Instructor:
@@ -23,7 +23,10 @@ class Instructor:
 
     async def update_superset_dict(self, exercise_item):
         """
+        Implement superset creations for set of trainings
 
+        Args:
+            exercise_item: secondary table object between training and exercise
         """
         if isinstance(exercise_item.supersets, list) and len(exercise_item.supersets) > 0:
             if str(exercise_item.id) not in self.superset_dict:
@@ -66,14 +69,24 @@ class Instructor:
                 await self.training_repo.session.flush()
                 self.ordering += 1
 
-    async def provide_training_exercises(self, training_id, exercise_id):
-        return await self.exercises_on_training_service.get_exercises_on_training(
-            training_id=training_id,
-            exercise_id=exercise_id
-        )
+    async def provide_scheduled_trainings(self, training_ids: list, exercise_ids: list) -> dict:
+        """
+        Provides scheduled training for training plan
 
-    async def get_training_exercises(self, training_id, exercise_id):
-        await self.training_service.provide_training_exercises(
-            training_id=training_id,
-            exercise_id=exercise_id
-        )
+        Args:
+            training_ids: specified trainings
+            exercise_ids: specified exercises
+
+        Returns:
+            all scheduled training for training plan
+        """
+        exercises = await self.exercises_on_training_repo.filter({
+            "training_ids": training_ids,
+            "exercise_ids": exercise_ids
+        })
+
+        scheduled_trainings = dict()
+        for exercise in exercises:
+            scheduled_trainings[str(exercise.exercise_id)] = exercise
+
+        return scheduled_trainings

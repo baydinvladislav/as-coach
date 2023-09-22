@@ -59,11 +59,21 @@ async def test_create_training_plan_successfully(
             }
         )
 
-    assert response.status_code == 201
+    status_code = response.status_code
+    assert status_code == 201
 
-    if response.status_code == 201:
+    response = response.json()
+    assert "id" in response
+    assert response["number_of_trainings"] == len(training_plan_data["trainings"])
+    # we expect to get strings because of design UI.
+    # training plan card contains string conc.
+    assert response["proteins"] == str(training_plan_data["diets"][0]["proteins"])
+    assert response["fats"] == str(training_plan_data["diets"][0]["fats"])
+    assert response["carbs"] == str(training_plan_data["diets"][0]["carbs"])
+
+    if status_code == 201:
         await override_get_db.execute(
-            delete(TrainingPlan).where(TrainingPlan.id == response.json()["id"])
+            delete(TrainingPlan).where(TrainingPlan.id == response["id"])
         )
         await override_get_db.commit()
 
