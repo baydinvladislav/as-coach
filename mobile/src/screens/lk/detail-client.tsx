@@ -61,7 +61,7 @@ export const DetailClient = ({ route }: RoutesProps) => {
       <Circle style={styles.back} onPress={goBack}>
         <ArrowLeftIcon />
       </Circle>
-      <Badge text={t('common.nonePlan')} status={BadgeStatuses.NONE} />
+      <Badge text={t('common.nonePlan')} status={BadgeStatuses.PLAN_NOT_EXISTS} />
       <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
         {data.first_name}
       </Text>

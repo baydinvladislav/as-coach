@@ -31,16 +31,17 @@ export const Plans = ({
 }: TProps) => {
   const { navigate } = useNavigation();
   const { user } = useStore();
+  const [isFetching, setIsFetching] = useState(false);
 
   const plans = data?.plans;
 
-  const isCouch = user.me.user_type === UserType.COACH;
+  const isCoach = user.me.user_type === UserType.COACH;
 
   const renderItem = (plan: ListRenderItemInfo<TPlanType>) => (
     <PlanCard
       plan={plan.item}
       onPress={() => handleNavigateDetailPlan(plan.item.id)}
-      withMenu={isCouch}
+      withMenu={isCoach}
     />
   );
 
@@ -54,13 +55,21 @@ export const Plans = ({
     navigate(Screens.DetailPlanScreen, { id: data.id, planId: id });
   };
 
+  const handleRefresh = () => {
+    console.log('AAAAAAAAAAAAAA')
+    setIsFetching(true);
+    setTimeout(() => {
+      setIsFetching(false);
+    }, 1000);
+  };
+
   return plans?.length ? (
     <>
       <TopContainer>
         <Text fontSize={FontSize.S20} color={colors.white}>
           {t('detailCustomer.plans')}
         </Text>
-        {isCouch && (
+        {isCoach && (
           <Button
             type={ButtonType.TEXT}
             onPress={handleNavigatePlan}
@@ -76,6 +85,8 @@ export const Plans = ({
         data={data.plans}
         renderItem={renderItem}
         keyExtractor={item => item.id}
+        onRefresh={handleRefresh}
+        refreshing={isFetching}
       />
     </>
   ) : (
