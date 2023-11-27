@@ -30,13 +30,18 @@ export const LkScreen = observer(() => {
   const { navigate } = useNavigation();
 
   const [data, setData] = useState<Partial<CustomerProps>>({});
+  
+  const getCustomerInfo = () => {
+    if (isClient) {
+      customer.getCustomerPlanById(user.me.id).then(plans => {
+        setData({ id: user.me.id, plans });
+      });
+    }
+  }
+
   useFocusEffect(
     useCallback(() => {
-      if (isClient) {
-        customer.getCustomerPlanById(user.me.id).then(plans => {
-          setData({ id: user.me.id, plans });
-        });
-      }
+      getCustomerInfo()
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isClient]),
   );
@@ -90,6 +95,7 @@ export const LkScreen = observer(() => {
       ) : (
         <Plans
           data={data}
+          getCustomerInfo={getCustomerInfo}
           title={t('lk.herePlans')}
           description={t('lk.hereAddPlans')}
           withAddButton={false}

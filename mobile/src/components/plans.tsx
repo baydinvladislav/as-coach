@@ -16,6 +16,7 @@ import { ButtonType, FontSize, TPlanType, UserType } from '~types';
 
 type TProps = {
   data: Partial<CustomerProps>;
+  getCustomerInfo: () => void;
   setPreviousScreen?: React.Dispatch<React.SetStateAction<Screens>>;
   title: string;
   description: string;
@@ -24,6 +25,7 @@ type TProps = {
 
 export const Plans = ({
   data,
+  getCustomerInfo,
   setPreviousScreen,
   title,
   description,
@@ -56,11 +58,9 @@ export const Plans = ({
   };
 
   const handleRefresh = () => {
-    console.log('AAAAAAAAAAAAAA')
     setIsFetching(true);
-    setTimeout(() => {
-      setIsFetching(false);
-    }, 1000);
+    getCustomerInfo()
+    setIsFetching(false);
   };
 
   return plans?.length ? (
@@ -87,6 +87,7 @@ export const Plans = ({
         keyExtractor={item => item.id}
         onRefresh={handleRefresh}
         refreshing={isFetching}
+        bounces={!isFetching}
       />
     </>
   ) : (

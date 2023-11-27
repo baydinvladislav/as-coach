@@ -28,13 +28,17 @@ export const DetailClient = ({ route }: RoutesProps) => {
 
   const id = (route.params as { id: string })?.id;
 
-  useFocusEffect(
-    useCallback(() => {
+  const getCustomerInfo = () => {
       loading.decreaseLoadingStatus();
       const client = customer.getCustomerById(id);
       customer.getCustomerPlanById(id).then(plans => {
         setData({ ...data, ...client, plans });
       });
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      getCustomerInfo()
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []),
   );
@@ -67,6 +71,7 @@ export const DetailClient = ({ route }: RoutesProps) => {
       </Text>
       <Plans
         data={data}
+        getCustomerInfo={getCustomerInfo}
         setPreviousScreen={setPreviousScreen}
         title={t('detailCustomer.herePlans')}
         description={t('detailCustomer.hereCanAdd')}
