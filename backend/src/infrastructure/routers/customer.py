@@ -13,8 +13,14 @@ from src.infrastructure.schemas.customer import (
     TrainingPlanIn,
     TrainingPlanOutFull
 )
-from src.dependencies import provide_customer_service, provide_user_service, provide_gym_service
+from src.dependencies import (
+    provide_customer_service,
+    provide_user_service,
+    provide_gym_service,
+    provide_push_notification_service,
+)
 from src.utils import validate_uuid, generate_random_password
+from src.application.services.notifications.notification_service import NotificationService
 
 customer_router = APIRouter()
 
@@ -176,8 +182,10 @@ async def get_customer(
 async def create_training_plan(
         training_plan_data: TrainingPlanIn,
         customer_id: str,
+        customer_service: CustomerService = Depends(provide_customer_service),
         user_service: CoachService = Depends(provide_user_service),
-        training_manager: MVPTrainingManager = Depends(provide_gym_service)
+        training_manager: MVPTrainingManager = Depends(provide_gym_service),
+        push_notification_service: NotificationService = Depends(provide_push_notification_service),
 ) -> dict:
     """
     Creates new training plan for specified customer
@@ -185,15 +193,29 @@ async def create_training_plan(
     Args:
         training_plan_data: data from application user to create new training plan
         customer_id: customer's str(UUID)
+        customer_service: service for interacting with customer
         user_service: service for interacting with profile
         training_manager: service for interacting with customer training plans
+        push_notification_service: service responsible to send push notification through FireBase service
     """
+    customer = await customer_service.find(filters={"id": customer_id})
+    if not customer:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Customer with id {customer_id} not found"
+        )
+
     training_plan = await training_manager.create_training_plan(
         customer_id=customer_id,
         data=training_plan_data
     )
 
     if training_plan:
+        notification_data = {
+            "title": "Новый тренировочный план",
+            "body": f"с {training_plan.start_date} до {training_plan.end_date}"
+        }
+        push_notification_service.send_notification(customer.fcm_token, notification_data)
         return {
             "id": str(training_plan.id),
             "start_date": training_plan.start_date.strftime("%Y-%m-%d"),
@@ -204,6 +226,7 @@ async def create_training_plan(
             "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets])
         }
     else:
+        # TODO: client isn't always guilty. 500 can be too
         raise HTTPException(
             status_code=status.HTTP_400,
             detail=f"Unknown error during training plan creation"

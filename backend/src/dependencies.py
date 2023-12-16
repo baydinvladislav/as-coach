@@ -29,6 +29,8 @@ from src.application.services.authentication.exceptions import TokenExpired, Not
 from src.application.services.training_manager.mvp.manager import MVPTrainingManager
 from src.application.services.training_manager.mvp.instructor import Instructor
 from src.application.services.training_manager.mvp.nutritionist import Nutritionist
+from src.application.services.notifications.notification_service import NotificationService
+from src.application.services.notifications.push_firebase_notificator import PushFirebaseNotificator
 
 
 async def get_db() -> AsyncSession:
@@ -135,3 +137,10 @@ async def provide_user_service(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="User not found"
             )
+
+
+async def provide_push_notification_service() -> NotificationService:
+    """
+    Returns service responsible to send push notification through FireBase service
+    """
+    return NotificationService(PushFirebaseNotificator)
