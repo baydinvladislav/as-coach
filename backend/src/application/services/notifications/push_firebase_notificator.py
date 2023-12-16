@@ -25,6 +25,9 @@ class PushNotificationEmptyDataMessage(Exception):
 
 @dataclass
 class FirebaseConfig:
+    """
+    Download from Firebase web as .json
+    """
     type: str = FIREBASE_TYPE
     project_id: str = FIREBASE_PROJECT_ID
     private_key_id: str = FIREBASE_PRIVATE_KEY_ID
@@ -39,8 +42,16 @@ class FirebaseConfig:
 
 
 class PushFirebaseNotificator(AbstractNotificator):
+    """
+    Implements interface to send push notification
+    to user device through Firebase platform
+    """
 
     def __init__(self):
+        """
+        Establishes connection to Firebase,
+        fix encryption problem
+        """
         self.firebase_config = asdict(FirebaseConfig())
         self.firebase_config["private_key"] = self.firebase_config["private_key"].replace('\\n', '\n')
 
@@ -48,7 +59,7 @@ class PushFirebaseNotificator(AbstractNotificator):
         initialize_app(self.firebase_cred)
 
     def send_notification(self, recipient_id: str, recipient_data: dict) -> None:
-        if "title" not in recipient_data or "body" not in recipient_data:
+        if not self._valid_recipient_data(recipient_data):
             raise PushNotificationEmptyDataMessage("Recipient data must have either title and body")
 
         registration_token = recipient_id
@@ -72,3 +83,10 @@ class PushFirebaseNotificator(AbstractNotificator):
         # send
         res = messaging.send(msg)
         print(res)
+
+    @staticmethod
+    def _valid_recipient_data(recipient_data: dict) -> bool:
+        """
+        Static until more complex logic
+        """
+        return "title" in recipient_data and "body" in recipient_data
