@@ -56,8 +56,7 @@ class Coach(Base, BaseModel):
         cascade="all,delete-orphan",
         back_populates="coach"
     )
-    # TODO: nullable False
-    fcm_token = Column("fcm_token", String(255), nullable=True)
+    fcm_token = Column("fcm_token", String(255), nullable=False)
 
     def __repr__(self):
         return f"Coach: {self.username}"
@@ -85,8 +84,7 @@ class Customer(Base, BaseModel):
     birthday = Column("birthday", Date, nullable=True)
     photo_path = Column("photo_path", String(255), nullable=True)
     email = Column("email", String(100), nullable=True)
-    # TODO: nullable False
-    fcm_token = Column("fcm_token", String(255), nullable=True)
+    fcm_token = Column("fcm_token", String(255), nullable=False)
 
     def __repr__(self):
         return f"Customer: {self.last_name} {self.first_name}"
