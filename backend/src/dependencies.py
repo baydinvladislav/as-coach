@@ -143,4 +143,4 @@ async def provide_push_notification_service() -> NotificationService:
     """
     Returns service responsible to send push notification through FireBase service
     """
-    return NotificationService(PushFirebaseNotificator)
+    return NotificationService(PushFirebaseNotificator())

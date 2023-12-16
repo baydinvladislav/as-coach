@@ -41,8 +41,10 @@ class FirebaseConfig:
 class PushFirebaseNotificator(AbstractNotificator):
 
     def __init__(self):
-        self.firebase_config_json = json.dumps(asdict(FirebaseConfig()))
-        self.firebase_cred = credentials.Certificate(asdict(json.loads(self.firebase_config_json)))
+        self.firebase_config = asdict(FirebaseConfig())
+        self.firebase_config["private_key"] = self.firebase_config["private_key"].replace('\\n', '\n')
+
+        self.firebase_cred = credentials.Certificate(self.firebase_config)
         initialize_app(self.firebase_cred)
 
     def send_notification(self, recipient_id: str, recipient_data: dict) -> None:
