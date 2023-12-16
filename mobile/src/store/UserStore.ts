@@ -5,7 +5,6 @@ import {
   getMuscleGroups,
   changePassword,
   confirmPassword,
-  master,
   login,
   me,
   profileEdit,
@@ -36,6 +35,7 @@ export type UserProps = {
     type?: string;
     uri?: string;
   };
+  fcm_token: string | null;
 };
 
 export default class UserStore {
@@ -123,6 +123,7 @@ export default class UserStore {
   @action
   @actionLoading()
   async login(values: Partial<UserProps>) {
+    console.log(values)
     try {
       const {
         data: { access_token },

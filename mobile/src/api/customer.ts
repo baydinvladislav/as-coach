@@ -8,8 +8,11 @@ export const createCustomer = (values: Partial<CustomerProps>) =>
 
 export const getCustomers = () => axiosBase.get('/customers');
 
-export const createPlan = (id: string, values: any) =>
-  axiosBase.post(`/customers/${id}/training_plans`, values);
+export const createPlan = (id: string, values: any) => {
+  console.log('Values:', values); // Add this line to print the values
+  console.log('Exercises:', values.trainings[0].exercises);
+  return axiosBase.post(`/customers/${id}/training_plans`, values);
+};
 
 export const getExercises = () => axiosBase.get<TExercises[]>('/exercises');
 
