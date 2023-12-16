@@ -53,12 +53,13 @@ class ProfileService(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def authorize(self, form_data: OAuth2PasswordRequestForm):
+    async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str):
         """
         Authorizes user in application
 
         Args:
             form_data: user credentials passed by client
+            fcm_token: token to send push notification on user device
         """
         raise NotImplementedError
 
@@ -111,3 +112,13 @@ class ProfileService(ABC):
         if await verify_password(password, str(self.user.password)):
             return True
         return False
+
+    async def set_fcm_token(self, fcm_token: str) -> None:
+        """
+        Assign Firebase token to user.
+
+        Args:
+            fcm_token: device token to identify receiver a push notification
+        """
+        self.user.fcm_token = fcm_token
+        set_attribute(self.user, "fcm_token", fcm_token)
