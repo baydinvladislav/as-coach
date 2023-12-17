@@ -18,6 +18,7 @@ class UserRegisterIn(BaseModel):
     username: str
     password: str
     first_name: str
+    fcm_token: str
 
     @validator("username")
     def validate_phone_number(cls, value):  # pylint: disable=no-self-argument
