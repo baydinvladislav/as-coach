@@ -188,7 +188,8 @@ async def create_training_plan(
         push_notification_service: NotificationService = Depends(provide_push_notification_service),
 ) -> dict:
     """
-    Creates new training plan for specified customer
+    Creates new training plan for specified customer.
+    Notify customer that he got new training plan.
 
     Args:
         training_plan_data: data from application user to create new training plan

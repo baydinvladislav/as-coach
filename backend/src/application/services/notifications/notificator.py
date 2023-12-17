@@ -5,7 +5,7 @@ class AbstractNotificator(Protocol):
     """
     Provides interface to any notificator in the application
     """
-    def send_notification(self, recipient_id: str, recipient_data: dict):
+    def send_notification(self, recipient_id: str, recipient_data: dict[str, str]):
         """
         Entrypoint to notify user
         """

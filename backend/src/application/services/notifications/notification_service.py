@@ -7,12 +7,12 @@ logger = logging.getLogger(__name__)
 class NotificationService:
     """
     Entrypoint to push notification functionality.
-    Uses notification to notify clients
+    Uses notificator instance to notify clients
     """
     def __init__(self, notificator: AbstractNotificator):
         self.push_notificator = notificator
 
-    def send_notification(self, recipient_id: str, recipient_data: dict):
+    def send_notification(self, recipient_id: str, recipient_data: dict[str, str]):
         if recipient_id is None:
             logger.warning(f"Failed to send notification recipient id is not specified")
             return

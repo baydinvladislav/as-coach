@@ -58,6 +58,19 @@ class PushFirebaseNotificator(AbstractNotificator):
         initialize_app(self.firebase_cred)
 
     def send_notification(self, recipient_id: str, recipient_data: dict[str, str]) -> str:
+        """
+        Sends Apple Push Notification instance as payload to send message on user device.
+        This method works only with iOS platform to send message on Android platform have to
+        pass in message additional parameter look at docs:
+        https://firebase.google.com/docs/cloud-messaging/send-message?hl=ru#when-to-use-platform-specific-fields
+
+        Args:
+            recipient_id: fcm token to identify user device
+            recipient_data: contains message data
+
+        Returns:
+            result: string that contains project id and message id as positive response from Firebase
+        """
         if not self._valid_recipient_data(recipient_data):
             raise PushNotificationEmptyDataMessage("Recipient data must have either title and body")
 
