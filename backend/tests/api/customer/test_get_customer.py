@@ -105,11 +105,11 @@ async def test_get_specific_customer_failed_not_valid_uuid(create_user, override
     assert response.status_code == 400
 
 
-@pytest.mark.asyncio
-async def test_ordering_in_get_customers(create_customer, override_get_db):
-    """
-    Checks that ordering matches the logic in ASC-0083
-    """
+# @pytest.mark.asyncio
+# async def test_ordering_in_get_customers(create_customer, override_get_db):
+#     """
+#     Checks that ordering matches the logic in ASC-0083
+#     """
 
     # async with AsyncClient(app=app, base_url="http://as-coach") as ac:
     #     auth_token = await create_access_token(create_customer.coach.username)
@@ -123,28 +123,28 @@ async def test_ordering_in_get_customers(create_customer, override_get_db):
     # assert response.status_code == 200
 
 
-    from firebase_admin import initialize_app, messaging, credentials
-
-    firebase_cred = credentials.Certificate("/Users/baydinvlad/Desktop/ascoach-e6704-firebase-adminsdk-bhxhy-80e12df7ad.json")
-    default_app = initialize_app(firebase_cred)
-    registration_token = 'e-OSU9t-lkYirUnmqhIH4Q:APA91bEpJUmDdHVf241RDMlTqXVYS2DBxEKDw0zYCa4ldbGiONxqLYc73QlhMdFc97wzUkiFqxUOSRd33U1_lbRf8vG8OklYXuetQeyYWECzGu24RaFcI8z6c3FLO0a1xEyZblUbtu1x'
-
-    # apns
-    alert = messaging.ApsAlert(title="Новый тренировочный план", body="с 11.12.23 по 18.12.23")
-    aps = messaging.Aps(alert=alert, sound="default")
-    payload = messaging.APNSPayload(aps)
-
-    # message
-    msg = messaging.Message(
-        notification=messaging.Notification(
-            title="Новый тренировочный план",
-            body="с 11.12.23 по 18.12.23"
-        ),
-        data={"key": "value"},
-        token=registration_token,
-        apns=messaging.APNSConfig(payload=payload)
-    )
-
-    # send
-    res = messaging.send(msg)
-    print(res)
+    # from firebase_admin import initialize_app, messaging, credentials
+    #
+    # firebase_cred = credentials.Certificate("/Users/baydinvlad/Desktop/ascoach-e6704-firebase-adminsdk-bhxhy-80e12df7ad.json")
+    # default_app = initialize_app(firebase_cred)
+    # registration_token = 'e-OSU9t-lkYirUnmqhIH4Q:APA91bEpJUmDdHVf241RDMlTqXVYS2DBxEKDw0zYCa4ldbGiONxqLYc73QlhMdFc97wzUkiFqxUOSRd33U1_lbRf8vG8OklYXuetQeyYWECzGu24RaFcI8z6c3FLO0a1xEyZblUbtu1x'
+    #
+    # # apns
+    # alert = messaging.ApsAlert(title="Новый тренировочный план", body="с 11.12.23 по 18.12.23")
+    # aps = messaging.Aps(alert=alert, sound="default")
+    # payload = messaging.APNSPayload(aps)
+    #
+    # # message
+    # msg = messaging.Message(
+    #     notification=messaging.Notification(
+    #         title="Новый тренировочный план",
+    #         body="с 11.12.23 по 18.12.23"
+    #     ),
+    #     data={"key": "value"},
+    #     token=registration_token,
+    #     apns=messaging.APNSConfig(payload=payload)
+    # )
+    #
+    # # send
+    # res = messaging.send(msg)
+    # print(res)
