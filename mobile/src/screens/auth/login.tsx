@@ -32,7 +32,7 @@ export const LoginScreen = observer(() => {
       .login({
         ...values,
         username: transformPhone(values.username),
-        fcm_token: fcmToken
+        fcm_token: fcmToken,
       })
       .then(() => navigate(Screens.LkScreen))
       .catch((e: AxiosError<{ detail: string }>) => {
@@ -48,7 +48,7 @@ export const LoginScreen = observer(() => {
       validateOnChange: false,
       validateOnBlur: false,
     });
-  
+
   useEffect(() => {
     const fetchFcmToken = async () => {
       const token = await getFcmToken();
@@ -57,7 +57,7 @@ export const LoginScreen = observer(() => {
 
     fetchFcmToken();
   }, []);
-  
+
   return (
     <Keyboard style={{ paddingTop: TOP_PADDING, flex: 1 }}>
       <Logo />
