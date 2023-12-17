@@ -189,7 +189,7 @@ async def create_training_plan(
 ) -> dict:
     """
     Creates new training plan for specified customer.
-    Notify customer that he got new training plan.
+    Notifies customer that he got new training plan.
 
     Args:
         training_plan_data: data from application user to create new training plan
