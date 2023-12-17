@@ -19,7 +19,8 @@ async def test_login_successfully(create_user, override_get_db):
     # test user is created by fixture
     login_data = {
         "username": TEST_COACH_USERNAME,
-        "password": TEST_COACH_PASSWORD
+        "password": TEST_COACH_PASSWORD,
+        "fcm_token": "test token value",
     }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
@@ -45,7 +46,8 @@ async def test_login_failed():
     login_data = {
         "username": "username_do_not_exist",
         "first_name": TEST_COACH_FIRST_NAME,
-        "password": TEST_COACH_PASSWORD
+        "password": TEST_COACH_PASSWORD,
+        "fcm_token": "test token value",
     }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
