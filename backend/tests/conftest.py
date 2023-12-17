@@ -327,7 +327,8 @@ async def create_user(override_get_db):
             username=TEST_COACH_USERNAME,
             first_name=TEST_COACH_FIRST_NAME,
             last_name=TEST_COACH_LAST_NAME,
-            password=await get_hashed_password(TEST_COACH_PASSWORD)
+            password=await get_hashed_password(TEST_COACH_PASSWORD),
+            fcm_token="test token value",
         )
 
         override_get_db.add(test_user)
