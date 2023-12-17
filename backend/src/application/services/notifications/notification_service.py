@@ -13,6 +13,12 @@ class NotificationService:
         self.push_notificator = notificator
 
     def send_notification(self, recipient_id: str, recipient_data: dict):
-        self.push_notificator.send_notification(recipient_id, recipient_data)
-        # TODO: make logging practice like Whoosh
-        logger.info(f"Push notifications sent on customer device: {recipient_id}")
+        if recipient_id is None:
+            logger.warning(f"Failed to send notification recipient id is not specified")
+            return
+
+        result = self.push_notificator.send_notification(recipient_id, recipient_data)
+        is_sent = isinstance(result, str) and "ascoach" in result
+        if is_sent:
+            # TODO: make logging practice like Whoosh
+            logger.info(f"Push notifications sent on customer device: {recipient_id}")

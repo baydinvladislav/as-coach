@@ -1,4 +1,3 @@
-import json
 from dataclasses import dataclass, asdict
 
 from firebase_admin import initialize_app, messaging, credentials
@@ -58,31 +57,22 @@ class PushFirebaseNotificator(AbstractNotificator):
         self.firebase_cred = credentials.Certificate(self.firebase_config)
         initialize_app(self.firebase_cred)
 
-    def send_notification(self, recipient_id: str, recipient_data: dict) -> None:
+    def send_notification(self, recipient_id: str, recipient_data: dict[str, str]) -> str:
         if not self._valid_recipient_data(recipient_data):
             raise PushNotificationEmptyDataMessage("Recipient data must have either title and body")
 
-        registration_token = recipient_id
-
-        # apns
-        alert = messaging.ApsAlert(title=recipient_data["title"], body=recipient_data["body"])
-        aps = messaging.Aps(alert=alert, sound="default")
-        payload = messaging.APNSPayload(aps)
-
-        # message
-        msg = messaging.Message(
-            notification=messaging.Notification(
-                title=recipient_data["title"],
-                body=recipient_data["body"]
-            ),
-            data={"key": "value"},
-            token=registration_token,
-            apns=messaging.APNSConfig(payload=payload)
+        aps_data = messaging.Aps(
+            alert=messaging.ApsAlert(title=recipient_data["title"], body=recipient_data["body"]),
+            sound="default",
         )
 
-        # send
-        res = messaging.send(msg)
-        print(res)
+        message = messaging.Message(
+            token=recipient_id,
+            apns=messaging.APNSConfig(payload=messaging.APNSPayload(aps_data)),
+        )
+
+        result = messaging.send(message)
+        return result
 
     @staticmethod
     def _valid_recipient_data(recipient_data: dict) -> bool:
