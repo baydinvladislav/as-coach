@@ -217,7 +217,7 @@ async def create_training_plan(
             "body": f"с {training_plan.start_date} до {training_plan.end_date}",
         }
 
-        push_notification_service.send_notification(
+        await push_notification_service.send_notification(
             customer.fcm_token,
             notification_data
         )

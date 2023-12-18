@@ -57,7 +57,7 @@ class PushFirebaseNotificator(AbstractNotificator):
         self.firebase_cred = credentials.Certificate(self.firebase_config)
         initialize_app(self.firebase_cred)
 
-    def send_notification(self, recipient_id: str, recipient_data: dict[str, str]) -> str:
+    async def send_notification(self, recipient_id: str, recipient_data: dict[str, str]) -> str:
         """
         Sends Apple Push Notification instance as payload to send message on user device.
         This method works only with iOS platform to send message on Android platform have to
@@ -71,7 +71,7 @@ class PushFirebaseNotificator(AbstractNotificator):
         Returns:
             result: string that contains project id and message id as positive response from Firebase
         """
-        if not self._valid_recipient_data(recipient_data):
+        if not await self._valid_recipient_data(recipient_data):
             raise PushNotificationEmptyDataMessage("Recipient data must have either title and body")
 
         aps_data = messaging.Aps(
@@ -84,11 +84,12 @@ class PushFirebaseNotificator(AbstractNotificator):
             apns=messaging.APNSConfig(payload=messaging.APNSPayload(aps_data)),
         )
 
+        # TODO: make it async
         result = messaging.send(message)
         return result
 
     @staticmethod
-    def _valid_recipient_data(recipient_data: dict) -> bool:
+    async def _valid_recipient_data(recipient_data: dict) -> bool:
         """
         Static until more complex logic
         """

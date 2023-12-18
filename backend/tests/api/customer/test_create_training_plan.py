@@ -1,5 +1,6 @@
 from datetime import date, timedelta
 import pytest
+from unittest.mock import patch
 
 from httpx import AsyncClient
 from sqlalchemy import select, delete
@@ -10,11 +11,18 @@ from src import TrainingPlan, MuscleGroup, ExercisesOnTraining
 from src.utils import create_access_token
 
 
+@pytest.fixture
+def mock_send_notification():
+    with patch("src.application.services.notifications.notification_service.NotificationService.send_notification") as mock:
+        yield mock
+
+
 @pytest.mark.asyncio
 async def test_create_training_plan_successfully(
         create_customer,
         create_exercises,
-        override_get_db
+        override_get_db,
+        mock_send_notification,
 ):
     """
     Successfully training plan creation
@@ -71,6 +79,14 @@ async def test_create_training_plan_successfully(
     assert response["fats"] == str(training_plan_data["diets"][0]["fats"])
     assert response["carbs"] == str(training_plan_data["diets"][0]["carbs"])
 
+    # check that we called firebase notification service with correct args
+    assert create_customer.fcm_token in mock_send_notification.call_args.args
+    excepted_push_notification_sent_data = {
+        "title": "Новый тренировочный план",
+        "body": f"с {training_plan_data['start_date']} до {training_plan_data['end_date']}",
+    }
+    assert excepted_push_notification_sent_data in mock_send_notification.call_args.args
+
     if status_code == 201:
         await override_get_db.execute(
             delete(TrainingPlan).where(TrainingPlan.id == response["id"])
@@ -82,7 +98,8 @@ async def test_create_training_plan_successfully(
 async def test_create_training_plan_with_supersets_successfully(
         create_customer,
         create_exercises,
-        override_get_db
+        override_get_db,
+        mock_send_notification,
 ):
     """
     Successfully creating training plan with supersets
@@ -181,6 +198,14 @@ async def test_create_training_plan_with_supersets_successfully(
         s.add(e.superset_id)
 
     assert len(s) == 1
+
+    # check that we called firebase notification service with correct args
+    assert create_customer.fcm_token in mock_send_notification.call_args.args
+    excepted_push_notification_sent_data = {
+        "title": "Новый тренировочный план",
+        "body": f"с {training_plan_data['start_date']} до {training_plan_data['end_date']}",
+    }
+    assert excepted_push_notification_sent_data in mock_send_notification.call_args.args
 
     if response.status_code == 201:
         await override_get_db.execute(
