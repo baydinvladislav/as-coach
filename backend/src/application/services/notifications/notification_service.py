@@ -17,7 +17,7 @@ class NotificationService:
             logger.warning(f"Failed to send notification recipient id is not specified")
             return
 
-        result = self.push_notificator.send_notification(recipient_id, recipient_data)
+        result = await self.push_notificator.send_notification(recipient_id, recipient_data)
         is_sent = isinstance(result, str) and "ascoach" in result
         if is_sent:
             # TODO: make logging practice like Whoosh
