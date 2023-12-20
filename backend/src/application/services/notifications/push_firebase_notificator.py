@@ -1,5 +1,6 @@
 from dataclasses import dataclass, asdict
 
+import firebase_admin
 from firebase_admin import initialize_app, messaging, credentials
 
 from src.config import (
@@ -73,7 +74,8 @@ class PushFirebaseNotificator(AbstractNotificator):
         if not await self._valid_recipient_data(recipient_data):
             raise PushNotificationEmptyDataMessage("Recipient data must have either title and body")
 
-        await self.establish_conn_to_firebase()
+        if not firebase_admin._apps:
+            await self.establish_conn_to_firebase()
 
         aps_data = messaging.Aps(
             alert=messaging.ApsAlert(title=recipient_data["title"], body=recipient_data["body"]),
