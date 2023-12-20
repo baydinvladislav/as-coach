@@ -48,14 +48,13 @@ class PushFirebaseNotificator(AbstractNotificator):
 
     def __init__(self):
         """
-        Establishes connection to Firebase,
-        fix encryption problem
+        Prepares config to connection
         """
         self.firebase_config = asdict(FirebaseConfig())
         self.firebase_config["private_key"] = self.firebase_config["private_key"].replace('\\n', '\n')
 
-        self.firebase_cred = credentials.Certificate(self.firebase_config)
-        initialize_app(self.firebase_cred)
+    async def establish_conn_to_firebase(self):
+        initialize_app(credentials.Certificate(self.firebase_config))
 
     async def send_notification(self, recipient_id: str, recipient_data: dict[str, str]) -> str:
         """
@@ -73,6 +72,8 @@ class PushFirebaseNotificator(AbstractNotificator):
         """
         if not await self._valid_recipient_data(recipient_data):
             raise PushNotificationEmptyDataMessage("Recipient data must have either title and body")
+
+        await self.establish_conn_to_firebase()
 
         aps_data = messaging.Aps(
             alert=messaging.ApsAlert(title=recipient_data["title"], body=recipient_data["body"]),
