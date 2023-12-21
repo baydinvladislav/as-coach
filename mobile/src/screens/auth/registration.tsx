@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { AxiosError } from 'axios';
@@ -19,17 +19,21 @@ import { registrationValidationSchema, transformPhone } from '@utils';
 
 import { ButtonType, FontSize } from '~types';
 
+import { getFcmToken } from '../../push/notificationServices';
+
 export const RegistrationScreen = observer(() => {
   const { navigate } = useNavigation();
 
   const { user, loading } = useStore();
   const isLoading = loading.isLoading;
+  const [fcmToken, setFcmToken] = useState<string | null>(null);
 
   const handleRegister = (values: Partial<UserProps>) => {
     user
       .register({
         ...values,
         username: transformPhone(values.username),
+        fcm_token: fcmToken,
       })
       .then(() => navigate(Screens.LkScreen))
       .catch((e: AxiosError<{ detail: string }>) => {
@@ -44,6 +48,15 @@ export const RegistrationScreen = observer(() => {
     validateOnChange: false,
     validateOnBlur: false,
   });
+
+  useEffect(() => {
+    const fetchFcmToken = async () => {
+      const token = await getFcmToken();
+      setFcmToken(token);
+    };
+
+    fetchFcmToken();
+  }, []);
 
   return (
     <Keyboard style={{ paddingTop: TOP_PADDING, flex: 1 }}>
