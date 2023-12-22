@@ -11,7 +11,7 @@ from src.utils import verify_password
 from src.repository.abstract import AbstractRepository
 from src.application.services.authentication.exceptions import NotValidCredentials
 from src.application.services.authentication.profile import ProfileService, ProfileType
-from src.schemas import UserRegisterIn
+from src.schemas.authentication import UserRegisterIn
 
 
 class CustomerService(ProfileService):
