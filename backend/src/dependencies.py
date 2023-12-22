@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from src.database import SessionLocal
-from src.services import Library
+from src.services.library import Library
 from src.config import reuseable_oauth
 from src.utils import decode_jwt_token
 
@@ -23,14 +23,14 @@ from src.repository.custom import (
     ExerciseRepository,
     MuscleGroupRepository
 )
-from src.services.authentication import CoachService
-from src.services.authentication import CustomerService
-from src.services.authentication import TokenExpired, NotValidCredentials
-from src.services.training_manager.mvp import MVPTrainingManager
+from src.services.authentication.coach import CoachService
+from src.services.authentication.customer import CustomerService
+from src.services.authentication.exceptions import TokenExpired, NotValidCredentials
+from src.services.training_manager.mvp.manager import MVPTrainingManager
 from src.services.training_manager.mvp.instructor import Instructor
-from src.services.training_manager.mvp import Nutritionist
-from src.services.notifications import NotificationService
-from src.services.notifications import PushFirebaseNotificator
+from src.services.training_manager.mvp.nutritionist import Nutritionist
+from src.services.notifications.notification_service import NotificationService
+from src.services.notifications.push_firebase_notificator import PushFirebaseNotificator
 
 
 async def get_db() -> AsyncSession:
