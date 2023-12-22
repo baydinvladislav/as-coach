@@ -16,7 +16,7 @@ from src import (
     ExercisesOnTraining,
     MuscleGroup
 )
-from src.domains.repositories.sqlalchemy import SQLAlchemyRepository
+from src.repository.sqlalchemy import SQLAlchemyRepository
 
 
 class CoachRepository(SQLAlchemyRepository):

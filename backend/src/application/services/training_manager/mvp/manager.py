@@ -7,7 +7,7 @@ from datetime import datetime
 from src.application.services.training_manager.abstract import TrainingManagerInterface
 from src.application.services.training_manager.mvp.instructor import Instructor
 from src.application.services.training_manager.mvp.nutritionist import Nutritionist
-from src.domains.repositories.abstract import AbstractRepository
+from src.repository.abstract import AbstractRepository
 from src.infrastructure.schemas.customer import TrainingPlanIn
 from src import TrainingPlan
 

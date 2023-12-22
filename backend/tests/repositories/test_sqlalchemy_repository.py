@@ -6,7 +6,7 @@ import pytest
 
 from sqlalchemy import delete
 
-from src.domains.repositories.sqlalchemy import SQLAlchemyRepository
+from src.repository.sqlalchemy import SQLAlchemyRepository
 from src import Coach, Exercise
 from src.utils import generate_random_password
 

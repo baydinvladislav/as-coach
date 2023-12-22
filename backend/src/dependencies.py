@@ -12,7 +12,7 @@ from src.application.services.library import Library
 from src.config import reuseable_oauth
 from src.utils import decode_jwt_token
 
-from src.domains.repositories.custom import (
+from src.repository.custom import (
     CoachRepository,
     CustomerRepository,
     TrainingPlanRepository,
