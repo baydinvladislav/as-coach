@@ -8,7 +8,7 @@ from src.application.services.training_manager.abstract import TrainingManagerIn
 from src.application.services.training_manager.mvp.instructor import Instructor
 from src.application.services.training_manager.mvp.nutritionist import Nutritionist
 from src.repository.abstract import AbstractRepository
-from src.schemas import TrainingPlanIn
+from src.schemas.customer import TrainingPlanIn
 from src import TrainingPlan
 
 
