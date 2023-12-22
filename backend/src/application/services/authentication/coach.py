@@ -45,18 +45,24 @@ class CoachService(ProfileService):
 
         return coach
 
-    async def authorize(self, form_data: OAuth2PasswordRequestForm) -> Coach:
+    async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Coach:
         """
         Coach logs in with own hashed password.
 
         Args:
             form_data: coach credentials passed by client
+            fcm_token: token to send push notification on user device
 
         Raises:
             NotValidCredentials: in case if credentials aren't valid
         """
         password_in_db = str(self.user.password)
         if await verify_password(form_data.password, password_in_db):
+
+            if self.user.fcm_token != fcm_token:
+                await self.set_fcm_token(fcm_token)
+                await self.coach_repo.update(str(self.user.id), fcm_token=fcm_token)
+
             return self.user
 
         raise NotValidCredentials

@@ -5,7 +5,7 @@
  * @format
  * @flow strict-local
  */
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import moment from 'moment';
 import 'moment/locale/ru';
@@ -21,6 +21,7 @@ import {
 } from '@react-navigation/native';
 import { colors } from '@theme';
 import { Layout } from '@ui';
+import { notificationListener, requestUserPermission } from './push/notificationServices';
 
 moment.locale('ru');
 moment.updateLocale('ru', {
@@ -43,6 +44,11 @@ const App = () => {
       background: colors.transparent,
     },
   };
+
+  useEffect(() => {
+    requestUserPermission()
+    notificationListener()
+  }, [])
 
   return (
     <SafeAreaProvider>

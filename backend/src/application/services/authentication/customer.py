@@ -35,13 +35,14 @@ class CustomerService(ProfileService):
         """
         ...
 
-    async def authorize(self, form_data: OAuth2PasswordRequestForm) -> Customer:
+    async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Customer:
         """
         Customer logs in with default password in the first time after receive invite.
         After customer changes password it logs in with own hashed password.
 
         Args:
             form_data: customer credentials passed by client
+            fcm_token: token to send push notification on user device
 
         Raises:
             NotValidCredentials: in case if credentials aren't valid
@@ -49,6 +50,11 @@ class CustomerService(ProfileService):
         password_in_db = str(self.user.password)
         if password_in_db == form_data.password \
                 or await verify_password(form_data.password, password_in_db):
+
+            if self.user.fcm_token != fcm_token:
+                await self.set_fcm_token(fcm_token)
+                await self.customer_repo.update(str(self.user.id), fcm_token=fcm_token)
+
             return self.user
 
         raise NotValidCredentials

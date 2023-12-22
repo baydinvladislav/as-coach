@@ -11,7 +11,8 @@ async def test_customer_login_successfully(create_customer):
     """
     login_data = {
         "username": create_customer.username,
-        "password": create_customer.password
+        "password": create_customer.password,
+        "fcm_token": "test token value",
     }
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:

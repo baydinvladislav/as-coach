@@ -23,7 +23,8 @@ async def test_create_method_positive(override_get_db):
     coach_data = {
         "username": "+79253332211",
         "password": generate_random_password(8),
-        "first_name": "Станислав"
+        "first_name": "Станислав",
+        "fcm_token": "test_token_value",
     }
 
     coach = await repo.create(**coach_data)

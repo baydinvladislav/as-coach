@@ -20,8 +20,11 @@ target 'ReactNative' do
   )
 
   pod 'react-native-mmkv', :path => '../node_modules/react-native-mmkv'
-
   pod 'react-native-config', :path => '../node_modules/react-native-config'
+  pod 'Firebase', :modular_headers => true
+  pod 'FirebaseCoreInternal', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'FirebaseCore', :modular_headers => true
 
   target 'ReactNativeTests' do
     inherit! :complete

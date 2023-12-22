@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { AxiosError } from 'axios';
@@ -16,6 +16,7 @@ import { UserProps } from '@store';
 import { colors, normVert } from '@theme';
 import { Button, Input, Keyboard, Text } from '@ui';
 import { loginValidationSchema, transformPhone } from '@utils';
+import { getFcmToken } from 'src/push/notificationServices';
 
 import { ButtonType, FontSize } from '~types';
 
@@ -24,12 +25,14 @@ export const LoginScreen = observer(() => {
 
   const { user, loading } = useStore();
   const isLoading = loading.isLoading;
+  const [fcmToken, setFcmToken] = useState<string | null>(null);
 
   const handleLogin = (values: Partial<UserProps>) => {
     user
       .login({
         ...values,
         username: transformPhone(values.username),
+        fcm_token: fcmToken,
       })
       .then(() => navigate(Screens.LkScreen))
       .catch((e: AxiosError<{ detail: string }>) => {
@@ -45,6 +48,15 @@ export const LoginScreen = observer(() => {
       validateOnChange: false,
       validateOnBlur: false,
     });
+
+  useEffect(() => {
+    const fetchFcmToken = async () => {
+      const token = await getFcmToken();
+      setFcmToken(token);
+    };
+
+    fetchFcmToken();
+  }, []);
 
   return (
     <Keyboard style={{ paddingTop: TOP_PADDING, flex: 1 }}>

@@ -80,6 +80,7 @@ async def register_user(
     response_model=LoginOut)
 async def login_user(
         form_data: OAuth2PasswordRequestForm = Depends(),
+        fcm_token: str = Form(...),
         coach_service: CoachService = Depends(provide_coach_service),
         customer_service: CustomerService = Depends(provide_customer_service)
 ) -> dict:
@@ -88,6 +89,7 @@ async def login_user(
 
     Args:
         form_data: data schema for user login
+        fcm_token: token to send push notification on user device
         coach_service: service for interacting with coach profile
         customer_service: service for interacting with customer profile
     Raises:
@@ -117,7 +119,7 @@ async def login_user(
         )
 
     try:
-        user = await service.authorize(form_data)
+        user = await service.authorize(form_data, fcm_token)
     except NotValidCredentials:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
