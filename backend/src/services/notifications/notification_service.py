@@ -1,5 +1,5 @@
 import logging
-from src.application.services.notifications.notificator import AbstractNotificator
+from src.services.notifications.notificator import AbstractNotificator
 
 logger = logging.getLogger(__name__)
 

@@ -3,9 +3,9 @@ from typing import Union, Any, List
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
-from src.application.services.authentication.coach import CoachService
-from src.application.services.authentication.customer import CustomerService
-from src.application.services.training_manager.mvp.manager import MVPTrainingManager
+from src.services.authentication import CoachService
+from src.services.authentication import CustomerService
+from src.services.training_manager.mvp import MVPTrainingManager
 from src.schemas.customer import (
     CustomerOut,
     CustomerCreateIn,
@@ -20,7 +20,7 @@ from src.dependencies import (
     provide_push_notification_service,
 )
 from src.utils import validate_uuid, generate_random_password
-from src.application.services.notifications.notification_service import NotificationService
+from src.services.notifications import NotificationService
 
 customer_router = APIRouter()
 

@@ -9,8 +9,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from src import Customer
 from src.utils import verify_password
 from src.repository.abstract import AbstractRepository
-from src.application.services.authentication.exceptions import NotValidCredentials
-from src.application.services.authentication.profile import ProfileService, ProfileType
+from src.services.authentication.exceptions import NotValidCredentials
+from src.services.authentication.profile import ProfileService, ProfileType
 from src.schemas.authentication import UserRegisterIn
 
 
