@@ -23,7 +23,7 @@ from src.repository.custom import (
     ExerciseRepository,
     MuscleGroupRepository
 )
-from src.servics.authentication.coach import CoachService
+from src.service.authentication.coach import CoachService
 from src.service.authentication.customer import CustomerService
 from src.service.authentication.exceptions import TokenExpired, NotValidCredentials
 from src.service.training_manager.mvp.manager import MVPTrainingManager
