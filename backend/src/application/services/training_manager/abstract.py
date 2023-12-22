@@ -5,7 +5,7 @@ Contains abstract training manager
 from abc import ABC
 from typing import Optional
 
-from src.infrastructure.schemas.customer import TrainingPlanIn
+from src.schemas import TrainingPlanIn
 from src import TrainingPlan
 
 

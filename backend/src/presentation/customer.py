@@ -6,7 +6,7 @@ from starlette import status
 from src.application.services.authentication.coach import CoachService
 from src.application.services.authentication.customer import CustomerService
 from src.application.services.training_manager.mvp.manager import MVPTrainingManager
-from src.infrastructure.schemas.customer import (
+from src.schemas.customer import (
     CustomerOut,
     CustomerCreateIn,
     TrainingPlanOut,

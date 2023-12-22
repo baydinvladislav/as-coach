@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, status
 from src.application.services.authentication.coach import CoachService
 from src.application.services.library import Library
 from src.dependencies import provide_user_service, provide_library
-from src.infrastructure.schemas.library import ExerciseCreateIn, ExerciseCreateOut
+from src.schemas.library import ExerciseCreateIn, ExerciseCreateOut
 
 gym_router = APIRouter()
 
