@@ -1,1 +1,1 @@
-![db_schema.png](..%2F..%2F..%2F..%2F..%2FDesktop%2Fdb_schema.png)
+<img src="db_schema.png" alt="db_schema.png" width=50% height=50%>
