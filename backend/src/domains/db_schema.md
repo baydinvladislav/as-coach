@@ -1,0 +1,1 @@
+![db_schema.png](..%2F..%2F..%2F..%2F..%2FDesktop%2Fdb_schema.png)
