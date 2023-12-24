@@ -13,7 +13,7 @@ from src.utils import create_access_token
 
 @pytest.fixture
 def mock_send_notification():
-    with patch("src.application.services.notifications.notification_service.NotificationService.send_notification") as mock:
+    with patch("src.service.notifications.notification_service.NotificationService.send_notification") as mock:
         yield mock
 
 

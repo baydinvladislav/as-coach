@@ -16,7 +16,7 @@ from src.config import (
     FIREBASE_CLIENT_CERT_URL,
     FIREBASE_UNIVERSE_DOMAIN,
 )
-from src.application.services.notifications.notificator import AbstractNotificator
+from src.service.notifications.notificator import AbstractNotificator
 
 
 class PushNotificationEmptyDataMessage(Exception):
