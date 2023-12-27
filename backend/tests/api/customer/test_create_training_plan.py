@@ -188,8 +188,8 @@ async def test_create_training_plan_with_supersets_successfully(
     for e in exercises_in_superset.scalars():
         s.add(e.superset_id)
 
-    # TODO: при повторном зайпуске теста инкрементирует len(s)
-    # assert len(s) == 1
+    # exercises have the same superset_id
+    assert len(s) == 1
     s.clear()
 
     triset_exercises_ids = (
@@ -206,8 +206,8 @@ async def test_create_training_plan_with_supersets_successfully(
     for e in exercises_in_triset.scalars():
         s.add(e.superset_id)
 
-    # TODO: при повторном зайпуске теста инкрементирует len(s)
-    # assert len(s) == 1
+    # exercises have the same superset_id
+    assert len(s) == 1
 
     if response.status_code == 201:
         await override_get_db.execute(
@@ -240,8 +240,8 @@ async def test_get_training_plan_with_supersets(
     for exercise in chest_training["exercises"]:
         superset_ids_set.add(exercise["superset_id"])
 
-    # TODO: при повторном запуске теста инкрементирует len(superset_ids_set)
-    # assert len(superset_ids_set) == 1
+    # exercises have the same superset_id
+    assert len(superset_ids_set) == 1
 
     if response.status_code == 200:
         await override_get_db.execute(

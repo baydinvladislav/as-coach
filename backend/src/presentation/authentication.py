@@ -22,7 +22,7 @@ from src.service.authentication.customer import CustomerService
 from src.service.authentication.profile import ProfileService
 from src.service.authentication.exceptions import NotValidCredentials, UsernameIsTaken
 from src.dependencies import provide_user_service, provide_coach_service, provide_customer_service
-from src.domains.models import Gender
+from src.persistence.models import Gender
 from src.schemas.authentication import (
     UserProfileOut,
     NewUserPassword,

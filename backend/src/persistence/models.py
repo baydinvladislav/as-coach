@@ -39,7 +39,7 @@ class Coach(Base, BaseModel):
     __table_args__ = {"extend_existing": True}
 
     username = Column("username", String(100), nullable=False)
-    password = Column("password", String, nullable=False)
+    password = Column("password", String(255), nullable=False)
     first_name = Column("first_name", String(50), nullable=True)
     last_name = Column("last_name", String(50), nullable=True)
     gender: Column = Column("gender", Enum(Gender), nullable=True)
@@ -70,7 +70,7 @@ class Customer(Base, BaseModel):
     __table_args__ = {'extend_existing': True}
 
     username = Column("username", String(100), nullable=True)
-    password = Column("password", String, nullable=True)
+    password = Column("password", String(255), nullable=True)
     first_name = Column("first_name", String(50), nullable=False)
     last_name = Column("last_name", String(50), nullable=False)
     gender: Column = Column("gender", Enum(Gender), nullable=True)

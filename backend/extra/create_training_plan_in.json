@@ -1,0 +1,151 @@
+{
+  "start_date": "2023-12-25",
+  "end_date": "2024-01-01",
+  "diets": [
+    {
+      "proteins": 200,
+      "fats": 100,
+      "carbs": 400
+    }
+  ],
+  "trainings": [
+    {
+      "name": "Грудь",
+      "exercises": [
+        {
+          "id": "010030c6-a70c-4d63-804d-8aaf40bbc7ee",
+          "sets": [12, 12, 12],
+          "supersets": ["fc48a3e2-f224-4078-a954-1b36f8291e72"]
+        },
+        {
+          "id": "fc48a3e2-f224-4078-a954-1b36f8291e72",
+          "sets": [12, 12, 12],
+          "supersets": ["010030c6-a70c-4d63-804d-8aaf40bbc7ee"]
+        },
+        {
+          "id": "78578653-1aee-4361-a170-8af49a79f217",
+          "sets": [12, 12, 12],
+          "supersets": []
+        }
+      ]
+    },
+    {
+      "name": "Бицепс",
+      "exercises": [
+        {
+          "id": "a610c90b-3b11-455d-9579-972f709212a9",
+          "sets": [12, 12, 12],
+          "supersets": ["86b17c2d-afe0-403c-a56a-fc63c6512001", "8b86774a-cdd4-4261-9d0e-9f35c9451e7c"]
+        },
+        {
+          "id": "86b17c2d-afe0-403c-a56a-fc63c6512001",
+          "sets": [12, 12, 12],
+          "supersets": ["a610c90b-3b11-455d-9579-972f709212a9", "8b86774a-cdd4-4261-9d0e-9f35c9451e7c"]
+        },
+        {
+          "id": "8b86774a-cdd4-4261-9d0e-9f35c9451e7c",
+          "sets": [12, 12, 12],
+          "supersets": ["a610c90b-3b11-455d-9579-972f709212a9", "86b17c2d-afe0-403c-a56a-fc63c6512001"]
+        }
+      ]
+    },
+    {
+      "name": "Спина",
+      "exercises": [
+        {
+          "id": "df9b8c20-60cd-473b-9e37-e69ff98b60dc",
+          "sets": [12, 12, 12],
+          "supersets": []
+        },
+        {
+          "id": "71c51418-fc90-4c12-a14b-d5b470d81e01",
+          "sets": [12, 12, 12],
+          "supersets": []
+        },
+        {
+          "id": "d1bbb449-7af6-4cf5-9c65-b7015ebe3a36",
+          "sets": [12, 12, 12],
+          "supersets": []
+        }
+      ]
+    },
+    {
+      "name": "Трицепс",
+      "exercises": [
+        {
+          "id": "139d89a0-96e1-4aed-980a-6a86f3d44dfd",
+          "sets": [12, 12, 12],
+          "supersets": []
+        },
+        {
+          "id": "8cc592f6-a50d-4ef0-b9ae-80e23eacbbd0",
+          "sets": [12, 12, 12],
+          "supersets": []
+        },
+        {
+          "id": "8e7e0b36-6d34-4945-9865-19aca2177c61",
+          "sets": [12, 12, 12],
+          "supersets": []
+        }
+      ]
+    },
+    {
+      "name": "Ноги",
+      "exercises": [
+        {
+          "id": "6f4be938-3302-4cc2-b0a5-c6a04ece8f13",
+          "sets": [12, 12, 12],
+          "supersets": []
+        }
+      ]
+    },
+    {
+      "name": "Плечи",
+      "exercises": [
+        {
+          "id": "eb281e0b-cb17-472b-9c81-7a26bbc8f747",
+          "sets": [12, 12, 12],
+          "supersets": []
+        },
+        {
+          "id": "606ee78a-d3de-43d2-9d3d-9b6b9f0f66c3",
+          "sets": [12, 12, 12],
+          "supersets": []
+        }
+      ]
+    },
+    {
+      "name": "Пресс",
+      "exercises": [
+        {
+          "id": "e8a1df94-5ee3-491e-b9cc-16f3139824ad",
+          "sets": [12, 12, 12],
+          "supersets": []
+        },
+        {
+          "id": "9637e8fa-8868-4454-bacc-15fc352eaae2",
+          "sets": [12, 12, 12],
+          "supersets": []
+        },
+        {
+          "id": "03a2b261-c39d-4eb9-ac1e-50b82f3ce9ac",
+          "sets": [12, 12, 12],
+          "supersets": []
+        },
+        {
+          "id": "51ff185d-7350-4632-8a0f-2a1f249e5826",
+          "sets": [12, 12, 12],
+          "supersets": []
+        },
+        {
+          "id": "2b6be63f-b360-45d3-8000-13943f3307ea",
+          "sets": [12, 12, 12],
+          "supersets": []
+        }
+      ]
+    }
+  ],
+  "set_rest": 60,
+  "exercise_rest": 120,
+  "notes": null
+}

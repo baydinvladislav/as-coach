@@ -1,5 +1,5 @@
 from .database import Base, engine
-from src.domains.models import (
+from src.persistence.models import (
     BaseModel,
     Gender,
     Coach,

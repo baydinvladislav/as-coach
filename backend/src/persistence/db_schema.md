@@ -1,0 +1,1 @@
+<img src="db_schema.png" alt="db_schema.png" width=50% height=50%>
