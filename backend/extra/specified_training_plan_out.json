@@ -1,0 +1,202 @@
+{
+  "id": "0049d594-0427-4db9-829d-7d5d12a4b804",
+  "start_date": "2023-12-18",
+  "end_date": "2023-12-25",
+  "proteins": "200",
+  "fats": "100",
+  "carbs": "400",
+  "trainings": [
+    {
+      "id": "ee226d86-c18c-44ad-bea4-ed03bf512156",
+      "name": "Грудь",
+      "number_of_exercises": 7,
+      "exercises": [
+        {
+          "id": "010030c6-a70c-4d63-804d-8aaf40bbc7ee",
+          "name": "Жим штанги лежа",
+          "sets": [12, 12, 12],
+          "superset_id": "9321a8a6-5c3f-436b-ac3b-1c36450be560",
+          "ordering": 0
+        },
+        {
+          "id": "fc48a3e2-f224-4078-a954-1b36f8291e72",
+          "name": "Разводка с гантелями",
+          "sets": [12, 12, 12],
+          "superset_id": "9321a8a6-5c3f-436b-ac3b-1c36450be560",
+          "ordering": 1
+        },
+        {
+          "id": "78578653-1aee-4361-a170-8af49a79f217",
+          "name": "Сведения в кроссовере",
+          "sets": [12, 12, 12],
+          "superset_id": "None",
+          "ordering": 2
+        }
+      ]
+    },
+    {
+      "id": "b3ee25ae-a8fe-4acb-9fe8-8ba143aa389c",
+      "name": "Бицепс",
+      "number_of_exercises": 7,
+      "exercises": [
+        {
+          "id": "a610c90b-3b11-455d-9579-972f709212a9",
+          "name": "Подъем штанги на бицепс",
+          "sets": [12, 12, 12],
+          "superset_id": "130c753e-8a28-4023-b825-0f4d23278bf8",
+          "ordering": 0
+        },
+        {
+          "id": "86b17c2d-afe0-403c-a56a-fc63c6512001",
+          "name": "Сгибания Молот",
+          "sets": [12, 12, 12],
+          "superset_id": "130c753e-8a28-4023-b825-0f4d23278bf8",
+          "ordering": 1
+        },
+        {
+          "id": "8b86774a-cdd4-4261-9d0e-9f35c9451e7c",
+          "name": "Сгибания на скамье Скотта",
+          "sets": [12, 12, 12],
+          "superset_id": "130c753e-8a28-4023-b825-0f4d23278bf8",
+          "ordering": 2
+        }
+      ]
+    },
+    {
+      "id": "36f440a5-31e6-4803-934a-521c96eb45a1",
+      "name": "Спина",
+      "number_of_exercises": 7,
+      "exercises": [
+        {
+          "id": "df9b8c20-60cd-473b-9e37-e69ff98b60dc",
+          "name": "Подтягивания",
+          "sets": [12, 12, 12],
+          "superset_id": "None",
+          "ordering": 0
+        },
+        {
+          "id": "71c51418-fc90-4c12-a14b-d5b470d81e01",
+          "name": "Тяга штанги в наклоне",
+          "sets": [12, 12, 12],
+          "superset_id": "None",
+          "ordering": 1
+        },
+        {
+          "id": "d1bbb449-7af6-4cf5-9c65-b7015ebe3a36",
+          "name": "Пулловер с верхнего блока",
+          "sets": [12, 12, 12],
+          "superset_id": "None",
+          "ordering": 2
+        }
+      ]
+    },
+    {
+      "id": "1e56d209-8e1a-434a-b010-3a55ae7734ca",
+      "name": "Трицепс",
+      "number_of_exercises": 7,
+      "exercises": [
+        {
+          "id": "139d89a0-96e1-4aed-980a-6a86f3d44dfd",
+          "name": "Жим штанги узким хватом",
+          "sets": [12, 12, 12],
+          "superset_id": "None",
+          "ordering": 0
+        },
+        {
+          "id": "8cc592f6-a50d-4ef0-b9ae-80e23eacbbd0",
+          "name": "Разгибания с верхнего блока",
+          "sets": [12, 12, 12],
+          "superset_id": "None",
+          "ordering": 1
+        },
+        {
+          "id": "8e7e0b36-6d34-4945-9865-19aca2177c61",
+          "name": "Французский жим",
+          "sets": [12, 12, 12],
+          "superset_id": "None",
+          "ordering": 2
+        }
+      ]
+    },
+    {
+      "id": "4eb57826-924d-42ec-bb03-5c8e08265b73",
+      "name": "Ноги",
+      "number_of_exercises": 7,
+      "exercises": [
+        {
+          "id": "6f4be938-3302-4cc2-b0a5-c6a04ece8f13",
+          "name": "Скручивания",
+          "sets": [12, 12, 12],
+          "superset_id": "None",
+          "ordering": 0
+        }
+      ]
+    },
+    {
+      "id": "284ec9b8-d343-4f61-b474-ee24589712d2",
+      "name": "Плечи",
+      "number_of_exercises": 7,
+      "exercises": [
+        {
+          "id": "eb281e0b-cb17-472b-9c81-7a26bbc8f747",
+          "name": "Жим штанги сидя",
+          "sets": [12, 12, 12],
+          "superset_id": "None",
+          "ordering": 0
+        },
+        {
+          "id": "606ee78a-d3de-43d2-9d3d-9b6b9f0f66c3",
+          "name": "Махи с гантелями в стороны",
+          "sets": [12, 12, 12],
+          "superset_id": "None",
+          "ordering": 1
+        }
+      ]
+    },
+    {
+      "id": "baade737-01d7-4c43-a810-631a0b4861b8",
+      "name": "Пресс",
+      "number_of_exercises": 7,
+      "exercises": [
+        {
+          "id": "e8a1df94-5ee3-491e-b9cc-16f3139824ad",
+          "name": "Приседания со штангой",
+          "sets": [12, 12, 12],
+          "superset_id": "None",
+          "ordering": 0
+        },
+        {
+          "id": "9637e8fa-8868-4454-bacc-15fc352eaae2",
+          "name": "Жим платформы ногами",
+          "sets": [12, 12, 12],
+          "superset_id": "None",
+          "ordering": 1
+        },
+        {
+          "id": "03a2b261-c39d-4eb9-ac1e-50b82f3ce9ac",
+          "name": "Сгибания ногами сидя",
+          "sets": [12, 12, 12],
+          "superset_id": "None",
+          "ordering": 2
+        },
+        {
+          "id": "51ff185d-7350-4632-8a0f-2a1f249e5826",
+          "name": "Разгибания ногами лежа",
+          "sets": [12, 12, 12],
+          "superset_id": "None",
+          "ordering": 3
+        },
+        {
+          "id": "2b6be63f-b360-45d3-8000-13943f3307ea",
+          "name": "Становая тяга на прямых ногах",
+          "sets": [12, 12, 12],
+          "superset_id": "None",
+          "ordering": 4
+        }
+      ]
+    }
+  ],
+  "set_rest": 60,
+  "exercise_rest": 120,
+  "notes": null
+}
