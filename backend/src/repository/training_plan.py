@@ -1,0 +1,6 @@
+class TrainingPlanRepository:
+    async def create_training_plan(self):
+        ...
+
+    async def get_training_plan_by_id(self):
+        ...
