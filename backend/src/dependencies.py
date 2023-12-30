@@ -26,9 +26,9 @@ from src.repository.custom import (
 from src.service.authentication.coach import CoachService
 from src.service.authentication.customer import CustomerService
 from src.service.authentication.exceptions import TokenExpired, NotValidCredentials
-from src.service.training_manager.mvp.training_plan import TrainingPlanService
-from src.service.training_manager.mvp.training import TrainingService
-from src.service.training_manager.mvp.diet import DietService
+from src.service.training_manager.training_plan import TrainingPlanService
+from src.service.training_manager.training import TrainingService
+from src.service.training_manager.diet import DietService
 from src.service.notifications.notification_service import NotificationService
 from src.service.notifications.push_firebase_notificator import PushFirebaseNotificator
 
