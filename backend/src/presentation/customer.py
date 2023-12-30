@@ -5,7 +5,7 @@ from starlette import status
 
 from src.service.authentication.coach import CoachService
 from src.service.authentication.customer import CustomerService
-from src.service.training_manager.mvp.manager import MVPTrainingManager
+from src.service.training_manager.mvp.training_plan import TrainingPlanService
 from src.schemas.customer import (
     CustomerOut,
     CustomerCreateIn,
@@ -184,7 +184,7 @@ async def create_training_plan(
         customer_id: str,
         customer_service: CustomerService = Depends(provide_customer_service),
         user_service: CoachService = Depends(provide_user_service),
-        training_manager: MVPTrainingManager = Depends(provide_gym_service),
+        training_manager: TrainingPlanService = Depends(provide_gym_service),
         push_notification_service: NotificationService = Depends(provide_push_notification_service),
 ) -> dict:
     """
@@ -247,7 +247,7 @@ async def get_all_training_plans(
         customer_id: str,
         user_service: CoachService = Depends(provide_user_service),
         customer_service: CustomerService = Depends(provide_customer_service),
-        training_manager: MVPTrainingManager = Depends(provide_gym_service)
+        training_manager: TrainingPlanService = Depends(provide_gym_service)
 ) -> Union[list[dict], list[None]]:
     """
     Returns all training plans for specific customer
@@ -291,7 +291,7 @@ async def get_training_plan(
         training_plan_id: str,
         customer_id: str,
         user_service: CoachService = Depends(provide_user_service),
-        training_manager: MVPTrainingManager = Depends(provide_gym_service),
+        training_manager: TrainingPlanService = Depends(provide_gym_service),
         customer_service: CustomerService = Depends(provide_customer_service)
 ) -> dict:
     """

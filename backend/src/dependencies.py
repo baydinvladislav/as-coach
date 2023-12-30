@@ -26,9 +26,9 @@ from src.repository.custom import (
 from src.service.authentication.coach import CoachService
 from src.service.authentication.customer import CustomerService
 from src.service.authentication.exceptions import TokenExpired, NotValidCredentials
-from src.service.training_manager.mvp.manager import MVPTrainingManager
-from src.service.training_manager.mvp.instructor import Instructor
-from src.service.training_manager.mvp.nutritionist import Nutritionist
+from src.service.training_manager.mvp.training_plan import TrainingPlanService
+from src.service.training_manager.mvp.training import TrainingService
+from src.service.training_manager.mvp.diet import DietService
 from src.service.notifications.notification_service import NotificationService
 from src.service.notifications.push_firebase_notificator import PushFirebaseNotificator
 
@@ -70,23 +70,23 @@ async def provide_library(database: Session = Depends(get_db)) -> Library:
     )
 
 
-async def provide_gym_service(database: Session = Depends(get_db)) -> MVPTrainingManager:
+async def provide_gym_service(database: Session = Depends(get_db)) -> TrainingPlanService:
     """
     Returns service responsible to interact with TrainingPlan domain
     """
-    gym_instructor = Instructor(
+    gym_instructor = TrainingService(
         repositories={
             "training_repo": TrainingRepository(database),
             "exercises_on_training_repo": ExercisesOnTrainingRepository(database)
         }
     )
-    nutritionist = Nutritionist(
+    nutritionist = DietService(
         repositories={
             "diet_repo": DietRepository(database),
             "diets_on_training_repo": DietOnTrainingPlanRepository(database)
         }
     )
-    return MVPTrainingManager({"training_plan": TrainingPlanRepository(database)}, gym_instructor, nutritionist)
+    return TrainingPlanService({"training_plan": TrainingPlanRepository(database)}, gym_instructor, nutritionist)
 
 
 async def provide_user_service(

@@ -5,32 +5,53 @@ Contains services related to the Gym functionality
 from datetime import datetime
 
 from src.service.training_manager.abstract import TrainingManagerInterface
-from src.service.training_manager.mvp.instructor import Instructor
-from src.service.training_manager.mvp.nutritionist import Nutritionist
+from src.service.training_manager.mvp.training import TrainingService
+from src.service.training_manager.mvp.diet import DietService
 from src.repository.abstract import AbstractRepository
+from src.repository.training_plan import TrainingPlanRepository
 from src.schemas.customer import TrainingPlanIn
 from src import TrainingPlan
 
 
-class MVPTrainingManager(TrainingManagerInterface):
+# class TrainingPlanService:
+#     """
+#     The service to provide fitness services for customers.
+#
+#     Attributes:
+#         training_plan_repository: repository to store TrainingPlan rows
+#         training_plan_repository: the service responsible for diets operations
+#         training_service: the service responsible for trainings operations
+#     """
+#     training_plan_repository: TrainingPlanRepository
+#     diet_service: DietService
+#     training_service: TrainingService
+#
+#     async def create_training_plan(self, customer_id: str, data: TrainingPlanIn) -> TrainingPlan:
+#         ...
+#
+#     async def find_training_plan(self, filters: dict) -> dict:
+#         ...
+
+
+class TrainingPlanService(TrainingManagerInterface):
     """
     The service to provide fitness services for customers.
 
     Attributes:
-        training_plan_repo: repository to store TrainingPlan rows
-        instructor: the service responsible for trainings operations
-        nutritionist: the service responsible for diets operations
+        training_plan_repository: repository to store TrainingPlan rows
+        training_service: the service responsible for trainings operations
+        diet_service: the service responsible for diets operations
     """
 
     def __init__(
             self,
             repositories: dict[str, AbstractRepository],
-            gym_instructor: Instructor,
-            nutritionist: Nutritionist
+            training_service: TrainingService,
+            diet_service: DietService
     ):
-        self.training_plan_repo = repositories["training_plan"]
-        self.instructor = gym_instructor
-        self.nutritionist = nutritionist
+        self.training_plan_repository = repositories["training_plan"]
+        self.training_service = training_service
+        self.diet_service = diet_service
 
     async def create_training_plan(self, customer_id: str, data: TrainingPlanIn) -> TrainingPlan:
         """
@@ -41,7 +62,7 @@ class MVPTrainingManager(TrainingManagerInterface):
             data: data from client for creating new training plan
         """
         try:
-            training_plan = await self.training_plan_repo.create(
+            training_plan = await self.training_plan_repository.create(
                 customer_id=customer_id,
                 start_date=datetime.strptime(data.start_date, "%Y-%m-%d").date(),
                 end_date=datetime.strptime(data.end_date, "%Y-%m-%d").date(),
@@ -50,27 +71,27 @@ class MVPTrainingManager(TrainingManagerInterface):
                 notes=data.notes
             )
 
-            self.training_plan_repo.session.add(training_plan)
-            await self.training_plan_repo.session.flush()
+            self.training_plan_repository.session.add(training_plan)
+            await self.training_plan_repository.session.flush()
 
-            await self.nutritionist.create_diets(
+            await self.diet_service.create_diets(
                 training_plan_id=str(training_plan.id),
                 diets=data.diets
             )
-            await self.instructor.create_trainings(
+            await self.training_service.create_trainings(
                 training_plan_id=str(training_plan.id),
                 trainings=data.trainings
             )
 
-            await self.training_plan_repo.session.commit()
-            await self.training_plan_repo.session.refresh(training_plan)
+            await self.training_plan_repository.session.commit()
+            await self.training_plan_repository.session.refresh(training_plan)
 
         except Exception as e:
-            await self.training_plan_repo.session.rollback()
+            await self.training_plan_repository.session.rollback()
             raise
 
         else:
-            training_plan_in_db = await self.training_plan_repo.filter(
+            training_plan_in_db = await self.training_plan_repository.filter(
                 filters={"id": str(training_plan.id)},
                 foreign_keys=["customer", "diets", "trainings"]
             )
@@ -85,7 +106,7 @@ class MVPTrainingManager(TrainingManagerInterface):
             filters: attributes and these values
         """
         foreign_keys, sub_queries = ["trainings"], ["exercises"]
-        training_plan = await self.training_plan_repo.filter(
+        training_plan = await self.training_plan_repository.filter(
             filters=filters,
             foreign_keys=foreign_keys,
             sub_queries=sub_queries
@@ -98,7 +119,7 @@ class MVPTrainingManager(TrainingManagerInterface):
             for exercise in training.exercises:
                 exercise_ids.append(str(exercise.id))
 
-        scheduled_trainings = await self.instructor.provide_scheduled_trainings(
+        scheduled_trainings = await self.training_service.provide_scheduled_trainings(
             training_ids=training_ids,
             exercise_ids=exercise_ids
         )
@@ -136,7 +157,7 @@ class MVPTrainingManager(TrainingManagerInterface):
 
     async def get_all_customer_training_plans(self, customer_id: str) -> list:
         foreign_keys, sub_queries = ["trainings"], ["exercises"]
-        training_plans = await self.training_plan_repo.filter(
+        training_plans = await self.training_plan_repository.filter(
             filters={"customer_id": customer_id},
             foreign_keys=foreign_keys,
             sub_queries=sub_queries
