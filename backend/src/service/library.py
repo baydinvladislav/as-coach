@@ -1,7 +1,7 @@
 from src.repository.abstract import AbstractRepository
 
 
-class Library:
+class LibraryService:
     """
     The service to organize data in gym library
     """

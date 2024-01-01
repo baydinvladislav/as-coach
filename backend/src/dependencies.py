@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from src.database import SessionLocal
-from src.service.library import Library
+from src.service.library import LibraryService
 from src.config import reuseable_oauth
 from src.utils import decode_jwt_token
 
@@ -58,11 +58,11 @@ async def provide_customer_service(database: Session = Depends(get_db)) -> Custo
     return CustomerService(CustomerRepository(database))
 
 
-async def provide_library(database: Session = Depends(get_db)) -> Library:
+async def provide_library(database: Session = Depends(get_db)) -> LibraryService:
     """
     Returns service to organize data in gym library
     """
-    return Library(
+    return LibraryService(
         repositories={
             "exercise": ExerciseRepository(database),
             "muscle_group": MuscleGroupRepository(database)
@@ -70,7 +70,7 @@ async def provide_library(database: Session = Depends(get_db)) -> Library:
     )
 
 
-async def provide_gym_service(database: Session = Depends(get_db)) -> TrainingPlanService:
+async def provide_training_plan_service(database: Session = Depends(get_db)) -> TrainingPlanService:
     """
     Returns service responsible to interact with TrainingPlan domain
     """

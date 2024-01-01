@@ -5,7 +5,7 @@ Library routing
 from fastapi import APIRouter, Depends, status
 
 from src.service.authentication.coach import CoachService
-from src.service.library import Library
+from src.service.library import LibraryService
 from src.dependencies import provide_user_service, provide_library
 from src.schemas.library import ExerciseCreateIn, ExerciseCreateOut
 
@@ -20,7 +20,7 @@ gym_router = APIRouter()
 async def create_exercise(
         exercise_data: ExerciseCreateIn,
         user_service: CoachService = Depends(provide_user_service),
-        library: Library = Depends(provide_library)
+        library_service: LibraryService = Depends(provide_library)
 ) -> dict:
     """
     Creates new exercise for coach
@@ -28,13 +28,13 @@ async def create_exercise(
     Args:
         exercise_data: data to create new exercise
         user_service: returns current application user
-        library: service to organize data in gym library
+        library_service: service to organize data in gym library
 
     Returns:
         dictionary with just created exercise id, name, muscle_group's name as keys
     """
     user = user_service.user
-    exercise = await library.create_exercise(
+    exercise = await library_service.create_exercise(
         exercise_name=exercise_data.name,
         coach_id=str(user.id),
         muscle_group_id=exercise_data.muscle_group_id
@@ -53,20 +53,20 @@ async def create_exercise(
     status_code=status.HTTP_200_OK)
 async def get_exercises(
         user_service: CoachService = Depends(provide_user_service),
-        library: Library = Depends(provide_library)
+        library_service: LibraryService = Depends(provide_library)
 ) -> list:
     """
     Returns all exercises for coach
 
     Args:
         user_service: returns current application user
-        library: service to organize data in gym library
+        library_service: service to organize data in gym library
 
     Returns:
         list of exercises
     """
     user = user_service.user
-    exercises = await library.get_exercise_list(str(user.id))
+    exercises = await library_service.get_exercise_list(str(user.id))
 
     response = []
     for exercise in exercises:
@@ -86,19 +86,19 @@ async def get_exercises(
     status_code=status.HTTP_200_OK)
 async def get_muscle_groups(
         user_service: CoachService = Depends(provide_user_service),
-        library: Library = Depends(provide_library)
+        library_service: LibraryService = Depends(provide_library)
 ) -> list:
     """
     Returns all muscle groups for coach
 
     Args:
         user_service: returns current application user
-        library: service to organize data in gym library
+        library_service: service to organize data in gym library
 
     Returns:
         list of muscle groups
     """
-    muscle_groups = await library.get_muscle_group_list()
+    muscle_groups = await library_service.get_muscle_group_list()
 
     response = []
     for muscle_group in muscle_groups:
