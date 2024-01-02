@@ -46,9 +46,9 @@ def insert_exercises(session):
     biceps = session.query(MuscleGroup).filter(MuscleGroup.name == "Бицепс").first()
     back = session.query(MuscleGroup).filter(MuscleGroup.name == "Спина").first()
     triceps = session.query(MuscleGroup).filter(MuscleGroup.name == "Трицепс").first()
-    press = session.query(MuscleGroup).filter(MuscleGroup.name == "Ноги").first()
+    press = session.query(MuscleGroup).filter(MuscleGroup.name == "Пресс").first()
     shoulders = session.query(MuscleGroup).filter(MuscleGroup.name == "Плечи").first()
-    legs = session.query(MuscleGroup).filter(MuscleGroup.name == "Пресс").first()
+    legs = session.query(MuscleGroup).filter(MuscleGroup.name == "Ноги").first()
 
     exercises = (
         Exercise(
