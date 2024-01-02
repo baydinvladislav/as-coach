@@ -31,7 +31,6 @@ export const StackNavigator = observer(() => {
   const { user, customer } = useStore();
 
   const isGuest = !user.hasAccess; // меняем !user.hasAccess на !!!user.hasAccess для разработки. Чтобы открывался сразу лк
-  const isCoach = user.me.user_type === UserType.COACH;
 
   useEffect(() => {
     const getToken = storage.getItem(TOKEN);
@@ -39,6 +38,7 @@ export const StackNavigator = observer(() => {
       token && user.getMe();
     });
 
+    const isCoach = user.me.user_type === UserType.COACH;
     if (isCoach) {
       customer.getExercises();
       user.getMuscleGroups();
