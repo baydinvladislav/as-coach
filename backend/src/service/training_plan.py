@@ -3,6 +3,7 @@ Contains services related to the Gym functionality
 """
 
 from datetime import datetime
+from dataclasses import dataclass
 
 from src.service.abstract import TrainingManagerInterface
 from src.service.training import TrainingService
@@ -12,6 +13,7 @@ from src.schemas.customer import TrainingPlanIn
 from src import TrainingPlan
 
 
+# @dataclass
 # class TrainingPlanService:
 #     """
 #     The service to provide fitness services for customers.
