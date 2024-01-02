@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, status
 
 from src.service.authentication.coach import CoachService
 from src.service.library import LibraryService
-from src.dependencies import provide_user_service, provide_library
+from src.dependencies import provide_user_service, provide_library_service
 from src.schemas.library import ExerciseCreateIn, ExerciseCreateOut
 
 gym_router = APIRouter()
@@ -20,7 +20,7 @@ gym_router = APIRouter()
 async def create_exercise(
         exercise_data: ExerciseCreateIn,
         user_service: CoachService = Depends(provide_user_service),
-        library_service: LibraryService = Depends(provide_library)
+        library_service: LibraryService = Depends(provide_library_service)
 ) -> dict:
     """
     Creates new exercise for coach
@@ -53,7 +53,7 @@ async def create_exercise(
     status_code=status.HTTP_200_OK)
 async def get_exercises(
         user_service: CoachService = Depends(provide_user_service),
-        library_service: LibraryService = Depends(provide_library)
+        library_service: LibraryService = Depends(provide_library_service)
 ) -> list:
     """
     Returns all exercises for coach
@@ -86,7 +86,7 @@ async def get_exercises(
     status_code=status.HTTP_200_OK)
 async def get_muscle_groups(
         user_service: CoachService = Depends(provide_user_service),
-        library_service: LibraryService = Depends(provide_library)
+        library_service: LibraryService = Depends(provide_library_service)
 ) -> list:
     """
     Returns all muscle groups for coach

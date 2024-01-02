@@ -58,7 +58,7 @@ async def provide_customer_service(database: Session = Depends(get_db)) -> Custo
     return CustomerService(CustomerRepository(database))
 
 
-async def provide_library(database: Session = Depends(get_db)) -> LibraryService:
+async def provide_library_service(database: Session = Depends(get_db)) -> LibraryService:
     """
     Returns service to organize data in gym library
     """
@@ -74,19 +74,19 @@ async def provide_training_plan_service(database: Session = Depends(get_db)) -> 
     """
     Returns service responsible to interact with TrainingPlan domain
     """
-    gym_instructor = TrainingService(
+    training_service = TrainingService(
         repositories={
             "training_repo": TrainingRepository(database),
             "exercises_on_training_repo": ExercisesOnTrainingRepository(database)
         }
     )
-    nutritionist = DietService(
+    diet_service = DietService(
         repositories={
             "diet_repo": DietRepository(database),
             "diets_on_training_repo": DietOnTrainingPlanRepository(database)
         }
     )
-    return TrainingPlanService({"training_plan": TrainingPlanRepository(database)}, gym_instructor, nutritionist)
+    return TrainingPlanService({"training_plan": TrainingPlanRepository(database)}, training_service, diet_service)
 
 
 async def provide_user_service(
