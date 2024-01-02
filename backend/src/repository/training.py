@@ -1,0 +1,6 @@
+class TrainingRepository:
+    ...
+
+
+class ExercisesOnTrainingRepository:
+    ...

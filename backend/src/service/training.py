@@ -2,22 +2,34 @@ import uuid
 
 from src import ExercisesOnTraining
 from src.repository.abstract import AbstractRepository
+from src.repository.training import TrainingRepository, ExercisesOnTrainingRepository
 
 
-class Instructor:
+# class TrainingService:
+#     training_repository: TrainingRepository
+#     exercises_on_training_repository: ExercisesOnTrainingRepository
+#
+#     async def create_trainings(self, training_plan_id: str, trainings: list):
+#         ...
+#
+#     async def provide_trainings_by_training_plan(self):
+#         ...
+
+
+class TrainingService:
     """
     The service responsible for trainings operations
 
     Attributes:
-        training_repo: repository to store Training rows
-        exercises_on_training_repo: repository to store ExercisesOnTraining rows
+        training_repository: repository to store Training rows
+        exercises_on_training_repository: repository to store ExercisesOnTraining rows
         superset_dict: using to store supersets
         ordering: make order for supersets
     """
 
     def __init__(self, repositories: dict[str, AbstractRepository]):
-        self.training_repo = repositories["training_repo"]
-        self.exercises_on_training_repo = repositories["exercises_on_training_repo"]
+        self.training_repository = repositories["training_repo"]
+        self.exercises_on_training_repository = repositories["exercises_on_training_repo"]
         self.superset_dict = {}
         self.ordering = 0
 
@@ -45,13 +57,13 @@ class Instructor:
             trainings: data for creating trainings
         """
         for training_item in trainings:
-            training = await self.training_repo.create(
+            training = await self.training_repository.create(
                 name=training_item.name,
                 training_plan_id=training_plan_id
             )
 
-            self.training_repo.session.add(training)
-            await self.training_repo.session.flush()
+            self.training_repository.session.add(training)
+            await self.training_repository.session.flush()
 
             self.superset_dict = {}
             self.ordering = 0
@@ -65,8 +77,8 @@ class Instructor:
                     superset_id=self.superset_dict.get(str(exercise_item.id)),
                     ordering=self.ordering
                 )
-                self.training_repo.session.add(exercise_on_training)
-                await self.training_repo.session.flush()
+                self.training_repository.session.add(exercise_on_training)
+                await self.training_repository.session.flush()
                 self.ordering += 1
 
     async def provide_scheduled_trainings(self, training_ids: list, exercise_ids: list) -> dict:
@@ -80,7 +92,7 @@ class Instructor:
         Returns:
             all scheduled training for training plan
         """
-        exercises = await self.exercises_on_training_repo.filter({
+        exercises = await self.exercises_on_training_repository.filter({
             "training_ids": training_ids,
             "exercise_ids": exercise_ids
         })

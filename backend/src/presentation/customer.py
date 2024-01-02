@@ -5,7 +5,7 @@ from starlette import status
 
 from src.service.authentication.coach import CoachService
 from src.service.authentication.customer import CustomerService
-from src.service.training_manager.mvp.manager import MVPTrainingManager
+from src.service.training_plan import TrainingPlanService
 from src.schemas.customer import (
     CustomerOut,
     CustomerCreateIn,
@@ -16,7 +16,7 @@ from src.schemas.customer import (
 from src.dependencies import (
     provide_customer_service,
     provide_user_service,
-    provide_gym_service,
+    provide_training_plan_service,
     provide_push_notification_service,
 )
 from src.utils import validate_uuid, generate_random_password
@@ -184,7 +184,7 @@ async def create_training_plan(
         customer_id: str,
         customer_service: CustomerService = Depends(provide_customer_service),
         user_service: CoachService = Depends(provide_user_service),
-        training_manager: MVPTrainingManager = Depends(provide_gym_service),
+        training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
         push_notification_service: NotificationService = Depends(provide_push_notification_service),
 ) -> dict:
     """
@@ -196,7 +196,7 @@ async def create_training_plan(
         customer_id: customer's str(UUID)
         customer_service: service for interacting with customer
         user_service: service for interacting with profile
-        training_manager: service for interacting with customer training plans
+        training_plan_service: service for interacting with customer training plans
         push_notification_service: service responsible to send push notification through FireBase service
     """
     customer = await customer_service.find(filters={"id": customer_id})
@@ -206,7 +206,7 @@ async def create_training_plan(
             detail=f"Customer with id {customer_id} not found"
         )
 
-    training_plan = await training_manager.create_training_plan(
+    training_plan = await training_plan_service.create_training_plan(
         customer_id=customer_id,
         data=training_plan_data
     )
@@ -247,7 +247,7 @@ async def get_all_training_plans(
         customer_id: str,
         user_service: CoachService = Depends(provide_user_service),
         customer_service: CustomerService = Depends(provide_customer_service),
-        training_manager: MVPTrainingManager = Depends(provide_gym_service)
+        training_plan_service: TrainingPlanService = Depends(provide_training_plan_service)
 ) -> Union[list[dict], list[None]]:
     """
     Returns all training plans for specific customer
@@ -257,7 +257,7 @@ async def get_all_training_plans(
         customer_id: customer's str(UUID)
         user_service: service for interacting with profile
         customer_service: service for interacting with customer
-        training_manager: service responsible for training plans creation
+        training_plan_service: service responsible for training plans creation
     """
     customer = await customer_service.find({"id": customer_id})
     if customer is None:
@@ -266,7 +266,7 @@ async def get_all_training_plans(
             detail=f"customer with id={customer_id} doesn't exist"
         )
 
-    training_plans = await training_manager.get_all_customer_training_plans(str(customer.id))
+    training_plans = await training_plan_service.get_all_customer_training_plans(str(customer.id))
 
     response = []
     for training_plan in training_plans:
@@ -291,7 +291,7 @@ async def get_training_plan(
         training_plan_id: str,
         customer_id: str,
         user_service: CoachService = Depends(provide_user_service),
-        training_manager: MVPTrainingManager = Depends(provide_gym_service),
+        training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
         customer_service: CustomerService = Depends(provide_customer_service)
 ) -> dict:
     """
@@ -302,7 +302,7 @@ async def get_training_plan(
         training_plan_id: str(UUID) of specified training plan
         customer_id: str(UUID) of specified customer
         user_service: service for interacting with profile
-        training_manager: service for interacting with customer training plans
+        training_plan_service: service for interacting with customer training plans
         customer_service: service for interacting with customer
 
     Raise:
@@ -315,7 +315,7 @@ async def get_training_plan(
             detail=f"Customer with id={customer_id} doesn't exist"
         )
 
-    training_plan = await training_manager.find_training_plan({"id": training_plan_id})
+    training_plan = await training_plan_service.find_training_plan({"id": training_plan_id})
     if training_plan is None:
         raise HTTPException(
             status_code=404,

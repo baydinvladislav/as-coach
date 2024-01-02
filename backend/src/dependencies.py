@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from src.database import SessionLocal
-from src.service.library import Library
+from src.service.library import LibraryService
 from src.config import reuseable_oauth
 from src.utils import decode_jwt_token
 
@@ -26,9 +26,9 @@ from src.repository.custom import (
 from src.service.authentication.coach import CoachService
 from src.service.authentication.customer import CustomerService
 from src.service.authentication.exceptions import TokenExpired, NotValidCredentials
-from src.service.training_manager.mvp.manager import MVPTrainingManager
-from src.service.training_manager.mvp.instructor import Instructor
-from src.service.training_manager.mvp.nutritionist import Nutritionist
+from src.service.training_plan import TrainingPlanService
+from src.service.training import TrainingService
+from src.service.diet import DietService
 from src.service.notifications.notification_service import NotificationService
 from src.service.notifications.push_firebase_notificator import PushFirebaseNotificator
 
@@ -58,11 +58,11 @@ async def provide_customer_service(database: Session = Depends(get_db)) -> Custo
     return CustomerService(CustomerRepository(database))
 
 
-async def provide_library(database: Session = Depends(get_db)) -> Library:
+async def provide_library_service(database: Session = Depends(get_db)) -> LibraryService:
     """
     Returns service to organize data in gym library
     """
-    return Library(
+    return LibraryService(
         repositories={
             "exercise": ExerciseRepository(database),
             "muscle_group": MuscleGroupRepository(database)
@@ -70,23 +70,23 @@ async def provide_library(database: Session = Depends(get_db)) -> Library:
     )
 
 
-async def provide_gym_service(database: Session = Depends(get_db)) -> MVPTrainingManager:
+async def provide_training_plan_service(database: Session = Depends(get_db)) -> TrainingPlanService:
     """
     Returns service responsible to interact with TrainingPlan domain
     """
-    gym_instructor = Instructor(
+    training_service = TrainingService(
         repositories={
             "training_repo": TrainingRepository(database),
             "exercises_on_training_repo": ExercisesOnTrainingRepository(database)
         }
     )
-    nutritionist = Nutritionist(
+    diet_service = DietService(
         repositories={
             "diet_repo": DietRepository(database),
             "diets_on_training_repo": DietOnTrainingPlanRepository(database)
         }
     )
-    return MVPTrainingManager({"training_plan": TrainingPlanRepository(database)}, gym_instructor, nutritionist)
+    return TrainingPlanService({"training_plan": TrainingPlanRepository(database)}, training_service, diet_service)
 
 
 async def provide_user_service(
