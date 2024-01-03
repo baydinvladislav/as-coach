@@ -46,9 +46,9 @@ const App = () => {
   };
 
   useEffect(() => {
-    requestUserPermission()
-    notificationListener()
-  }, [])
+    requestUserPermission();
+    notificationListener();
+  }, []);
 
   return (
     <SafeAreaProvider>
