@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useFormik } from 'formik';
@@ -86,6 +86,10 @@ export const CreateExerciseScreen = observer(
         }));
       }
     }
+
+    useEffect(() => {
+      user.getMuscleGroups();
+    }, [user]);
 
     return (
       <>
