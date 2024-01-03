@@ -29,6 +29,10 @@ class CustomerService(ProfileService):
         self.user_type = ProfileType.CUSTOMER.value
         self.customer_repo = customer_repo
 
+    async def get_customers_by_coach_id(self, coach_id: str):
+        customers = await self.customer_repo.provide_customers_by_coach_id(coach_id)
+        return customers
+
     async def register(self, data: UserRegisterIn) -> Customer:
         """
         Temperately customer registration implemented by Coach's invites

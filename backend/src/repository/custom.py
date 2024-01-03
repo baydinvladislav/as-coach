@@ -32,6 +32,11 @@ class CustomerRepository(SQLAlchemyRepository):
     """
     model = Customer
 
+    async def provide_customers_by_coach_id(self, coach_id: str):
+        query = select(self.model).where(self.model.coach_id == coach_id).order_by()
+        result = await self.session.execute(query)
+        return result.fetchall()
+
 
 class TrainingPlanRepository(SQLAlchemyRepository):
     """
