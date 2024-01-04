@@ -20,6 +20,7 @@ import { ButtonType, FontSize, FontWeight } from '~types';
 export const LkClients = observer(() => {
   const [searchInputKey, setSearchInputKey] = useState(0);
   const [searchValue, setSearchValue] = useState<string | undefined>();
+  const [isFetching, setIsFetching] = useState(false);
 
   const { customer, loading } = useStore();
 
@@ -53,6 +54,12 @@ export const LkClients = observer(() => {
 
   const customers = customer.customers;
   const searchCustomers = customer.searchCustomers;
+
+  const handleRefresh = () => {
+    setIsFetching(true);
+    customer.getCustomers();
+    setIsFetching(false);
+  };
 
   const handleNavigateDetailClient = (id: string) => {
     clearSearch();
@@ -112,6 +119,9 @@ export const LkClients = observer(() => {
           }
           renderItem={renderItem}
           keyExtractor={item => item.id}
+          refreshing={isFetching}
+          onRefresh={handleRefresh}
+          bounces={!isFetching}
         />
       ) : (
         <NotFound />
