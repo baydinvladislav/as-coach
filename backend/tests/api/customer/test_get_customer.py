@@ -121,3 +121,5 @@ async def test_ordering_in_get_customers(create_customer, override_get_db):
         )
 
     assert response.status_code == 200
+
+    print(f"PYTHON LOGS FROM {response.json()}")
