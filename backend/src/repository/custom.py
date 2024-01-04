@@ -2,12 +2,11 @@
 Stores custom repositories for interaction with data storage
 """
 
-from sqlalchemy import select, or_, func, nullsfirst
+from sqlalchemy import select, or_
 from sqlalchemy.orm import selectinload
 
 from src import (
     Coach,
-    Customer,
     TrainingPlan,
     Diet,
     DietOnTrainingPlan,
@@ -24,31 +23,6 @@ class CoachRepository(SQLAlchemyRepository):
     Access to Coach storage
     """
     model = Coach
-
-
-class CustomerRepository(SQLAlchemyRepository):
-    """
-    Access to Customer storage
-    """
-    model = Customer
-
-    async def provide_customers_by_coach_id(self, coach_id: str):
-        query = (
-            select(
-                self.model.id,
-                self.model.first_name,
-                self.model.last_name,
-                self.model.username,
-                func.max(TrainingPlan.end_date).label('last_plan_end_date')
-            )
-            .join(TrainingPlan, self.model.id == TrainingPlan.customer_id, isouter=True)
-            .where(self.model.coach_id == coach_id)
-            .group_by(self.model.id)
-            .order_by(nullsfirst(func.max(TrainingPlan.end_date).asc()))
-        )
-
-        result = await self.session.execute(query)
-        return result.fetchall()
 
 
 class TrainingPlanRepository(SQLAlchemyRepository):

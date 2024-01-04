@@ -110,31 +110,7 @@ async def get_customers(
     """
     coach = coach_service.user
     customers = await customer_service.get_customers_by_coach_id(str(coach.id))
-
-    active_customers = []
-    archive_customers = []
-    for customer in customers:
-        last_plan_end_date = customer[4]
-
-        if last_plan_end_date and datetime.now().date() - last_plan_end_date > timedelta(days=30):
-            archive_customers.append({
-                "id": str(customer[0]),
-                "first_name": customer[1],
-                "last_name": customer[2],
-                "phone_number": customer[3],
-                "last_plan_end_date": last_plan_end_date.strftime("%Y-%m-%d")
-            })
-        else:
-            active_customers.append({
-                "id": str(customer[0]),
-                "first_name": customer[1],
-                "last_name": customer[2],
-                "phone_number": customer[3],
-                "last_plan_end_date": last_plan_end_date.strftime("%Y-%m-%d") if last_plan_end_date else None
-            })
-
-    active_customers.extend(archive_customers)
-    return active_customers
+    return customers
 
 
 @customer_router.get(

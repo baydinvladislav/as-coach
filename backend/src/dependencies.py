@@ -14,7 +14,6 @@ from src.utils import decode_jwt_token
 
 from src.repository.custom import (
     CoachRepository,
-    CustomerRepository,
     TrainingPlanRepository,
     TrainingRepository,
     DietRepository,
@@ -23,6 +22,7 @@ from src.repository.custom import (
     ExerciseRepository,
     MuscleGroupRepository
 )
+from src.repository.customer import CustomerRepository
 from src.service.authentication.coach import CoachService
 from src.service.authentication.customer import CustomerService
 from src.service.authentication.exceptions import TokenExpired, NotValidCredentials

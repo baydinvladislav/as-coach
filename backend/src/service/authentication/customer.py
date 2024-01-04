@@ -3,6 +3,7 @@ Service for Customer role functionality
 """
 
 from typing import Optional
+from datetime import datetime, timedelta
 
 from fastapi.security import OAuth2PasswordRequestForm
 
@@ -21,16 +22,40 @@ class CustomerService(ProfileService):
     Attributes:
         user: Customer: customer ORM instance
         user_type: str: mark as customer role
-        customer_repo: repository to interacting with storage using customer domain
+        customer_repository: repository to interacting with storage using customer domain
     """
 
-    def __init__(self, customer_repo: AbstractRepository):
+    def __init__(self, customer_repository: AbstractRepository):
         self.user = None
         self.user_type = ProfileType.CUSTOMER.value
-        self.customer_repo = customer_repo
+        self.customer_repository = customer_repository
 
     async def get_customers_by_coach_id(self, coach_id: str):
-        customers = await self.customer_repo.provide_customers_by_coach_id(coach_id)
+        customers_aggregates = await self.customer_repository.provide_customers_by_coach_id(coach_id)
+
+        customers = []
+        archive_customers = []
+        for customer in customers_aggregates:
+            last_plan_end_date = customer[4]
+
+            if last_plan_end_date and datetime.now().date() - last_plan_end_date > timedelta(days=30):
+                archive_customers.append({
+                    "id": str(customer[0]),
+                    "first_name": customer[1],
+                    "last_name": customer[2],
+                    "phone_number": customer[3],
+                    "last_plan_end_date": last_plan_end_date.strftime("%Y-%m-%d")
+                })
+            else:
+                customers.append({
+                    "id": str(customer[0]),
+                    "first_name": customer[1],
+                    "last_name": customer[2],
+                    "phone_number": customer[3],
+                    "last_plan_end_date": last_plan_end_date.strftime("%Y-%m-%d") if last_plan_end_date else None
+                })
+
+        customers.extend(archive_customers)
         return customers
 
     async def register(self, data: UserRegisterIn) -> Customer:
@@ -57,7 +82,7 @@ class CustomerService(ProfileService):
 
             if self.user.fcm_token != fcm_token:
                 await self.set_fcm_token(fcm_token)
-                await self.customer_repo.update(str(self.user.id), fcm_token=fcm_token)
+                await self.customer_repository.update(str(self.user.id), fcm_token=fcm_token)
 
             return self.user
 
@@ -72,7 +97,7 @@ class CustomerService(ProfileService):
             filters: attributes and these values
         """
         foreign_keys, sub_queries = ["training_plans"], ["trainings", "diets"]
-        customer = await self.customer_repo.filter(
+        customer = await self.customer_repository.filter(
             filters=filters,
             foreign_keys=foreign_keys,
             sub_queries=sub_queries
@@ -91,7 +116,7 @@ class CustomerService(ProfileService):
             params: parameters for customer updating
         """
         await self.handle_profile_photo(params.pop("photo"))
-        await self.customer_repo.update(str(self.user.id), **params)
+        await self.customer_repository.update(str(self.user.id), **params)
 
     async def create(self, coach_id: str, **kwargs) -> Customer:
         """
@@ -104,5 +129,5 @@ class CustomerService(ProfileService):
         Returns:
             customer: Customer instance
         """
-        customer = await self.customer_repo.create(coach_id=coach_id, **kwargs)
+        customer = await self.customer_repository.create(coach_id=coach_id, **kwargs)
         return customer
