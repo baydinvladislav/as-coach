@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from typing import Union, Any, List
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -110,17 +111,30 @@ async def get_customers(
     coach = coach_service.user
     customers = await customer_service.get_customers_by_coach_id(str(coach.id))
 
-    result = []
+    active_customers = []
+    archive_customers = []
     for customer in customers:
-        result.append({
-            "id": str(customer[0]),
-            "first_name": customer[1],
-            "last_name": customer[2],
-            "phone_number": customer[3],
-            "last_plan_end_date": customer[4].strftime("%Y-%m-%d") if customer[4] else None
-        })
+        last_plan_end_date = customer[4]
 
-    return result
+        if last_plan_end_date and datetime.now().date() - last_plan_end_date > timedelta(days=30):
+            archive_customers.append({
+                "id": str(customer[0]),
+                "first_name": customer[1],
+                "last_name": customer[2],
+                "phone_number": customer[3],
+                "last_plan_end_date": last_plan_end_date.strftime("%Y-%m-%d")
+            })
+        else:
+            active_customers.append({
+                "id": str(customer[0]),
+                "first_name": customer[1],
+                "last_name": customer[2],
+                "phone_number": customer[3],
+                "last_plan_end_date": last_plan_end_date.strftime("%Y-%m-%d") if last_plan_end_date else None
+            })
+
+    active_customers.extend(archive_customers)
+    return active_customers
 
 
 @customer_router.get(

@@ -2,7 +2,7 @@
 Stores custom repositories for interaction with data storage
 """
 
-from sqlalchemy import select, or_, func
+from sqlalchemy import select, or_, func, nullsfirst
 from sqlalchemy.orm import selectinload
 
 from src import (
@@ -44,7 +44,7 @@ class CustomerRepository(SQLAlchemyRepository):
             .join(TrainingPlan, self.model.id == TrainingPlan.customer_id, isouter=True)
             .where(self.model.coach_id == coach_id)
             .group_by(self.model.id)
-            .order_by()
+            .order_by(nullsfirst(func.max(TrainingPlan.end_date).asc()))
         )
 
         result = await self.session.execute(query)
