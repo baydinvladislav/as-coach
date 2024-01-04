@@ -59,7 +59,7 @@ export const Plans = ({
 
   const handleRefresh = () => {
     setIsFetching(true);
-    getCustomerInfo()
+    getCustomerInfo();
     setIsFetching(false);
   };
 
