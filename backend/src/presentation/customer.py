@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from typing import Union, Any, List
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -95,30 +96,20 @@ async def create_customer(
     summary="Gets all user's customers",
     status_code=status.HTTP_200_OK)
 async def get_customers(
-        user_service: CoachService = Depends(provide_user_service),
+        coach_service: CoachService = Depends(provide_user_service),
+        customer_service: CustomerService = Depends(provide_customer_service),
 ) -> List[dict[str, Any]]:
     """
     Gets all customer for current coach
 
     Args:
-        user_service: current application coach
-
+        coach_service: current application coach
+        customer_service: service to work with customer domain
     Returns:
         list of customers
     """
-    user = user_service.user
-
-    customers = []
-    for customer in user.customers:
-        training_plans = sorted(customer.training_plans, key=lambda x: x.end_date, reverse=True)
-        customers.append({
-            "id": str(customer.id),
-            "first_name": customer.first_name,
-            "last_name": customer.last_name,
-            "phone_number": customer.username,
-            "last_plan_end_date": training_plans[0].end_date.strftime("%Y-%m-%d") if training_plans else None
-        })
-
+    coach = coach_service.user
+    customers = await customer_service.get_customers_by_coach_id(str(coach.id))
     return customers
 
 

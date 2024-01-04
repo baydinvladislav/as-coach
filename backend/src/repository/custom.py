@@ -7,7 +7,6 @@ from sqlalchemy.orm import selectinload
 
 from src import (
     Coach,
-    Customer,
     TrainingPlan,
     Diet,
     DietOnTrainingPlan,
@@ -24,13 +23,6 @@ class CoachRepository(SQLAlchemyRepository):
     Access to Coach storage
     """
     model = Coach
-
-
-class CustomerRepository(SQLAlchemyRepository):
-    """
-    Access to Customer storage
-    """
-    model = Customer
 
 
 class TrainingPlanRepository(SQLAlchemyRepository):
