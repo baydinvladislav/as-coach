@@ -112,13 +112,12 @@ async def get_customers(
 
     result = []
     for customer in customers:
-        training_plans = sorted(customer.training_plans, key=lambda x: x.end_date, reverse=True)
         result.append({
-            "id": str(customer.id),
-            "first_name": customer.first_name,
-            "last_name": customer.last_name,
-            "phone_number": customer.username,
-            "last_plan_end_date": training_plans[0].end_date.strftime("%Y-%m-%d") if training_plans else None
+            "id": str(customer[0]),
+            "first_name": customer[1],
+            "last_name": customer[2],
+            "phone_number": customer[3],
+            "last_plan_end_date": customer[4].strftime("%Y-%m-%d") if customer[4] else None
         })
 
     return result

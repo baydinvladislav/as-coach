@@ -2,7 +2,7 @@
 Stores custom repositories for interaction with data storage
 """
 
-from sqlalchemy import select, or_
+from sqlalchemy import select, or_, func
 from sqlalchemy.orm import selectinload
 
 from src import (
@@ -33,7 +33,20 @@ class CustomerRepository(SQLAlchemyRepository):
     model = Customer
 
     async def provide_customers_by_coach_id(self, coach_id: str):
-        query = select(self.model).where(self.model.coach_id == coach_id).order_by()
+        query = (
+            select(
+                self.model.id,
+                self.model.first_name,
+                self.model.last_name,
+                self.model.username,
+                func.max(TrainingPlan.end_date).label('last_plan_end_date')
+            )
+            .join(TrainingPlan, self.model.id == TrainingPlan.customer_id, isouter=True)
+            .where(self.model.coach_id == coach_id)
+            .group_by(self.model.id)
+            .order_by()
+        )
+
         result = await self.session.execute(query)
         return result.fetchall()
 
