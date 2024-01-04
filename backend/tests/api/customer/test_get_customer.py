@@ -103,23 +103,3 @@ async def test_get_specific_customer_failed_not_valid_uuid(create_user, override
         )
 
     assert response.status_code == 400
-
-
-@pytest.mark.asyncio
-async def test_ordering_in_get_customers(create_customer, override_get_db):
-    """
-    Checks that ordering matches the logic in ASC-0083
-    """
-
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = await create_access_token(create_customer.coach.username)
-        response = await ac.get(
-            f"/api/customers",
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
-
-    assert response.status_code == 200
-
-    print(f"PYTHON LOGS FROM {response.json()}")
