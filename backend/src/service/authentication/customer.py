@@ -2,7 +2,7 @@
 Service for Customer role functionality
 """
 
-from typing import Optional
+from typing import Optional, Type
 from datetime import datetime, timedelta
 
 from fastapi.security import OAuth2PasswordRequestForm
@@ -12,7 +12,7 @@ from src.utils import verify_password
 from src.repository.abstract import AbstractRepository
 from src.service.authentication.exceptions import NotValidCredentials
 from src.service.authentication.profile import ProfileService, ProfileType
-from src.schemas.authentication import UserRegisterIn
+from src.service.telegram.adapter import TelegramAdapter
 
 
 class CustomerService(ProfileService):
@@ -25,10 +25,11 @@ class CustomerService(ProfileService):
         customer_repository: repository to interacting with storage using customer domain
     """
 
-    def __init__(self, customer_repository: AbstractRepository):
+    def __init__(self, customer_repository: AbstractRepository, adapter: Type['TelegramAdapter']):
         self.user = None
         self.user_type = ProfileType.CUSTOMER.value
         self.customer_repository = customer_repository
+        self.telegram_adapter = adapter
 
     async def get_customers_by_coach_id(self, coach_id: str):
         customers_aggregates = await self.customer_repository.provide_customers_by_coach_id(coach_id)
@@ -58,7 +59,7 @@ class CustomerService(ProfileService):
         customers.extend(archive_customers)
         return customers
 
-    async def register(self, data: UserRegisterIn) -> Customer:
+    async def register(self, **kwargs) -> Customer:
         """
         Temperately customer registration implemented by Coach's invites
         """
@@ -115,8 +116,16 @@ class CustomerService(ProfileService):
         Args:
             params: parameters for customer updating
         """
-        await self.handle_profile_photo(params.pop("photo"))
+        if "photo" in params:
+            await self.handle_profile_photo(params.pop("photo"))
         await self.customer_repository.update(str(self.user.id), **params)
+
+    async def _send_invite(self, customer, message: str):
+        async with self.telegram_adapter() as tlg_session:
+            tlg_session.send_message_to_user(
+                username=customer.username,
+                message=message,
+            )
 
     async def create(self, coach_id: str, **kwargs) -> Customer:
         """
@@ -129,5 +138,7 @@ class CustomerService(ProfileService):
         Returns:
             customer: Customer instance
         """
-        customer = await self.customer_repository.create(coach_id=coach_id, **kwargs)
-        return customer
+        self.user = await self.customer_repository.create(coach_id=coach_id, **kwargs)
+        await self._send_invite(self.user, "Новое сообщение")
+        await self.update(invited_at=datetime.now())
+        return self.user

@@ -1,4 +1,5 @@
 import pytest
+from unittest.mock import patch
 
 from httpx import AsyncClient
 from sqlalchemy import select, delete
@@ -13,8 +14,14 @@ from tests.conftest import (
 )
 
 
+@pytest.fixture
+def mock_send_message_to_user():
+    with patch("src.service.telegram.adapter.TelegramAdapter.send_message_to_user") as mock:
+        yield mock
+
+
 @pytest.mark.asyncio
-async def test_create_customer_successfully(create_user, override_get_db):
+async def test_create_customer_successfully(create_user, override_get_db, mock_send_message_to_user):
     """
     Successfully customer creation
     """
@@ -46,6 +53,12 @@ async def test_create_customer_successfully(create_user, override_get_db):
         )
 
     assert response.status_code == 201
+
+    # we successfully invited customer
+    assert customer.invited_at is not None
+
+    # we successfully called telegram adapter with username from request to server
+    assert mock_send_message_to_user.call_args.kwargs["username"] == customer_data["phone_number"]
 
     if response.status_code == 201:
         await override_get_db.execute(

@@ -2,6 +2,8 @@
 Common dependencies for application
 """
 
+from typing import Type
+
 from fastapi import Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 from sqlalchemy.orm import Session
@@ -31,6 +33,7 @@ from src.service.training import TrainingService
 from src.service.diet import DietService
 from src.service.notifications.notification_service import NotificationService
 from src.service.notifications.push_firebase_notificator import PushFirebaseNotificator
+from src.service.telegram.adapter import TelegramAdapter
 
 
 async def get_db() -> AsyncSession:
@@ -51,11 +54,18 @@ async def provide_coach_service(database: Session = Depends(get_db)) -> CoachSer
     return CoachService(CoachRepository(database))
 
 
-async def provide_customer_service(database: Session = Depends(get_db)) -> CustomerService:
+async def provide_telegram_adapter() -> Type['TelegramAdapter']:
+    return TelegramAdapter
+
+
+async def provide_customer_service(
+        database: Session = Depends(get_db),
+        telegram_adapter: Type['TelegramAdapter'] = Depends(provide_telegram_adapter),
+) -> CustomerService:
     """
     Returns service responsible to interact with Customer domain
     """
-    return CustomerService(CustomerRepository(database))
+    return CustomerService(CustomerRepository(database), telegram_adapter)
 
 
 async def provide_library_service(database: Session = Depends(get_db)) -> LibraryService:
