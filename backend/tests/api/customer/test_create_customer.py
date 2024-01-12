@@ -55,6 +55,10 @@ async def test_create_customer_successfully(create_user, override_get_db, mock_s
     assert response.status_code == 201
 
     # we successfully invited customer
+    customer_in_db = await override_get_db.execute(
+        select(Customer).where(Customer.username == customer_data["phone_number"])
+    )
+    customer = customer_in_db.scalar()
     assert customer.invited_at is not None
 
     # we successfully called telegram adapter with username from request to server
