@@ -96,7 +96,7 @@ async def test_create_customer_not_valid_number(create_user, override_get_db):
 
 
 @pytest.mark.asyncio
-async def test_create_customer_it_already_exists(create_user, override_get_db):
+async def test_create_customer_it_already_exists(create_user, override_get_db, mock_send_message_to_user):
     """
     Failed because of customer with these last_name + first already exists
     """
