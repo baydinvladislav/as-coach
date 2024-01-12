@@ -144,12 +144,17 @@ def validate_password(password: str):
     raise ValueError("Password must be greater than 7 symbols and less than 129 symbols")
 
 
-def generate_random_password(length: int) -> str:
+def generate_random_password(length: int, only_numbers: bool = False) -> str | int:
     """
     Generates a random password of a given length
+
     Args:
        length: length of result password
+       only_numbers: toggle to generate only numbers in password
+
+    Returns:
+        random sequence of symbols
     """
-    letters = string.ascii_letters + string.digits
-    password = "".join(random.choice(letters) for _ in range(length))
+    symbols = string.digits if only_numbers else string.ascii_letters + string.digits
+    password = "".join(random.choice(symbols) for _ in range(length))
     return password

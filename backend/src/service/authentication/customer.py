@@ -120,10 +120,17 @@ class CustomerService(ProfileService):
             await self.handle_profile_photo(params.pop("photo"))
         await self.customer_repository.update(str(self.user.id), **params)
 
-    async def _send_invite(self, customer, message: str):
+    async def _send_invite(self, username: str, message: str) -> None:
+        """
+        Invites customer to application providing One Time Password to first log in
+
+        Args:
+            username: customer's username
+            message: text with invitation and OTP
+        """
         async with self.telegram_adapter() as tlg_session:
             tlg_session.send_message_to_user(
-                username=customer.username,
+                username=username,
                 message=message,
             )
 
@@ -139,6 +146,6 @@ class CustomerService(ProfileService):
             customer: Customer instance
         """
         self.user = await self.customer_repository.create(coach_id=coach_id, **kwargs)
-        await self._send_invite(self.user, "Новое сообщение")
+        await self._send_invite(self.user.username, f"Your OTP is {self.user.password}")
         await self.update(invited_at=datetime.now())
         return self.user
