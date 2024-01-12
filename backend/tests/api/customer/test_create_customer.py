@@ -1,6 +1,5 @@
 import pytest
 
-from unittest.mock import patch
 from httpx import AsyncClient
 from sqlalchemy import select, delete
 
@@ -12,12 +11,6 @@ from tests.conftest import (
     TEST_CUSTOMER_LAST_NAME,
     TEST_CUSTOMER_USERNAME
 )
-
-
-@pytest.fixture
-def mock_send_message_to_user():
-    with patch("src.service.authentication.customer.CustomerService._send_invite") as mock:
-        yield mock
 
 
 @pytest.mark.asyncio

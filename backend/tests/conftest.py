@@ -1,6 +1,9 @@
 import os
 import uuid
 from datetime import date, timedelta
+from unittest.mock import patch
+
+import pytest
 import pytest_asyncio
 
 from sqlalchemy import select
@@ -31,6 +34,12 @@ TEST_CUSTOMER_LAST_NAME = os.getenv("TEST_CUSTOMER_LAST_NAME")
 TEST_CUSTOMER_USERNAME = os.getenv("TEST_CUSTOMER_USERNAME")
 
 TestingSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+
+
+@pytest.fixture
+def mock_send_message_to_user():
+    with patch("src.service.authentication.customer.CustomerService._send_invite") as mock:
+        yield mock
 
 
 @pytest_asyncio.fixture()

@@ -9,7 +9,7 @@ from src.utils import create_access_token
 
 
 @pytest.mark.asyncio
-async def test_get_customers(create_user, override_get_db):
+async def test_get_customers(create_user, override_get_db, mock_send_message_to_user):
     """
     Gets all user's customers
     """
