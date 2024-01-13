@@ -85,6 +85,7 @@ class Customer(Base, BaseModel):
     photo_path = Column("photo_path", String(255), nullable=True)
     email = Column("email", String(100), nullable=True)
     fcm_token = Column("fcm_token", String(255), nullable=True)
+    invited_at = Column("invited_at", DateTime, nullable=True)
 
     def __repr__(self):
         return f"Customer: {self.last_name} {self.first_name}"

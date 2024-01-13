@@ -14,7 +14,7 @@ from tests.conftest import (
 
 
 @pytest.mark.asyncio
-async def test_create_customer_successfully(create_user, override_get_db):
+async def test_create_customer_successfully(create_user, override_get_db, mock_send_message_to_user):
     """
     Successfully customer creation
     """
@@ -46,6 +46,16 @@ async def test_create_customer_successfully(create_user, override_get_db):
         )
 
     assert response.status_code == 201
+
+    # we successfully invited customer
+    customer_in_db = await override_get_db.execute(
+        select(Customer).where(Customer.username == customer_data["phone_number"])
+    )
+    customer = customer_in_db.scalar()
+    assert customer.invited_at is not None
+
+    # we successfully called telegram adapter with username from request to server
+    assert mock_send_message_to_user.call_args.args[0] == customer_data["phone_number"]
 
     if response.status_code == 201:
         await override_get_db.execute(
@@ -79,7 +89,7 @@ async def test_create_customer_not_valid_number(create_user, override_get_db):
 
 
 @pytest.mark.asyncio
-async def test_create_customer_it_already_exists(create_user, override_get_db):
+async def test_create_customer_it_already_exists(create_user, override_get_db, mock_send_message_to_user):
     """
     Failed because of customer with these last_name + first already exists
     """
