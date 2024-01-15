@@ -129,7 +129,7 @@ class CustomerService(ProfileService):
             message: text with invitation and OTP
         """
         async with self.telegram_adapter() as tlg_session:
-            tlg_session.send_message_to_user(
+            await tlg_session.send_message_to_user(
                 username=username,
                 message=message,
             )
