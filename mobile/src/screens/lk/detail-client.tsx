@@ -29,16 +29,16 @@ export const DetailClient = ({ route }: RoutesProps) => {
   const id = (route.params as { id: string })?.id;
 
   const getCustomerInfo = () => {
-      loading.decreaseLoadingStatus();
-      const client = customer.getCustomerById(id);
-      customer.getCustomerPlanById(id).then(plans => {
-        setData({ ...data, ...client, plans });
-      });
-  }
+    loading.decreaseLoadingStatus();
+    const client = customer.getCustomerById(id);
+    customer.getCustomerPlanById(id).then(plans => {
+      setData({ ...data, ...client, plans });
+    });
+  };
 
   useFocusEffect(
     useCallback(() => {
-      getCustomerInfo()
+      getCustomerInfo();
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []),
   );
@@ -65,7 +65,10 @@ export const DetailClient = ({ route }: RoutesProps) => {
       <Circle style={styles.back} onPress={goBack}>
         <ArrowLeftIcon />
       </Circle>
-      <Badge text={t('common.nonePlan')} status={BadgeStatuses.PLAN_NOT_EXISTS} />
+      <Badge
+        text={t('common.nonePlan')}
+        status={BadgeStatuses.PLAN_NOT_EXISTS}
+      />
       <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
         {data.first_name}
       </Text>
