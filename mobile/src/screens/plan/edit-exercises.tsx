@@ -71,7 +71,6 @@ export const EditExercisesScreen = observer(
 
     useFocusEffect(
       useCallback(() => {
-        console.clear();
         setData(
           exercises.map(item => {
             item.superset_id = item?.supersets?.[0];
