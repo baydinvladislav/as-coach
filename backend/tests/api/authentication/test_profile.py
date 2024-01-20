@@ -1,23 +1,14 @@
 import pytest
-from httpx import AsyncClient
 
-from src.utils import create_access_token
-from src.main import app
+from tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
 async def test_get_user_profile(create_user):
     """
-    Success GET user profile
+    Success getting user profile
     """
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = await create_access_token(create_user.username)
-        response = await ac.get(
-            "/api/profiles",
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
+    response = await make_test_http_request("/api/profiles", "get", create_user.username)
 
     assert response.status_code == 200
     assert "id" in response.json()
@@ -27,7 +18,7 @@ async def test_get_user_profile(create_user):
 
 
 @pytest.mark.asyncio
-async def test_post_user_profile(create_user):
+async def test_update_user_profile(create_user):
     """
     Success updating user profile
     """
@@ -40,18 +31,11 @@ async def test_post_user_profile(create_user):
         "email": "example@yandex.ru"
     }
 
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = await create_access_token(create_user.username)
-        response = await ac.post(
-            "/api/profiles",
-            data=update_user_data,
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
-
+    response = await make_test_http_request("/api/profiles", "post", create_user.username, update_user_data)
     assert response.status_code == 200
-    assert response.json()["last_name"] != prev_last_name
-    assert response.json()["last_name"] == update_user_data["last_name"]
-    assert response.json()["email"] == update_user_data["email"]
-    assert response.json()["user_type"] == "coach"
+
+    response_data = response.json()
+    assert response_data["last_name"] != prev_last_name
+    assert response_data["last_name"] == update_user_data["last_name"]
+    assert response_data["email"] == update_user_data["email"]
+    assert response_data["user_type"] == "coach"
