@@ -34,7 +34,12 @@ TEST_CUSTOMER_USERNAME = os.getenv("TEST_CUSTOMER_USERNAME")
 TestingSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 
-async def make_test_http_request(url: str, method: str, username: str = "", body: dict | None = None) -> Response:
+async def make_test_http_request(
+        url: str,
+        method: str,
+        username: str | None = None,
+        data: dict | None = None,
+) -> Response:
     """
     Make tests http request to server,
     has username if test case requires authed user.
@@ -43,7 +48,7 @@ async def make_test_http_request(url: str, method: str, username: str = "", body
         url: testing endpoint
         method: http request method
         username: authed user who makes http request
-        body: http request body
+        data: data sent to server
     """
     headers = {"content-type": "application/x-www-form-urlencoded"}
     if username:
@@ -51,10 +56,15 @@ async def make_test_http_request(url: str, method: str, username: str = "", body
         headers["Authorization"] = f"Bearer {auth_token}"
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        http_method = getattr(ac, method)
-        response = await http_method(url, headers=headers)
+        match method:
+            case "get":
+                response = await ac.get(url, headers=headers)
+            case "post":
+                response = await ac.post(url, headers=headers, data=data)
+            case _:
+                raise ValueError("Unexpected method")
 
-    return response
+        return response
 
 
 @pytest_asyncio.fixture()
