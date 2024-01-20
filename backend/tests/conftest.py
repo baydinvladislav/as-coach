@@ -3,6 +3,7 @@ import uuid
 from datetime import date, timedelta
 import pytest_asyncio
 
+from httpx import AsyncClient, Response
 from sqlalchemy import select
 from sqlalchemy.orm import sessionmaker, selectinload
 from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
@@ -17,7 +18,7 @@ from src import (
     Exercise,
     ExercisesOnTraining
 )
-from src.utils import get_hashed_password, generate_random_password
+from src.utils import get_hashed_password, generate_random_password, create_access_token
 from src.dependencies import get_db
 from src.main import app
 
@@ -31,6 +32,29 @@ TEST_CUSTOMER_LAST_NAME = os.getenv("TEST_CUSTOMER_LAST_NAME")
 TEST_CUSTOMER_USERNAME = os.getenv("TEST_CUSTOMER_USERNAME")
 
 TestingSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+
+
+async def make_test_http_request(url: str, method: str, username: str = "", body: dict | None = None) -> Response:
+    """
+    Make tests http request to server,
+    has username if test case requires authed user.
+
+    Args:
+        url: testing endpoint
+        method: http request method
+        username: authed user who makes http request
+        body: http request body
+    """
+    headers = {"content-type": "application/x-www-form-urlencoded"}
+    if username:
+        auth_token = await create_access_token(username)
+        headers["Authorization"] = f"Bearer {auth_token}"
+
+    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
+        http_method = getattr(ac, method)
+        response = await http_method(url, headers=headers)
+
+    return response
 
 
 @pytest_asyncio.fixture()
