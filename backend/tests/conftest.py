@@ -39,6 +39,7 @@ async def make_test_http_request(
         method: str,
         username: str | None = None,
         data: dict | None = None,
+        json: dict | None = None,
 ) -> Response:
     """
     Make tests http request to server,
@@ -60,7 +61,11 @@ async def make_test_http_request(
             case "get":
                 response = await ac.get(url, headers=headers)
             case "post":
-                response = await ac.post(url, json=data)
+                # TODO: understand why
+                if data:
+                    response = await ac.post(url, data=data)
+                else:
+                    response = await ac.post(url, json=json)
             case _:
                 raise ValueError("Unexpected method")
 
