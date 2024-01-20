@@ -52,10 +52,12 @@ async def make_test_http_request(
         data: data sent to server
         json: data to signup
     """
-    headers = {"content-type": "application/x-www-form-urlencoded"}
+    headers = None
     if username:
         auth_token = await create_access_token(username)
+        headers = dict()
         headers["Authorization"] = f"Bearer {auth_token}"
+        headers["content-type"] = "application/x-www-form-urlencoded"
 
     async with AsyncClient(app=app, base_url="http://as-coach") as ac:
         match method:
