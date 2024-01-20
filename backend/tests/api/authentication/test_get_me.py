@@ -1,8 +1,6 @@
 import pytest
-from httpx import AsyncClient
 
-from src.main import app
-from src.utils import create_access_token
+from tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
@@ -10,14 +8,7 @@ async def test_coach_get_me(create_user, override_get_db):
     """
     Tests that coach can get response from /api/me
     """
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = await create_access_token(create_user.username)
-        response = await ac.get(
-            "/api/me",
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
+    response = await make_test_http_request("/api/me", "get", create_user.username)
 
     assert response.status_code == 200
     assert response.json()["user_type"] == "coach"
