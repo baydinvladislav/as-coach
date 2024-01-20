@@ -65,8 +65,7 @@ async def make_test_http_request(
                 if data:
                     response = await ac.post(url, headers=headers, data=data)
                 else:
-                    # for signup
-                    response = await ac.post(url, json=json)
+                    response = await ac.post(url, headers=headers, json=json)
             case _:
                 raise ValueError("Unexpected method")
 
