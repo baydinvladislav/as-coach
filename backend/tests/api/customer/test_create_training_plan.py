@@ -2,13 +2,11 @@ from datetime import date, timedelta
 import pytest
 from unittest.mock import patch
 
-from httpx import AsyncClient
 from sqlalchemy import select, delete
 from sqlalchemy.orm import selectinload
 
-from src.main import app
 from src import TrainingPlan, MuscleGroup, ExercisesOnTraining
-from src.utils import create_access_token
+from tests.conftest import make_test_http_request
 
 
 @pytest.fixture
@@ -57,15 +55,12 @@ async def test_create_training_plan_successfully(
 
     training_plan_data["trainings"] = trainings
 
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = await create_access_token(create_customer.coach.username)
-        response = await ac.post(
-            f"/api/customers/{create_customer.id}/training_plans",
-            json=training_plan_data,
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
+    response = await make_test_http_request(
+        url=f"/api/customers/{create_customer.id}/training_plans",
+        method="post",
+        username=create_customer.coach.username,
+        json=training_plan_data
+    )
 
     status_code = response.status_code
     assert status_code == 201
@@ -154,15 +149,12 @@ async def test_create_training_plan_with_supersets_successfully(
     training_plan_data["trainings"][1]["exercises"][2]["supersets"].append(first_exercise_id_in_triset)
     training_plan_data["trainings"][1]["exercises"][2]["supersets"].append(second_exercise_id_in_triset)
 
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = await create_access_token(create_customer.coach.username)
-        response = await ac.post(
-            f"/api/customers/{create_customer.id}/training_plans",
-            json=training_plan_data,
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
+    response = await make_test_http_request(
+        url=f"/api/customers/{create_customer.id}/training_plans",
+        method="post",
+        username=create_customer.coach.username,
+        json=training_plan_data
+    )
 
     assert response.status_code == 201
 
@@ -223,16 +215,11 @@ async def test_get_training_plan_with_supersets(
     create_training_exercises,
     override_get_db
 ):
-
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = await create_access_token(create_customer.coach.username)
-        response = await ac.get(
-            f"/api/customers/{create_customer.id}/training_plans/{create_training_plans[0].id}",
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
-
+    response = await make_test_http_request(
+        url=f"/api/customers/{create_customer.id}/training_plans/{create_training_plans[0].id}",
+        method="get",
+        username=create_customer.coach.username,
+    )
     assert response.status_code == 200
 
     chest_training = list(filter(lambda x: x["name"] == "Грудь", response.json()["trainings"]))[0]
