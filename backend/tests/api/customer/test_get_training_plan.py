@@ -19,10 +19,12 @@ async def test_get_all_training_plans(
         f"/api/customers/{create_customer.id}/training_plans", "get", create_customer.coach.username
     )
     assert response.status_code == 200
-    assert len(create_training_plans) == len(response.json())
 
-    first_date_end = datetime.strptime(response.json()[0]["end_date"], "%Y-%m-%d").date()
-    last_date_end = datetime.strptime(response.json()[-1]["end_date"], "%Y-%m-%d").date()
+    response_data = response.json()
+    assert len(create_training_plans) == len(response_data)
+
+    first_date_end = datetime.strptime(response_data[0]["end_date"], "%Y-%m-%d").date()
+    last_date_end = datetime.strptime(response_data[-1]["end_date"], "%Y-%m-%d").date()
     assert first_date_end < last_date_end
 
 
@@ -38,7 +40,9 @@ async def test_get_specified_training_plan(
     """
     training_plan_id = str(create_trainings[0].training_plan_id)
     response = await make_test_http_request(
-        f"/api/customers/{create_customer.id}/training_plans/{training_plan_id}", "get", create_customer.coach.username
+        url=f"/api/customers/{create_customer.id}/training_plans/{training_plan_id}",
+        method="get",
+        username=create_customer.coach.username
     )
     assert response.status_code == 200
     assert response.json()["id"] == training_plan_id
