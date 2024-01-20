@@ -50,6 +50,7 @@ async def make_test_http_request(
         method: http request method
         username: authed user who makes http request
         data: data sent to server
+        json: data to signup
     """
     headers = {"content-type": "application/x-www-form-urlencoded"}
     if username:
@@ -61,10 +62,10 @@ async def make_test_http_request(
             case "get":
                 response = await ac.get(url, headers=headers)
             case "post":
-                # TODO: understand why
                 if data:
-                    response = await ac.post(url, data=data)
+                    response = await ac.post(url, headers=headers, data=data)
                 else:
+                    # for signup
                     response = await ac.post(url, json=json)
             case _:
                 raise ValueError("Unexpected method")
