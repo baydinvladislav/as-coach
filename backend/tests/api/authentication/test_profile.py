@@ -31,7 +31,7 @@ async def test_update_user_profile(create_user):
         "email": "example@yandex.ru"
     }
 
-    response = await make_test_http_request("/api/profiles", "post", create_user.username, update_user_data)
+    response = await make_test_http_request("/api/profiles", "post", create_user.username, data=update_user_data)
     assert response.status_code == 200
 
     response_data = response.json()

@@ -34,7 +34,7 @@ async def test_signup_successfully(override_get_db):
         "fcm_token": "test fcm token value",
     }
 
-    response = await make_test_http_request("/api/signup", "post", data=signup_data)
+    response = await make_test_http_request("/api/signup", "post", json=signup_data)
     assert response.status_code == 201
 
 
@@ -62,7 +62,7 @@ async def test_signup_validation_error(override_get_db):
         "fcm_token": "test token value",
     }
 
-    response = await make_test_http_request("/api/signup", "post", data=not_valid_signup_data)
+    response = await make_test_http_request("/api/signup", "post", json=not_valid_signup_data)
     assert response.status_code == 422
 
 
@@ -90,7 +90,7 @@ async def test_signup_too_short_password(override_get_db):
         "fcm_token": "test token value",
     }
 
-    response = await make_test_http_request("/api/signup", "post", data=not_valid_signup_data)
+    response = await make_test_http_request("/api/signup", "post", json=not_valid_signup_data)
     assert response.status_code == 422
 
 
@@ -106,5 +106,5 @@ async def test_signup_failed_username_already_registered(create_user):
         "fcm_token": "test token value",
     }
 
-    response = await make_test_http_request("/api/signup", "post", data=signup_data)
+    response = await make_test_http_request("/api/signup", "post", json=signup_data)
     assert response.status_code == 400
