@@ -64,6 +64,7 @@ async def make_test_http_request(
                 response = await ac.get(url, headers=headers)
             case "post":
                 if data:
+                    headers["content-type"] = "application/x-www-form-urlencoded"
                     response = await ac.post(url, headers=headers, data=data)
                 else:
                     response = await ac.post(url, headers=headers, json=json)
