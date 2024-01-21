@@ -63,10 +63,8 @@ async def make_test_http_request(
             case "get":
                 response = await ac.get(url, headers=headers)
             case "post":
-                if data:
-                    response = await ac.post(url, headers=headers, data=data)
-                else:
-                    response = await ac.post(url, headers=headers, json=json)
+                kwargs = {"headers": headers, "data": data, "json": json}
+                response = await ac.post(url, **{key: val for key, val in kwargs.items() if val})
             case _:
                 raise ValueError("Unexpected method")
 
