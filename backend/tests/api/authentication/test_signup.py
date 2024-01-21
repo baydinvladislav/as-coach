@@ -4,11 +4,9 @@ from sqlalchemy import select, delete
 
 from src import Coach
 from backend.tests.conftest import (
-    make_test_http_request,
-    TEST_COACH_FIRST_NAME,
-    TEST_COACH_USERNAME,
-    TEST_COACH_PASSWORD
+    make_test_http_request
 )
+from src.config import TEST_COACH_FIRST_NAME, TEST_COACH_USERNAME, TEST_COACH_PASSWORD
 
 
 @pytest.mark.asyncio

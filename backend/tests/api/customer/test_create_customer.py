@@ -4,11 +4,9 @@ from sqlalchemy import select, delete
 
 from src import Customer
 from tests.conftest import (
-    make_test_http_request,
-    TEST_CUSTOMER_FIRST_NAME,
-    TEST_CUSTOMER_LAST_NAME,
-    TEST_CUSTOMER_USERNAME
+    make_test_http_request
 )
+from src.config import TEST_CUSTOMER_FIRST_NAME, TEST_CUSTOMER_LAST_NAME, TEST_CUSTOMER_USERNAME
 
 
 @pytest.mark.asyncio

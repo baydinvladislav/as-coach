@@ -2,10 +2,8 @@ import pytest
 
 from tests.conftest import (
     make_test_http_request,
-    TEST_COACH_FIRST_NAME,
-    TEST_COACH_USERNAME,
-    TEST_COACH_PASSWORD,
 )
+from src.config import TEST_COACH_FIRST_NAME, TEST_COACH_USERNAME, TEST_COACH_PASSWORD
 
 
 @pytest.mark.asyncio
