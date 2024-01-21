@@ -1,11 +1,9 @@
 import pytest
 
-from httpx import AsyncClient
 from sqlalchemy import delete
 
-from src.main import app
 from src import Customer
-from src.utils import create_access_token
+from tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
@@ -34,28 +32,11 @@ async def test_get_customers(create_user, override_get_db):
 
     ids = []
     for customer in customers_data:
-        async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-            auth_token = await create_access_token(user_username)
-            response = await ac.post(
-                "/api/customers",
-                json=customer,
-                headers={
-                    "Authorization": f"Bearer {auth_token}"
-                }
-            )
-
+        response = await make_test_http_request("/api/customers", "post", user_username, json=customer)
         assert response.status_code == 201
         ids.append(response.json()["id"])
 
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = await create_access_token(user_username)
-        response = await ac.get(
-            "/api/customers",
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
-
+    response = await make_test_http_request("/api/customers", "get", user_username)
     assert response.status_code == 200
 
     await override_get_db.execute(
@@ -69,16 +50,9 @@ async def test_get_specific_customer(create_customer, override_get_db):
     """
     Gets specific customer
     """
-
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = await create_access_token(create_customer.coach.username)
-        response = await ac.get(
-            f"/api/customers/{create_customer.id}",
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
-
+    response = await make_test_http_request(
+        f"/api/customers/{create_customer.id}", "get", create_customer.coach.username
+    )
     assert response.status_code == 200
 
     await override_get_db.execute(
@@ -92,14 +66,5 @@ async def test_get_specific_customer_failed_not_valid_uuid(create_user, override
     """
     Failed because client sent is not valid UUID
     """
-
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = await create_access_token(create_user.username)
-        response = await ac.get(
-            f"/api/customers/7a8sdgajksd8asdb",
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
-
+    response = await make_test_http_request(f"/api/customers/7a8sdgajksd8asdb", "get", create_user.username)
     assert response.status_code == 400

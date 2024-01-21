@@ -1,8 +1,6 @@
 import pytest
-from httpx import AsyncClient
 
-from src.main import app
-from src.utils import create_access_token
+from tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
@@ -10,15 +8,7 @@ async def test_customer_get_profile(create_customer, override_get_db):
     """
     Tests that customer can get profile on /api/profiles
     """
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = await create_access_token(create_customer.username)
-        response = await ac.get(
-            "/api/profiles",
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
-
+    response = await make_test_http_request("/api/profiles", "get", create_customer.username)
     assert response.status_code == 200
     assert response.json()["user_type"] == "customer"
 
@@ -28,24 +18,17 @@ async def test_customer_update_profile(create_customer, override_get_db):
     """
     Tests that customer can update profile on /api/profiles
     """
-    updated_profile = {
+    updated_data = {
         "username": create_customer.username,
         "first_name": create_customer.first_name,
         "email": "newemail@gmail.com",
         "last_name": "Petrov"
     }
 
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = await create_access_token(create_customer.username)
-        response = await ac.post(
-            "/api/profiles",
-            data=updated_profile,
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
-
+    response = await make_test_http_request("/api/profiles", "post", create_customer.username, data=updated_data)
     assert response.status_code == 200
-    assert response.json()["email"] == updated_profile["email"]
-    assert response.json()["last_name"] == updated_profile["last_name"]
-    assert response.json()["user_type"] == "customer"
+
+    response_data = response.json()
+    assert response_data["email"] == updated_data["email"]
+    assert response_data["last_name"] == updated_data["last_name"]
+    assert response_data["user_type"] == "customer"

@@ -1,11 +1,9 @@
 import pytest
 
-from httpx import AsyncClient
 from sqlalchemy import select, delete
 
-from src.main import app
 from src import MuscleGroup, Exercise
-from src.utils import create_access_token
+from tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
@@ -25,22 +23,11 @@ async def test_create_exercise_successfully(
         "muscle_group_id": str(muscle_groups.id)
     }
 
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = await create_access_token(create_user.username)
-        response = await ac.post(
-            f"/api/exercises",
-            json=exercise_data,
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
-
+    response = await make_test_http_request(f"/api/exercises", "post", create_user.username, json=exercise_data)
     assert response.status_code == 201
 
     if response.status_code == 201:
         await override_get_db.execute(
-            delete(Exercise).where(
-                Exercise.id == response.json()["id"]
-            )
+            delete(Exercise).where(Exercise.id == response.json()["id"])
         )
         await override_get_db.commit()

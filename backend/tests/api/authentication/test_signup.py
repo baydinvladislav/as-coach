@@ -1,15 +1,12 @@
 import pytest
 
-from httpx import AsyncClient
 from sqlalchemy import select, delete
 
 from src import Coach
-from src.main import app
 from backend.tests.conftest import (
-    TEST_COACH_FIRST_NAME,
-    TEST_COACH_USERNAME,
-    TEST_COACH_PASSWORD
+    make_test_http_request
 )
+from src.config import TEST_COACH_FIRST_NAME, TEST_COACH_USERNAME, TEST_COACH_PASSWORD
 
 
 @pytest.mark.asyncio
@@ -28,16 +25,14 @@ async def test_signup_successfully(override_get_db):
         )
         await override_get_db.commit()
 
-    body = {
+    signup_data = {
         "username": TEST_COACH_USERNAME,
         "password": TEST_COACH_PASSWORD,
         "first_name": TEST_COACH_FIRST_NAME,
-        "fcm_token": "test token value",
+        "fcm_token": "test fcm token value",
     }
 
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        response = await ac.post("/api/signup", json=body)
-
+    response = await make_test_http_request("/api/signup", "post", json=signup_data)
     assert response.status_code == 201
 
 
@@ -57,7 +52,7 @@ async def test_signup_validation_error(override_get_db):
         )
         await override_get_db.commit()
 
-    body = {
+    not_valid_signup_data = {
         # without "+"
         "username": "79850002233",
         "password": TEST_COACH_PASSWORD,
@@ -65,9 +60,7 @@ async def test_signup_validation_error(override_get_db):
         "fcm_token": "test token value",
     }
 
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        response = await ac.post("/api/signup", json=body)
-
+    response = await make_test_http_request("/api/signup", "post", json=not_valid_signup_data)
     assert response.status_code == 422
 
 
@@ -87,7 +80,7 @@ async def test_signup_too_short_password(override_get_db):
         )
         await override_get_db.commit()
 
-    signup_data = {
+    not_valid_signup_data = {
         "username": TEST_COACH_USERNAME,
         # password is less 8 symbols
         "password": "1234567",
@@ -95,9 +88,7 @@ async def test_signup_too_short_password(override_get_db):
         "fcm_token": "test token value",
     }
 
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        response = await ac.post("/api/signup", json=signup_data)
-
+    response = await make_test_http_request("/api/signup", "post", json=not_valid_signup_data)
     assert response.status_code == 422
 
 
@@ -113,7 +104,5 @@ async def test_signup_failed_username_already_registered(create_user):
         "fcm_token": "test token value",
     }
 
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        response = await ac.post("/api/signup", json=signup_data)
-
+    response = await make_test_http_request("/api/signup", "post", json=signup_data)
     assert response.status_code == 400

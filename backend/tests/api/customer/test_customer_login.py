@@ -1,7 +1,6 @@
 import pytest
-from httpx import AsyncClient
 
-from src.main import app
+from tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
@@ -15,11 +14,5 @@ async def test_customer_login_successfully(create_customer):
         "fcm_token": "test token value",
     }
 
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        response = await ac.post(
-            "/api/login",
-            data=login_data,
-            headers={"content-type": "application/x-www-form-urlencoded"}
-        )
-
+    response = await make_test_http_request("/api/login", "post", create_customer.username, data=login_data)
     assert response.status_code == 200

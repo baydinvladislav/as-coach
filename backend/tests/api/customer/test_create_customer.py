@@ -1,16 +1,12 @@
 import pytest
 
-from httpx import AsyncClient
 from sqlalchemy import select, delete
 
-from src.main import app
 from src import Customer
-from src.utils import create_access_token
 from tests.conftest import (
-    TEST_CUSTOMER_FIRST_NAME,
-    TEST_CUSTOMER_LAST_NAME,
-    TEST_CUSTOMER_USERNAME
+    make_test_http_request
 )
+from src.config import TEST_CUSTOMER_FIRST_NAME, TEST_CUSTOMER_LAST_NAME, TEST_CUSTOMER_USERNAME
 
 
 @pytest.mark.asyncio
@@ -35,16 +31,7 @@ async def test_create_customer_successfully(create_user, override_get_db):
         )
         await override_get_db.commit()
 
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = await create_access_token(create_user.username)
-        response = await ac.post(
-            "/api/customers",
-            json=customer_data,
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
-
+    response = await make_test_http_request("/api/customers", "post", create_user.username, json=customer_data)
     assert response.status_code == 201
 
     if response.status_code == 201:
@@ -65,16 +52,7 @@ async def test_create_customer_not_valid_number(create_user, override_get_db):
         "phone_number": "+9857773322"
     }
 
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = await create_access_token(create_user.username)
-        response = await ac.post(
-            "/api/customers",
-            json=customer_data,
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
-
+    response = await make_test_http_request("/api/customers", "post", create_user.username, json=customer_data)
     assert response.status_code == 422
 
 
@@ -106,28 +84,11 @@ async def test_create_customer_it_already_exists(create_user, override_get_db):
         )
         await override_get_db.commit()
 
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = await create_access_token(create_user.username)
-        response = await ac.post(
-            "/api/customers",
-            json=customer_data,
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
-
+    response = await make_test_http_request("/api/customers", "post", create_user.username, json=customer_data)
     assert response.status_code == 201
 
-    async with AsyncClient(app=app, base_url="http://as-coach") as ac:
-        auth_token = await create_access_token(create_user.username)
-        response = await ac.post(
-            "/api/customers",
-            json=customer_data,
-            headers={
-                "Authorization": f"Bearer {auth_token}"
-            }
-        )
-
+    # already exists
+    response = await make_test_http_request("/api/customers", "post", create_user.username, json=customer_data)
     assert response.status_code == 400
 
     await override_get_db.execute(
