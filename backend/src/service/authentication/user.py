@@ -15,7 +15,7 @@ from src.utils import verify_password
 from src.schemas.authentication import UserRegisterIn
 
 
-class ProfileType(Enum):
+class UserType(Enum):
     """
     Available application roles
     """
@@ -23,7 +23,7 @@ class ProfileType(Enum):
     CUSTOMER = "customer"
 
 
-class ProfileService(ABC):
+class UserService(ABC):
     """
     Abstract class for user services.
 

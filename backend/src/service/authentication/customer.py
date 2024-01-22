@@ -11,11 +11,11 @@ from src import Customer
 from src.utils import verify_password
 from src.repository.abstract import AbstractRepository
 from src.service.authentication.exceptions import NotValidCredentials
-from src.service.authentication.profile import ProfileService, ProfileType
+from src.service.authentication.user import UserService, UserType
 from src.schemas.authentication import UserRegisterIn
 
 
-class CustomerService(ProfileService):
+class CustomerService(UserService):
     """
     Implements logic to interact with Customer domain
 
@@ -27,7 +27,7 @@ class CustomerService(ProfileService):
 
     def __init__(self, customer_repository: AbstractRepository):
         self.user = None
-        self.user_type = ProfileType.CUSTOMER.value
+        self.user_type = UserType.CUSTOMER.value
         self.customer_repository = customer_repository
 
     async def get_customers_by_coach_id(self, coach_id: str):

@@ -13,7 +13,7 @@ from src.utils import validate_uuid
 
 class SQLAlchemyRepository(AbstractRepository):
     """
-    Implements connection to storage
+    Based repository with common CRUD operations
     """
     model = None
 
@@ -61,9 +61,36 @@ class SQLAlchemyRepository(AbstractRepository):
         instances = await self.session.execute(query)
         return instances.scalars().all()
 
+    async def update(self, pk, **params):
+        """
+        Updates instance into storage
+
+        Args:
+             pk: primary key of the instance being updated
+             params: parameters for instance updating
+        """
+        instance = await self.get(pk=pk)
+
+        if not instance:
+            return
+
+        query = (
+            update(self.model).where(
+                self.model.id == str(instance.id)
+            ).values(
+                **params,
+                modified=datetime.now()
+            )
+        )
+
+        await self.session.execute(query)
+        await self.session.commit()
+        await self.session.refresh(instance)
+
     async def filter(self, filters: dict, foreign_keys: list = None, sub_queries: list = None):
         """
-        Forms selection by passed params
+        Common method to build queries.
+        Heirs will probably rewrite this method.
 
         Args:
             filters: dictionary with attributes and values
@@ -92,9 +119,7 @@ class SQLAlchemyRepository(AbstractRepository):
             if sub_queries:
                 for sub_query in sub_queries:
                     f_keys.append(
-                        selectinload(
-                            getattr(self.model, foreign_key)
-                        ).subqueryload(sub_query)
+                        selectinload(getattr(self.model, foreign_key)).subqueryload(sub_query)
                     )
             else:
                 f_keys.append(selectinload(getattr(self.model, foreign_key)))
@@ -105,29 +130,3 @@ class SQLAlchemyRepository(AbstractRepository):
 
         instances = result.scalars().all()
         return instances
-
-    async def update(self, pk, **params):
-        """
-        Updates instance into storage
-
-        Args:
-             pk: primary key of the instance being updated
-             params: parameters for instance updating
-        """
-        instance = await self.get(pk=pk)
-
-        if not instance:
-            return
-
-        query = (
-            update(self.model).where(
-                self.model.id == str(instance.id)
-            ).values(
-                **params,
-                modified=datetime.now()
-            )
-        )
-
-        await self.session.execute(query)
-        await self.session.commit()
-        await self.session.refresh(instance)

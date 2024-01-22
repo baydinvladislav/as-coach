@@ -10,11 +10,11 @@ from src import Coach
 from src.utils import get_hashed_password, verify_password
 from src.repository.abstract import AbstractRepository
 from src.service.authentication.exceptions import NotValidCredentials, UsernameIsTaken
-from src.service.authentication.profile import ProfileService, ProfileType
+from src.service.authentication.user import UserService, UserType
 from src.schemas.authentication import UserRegisterIn
 
 
-class CoachService(ProfileService):
+class CoachService(UserService):
     """
     Implements logic to interact with Coach user role
 
@@ -26,7 +26,7 @@ class CoachService(ProfileService):
 
     def __init__(self, coach_repo: AbstractRepository):
         self.user = None
-        self.user_type = ProfileType.COACH.value
+        self.user_type = UserType.COACH.value
         self.coach_repo = coach_repo
 
     async def register(self, data: UserRegisterIn) -> Coach:
