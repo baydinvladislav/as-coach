@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from src import Coach
 from src.utils import get_hashed_password, verify_password
-from src.repository.coach import CoachRepository
+from src.repository.custom import CoachRepository
 from src.service.authentication.exceptions import NotValidCredentials, UsernameIsTaken
 from src.service.authentication.user import UserService, UserType
 from src.schemas.authentication import UserRegisterIn

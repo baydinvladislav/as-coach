@@ -1,7 +1,3 @@
-"""
-Contains controllers for user functionality
-"""
-
 from datetime import date
 from typing import Optional
 
