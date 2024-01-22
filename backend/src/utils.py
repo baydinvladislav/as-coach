@@ -1,5 +1,5 @@
 """
-Common utils for project
+Move it to the UserService/CoachService/CustomerService
 """
 
 import random

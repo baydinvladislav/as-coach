@@ -10,6 +10,12 @@ class CustomerRepository(SQLAlchemyRepository):
     """
     model = Customer
 
+    async def provide_by_username(self, username: str) -> Customer | None:
+        query = select(self.model).where(self.model.username == username)
+        result = await self.session.execute(query)
+        coach = result.fetchone()
+        return coach
+
     async def provide_customers_by_coach_id(self, coach_id: str):
         query = (
             select(

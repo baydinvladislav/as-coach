@@ -64,6 +64,7 @@ async def register_user(
         "id": str(user.id),
         "first_name": user.first_name,
         "username": user.username,
+        # create_access_token and create_refresh_token to UserService
         "access_token": await create_access_token(str(user.username)),
         "refresh_token": await create_refresh_token(str(user.username))
     }
@@ -101,8 +102,9 @@ async def login_user(
             detail="Empty fields"
         )
 
-    coach = await coach_service.find({"username": form_data.username})
-    customer = await customer_service.find({"username": form_data.username})
+    # TODO: create index on username column
+    coach = await coach_service.get_coach_by_username(username=form_data.username)
+    customer = await customer_service.get_customer_by_username(username=form_data.username)
 
     if coach:
         service = coach_service

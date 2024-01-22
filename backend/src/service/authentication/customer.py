@@ -78,6 +78,14 @@ class CustomerService(UserService):
         customers.extend(archive_customers)
         return customers
 
+    async def get_customer_by_username(self, username: str) -> Customer | None:
+        customer = await self.customer_repository.provide_by_username(username)
+
+        if customer:
+            self.user = customer[0]
+            return self.user
+
+    # deprecating...
     async def find(self, filters: dict) -> Optional[Customer]:
         foreign_keys, sub_queries = ["training_plans"], ["trainings", "diets"]
         customer = await self.customer_repository.filter(

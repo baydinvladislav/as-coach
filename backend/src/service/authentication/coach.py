@@ -18,7 +18,7 @@ class CoachService(UserService):
         self.coach_repository = coach_repository
 
     async def register(self, data: UserRegisterIn) -> Coach:
-        existed_coach = await self.get_by_username(username=data.username)
+        existed_coach = await self.get_coach_by_username(username=data.username)
         if existed_coach:
             raise UsernameIsTaken
 
@@ -43,13 +43,14 @@ class CoachService(UserService):
         await self.handle_profile_photo(params.pop("photo"))
         await self.coach_repository.update(str(self.user.id), **params)
 
-    async def get_by_username(self, username: str) -> Coach | None:
+    async def get_coach_by_username(self, username: str) -> Coach | None:
         coach = await self.coach_repository.provide_by_username(username)
 
         if coach:
             self.user = coach[0]
             return self.user
 
+    # deprecating...
     async def find(self, filters: dict) -> Optional[Coach]:
         foreign_keys, sub_queries = ["customers"], ["training_plans"]
         coach = await self.coach_repository.filter(
