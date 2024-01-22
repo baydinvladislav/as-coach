@@ -61,10 +61,7 @@ async def create_customer(
         )
 
     customer_in_db = await customer_service.find(
-        {
-            "first_name": customer_data.first_name,
-            "last_name": customer_data.last_name
-        }
+        {"first_name": customer_data.first_name, "last_name": customer_data.last_name}
     )
     if customer_in_db:
         raise HTTPException(
@@ -73,10 +70,9 @@ async def create_customer(
                    f"{customer_data.last_name} already exists."
         )
 
-    customer = await customer_service.create(
+    customer = await customer_service.register(
         coach_id=str(user.id),
         username=customer_data.phone_number,
-        # TODO: make it async
         password=generate_random_password(8),
         first_name=customer_data.first_name,
         last_name=customer_data.last_name

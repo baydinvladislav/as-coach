@@ -1,7 +1,3 @@
-"""
-Service for Coach role functionality
-"""
-
 from typing import Optional
 
 from fastapi.security import OAuth2PasswordRequestForm
@@ -15,14 +11,6 @@ from src.schemas.authentication import UserRegisterIn
 
 
 class CoachService(UserService):
-    """
-    Implements logic to interact with Coach user role
-
-    Attributes:
-        user: Coach: coach ORM instance
-        user_type: str: mark as coach role
-        coach_repo: repository to interacting with storage using coach domain
-    """
 
     def __init__(self, coach_repo: AbstractRepository):
         self.user = None
@@ -30,12 +18,6 @@ class CoachService(UserService):
         self.coach_repo = coach_repo
 
     async def register(self, data: UserRegisterIn) -> Coach:
-        """
-        Registers new coach in application
-
-        Args:
-            data: data for registration passed by client
-        """
         is_registered = await self.find({"username": data.username})
         if is_registered:
             raise UsernameIsTaken
@@ -46,16 +28,6 @@ class CoachService(UserService):
         return coach
 
     async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Coach:
-        """
-        Coach logs in with own hashed password.
-
-        Args:
-            form_data: coach credentials passed by client
-            fcm_token: token to send push notification on user device
-
-        Raises:
-            NotValidCredentials: in case if credentials aren't valid
-        """
         password_in_db = str(self.user.password)
         if await verify_password(form_data.password, password_in_db):
 
@@ -68,13 +40,6 @@ class CoachService(UserService):
         raise NotValidCredentials
 
     async def find(self, filters: dict) -> Optional[Coach]:
-        """
-        Provides coach from database in case it is found.
-        Save coach instance to user attr.
-
-        Args:
-            filters: attributes and these values
-        """
         foreign_keys, sub_queries = ["customers"], ["training_plans"]
         coach = await self.coach_repo.filter(
             filters=filters,
@@ -87,11 +52,5 @@ class CoachService(UserService):
             return self.user
 
     async def update(self, **params) -> None:
-        """
-        Updates coach data in database
-
-        Args:
-            params: parameters for coach updating
-        """
         await self.handle_profile_photo(params.pop("photo"))
         await self.coach_repo.update(str(self.user.id), **params)

@@ -1,7 +1,3 @@
-"""
-Service for Customer role functionality
-"""
-
 from typing import Optional
 from datetime import datetime, timedelta
 
@@ -12,18 +8,9 @@ from src.utils import verify_password
 from src.repository.abstract import AbstractRepository
 from src.service.authentication.exceptions import NotValidCredentials
 from src.service.authentication.user import UserService, UserType
-from src.schemas.authentication import UserRegisterIn
 
 
 class CustomerService(UserService):
-    """
-    Implements logic to interact with Customer domain
-
-    Attributes:
-        user: Customer: customer ORM instance
-        user_type: str: mark as customer role
-        customer_repository: repository to interacting with storage using customer domain
-    """
 
     def __init__(self, customer_repository: AbstractRepository):
         self.user = None
@@ -58,11 +45,9 @@ class CustomerService(UserService):
         customers.extend(archive_customers)
         return customers
 
-    async def register(self, data: UserRegisterIn) -> Customer:
-        """
-        Temperately customer registration implemented by Coach's invites
-        """
-        ...
+    async def register(self, coach_id: str, **kwargs) -> Customer:
+        customer = await self.customer_repository.create(coach_id=coach_id, **kwargs)
+        return customer
 
     async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Customer:
         """
@@ -89,13 +74,6 @@ class CustomerService(UserService):
         raise NotValidCredentials
 
     async def find(self, filters: dict) -> Optional[Customer]:
-        """
-        Provides customer from database in case it is found.
-        Save customer instance to user attr.
-
-        Args:
-            filters: attributes and these values
-        """
         foreign_keys, sub_queries = ["training_plans"], ["trainings", "diets"]
         customer = await self.customer_repository.filter(
             filters=filters,
@@ -109,25 +87,9 @@ class CustomerService(UserService):
 
     # TODO: return numbers of updated rows
     async def update(self, **params) -> None:
-        """
-        Updates customer data in database
-
-        Args:
-            params: parameters for customer updating
-        """
         await self.handle_profile_photo(params.pop("photo"))
         await self.customer_repository.update(str(self.user.id), **params)
 
     async def create(self, coach_id: str, **kwargs) -> Customer:
-        """
-        Creates new customer in database
-
-        Args:
-            coach_id: customer's coach
-            kwargs: any required params for customer creating
-
-        Returns:
-            customer: Customer instance
-        """
         customer = await self.customer_repository.create(coach_id=coach_id, **kwargs)
         return customer
