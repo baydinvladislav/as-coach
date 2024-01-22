@@ -18,13 +18,12 @@ class CoachService(UserService):
         self.coach_repository = coach_repository
 
     async def register(self, data: UserRegisterIn) -> Coach:
-        is_registered = await self.find({"username": data.username})
-        if is_registered:
+        existed_coach = await self.get_by_username(username=data.username)
+        if existed_coach:
             raise UsernameIsTaken
 
         data.password = await get_hashed_password(data.password)
         coach = await self.coach_repository.create(**dict(data))
-
         return coach
 
     async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Coach:
@@ -43,6 +42,13 @@ class CoachService(UserService):
     async def update(self, **params) -> None:
         await self.handle_profile_photo(params.pop("photo"))
         await self.coach_repository.update(str(self.user.id), **params)
+
+    async def get_by_username(self, username: str) -> Coach | None:
+        coach = await self.coach_repository.provide_by_username(username)
+
+        if coach:
+            self.user = coach[0]
+            return self.user
 
     async def find(self, filters: dict) -> Optional[Coach]:
         foreign_keys, sub_queries = ["customers"], ["training_plans"]

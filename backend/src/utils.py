@@ -44,6 +44,7 @@ async def validate_uuid(uuid_value: str):
         return False
 
 
+# to UserService
 async def get_hashed_password(password: str) -> str:
     """
     Hashes password
