@@ -13,7 +13,6 @@ from src.config import reuseable_oauth
 from src.utils import decode_jwt_token
 
 from src.repository.custom import (
-    CoachRepository,
     TrainingPlanRepository,
     TrainingRepository,
     DietRepository,
@@ -22,6 +21,7 @@ from src.repository.custom import (
     ExerciseRepository,
     MuscleGroupRepository
 )
+from src.repository.coach import CoachRepository
 from src.repository.customer import CustomerRepository
 from src.service.authentication.coach import CoachService
 from src.service.authentication.customer import CustomerService

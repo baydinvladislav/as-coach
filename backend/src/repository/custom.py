@@ -6,7 +6,6 @@ from sqlalchemy import select, or_
 from sqlalchemy.orm import selectinload
 
 from src import (
-    Coach,
     TrainingPlan,
     Diet,
     DietOnTrainingPlan,
@@ -16,19 +15,6 @@ from src import (
     MuscleGroup
 )
 from src.repository.sqlalchemy import SQLAlchemyRepository
-
-
-class CoachRepository(SQLAlchemyRepository):
-    """
-    Access to Coach storage
-    """
-    model = Coach
-
-    async def provide_by_username(self, username: str) -> Coach | None:
-        query = select(self.model).where(self.model.username == username)
-        result = await self.session.execute(query)
-        coach = result.fetchone()
-        return coach
 
 
 class TrainingPlanRepository(SQLAlchemyRepository):
