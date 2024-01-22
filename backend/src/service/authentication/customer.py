@@ -17,34 +17,6 @@ class CustomerService(UserService):
         self.user_type = UserType.CUSTOMER.value
         self.customer_repository = customer_repository
 
-    async def get_customers_by_coach_id(self, coach_id: str):
-        customers_aggregates = await self.customer_repository.provide_customers_by_coach_id(coach_id)
-
-        customers = []
-        archive_customers = []
-        for customer in customers_aggregates:
-            last_plan_end_date = customer[4]
-
-            if last_plan_end_date and datetime.now().date() - last_plan_end_date > timedelta(days=30):
-                archive_customers.append({
-                    "id": str(customer[0]),
-                    "first_name": customer[1],
-                    "last_name": customer[2],
-                    "phone_number": customer[3],
-                    "last_plan_end_date": last_plan_end_date.strftime("%Y-%m-%d")
-                })
-            else:
-                customers.append({
-                    "id": str(customer[0]),
-                    "first_name": customer[1],
-                    "last_name": customer[2],
-                    "phone_number": customer[3],
-                    "last_plan_end_date": last_plan_end_date.strftime("%Y-%m-%d") if last_plan_end_date else None
-                })
-
-        customers.extend(archive_customers)
-        return customers
-
     async def register(self, coach_id: str, **kwargs) -> Customer:
         customer = await self.customer_repository.create(coach_id=coach_id, **kwargs)
         return customer
@@ -73,6 +45,38 @@ class CustomerService(UserService):
 
         raise NotValidCredentials
 
+    async def update(self, **params) -> None:
+        await self.handle_profile_photo(params.pop("photo"))
+        await self.customer_repository.update(str(self.user.id), **params)
+
+    async def get_customers_by_coach_id(self, coach_id: str):
+        customers_aggregates = await self.customer_repository.provide_customers_by_coach_id(coach_id)
+
+        customers = []
+        archive_customers = []
+        for customer in customers_aggregates:
+            last_plan_end_date = customer[4]
+
+            if last_plan_end_date and datetime.now().date() - last_plan_end_date > timedelta(days=30):
+                archive_customers.append({
+                    "id": str(customer[0]),
+                    "first_name": customer[1],
+                    "last_name": customer[2],
+                    "phone_number": customer[3],
+                    "last_plan_end_date": last_plan_end_date.strftime("%Y-%m-%d")
+                })
+            else:
+                customers.append({
+                    "id": str(customer[0]),
+                    "first_name": customer[1],
+                    "last_name": customer[2],
+                    "phone_number": customer[3],
+                    "last_plan_end_date": last_plan_end_date.strftime("%Y-%m-%d") if last_plan_end_date else None
+                })
+
+        customers.extend(archive_customers)
+        return customers
+
     async def find(self, filters: dict) -> Optional[Customer]:
         foreign_keys, sub_queries = ["training_plans"], ["trainings", "diets"]
         customer = await self.customer_repository.filter(
@@ -84,12 +88,3 @@ class CustomerService(UserService):
         if customer:
             self.user = customer[0]
             return self.user
-
-    # TODO: return numbers of updated rows
-    async def update(self, **params) -> None:
-        await self.handle_profile_photo(params.pop("photo"))
-        await self.customer_repository.update(str(self.user.id), **params)
-
-    async def create(self, coach_id: str, **kwargs) -> Customer:
-        customer = await self.customer_repository.create(coach_id=coach_id, **kwargs)
-        return customer
