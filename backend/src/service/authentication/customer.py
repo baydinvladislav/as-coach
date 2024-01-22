@@ -5,14 +5,14 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from src import Customer
 from src.utils import verify_password
-from src.repository.abstract import AbstractRepository
+from src.repository.customer import CustomerRepository
 from src.service.authentication.exceptions import NotValidCredentials
 from src.service.authentication.user import UserService, UserType
 
 
 class CustomerService(UserService):
 
-    def __init__(self, customer_repository: AbstractRepository):
+    def __init__(self, customer_repository: CustomerRepository):
         self.user = None
         self.user_type = UserType.CUSTOMER.value
         self.customer_repository = customer_repository
@@ -37,6 +37,7 @@ class CustomerService(UserService):
         if password_in_db == form_data.password \
                 or await verify_password(form_data.password, password_in_db):
 
+            # to update User.fcm_token
             if self.user.fcm_token != fcm_token:
                 await self.set_fcm_token(fcm_token)
                 await self.customer_repository.update(str(self.user.id), fcm_token=fcm_token)
