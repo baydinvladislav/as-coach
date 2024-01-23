@@ -26,7 +26,7 @@ class CustomerRepository(BaseRepository):
         customer = result.fetchone()
         return customer
 
-    async def provide_customers_by_coach_id(self, coach_id: str):
+    async def provide_customers_by_coach_id(self, coach_id: str) -> list[Customer]:
         query = (
             select(
                 self.model.id,
