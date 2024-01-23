@@ -5,9 +5,6 @@ from src.repository.base import BaseRepository
 
 
 class CustomerRepository(BaseRepository):
-    """
-    Access to Customer storage
-    """
     model = Customer
 
     async def provide_by_username(self, username: str) -> Customer | None:

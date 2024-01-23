@@ -50,7 +50,14 @@ class CustomerService(UserService):
         await self.handle_profile_photo(params.pop("photo"))
         await self.customer_repository.update(str(self.user.id), **params)
 
-    async def get_customers_by_coach_id(self, coach_id: str):
+    async def get_customer_by_pk(self, pk: str) -> Customer | None:
+        customer = await self.customer_repository.get(pk=pk)
+
+        if customer:
+            self.user = customer
+            return self.user
+
+    async def get_customers_by_coach_id(self, coach_id: str) -> list[Customer]:
         customers_aggregates = await self.customer_repository.provide_customers_by_coach_id(coach_id)
 
         customers = []
