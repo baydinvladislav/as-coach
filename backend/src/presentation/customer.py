@@ -52,7 +52,7 @@ async def create_customer(
     """
     user = user_service.user
 
-    customer_in_db = await customer_service.find({"username": customer_data.phone_number})
+    customer_in_db = await customer_service.get_customer_by_username(username=customer_data.phone_number)
     if customer_data.phone_number and customer_in_db:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
