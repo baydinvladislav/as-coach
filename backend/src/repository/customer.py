@@ -1,10 +1,10 @@
 from sqlalchemy import select, func, nullsfirst, and_
 
 from src import Customer, TrainingPlan
-from src.repository.sqlalchemy import SQLAlchemyRepository
+from src.repository.base import BaseRepository
 
 
-class CustomerRepository(SQLAlchemyRepository):
+class CustomerRepository(BaseRepository):
     """
     Access to Customer storage
     """

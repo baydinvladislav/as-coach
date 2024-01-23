@@ -14,38 +14,38 @@ from src import (
     ExercisesOnTraining,
     MuscleGroup
 )
-from src.repository.sqlalchemy import SQLAlchemyRepository
+from src.repository.base import BaseRepository
 
 
-class TrainingPlanRepository(SQLAlchemyRepository):
+class TrainingPlanRepository(BaseRepository):
     """
     Access to TrainingPlan storage
     """
     model = TrainingPlan
 
 
-class TrainingRepository(SQLAlchemyRepository):
+class TrainingRepository(BaseRepository):
     """
     Access to Training storage
     """
     model = Training
 
 
-class DietRepository(SQLAlchemyRepository):
+class DietRepository(BaseRepository):
     """
     Access to Diet storage
     """
     model = Diet
 
 
-class DietOnTrainingPlanRepository(SQLAlchemyRepository):
+class DietOnTrainingPlanRepository(BaseRepository):
     """
     Access to DietOnTrainingPlan storage
     """
     model = DietOnTrainingPlan
 
 
-class ExerciseRepository(SQLAlchemyRepository):
+class ExerciseRepository(BaseRepository):
     """
     Access to Exercise storage
     """
@@ -75,7 +75,7 @@ class ExerciseRepository(SQLAlchemyRepository):
         return instances
 
 
-class ExercisesOnTrainingRepository(SQLAlchemyRepository):
+class ExercisesOnTrainingRepository(BaseRepository):
     """
     Access to ExercisesOnTraining storage
     """
@@ -92,7 +92,7 @@ class ExercisesOnTrainingRepository(SQLAlchemyRepository):
         return instances
 
 
-class MuscleGroupRepository(SQLAlchemyRepository):
+class MuscleGroupRepository(BaseRepository):
     """
     Access to MuscleGroup storage
     """

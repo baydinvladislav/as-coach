@@ -1,10 +1,10 @@
 from sqlalchemy import select
 
 from src import Coach
-from src.repository.sqlalchemy import SQLAlchemyRepository
+from src.repository.base import BaseRepository
 
 
-class CoachRepository(SQLAlchemyRepository):
+class CoachRepository(BaseRepository):
     """
     Access to Coach storage
     """
