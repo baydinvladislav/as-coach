@@ -295,7 +295,7 @@ async def get_training_plan(
     Raise:
         HTTPException: 404 when customer or training plan are not found
     """
-    customer = await customer_service.find({"id": customer_id})
+    customer = await customer_service.get_customer_by_pk(pk=customer_id)
     if customer is None:
         raise HTTPException(
             status_code=404,
