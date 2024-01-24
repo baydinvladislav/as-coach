@@ -1,4 +1,5 @@
 from sqlalchemy import select, func, nullsfirst, and_
+from sqlalchemy.orm import selectinload
 
 from src import Customer, TrainingPlan
 from src.repository.base import BaseRepository
@@ -6,6 +7,19 @@ from src.repository.base import BaseRepository
 
 class CustomerRepository(BaseRepository):
     model = Customer
+
+    async def provide_by_pk(self, pk: str) -> Customer | None:
+        """So far not used because we have many sub queries"""
+        query = select(self.model).where(
+            self.model.id == pk
+        ).options(
+            selectinload(Customer.training_plans).subqueryload(TrainingPlan.trainings),
+            selectinload(Customer.training_plans).subqueryload(TrainingPlan.diets)
+        )
+
+        result = await self.session.execute(query)
+        customer = result.scalar_one_or_none()
+        return customer
 
     async def provide_by_username(self, username: str) -> Customer | None:
         query = select(self.model).where(self.model.username == username)
