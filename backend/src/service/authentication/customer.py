@@ -51,7 +51,7 @@ class CustomerService(UserService):
         await self.customer_repository.update(str(self.user.id), **params)
 
     async def get_customer_by_pk(self, pk: str) -> Customer | None:
-        customer = await self.customer_repository.get(pk=pk)
+        customer = await self.customer_repository.provide_by_pk(pk=pk)
 
         if customer:
             self.user = customer

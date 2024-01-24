@@ -9,7 +9,6 @@ class CustomerRepository(BaseRepository):
     model = Customer
 
     async def provide_by_pk(self, pk: str) -> Customer | None:
-        """So far not used because we have many sub queries"""
         query = select(self.model).where(
             self.model.id == pk
         ).options(
