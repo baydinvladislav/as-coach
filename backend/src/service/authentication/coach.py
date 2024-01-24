@@ -39,10 +39,6 @@ class CoachService(UserService):
 
         raise NotValidCredentials
 
-    async def update(self, **params) -> None:
-        await self.handle_profile_photo(params.pop("photo"))
-        await self.coach_repository.update(str(self.user.id), **params)
-
     async def get_coach_by_username(self, username: str) -> Coach | None:
         coach = await self.coach_repository.provide_by_username(username)
 
@@ -50,15 +46,6 @@ class CoachService(UserService):
             self.user = coach[0]
             return self.user
 
-    # deprecating...
-    async def find(self, filters: dict) -> Optional[Coach]:
-        foreign_keys, sub_queries = ["customers"], ["training_plans"]
-        coach = await self.coach_repository.filter(
-            filters=filters,
-            foreign_keys=foreign_keys,
-            sub_queries=sub_queries
-        )
-
-        if coach:
-            self.user = coach[0]
-            return self.user
+    async def update(self, **params) -> None:
+        await self.handle_profile_photo(params.pop("photo"))
+        await self.coach_repository.update(str(self.user.id), **params)
