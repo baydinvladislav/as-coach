@@ -57,7 +57,7 @@ class CustomerService(UserService):
             self.user = customer
             return self.user
 
-    async def get_customers_by_coach_id(self, coach_id: str) -> list[Customer]:
+    async def get_customers_by_coach_id(self, coach_id: str) -> list[dict[str, str]]:
         customers_aggregates = await self.customer_repository.provide_customers_by_coach_id(coach_id)
 
         customers = []
