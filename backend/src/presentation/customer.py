@@ -116,7 +116,8 @@ async def get_customers(
 async def get_customer(
         customer_id: str,
         user_service: CoachService = Depends(provide_user_service),
-        customer_service: CustomerService = Depends(provide_customer_service)
+        customer_service: CustomerService = Depends(provide_customer_service),
+        training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
 ) -> dict:
     """
     Gets specific customer by ID.
@@ -125,6 +126,7 @@ async def get_customer(
         customer_id: str(UUID) of specified customer.
         user_service: service for interacting with profile
         customer_service: service for interacting with customer
+        training_plan_service: service for interacting with customer training plans
 
     Raise:
         HTTPException: 400 when passed is not correct UUID as customer_id.
@@ -151,7 +153,7 @@ async def get_customer(
             detail=f"Customer with id {customer_id} not found"
         )
 
-    training_plans = sorted(customer.training_plans, key=lambda x: x.end_date, reverse=True)
+    training_plans = await training_plan_service.get_all_customer_training_plans(str(customer.id))
     return {
         "id": str(customer.id),
         "first_name": customer.first_name,
