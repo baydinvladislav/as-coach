@@ -1,5 +1,3 @@
-from typing import Optional
-
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src import Coach

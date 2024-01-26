@@ -53,3 +53,10 @@ class UserService(ABC):
     async def set_fcm_token(self, fcm_token: str) -> None:
         self.user.fcm_token = fcm_token
         set_attribute(self.user, "fcm_token", fcm_token)
+
+    async def fcm_token_actualize(self, fcm_token: str) -> bool:
+        if self.user.fcm_token is None or self.user.fcm_token != fcm_token:
+            await self.set_fcm_token(fcm_token)
+            return True
+        else:
+            return False
