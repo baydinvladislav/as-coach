@@ -2,18 +2,6 @@ import uuid
 
 from src import ExercisesOnTraining
 from src.repository.abstract import AbstractRepository
-from src.repository.training import TrainingRepository, ExercisesOnTrainingRepository
-
-
-# class TrainingService:
-#     training_repository: TrainingRepository
-#     exercises_on_training_repository: ExercisesOnTrainingRepository
-#
-#     async def create_trainings(self, training_plan_id: str, trainings: list):
-#         ...
-#
-#     async def provide_trainings_by_training_plan(self):
-#         ...
 
 
 class TrainingService:

@@ -1,17 +1,5 @@
 from src import DietOnTrainingPlan
 from src.repository.abstract import AbstractRepository
-from src.repository.diet import DietRepository, DietsInTrainingPlanRepository
-
-
-# class DietService:
-#     diet_repository: DietRepository
-#     diets_in_training_plan_repository: DietsInTrainingPlanRepository
-#
-#     async def create_diet(self):
-#         ...
-#
-#     async def get_diets_by_training_plan_id(self):
-#         ...
 
 
 class DietService:
