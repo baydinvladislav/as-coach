@@ -248,7 +248,7 @@ async def get_all_training_plans(
         customer_service: service for interacting with customer
         training_plan_service: service responsible for training plans creation
     """
-    customer = await customer_service.find({"id": customer_id})
+    customer = await customer_service.get_customer_by_pk(pk=customer_id)
     if customer is None:
         raise HTTPException(
             status_code=404,

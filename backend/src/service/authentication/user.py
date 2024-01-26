@@ -31,9 +31,6 @@ class UserService(ABC):
     async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str):
         raise NotImplementedError
 
-    async def find(self, filters: dict):
-        ...
-
     @abstractmethod
     async def update(self, **params):
         raise NotImplementedError

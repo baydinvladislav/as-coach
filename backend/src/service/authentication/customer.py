@@ -98,16 +98,3 @@ class CustomerService(UserService):
         if customer:
             self.user = customer[0]
             return self.user
-
-    # deprecating...
-    async def find(self, filters: dict) -> Optional[Customer]:
-        foreign_keys, sub_queries = ["training_plans"], ["trainings", "diets"]
-        customer = await self.customer_repository.filter(
-            filters=filters,
-            foreign_keys=foreign_keys,
-            sub_queries=sub_queries
-        )
-
-        if customer:
-            self.user = customer[0]
-            return self.user
