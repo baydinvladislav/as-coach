@@ -188,7 +188,7 @@ async def create_training_plan(
         training_plan_service: service for interacting with customer training plans
         push_notification_service: service responsible to send push notification through FireBase service
     """
-    customer = await customer_service.find(filters={"id": customer_id})
+    customer = await customer_service.get_customer_by_pk(pk=customer_id)
     if not customer:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
