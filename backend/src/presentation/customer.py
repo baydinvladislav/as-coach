@@ -139,7 +139,7 @@ async def get_customer(
             detail="Passed customer_id is not correct UUID value"
         )
 
-    customer = await customer_service.find(filters={"id": customer_id})
+    customer = await customer_service.get_customer_by_pk(pk=customer_id)
 
     if str(customer.coach_id) != str(user_service.user.id):
         raise HTTPException(
