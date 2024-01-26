@@ -1,6 +1,6 @@
-class TrainingPlanRepository:
-    async def create_training_plan(self):
-        ...
+from src import TrainingPlan
+from src.repository.base import BaseRepository
 
-    async def get_training_plan_by_id(self):
-        ...
+
+class TrainingPlanRepository(BaseRepository):
+    model = TrainingPlan

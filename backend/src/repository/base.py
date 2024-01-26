@@ -10,9 +10,10 @@ from src.utils import validate_uuid
 class BaseRepository(AbstractRepository):
     """
     The base repository implements the abstract repository interface.
-    Almost all of its subclasses will use its methods for CUD operations,
-    but will implement their own queries instead of the default query filter() method, however,
-    I will leave the method as it serves as a convenient way of filtering for testing and debugging.
+
+    Almost all of its subclasses will use its methods for CUD operations.
+    but will implement their own methods that perform queries, avoiding the use of filter(),
+    however I'll leave the method in because it serves as a convenient way to filter for testing and debugging.
     """
 
     model = None
@@ -69,15 +70,6 @@ class BaseRepository(AbstractRepository):
         await self.session.refresh(instance)
 
     async def filter(self, filters: dict, foreign_keys: list = None, sub_queries: list = None):
-        """
-        Common method to build queries.
-        Subclasses will probably rewrite this method.
-
-        Args:
-            filters: dictionary with attributes and values
-            foreign_keys: list of foreign keys fields
-            sub_queries: list of fields for sub queries
-        """
         if foreign_keys is None:
             foreign_keys = []
 
