@@ -28,9 +28,7 @@ class CoachService(UserService):
         password_in_db = str(self.user.password)
         if await verify_password(form_data.password, password_in_db):
 
-            # to update User.fcm_token
-            if self.user.fcm_token != fcm_token:
-                await self.set_fcm_token(fcm_token)
+            if self.fcm_token_actualize(fcm_token) is False:
                 await self.coach_repository.update(str(self.user.id), fcm_token=fcm_token)
 
             return self.user
