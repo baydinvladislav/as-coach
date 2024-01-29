@@ -1,12 +1,19 @@
 from abc import ABC, abstractmethod
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import Enum
 
 import shutil
+from jose import jwt
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm.attributes import set_attribute
 
-from src.config import STATIC_DIR
+from src.config import (
+    ACCESS_TOKEN_EXPIRE_MINUTES,
+    REFRESH_TOKEN_EXPIRE_MINUTES,
+    ALGORITHM, JWT_SECRET_KEY,
+    JWT_REFRESH_SECRET_KEY,
+    STATIC_DIR,
+)
 from src.utils import verify_password
 from src.schemas.authentication import UserRegisterIn
 
@@ -34,6 +41,22 @@ class UserService(ABC):
     @abstractmethod
     async def update(self, **params):
         raise NotImplementedError
+
+    async def generate_jwt_token(self, access: bool = False, refresh: bool = False) -> str:
+        if not access and not refresh:
+            raise ValueError("Specify what token type you're creating")
+
+        time_delta = timedelta(
+            minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES) if access else int(REFRESH_TOKEN_EXPIRE_MINUTES)
+        )
+        expires_delta = datetime.utcnow() + time_delta
+        to_encode = {"exp": expires_delta, "sub": str(self.user.username)}
+        encoded_jwt = jwt.encode(
+            to_encode,
+            JWT_SECRET_KEY if access else str(JWT_REFRESH_SECRET_KEY),
+            str(ALGORITHM)
+        )
+        return encoded_jwt
 
     async def handle_profile_photo(self, photo) -> None:
         if photo is not None:

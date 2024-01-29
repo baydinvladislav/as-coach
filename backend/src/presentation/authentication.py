@@ -64,9 +64,8 @@ async def register_user(
         "id": str(user.id),
         "first_name": user.first_name,
         "username": user.username,
-        # create_access_token and create_refresh_token to UserService
-        "access_token": await create_access_token(str(user.username)),
-        "refresh_token": await create_refresh_token(str(user.username))
+        "access_token": await service.generate_jwt_token(access=True),
+        "refresh_token": await service.generate_jwt_token(refresh=True),
     }
 
 
