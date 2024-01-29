@@ -22,6 +22,7 @@ class CoachService(UserService):
 
         data.password = await get_hashed_password(data.password)
         coach = await self.coach_repository.create(**dict(data))
+        self.user = coach
         return coach
 
     async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Coach:
