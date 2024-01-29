@@ -103,3 +103,14 @@ class BaseRepository(AbstractRepository):
 
         instances = result.scalars().all()
         return instances
+
+    async def delete(self, pk, **params) -> str | None:
+        instance = await self.get(pk)
+
+        if not instance:
+            return None
+
+        deleted_instance_pk = str(instance.pk)
+        self.session.delete(instance)
+        await self.session.commit()
+        return deleted_instance_pk

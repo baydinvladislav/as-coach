@@ -56,7 +56,11 @@ class AbstractRepository(ABC):
         """
         raise NotImplementedError
 
-    # TODO: implement soft deletion
-    # def delete(self, pk, **params):
-    #     """"""
-    #     raise NotImplementedError
+    def delete(self, pk):
+        """
+        Deletes instance in storage by primary key
+
+        Args:
+            pk: primary key of the instance being deleted
+        """
+        raise NotImplementedError
