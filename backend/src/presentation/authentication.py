@@ -101,7 +101,6 @@ async def login_user(
             detail="Empty fields"
         )
 
-    # TODO: create index on username column
     coach = await coach_service.get_coach_by_username(username=form_data.username)
     customer = await customer_service.get_customer_by_username(username=form_data.username)
 
