@@ -1,16 +1,42 @@
-from sqlalchemy import select, func, nullsfirst
+from sqlalchemy import select, func, nullsfirst, and_
+from sqlalchemy.orm import selectinload
 
 from src import Customer, TrainingPlan
-from src.repository.sqlalchemy import SQLAlchemyRepository
+from src.repository.base import BaseRepository
 
 
-class CustomerRepository(SQLAlchemyRepository):
-    """
-    Access to Customer storage
-    """
+class CustomerRepository(BaseRepository):
     model = Customer
 
-    async def provide_customers_by_coach_id(self, coach_id: str):
+    async def provide_by_pk(self, pk: str) -> Customer | None:
+        query = select(self.model).where(
+            self.model.id == pk
+        ).options(
+            selectinload(Customer.training_plans).subqueryload(TrainingPlan.trainings),
+            selectinload(Customer.training_plans).subqueryload(TrainingPlan.diets)
+        )
+
+        result = await self.session.execute(query)
+        customer = result.scalar_one_or_none()
+        return customer
+
+    async def provide_by_username(self, username: str) -> Customer | None:
+        query = select(self.model).where(self.model.username == username)
+        result = await self.session.execute(query)
+        customer = result.fetchone()
+        return customer
+
+    async def provide_by_full_name(self, first_name: str, last_name: str) -> Customer | None:
+        query = select(self.model).where(
+            and_(
+                self.model.first_name == first_name, self.model.last_name == last_name
+            )
+        )
+        result = await self.session.execute(query)
+        customer = result.fetchone()
+        return customer
+
+    async def provide_customers_by_coach_id(self, coach_id: str) -> list[Customer]:
         query = (
             select(
                 self.model.id,

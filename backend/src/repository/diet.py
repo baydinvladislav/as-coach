@@ -1,14 +1,10 @@
-class DietRepository:
-    async def create_diet(self):
-        ...
-
-    async def get_diet_by_training_plan_id(self):
-        ...
+from src import Diet, DietOnTrainingPlan
+from src.repository.base import BaseRepository
 
 
-class DietsInTrainingPlanRepository:
-    async def create_diet_in_training_plan(self):
-        ...
+class DietRepository(BaseRepository):
+    model = Diet
 
-    async def get_diet_by_training_plan_id(self):
-        ...
+
+class DietOnTrainingPlanRepository(BaseRepository):
+    model = DietOnTrainingPlan

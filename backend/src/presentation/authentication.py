@@ -1,7 +1,3 @@
-"""
-Contains controllers for user functionality
-"""
-
 from datetime import date
 from typing import Optional
 
@@ -19,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 
 from src.service.authentication.coach import CoachService
 from src.service.authentication.customer import CustomerService
-from src.service.authentication.profile import ProfileService
+from src.service.authentication.user import UserService
 from src.service.authentication.exceptions import NotValidCredentials, UsernameIsTaken
 from src.dependencies import provide_user_service, provide_coach_service, provide_customer_service
 from src.persistence.models import Gender
@@ -68,8 +64,8 @@ async def register_user(
         "id": str(user.id),
         "first_name": user.first_name,
         "username": user.username,
-        "access_token": await create_access_token(str(user.username)),
-        "refresh_token": await create_refresh_token(str(user.username))
+        "access_token": await service.generate_jwt_token(access=True),
+        "refresh_token": await service.generate_jwt_token(refresh=True),
     }
 
 
@@ -105,8 +101,8 @@ async def login_user(
             detail="Empty fields"
         )
 
-    coach = await coach_service.find({"username": form_data.username})
-    customer = await customer_service.find({"username": form_data.username})
+    coach = await coach_service.get_coach_by_username(username=form_data.username)
+    customer = await customer_service.get_customer_by_username(username=form_data.username)
 
     if coach:
         service = coach_service
@@ -130,9 +126,9 @@ async def login_user(
         "id": str(user.id),
         "user_type": service.user_type,
         "first_name": user.first_name,
-        "access_token": await create_access_token(str(user.username)),
-        "refresh_token": await create_refresh_token(str(user.username)),
-        "password_changed": bool(password_context.identify(user.password))
+        "access_token": await service.generate_jwt_token(access=True),
+        "refresh_token": await service.generate_jwt_token(refresh=True),
+        "password_changed": bool(password_context.identify(user.password)),
     }
 
 
@@ -141,7 +137,7 @@ async def login_user(
     status_code=status.HTTP_200_OK,
     summary="Get details of currently logged in user")
 async def get_me(
-        service: ProfileService = Depends(provide_user_service)
+        service: UserService = Depends(provide_user_service)
 ) -> dict:
     """
     Returns short info about current user
@@ -169,7 +165,7 @@ async def get_me(
     response_model=UserProfileOut,
     summary="Get user profile")
 async def get_profile(
-        service: ProfileService = Depends(provide_user_service)
+        service: UserService = Depends(provide_user_service)
 ) -> dict:
     """
     Returns full info about user
@@ -202,7 +198,7 @@ async def get_profile(
     response_model=UserProfileOut,
     status_code=status.HTTP_200_OK)
 async def update_profile(
-        service: ProfileService = Depends(provide_user_service),
+        service: UserService = Depends(provide_user_service),
         first_name: str = Form(...),
         username: str = Form(...),
         last_name: str = Form(None),
@@ -259,7 +255,7 @@ async def update_profile(
     status_code=status.HTTP_200_OK)
 async def confirm_password(
         current_password: str = Form(...),
-        service: ProfileService = Depends(provide_user_service)
+        service: UserService = Depends(provide_user_service)
 ) -> dict:
     """
     Confirms that user knows current password before it is changed.
@@ -285,7 +281,7 @@ async def confirm_password(
     status_code=status.HTTP_200_OK)
 async def change_password(
         new_password: NewUserPassword,
-        service: ProfileService = Depends(provide_user_service)
+        service: UserService = Depends(provide_user_service)
 ) -> dict:
     """
     Changes user password.

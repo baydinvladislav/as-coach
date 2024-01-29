@@ -1,5 +1,5 @@
 """
-Common utils for project
+Move it to the UserService/CoachService/CustomerService
 """
 
 import random
@@ -44,6 +44,7 @@ async def validate_uuid(uuid_value: str):
         return False
 
 
+# to UserService
 async def get_hashed_password(password: str) -> str:
     """
     Hashes password

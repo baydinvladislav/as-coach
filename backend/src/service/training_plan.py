@@ -3,7 +3,6 @@ Contains services related to the Gym functionality
 """
 
 from datetime import datetime
-from dataclasses import dataclass
 
 from src.service.abstract import TrainingManagerInterface
 from src.service.training import TrainingService
@@ -11,27 +10,6 @@ from src.service.diet import DietService
 from src.repository.abstract import AbstractRepository
 from src.schemas.customer import TrainingPlanIn
 from src import TrainingPlan
-
-
-# @dataclass
-# class TrainingPlanService:
-#     """
-#     The service to provide fitness services for customers.
-#
-#     Attributes:
-#         training_plan_repository: repository to store TrainingPlan rows
-#         training_plan_repository: the service responsible for diets operations
-#         training_service: the service responsible for trainings operations
-#     """
-#     training_plan_repository: TrainingPlanRepository
-#     diet_service: DietService
-#     training_service: TrainingService
-#
-#     async def create_training_plan(self, customer_id: str, data: TrainingPlanIn) -> TrainingPlan:
-#         ...
-#
-#     async def find_training_plan(self, filters: dict) -> dict:
-#         ...
 
 
 class TrainingPlanService(TrainingManagerInterface):

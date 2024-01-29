@@ -1,7 +1,3 @@
-"""
-Class for interacting with storage through SQLAlchemy interlayer
-"""
-
 from datetime import datetime
 
 from sqlalchemy import select, update
@@ -11,22 +7,21 @@ from src.repository.abstract import AbstractRepository
 from src.utils import validate_uuid
 
 
-class SQLAlchemyRepository(AbstractRepository):
+class BaseRepository(AbstractRepository):
     """
-    Implements connection to storage
+    The base repository implements the abstract repository interface.
+
+    Almost all of its subclasses will use its methods for CUD operations.
+    but will implement their own methods that perform queries, avoiding the use of filter(),
+    however I'll leave the method in because it serves as a convenient way to filter for testing and debugging.
     """
+
     model = None
 
     def __init__(self, session):
         self.session = session
 
     async def create(self, **params):
-        """
-        Creates new instance in storage
-
-        Args:
-            :params: unknown pairs of attributes and values for new instance
-        """
         invalid_attrs = [
             attribute for attribute, value in params.items()
             if attribute not in self.model.__dict__
@@ -44,9 +39,6 @@ class SQLAlchemyRepository(AbstractRepository):
         return new_instance
 
     async def get(self, pk):
-        """
-        Returns instance by their primary key
-        """
         if not await validate_uuid(pk):
             raise TypeError("Argument is not valid UUID")
 
@@ -54,22 +46,30 @@ class SQLAlchemyRepository(AbstractRepository):
         return instance
 
     async def get_all(self):
-        """
-        Returns all instances from tables
-        """
         query = select(self.model)
         instances = await self.session.execute(query)
         return instances.scalars().all()
 
-    async def filter(self, filters: dict, foreign_keys: list = None, sub_queries: list = None):
-        """
-        Forms selection by passed params
+    async def update(self, pk, **params):
+        instance = await self.get(pk=pk)
 
-        Args:
-            filters: dictionary with attributes and values
-            foreign_keys: list of foreign keys fields
-            sub_queries: list of fields for sub queries
-        """
+        if not instance:
+            return
+
+        query = (
+            update(self.model).where(
+                self.model.id == str(instance.id)
+            ).values(
+                **params,
+                modified=datetime.now()
+            )
+        )
+
+        await self.session.execute(query)
+        await self.session.commit()
+        await self.session.refresh(instance)
+
+    async def filter(self, filters: dict, foreign_keys: list = None, sub_queries: list = None):
         if foreign_keys is None:
             foreign_keys = []
 
@@ -92,9 +92,7 @@ class SQLAlchemyRepository(AbstractRepository):
             if sub_queries:
                 for sub_query in sub_queries:
                     f_keys.append(
-                        selectinload(
-                            getattr(self.model, foreign_key)
-                        ).subqueryload(sub_query)
+                        selectinload(getattr(self.model, foreign_key)).subqueryload(sub_query)
                     )
             else:
                 f_keys.append(selectinload(getattr(self.model, foreign_key)))
@@ -106,28 +104,13 @@ class SQLAlchemyRepository(AbstractRepository):
         instances = result.scalars().all()
         return instances
 
-    async def update(self, pk, **params):
-        """
-        Updates instance into storage
-
-        Args:
-             pk: primary key of the instance being updated
-             params: parameters for instance updating
-        """
-        instance = await self.get(pk=pk)
+    async def delete(self, pk, **params) -> str | None:
+        instance = await self.get(pk)
 
         if not instance:
-            return
+            return None
 
-        query = (
-            update(self.model).where(
-                self.model.id == str(instance.id)
-            ).values(
-                **params,
-                modified=datetime.now()
-            )
-        )
-
-        await self.session.execute(query)
+        deleted_instance_pk = str(instance.pk)
+        self.session.delete(instance)
         await self.session.commit()
-        await self.session.refresh(instance)
+        return deleted_instance_pk

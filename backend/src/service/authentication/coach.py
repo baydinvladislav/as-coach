@@ -1,97 +1,48 @@
-"""
-Service for Coach role functionality
-"""
-
-from typing import Optional
-
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src import Coach
 from src.utils import get_hashed_password, verify_password
-from src.repository.abstract import AbstractRepository
+from src.repository.coach import CoachRepository
 from src.service.authentication.exceptions import NotValidCredentials, UsernameIsTaken
-from src.service.authentication.profile import ProfileService, ProfileType
+from src.service.authentication.user import UserService, UserType
 from src.schemas.authentication import UserRegisterIn
 
 
-class CoachService(ProfileService):
-    """
-    Implements logic to interact with Coach user role
+class CoachService(UserService):
 
-    Attributes:
-        user: Coach: coach ORM instance
-        user_type: str: mark as coach role
-        coach_repo: repository to interacting with storage using coach domain
-    """
-
-    def __init__(self, coach_repo: AbstractRepository):
+    def __init__(self, coach_repository: CoachRepository):
         self.user = None
-        self.user_type = ProfileType.COACH.value
-        self.coach_repo = coach_repo
+        self.user_type = UserType.COACH.value
+        self.coach_repository = coach_repository
 
     async def register(self, data: UserRegisterIn) -> Coach:
-        """
-        Registers new coach in application
-
-        Args:
-            data: data for registration passed by client
-        """
-        is_registered = await self.find({"username": data.username})
-        if is_registered:
+        existed_coach = await self.get_coach_by_username(username=data.username)
+        if existed_coach:
             raise UsernameIsTaken
 
         data.password = await get_hashed_password(data.password)
-        coach = await self.coach_repo.create(**dict(data))
-
+        coach = await self.coach_repository.create(**dict(data))
+        self.user = coach
         return coach
 
     async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Coach:
-        """
-        Coach logs in with own hashed password.
-
-        Args:
-            form_data: coach credentials passed by client
-            fcm_token: token to send push notification on user device
-
-        Raises:
-            NotValidCredentials: in case if credentials aren't valid
-        """
         password_in_db = str(self.user.password)
         if await verify_password(form_data.password, password_in_db):
 
-            if self.user.fcm_token != fcm_token:
-                await self.set_fcm_token(fcm_token)
-                await self.coach_repo.update(str(self.user.id), fcm_token=fcm_token)
+            if self.fcm_token_actualize(fcm_token) is False:
+                await self.coach_repository.update(str(self.user.id), fcm_token=fcm_token)
 
             return self.user
 
         raise NotValidCredentials
 
-    async def find(self, filters: dict) -> Optional[Coach]:
-        """
-        Provides coach from database in case it is found.
-        Save coach instance to user attr.
+    async def update(self, **params) -> None:
+        await self.handle_profile_photo(params.pop("photo"))
+        await self.coach_repository.update(str(self.user.id), **params)
 
-        Args:
-            filters: attributes and these values
-        """
-        foreign_keys, sub_queries = ["customers"], ["training_plans"]
-        coach = await self.coach_repo.filter(
-            filters=filters,
-            foreign_keys=foreign_keys,
-            sub_queries=sub_queries
-        )
+    async def get_coach_by_username(self, username: str) -> Coach | None:
+        coach = await self.coach_repository.provide_by_username(username)
 
         if coach:
             self.user = coach[0]
             return self.user
-
-    async def update(self, **params) -> None:
-        """
-        Updates coach data in database
-
-        Args:
-            params: parameters for coach updating
-        """
-        await self.handle_profile_photo(params.pop("photo"))
-        await self.coach_repo.update(str(self.user.id), **params)

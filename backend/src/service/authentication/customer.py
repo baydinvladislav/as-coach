@@ -1,36 +1,60 @@
-"""
-Service for Customer role functionality
-"""
-
-from typing import Optional
 from datetime import datetime, timedelta
 
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src import Customer
 from src.utils import verify_password
-from src.repository.abstract import AbstractRepository
+from src.repository.customer import CustomerRepository
 from src.service.authentication.exceptions import NotValidCredentials
-from src.service.authentication.profile import ProfileService, ProfileType
-from src.schemas.authentication import UserRegisterIn
+from src.service.authentication.user import UserService, UserType
 
 
-class CustomerService(ProfileService):
-    """
-    Implements logic to interact with Customer domain
+class CustomerService(UserService):
 
-    Attributes:
-        user: Customer: customer ORM instance
-        user_type: str: mark as customer role
-        customer_repository: repository to interacting with storage using customer domain
-    """
-
-    def __init__(self, customer_repository: AbstractRepository):
+    def __init__(self, customer_repository: CustomerRepository):
         self.user = None
-        self.user_type = ProfileType.CUSTOMER.value
+        self.user_type = UserType.CUSTOMER.value
         self.customer_repository = customer_repository
 
-    async def get_customers_by_coach_id(self, coach_id: str):
+    async def register(self, coach_id: str, **kwargs) -> Customer:
+        customer = await self.customer_repository.create(coach_id=coach_id, **kwargs)
+        return customer
+
+    async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Customer:
+        """
+        Customer logs in with default password in the first time after receive invite.
+        After customer changes password it logs in with own hashed password.
+
+        Args:
+            form_data: customer credentials passed by client
+            fcm_token: token to send push notification on user device
+
+        Raises:
+            NotValidCredentials: in case if credentials aren't valid
+        """
+        password_in_db = str(self.user.password)
+        if password_in_db == form_data.password \
+                or await verify_password(form_data.password, password_in_db):
+
+            if self.fcm_token_actualize(fcm_token) is False:
+                await self.customer_repository.update(str(self.user.id), fcm_token=fcm_token)
+
+            return self.user
+
+        raise NotValidCredentials
+
+    async def update(self, **params) -> None:
+        await self.handle_profile_photo(params.pop("photo"))
+        await self.customer_repository.update(str(self.user.id), **params)
+
+    async def get_customer_by_pk(self, pk: str) -> Customer | None:
+        customer = await self.customer_repository.provide_by_pk(pk=pk)
+
+        if customer:
+            self.user = customer
+            return self.user
+
+    async def get_customers_by_coach_id(self, coach_id: str) -> list[dict[str, str]]:
         customers_aggregates = await self.customer_repository.provide_customers_by_coach_id(coach_id)
 
         customers = []
@@ -58,76 +82,16 @@ class CustomerService(ProfileService):
         customers.extend(archive_customers)
         return customers
 
-    async def register(self, data: UserRegisterIn) -> Customer:
-        """
-        Temperately customer registration implemented by Coach's invites
-        """
-        ...
-
-    async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Customer:
-        """
-        Customer logs in with default password in the first time after receive invite.
-        After customer changes password it logs in with own hashed password.
-
-        Args:
-            form_data: customer credentials passed by client
-            fcm_token: token to send push notification on user device
-
-        Raises:
-            NotValidCredentials: in case if credentials aren't valid
-        """
-        password_in_db = str(self.user.password)
-        if password_in_db == form_data.password \
-                or await verify_password(form_data.password, password_in_db):
-
-            if self.user.fcm_token != fcm_token:
-                await self.set_fcm_token(fcm_token)
-                await self.customer_repository.update(str(self.user.id), fcm_token=fcm_token)
-
-            return self.user
-
-        raise NotValidCredentials
-
-    async def find(self, filters: dict) -> Optional[Customer]:
-        """
-        Provides customer from database in case it is found.
-        Save customer instance to user attr.
-
-        Args:
-            filters: attributes and these values
-        """
-        foreign_keys, sub_queries = ["training_plans"], ["trainings", "diets"]
-        customer = await self.customer_repository.filter(
-            filters=filters,
-            foreign_keys=foreign_keys,
-            sub_queries=sub_queries
-        )
+    async def get_customer_by_username(self, username: str) -> Customer | None:
+        customer = await self.customer_repository.provide_by_username(username)
 
         if customer:
             self.user = customer[0]
             return self.user
 
-    # TODO: return numbers of updated rows
-    async def update(self, **params) -> None:
-        """
-        Updates customer data in database
+    async def get_customer_by_full_name(self, first_name: str, last_name: str) -> Customer | None:
+        customer = await self.customer_repository.provide_by_full_name(first_name, last_name)
 
-        Args:
-            params: parameters for customer updating
-        """
-        await self.handle_profile_photo(params.pop("photo"))
-        await self.customer_repository.update(str(self.user.id), **params)
-
-    async def create(self, coach_id: str, **kwargs) -> Customer:
-        """
-        Creates new customer in database
-
-        Args:
-            coach_id: customer's coach
-            kwargs: any required params for customer creating
-
-        Returns:
-            customer: Customer instance
-        """
-        customer = await self.customer_repository.create(coach_id=coach_id, **kwargs)
-        return customer
+        if customer:
+            self.user = customer[0]
+            return self.user

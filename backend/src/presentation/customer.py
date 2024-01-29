@@ -52,7 +52,7 @@ async def create_customer(
     """
     user = user_service.user
 
-    customer_in_db = await customer_service.find({"username": customer_data.phone_number})
+    customer_in_db = await customer_service.get_customer_by_username(username=customer_data.phone_number)
     if customer_data.phone_number and customer_in_db:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -60,11 +60,8 @@ async def create_customer(
                    f"with this phone number already exists."
         )
 
-    customer_in_db = await customer_service.find(
-        {
-            "first_name": customer_data.first_name,
-            "last_name": customer_data.last_name
-        }
+    customer_in_db = await customer_service.get_customer_by_full_name(
+        first_name=customer_data.first_name, last_name=customer_data.last_name
     )
     if customer_in_db:
         raise HTTPException(
@@ -73,10 +70,9 @@ async def create_customer(
                    f"{customer_data.last_name} already exists."
         )
 
-    customer = await customer_service.create(
+    customer = await customer_service.register(
         coach_id=str(user.id),
         username=customer_data.phone_number,
-        # TODO: make it async
         password=generate_random_password(8),
         first_name=customer_data.first_name,
         last_name=customer_data.last_name
@@ -120,7 +116,8 @@ async def get_customers(
 async def get_customer(
         customer_id: str,
         user_service: CoachService = Depends(provide_user_service),
-        customer_service: CustomerService = Depends(provide_customer_service)
+        customer_service: CustomerService = Depends(provide_customer_service),
+        training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
 ) -> dict:
     """
     Gets specific customer by ID.
@@ -129,6 +126,7 @@ async def get_customer(
         customer_id: str(UUID) of specified customer.
         user_service: service for interacting with profile
         customer_service: service for interacting with customer
+        training_plan_service: service for interacting with customer training plans
 
     Raise:
         HTTPException: 400 when passed is not correct UUID as customer_id.
@@ -141,7 +139,7 @@ async def get_customer(
             detail="Passed customer_id is not correct UUID value"
         )
 
-    customer = await customer_service.find(filters={"id": customer_id})
+    customer = await customer_service.get_customer_by_pk(pk=customer_id)
 
     if str(customer.coach_id) != str(user_service.user.id):
         raise HTTPException(
@@ -155,7 +153,7 @@ async def get_customer(
             detail=f"Customer with id {customer_id} not found"
         )
 
-    training_plans = sorted(customer.training_plans, key=lambda x: x.end_date, reverse=True)
+    training_plans = await training_plan_service.get_all_customer_training_plans(str(customer.id))
     return {
         "id": str(customer.id),
         "first_name": customer.first_name,
@@ -190,7 +188,7 @@ async def create_training_plan(
         training_plan_service: service for interacting with customer training plans
         push_notification_service: service responsible to send push notification through FireBase service
     """
-    customer = await customer_service.find(filters={"id": customer_id})
+    customer = await customer_service.get_customer_by_pk(pk=customer_id)
     if not customer:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -250,7 +248,7 @@ async def get_all_training_plans(
         customer_service: service for interacting with customer
         training_plan_service: service responsible for training plans creation
     """
-    customer = await customer_service.find({"id": customer_id})
+    customer = await customer_service.get_customer_by_pk(pk=customer_id)
     if customer is None:
         raise HTTPException(
             status_code=404,
@@ -299,7 +297,7 @@ async def get_training_plan(
     Raise:
         HTTPException: 404 when customer or training plan are not found
     """
-    customer = await customer_service.find({"id": customer_id})
+    customer = await customer_service.get_customer_by_pk(pk=customer_id)
     if customer is None:
         raise HTTPException(
             status_code=404,

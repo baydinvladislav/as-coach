@@ -12,16 +12,11 @@ from src.service.library import LibraryService
 from src.config import reuseable_oauth
 from src.utils import decode_jwt_token
 
-from src.repository.custom import (
-    CoachRepository,
-    TrainingPlanRepository,
-    TrainingRepository,
-    DietRepository,
-    DietOnTrainingPlanRepository,
-    ExercisesOnTrainingRepository,
-    ExerciseRepository,
-    MuscleGroupRepository
-)
+from src.repository.library import ExerciseRepository, MuscleGroupRepository
+from src.repository.diet import DietRepository, DietOnTrainingPlanRepository
+from src.repository.training import TrainingRepository, ExercisesOnTrainingRepository
+from src.repository.training_plan import TrainingPlanRepository
+from src.repository.coach import CoachRepository
 from src.repository.customer import CustomerRepository
 from src.service.authentication.coach import CoachService
 from src.service.authentication.customer import CustomerService
@@ -125,8 +120,8 @@ async def provide_user_service(
     else:
         username = token_data.sub
 
-        coach = await coach_service.find({"username": username})
-        customer = await customer_service.find({"username": username})
+        coach = await coach_service.get_coach_by_username(username=username)
+        customer = await customer_service.get_customer_by_username(username=username)
 
         if coach:
             return coach_service
