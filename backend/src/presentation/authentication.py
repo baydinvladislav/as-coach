@@ -127,9 +127,9 @@ async def login_user(
         "id": str(user.id),
         "user_type": service.user_type,
         "first_name": user.first_name,
-        "access_token": await create_access_token(str(user.username)),
-        "refresh_token": await create_refresh_token(str(user.username)),
-        "password_changed": bool(password_context.identify(user.password))
+        "access_token": await service.generate_jwt_token(access=True),
+        "refresh_token": await service.generate_jwt_token(refresh=True),
+        "password_changed": bool(password_context.identify(user.password)),
     }
 
 
