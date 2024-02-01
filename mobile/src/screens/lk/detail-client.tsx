@@ -13,7 +13,7 @@ import { RoutesProps, Screens, useNavigation } from '@navigation';
 import { useFocusEffect } from '@react-navigation/native';
 import { CustomerProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
-import { Badge, BadgeStatuses, Text } from '@ui';
+import { Badge, Text } from '@ui';
 import { windowHeight, windowWidth } from '@utils';
 
 import { FontSize } from '~types';
@@ -27,6 +27,7 @@ export const DetailClient = ({ route }: RoutesProps) => {
   const { customer, loading } = useStore();
 
   const id = (route.params as { id: string })?.id;
+  const dateEnd = route.params?.dateEnd;
 
   const getCustomerInfo = () => {
     loading.decreaseLoadingStatus();
@@ -65,10 +66,7 @@ export const DetailClient = ({ route }: RoutesProps) => {
       <Circle style={styles.back} onPress={goBack}>
         <ArrowLeftIcon />
       </Circle>
-      <Badge
-        text={t('common.nonePlan')}
-        status={BadgeStatuses.PLAN_NOT_EXISTS}
-      />
+      <Badge dateEnd={dateEnd} />
       <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
         {data.first_name}
       </Text>

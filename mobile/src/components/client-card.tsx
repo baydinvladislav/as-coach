@@ -67,26 +67,15 @@ export const ClientCard: React.FC<ClientCardProps> = ({
     }
   };
 
-  const getText = (days: number) => {
-    if (!days) {
-      return 'Нет плана';
-    } else if (days < 0) {
-      return `Истек ${Math.abs(days)} дней назад`;
-    } else if (days > 0) {
-      return `Истечет через ${days} дней`;
-    } else {
-      return 'Неизвестный промежуток';
-    }
-  };
-
   return (
     <TouchableOpacity onPress={onPress} style={styles.card}>
+      {/* статусную линию связать с бейджом и удалить getStatus и getLineColor из компонента */}
       <View
         style={[styles.line, { backgroundColor: getLineColor(bageStatus) }]}
       />
       <View style={styles.userInfo}>
         <View>
-          <Badge text={getText(toCompletion)} status={bageStatus} />
+          <Badge dateEnd={dateEnd} />
         </View>
         <View style={styles.names}>
           <Text color={colors.white} fontSize={FontSize.S17}>

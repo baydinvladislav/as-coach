@@ -61,11 +61,12 @@ export const LkClients = observer(() => {
     setIsFetching(false);
   };
 
-  const handleNavigateDetailClient = (id: string) => {
+  const handleNavigateDetailClient = (id: string, dateEnd: string) => {
     clearSearch();
     loading.increaseLoadingStatus();
     navigate(Screens.DetailClient, {
       id,
+      dateEnd,
       from: Screens.LkScreen,
     });
   };
@@ -81,7 +82,12 @@ export const LkClients = observer(() => {
       firstName={customer.item.first_name}
       lastName={customer.item.last_name}
       dateEnd={customer.item.last_plan_end_date}
-      onPress={() => handleNavigateDetailClient(customer.item.id)}
+      onPress={() =>
+        handleNavigateDetailClient(
+          customer.item.id,
+          customer.item.last_plan_end_date,
+        )
+      }
     />
   );
 

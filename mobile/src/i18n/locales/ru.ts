@@ -15,6 +15,11 @@ export const ru = {
     hereCanAdd: 'В этом разделе можно\nдобавлять клиентов',
     herePlans: 'Здесь будут ваши планы',
     hereAddPlans: 'В этом разделе тренер\nбудет создавать вам планы',
+    customerStatus: {
+      noPlan: 'Нет плана',
+      expired: 'Истек {days} дней назад',
+      expiring: 'Истечет через {days} дней',
+    },
   },
   detailCustomer: {
     plans: 'Планы',
