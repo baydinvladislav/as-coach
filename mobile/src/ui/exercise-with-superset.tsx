@@ -23,8 +23,7 @@ export const ExerciseWithSuperset = ({ exercises }: TProps) => {
         const supersets = exercise.supersets;
 
         const isFirstInSuperset =
-          (exercise.supersets && supersets?.[0] !== exercise.id) ||
-          (arr[key - 1] && exercise.superset_id === arr[key - 1]?.superset_id);
+          exercise.supersets && supersets?.[0] !== exercise.id;
 
         const isHasLine = isFromServer
           ? isFirstInSuperset

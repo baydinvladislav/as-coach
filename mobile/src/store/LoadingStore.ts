@@ -7,7 +7,7 @@ import {
 } from 'mobx';
 
 export class LoadingStore {
-  @observable loadingStatus = 0;
+  @observable loadingStatus = 1;
 
   constructor() {
     makeObservable(this);

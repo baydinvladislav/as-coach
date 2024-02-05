@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from 'react';
-import { View } from 'react-native';
+import { FlatList, View } from 'react-native';
 
 import styled from 'styled-components';
 
@@ -11,17 +11,26 @@ import { isIOS } from '@utils';
 export const ModalLayout = ({
   children,
   isScroll = true,
-}: PropsWithChildren<{ isScroll?: boolean }>) => {
+  onPress,
+}: PropsWithChildren<{ isScroll?: boolean; onPress: () => void }>) => {
   const Container = isScroll ? Keyboard : View;
 
   return (
-    <Container style={{ flex: 1, paddingTop: isIOS ? TOP_PADDING : 0 }}>
+    <Container
+      onTouchEnd={onPress}
+      style={{ flex: 1, paddingTop: isIOS ? TOP_PADDING : 0 }}
+    >
       {isIOS && (
         <TopBackground>
           <Line />
         </TopBackground>
       )}
-      <Background style={{ paddingTop: isIOS ? 0 : TOP_PADDING }}>
+      <Background
+        style={{ paddingTop: isIOS ? 0 : TOP_PADDING }}
+        onTouchEnd={e => {
+          e.stopPropagation();
+        }}
+      >
         {children}
       </Background>
     </Container>

@@ -26,7 +26,7 @@ export const DetailPlanScreen = ({ route }: RoutesProps) => {
   const isDifference = data?.proteins?.indexOf('/') !== -1;
 
   return (
-    <ModalLayout>
+    <ModalLayout onPress={goBack}>
       {data ? (
         <ViewWithButtons
           style={{ justifyContent: 'space-between' }}

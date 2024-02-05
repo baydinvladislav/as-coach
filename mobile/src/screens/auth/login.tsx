@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native';
 import { AxiosError } from 'axios';
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react';
+import { getFcmToken } from 'src/push/notificationServices';
 import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
@@ -16,7 +17,6 @@ import { UserProps } from '@store';
 import { colors, normVert } from '@theme';
 import { Button, Input, Keyboard, Text } from '@ui';
 import { loginValidationSchema, transformPhone } from '@utils';
-import { getFcmToken } from 'src/push/notificationServices';
 
 import { ButtonType, FontSize } from '~types';
 
@@ -34,7 +34,10 @@ export const LoginScreen = observer(() => {
         username: transformPhone(values.username),
         fcm_token: fcmToken,
       })
-      .then(() => navigate(Screens.LkScreen))
+      .then(() => {
+        navigate(Screens.LkScreen);
+        loading.increaseLoadingStatus();
+      })
       .catch((e: AxiosError<{ detail: string }>) => {
         setErrors({ password: e.response?.data?.detail });
       });
@@ -52,6 +55,7 @@ export const LoginScreen = observer(() => {
   useEffect(() => {
     const fetchFcmToken = async () => {
       const token = await getFcmToken();
+      loading.decreaseLoadingStatus();
       setFcmToken(token);
     };
 

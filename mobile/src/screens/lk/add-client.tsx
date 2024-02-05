@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useFormik } from 'formik';
@@ -21,7 +21,7 @@ export const AddClientScreen = observer(() => {
 
   const isLoading = loading.isLoading;
 
-  const { navigate } = useNavigation();
+  const { navigate, goBack } = useNavigation();
 
   const handleAddClient = (values: Partial<CustomerProps>) => {
     customer
@@ -40,8 +40,12 @@ export const AddClientScreen = observer(() => {
     validateOnBlur: false,
   });
 
+  useEffect(() => {
+    loading.decreaseLoadingStatus();
+  }, []);
+
   return (
-    <ModalLayout>
+    <ModalLayout onPress={goBack}>
       <Text
         style={styles.title}
         color={colors.white}
