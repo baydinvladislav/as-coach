@@ -27,6 +27,8 @@ export const DetailClient = ({ route }: RoutesProps) => {
   const { customer, loading } = useStore();
 
   const id = (route.params as { id: string })?.id;
+  const status = (route.params as { status: BadgeStatuses }).status;
+  const text = (route.params as { text: string })?.text;
 
   const getCustomerInfo = () => {
     loading.decreaseLoadingStatus();
@@ -61,10 +63,7 @@ export const DetailClient = ({ route }: RoutesProps) => {
       <Circle style={styles.back} onPress={goBack}>
         <ArrowLeftIcon />
       </Circle>
-      <Badge
-        text={t('common.nonePlan')}
-        status={BadgeStatuses.PLAN_NOT_EXISTS}
-      />
+      <Badge text={text} status={status} />
       <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
         {data.first_name}
       </Text>
