@@ -20,44 +20,45 @@ type TProps = {
 export const LkEmpty = observer(
   ({ title, description, buttonText, onPress }: TProps) => {
     const { loading } = useStore();
-
     const isLoading = loading.isLoading;
 
-    return isLoading ? (
-      <View style={styles.text}>
-        <Loader />
-      </View>
-    ) : (
-      <>
+    if (isLoading) {
+      return (
         <View style={styles.text}>
-          <Text
-            align="center"
-            style={{ lineHeight: 24, marginBottom: normVert(16) }}
-            fontSize={FontSize.S24}
-            color={colors.black5}
-          >
-            {title}
-          </Text>
-          <Text
-            align="center"
-            style={{ lineHeight: 24, marginBottom: normVert(24) }}
-            fontSize={FontSize.S17}
-            color={colors.black4}
-            weight={FontWeight.Regular}
-          >
-            {description}
-          </Text>
-          {buttonText && (
-            <Button
-              type={ButtonType.TEXT}
-              onPress={onPress}
-              leftIcon={<AddIcon fill={colors.green} />}
-            >
-              {buttonText}
-            </Button>
-          )}
+          <Loader />
         </View>
-      </>
+      );
+    }
+
+    return (
+      <View style={styles.text}>
+        <Text
+          align="center"
+          style={{ lineHeight: 24, marginBottom: normVert(16) }}
+          fontSize={FontSize.S24}
+          color={colors.black5}
+        >
+          {title}
+        </Text>
+        <Text
+          align="center"
+          style={{ lineHeight: 24, marginBottom: normVert(24) }}
+          fontSize={FontSize.S17}
+          color={colors.black4}
+          weight={FontWeight.Regular}
+        >
+          {description}
+        </Text>
+        {buttonText && (
+          <Button
+            type={ButtonType.TEXT}
+            onPress={onPress}
+            leftIcon={<AddIcon fill={colors.green} />}
+          >
+            {buttonText}
+          </Button>
+        )}
+      </View>
     );
   },
 );

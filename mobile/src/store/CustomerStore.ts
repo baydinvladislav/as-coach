@@ -133,7 +133,7 @@ export default class CustomerStore {
   async createCustomer(values: Partial<CustomerProps>) {
     try {
       const { data } = await createCustomer(values);
-      this.setCustomer([...this.customers, data]);
+      this.setCustomer([data, ...this.customers]);
       this.setSearchCustomer(this.customers);
     } catch (e) {
       console.warn(e);

@@ -52,6 +52,7 @@ export const RegistrationScreen = observer(() => {
   useEffect(() => {
     const fetchFcmToken = async () => {
       const token = await getFcmToken();
+      loading.decreaseLoadingStatus();
       setFcmToken(token);
     };
 

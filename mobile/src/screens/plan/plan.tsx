@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react';
-import moment from 'moment';
 
 import { createPlan } from '@api';
 import { useStateCallback } from '@hooks';
@@ -32,7 +31,7 @@ export enum PlanScreens {
 }
 
 export const PlanScreen = observer(({ route }: RoutesProps) => {
-  const { navigate } = useNavigation();
+  const { navigate, goBack } = useNavigation();
   const [currentScreen, setCurrentScreen] = useState(
     PlanScreens.CREATE_DATE_SCREEN,
   );
@@ -186,6 +185,7 @@ export const PlanScreen = observer(({ route }: RoutesProps) => {
 
   return (
     <ModalLayout
+      onPress={goBack}
       isScroll={currentScreen === PlanScreens.CREATE_DATE_SCREEN ? false : true}
     >
       {renderScreen()}

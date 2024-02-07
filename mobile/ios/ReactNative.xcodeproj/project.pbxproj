@@ -35,8 +35,8 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* ReactNativeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReactNativeTests.m; sourceTree = "<group>"; };
 		07079C462B1F865C000388F5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
-		07079C482B20FC4F000388F5 /* ReactNative.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = ReactNative.entitlements; path = ReactNative/ReactNative.entitlements; sourceTree = "<group>"; };
 		07AA3B1B2B3898A70039230F /* ReactNativeRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = ReactNativeRelease.entitlements; path = ReactNative/ReactNativeRelease.entitlements; sourceTree = "<group>"; };
+		07FCD6092B6F9CB0008755DF /* ReactNativeDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = ReactNativeDebug.entitlements; path = ReactNative/ReactNativeDebug.entitlements; sourceTree = "<group>"; };
 		0E0C05CDCB7349E2CF0E372E /* libPods-ReactNative-ReactNativeTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ReactNative-ReactNativeTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07F961A680F5B00A75B9A /* ReactNative.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReactNative.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = ReactNative/AppDelegate.h; sourceTree = "<group>"; };
@@ -96,8 +96,8 @@
 		13B07FAE1A68108700A75B9A /* ReactNative */ = {
 			isa = PBXGroup;
 			children = (
+				07FCD6092B6F9CB0008755DF /* ReactNativeDebug.entitlements */,
 				07AA3B1B2B3898A70039230F /* ReactNativeRelease.entitlements */,
-				07079C482B20FC4F000388F5 /* ReactNative.entitlements */,
 				07079C462B1F865C000388F5 /* GoogleService-Info.plist */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -268,12 +268,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07079C472B1F865C000388F5 /* GoogleService-Info.plist in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				6E8DF9C1EFE5457BA4CED019 /* Ubuntu-Medium.ttf in Resources */,
 				7F2728C21F554BA4B318231D /* Ubuntu-Regular.ttf in Resources */,
 				7625F2EF320543CCB85886DA /* Ubuntu-Bold.ttf in Resources */,
-				07079C472B1F865C000388F5 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -527,7 +527,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = ReactNative/ReactNativeRelease.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ReactNative/ReactNativeDebug.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7ZVHUFXH47;
 				ENABLE_BITCODE = NO;

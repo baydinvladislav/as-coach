@@ -43,7 +43,7 @@ export const ViewWithButtons = ({
   onConfirm,
   confirmText = t('buttons.save'),
   cancelText = t('buttons.cancel'),
-  isLoading,
+  isLoading = false,
   isScroll = false,
   circles: Circles,
   isDraggable,
