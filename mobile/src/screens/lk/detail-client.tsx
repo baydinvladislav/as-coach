@@ -13,7 +13,7 @@ import { RoutesProps, Screens, useNavigation } from '@navigation';
 import { useFocusEffect } from '@react-navigation/native';
 import { CustomerProps } from '@store';
 import { colors, normHor, normVert } from '@theme';
-import { Badge, Text } from '@ui';
+import { Badge, BadgeStatuses, Text } from '@ui';
 import { windowHeight, windowWidth } from '@utils';
 
 import { FontSize } from '~types';
@@ -27,7 +27,8 @@ export const DetailClient = ({ route }: RoutesProps) => {
   const { customer, loading } = useStore();
 
   const id = (route.params as { id: string })?.id;
-  const dateEnd = route.params?.dateEnd;
+  const status = (route.params as { status: BadgeStatuses }).status;
+  const text = (route.params as { text: string })?.text;
 
   const getCustomerInfo = () => {
     loading.decreaseLoadingStatus();
@@ -52,21 +53,17 @@ export const DetailClient = ({ route }: RoutesProps) => {
         paddingTop: TOP_PADDING,
       }}
     >
-      {previousScreen !== Screens.LkScreen && (
-        <>
-          <BackgroundColor />
-          <Background
-            blurRadius={10}
-            source={BackgroundImage}
-            style={{ opacity: 0.3 }}
-          />
-        </>
-      )}
+      <BackgroundColor />
+      <Background
+        blurRadius={10}
+        source={BackgroundImage}
+        style={{ opacity: 0.3 }}
+      />
 
       <Circle style={styles.back} onPress={goBack}>
         <ArrowLeftIcon />
       </Circle>
-      <Badge dateEnd={dateEnd} />
+      <Badge text={text} status={status} />
       <Text style={styles.title} color={colors.white} fontSize={FontSize.S24}>
         {data.first_name}
       </Text>
