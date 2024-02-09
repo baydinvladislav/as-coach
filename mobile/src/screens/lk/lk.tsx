@@ -24,24 +24,24 @@ export const LkScreen = observer(() => {
   const { user, customer } = useStore();
   const { top } = useSafeAreaInsets();
 
-  const isCouch = user.me.user_type === UserType.COACH;
+  const isCoach = user.me.user_type === UserType.COACH;
   const isClient = user.me.user_type === UserType.CLIENT;
 
   const { navigate } = useNavigation();
 
   const [data, setData] = useState<Partial<CustomerProps>>({});
-  
+
   const getCustomerInfo = () => {
     if (isClient) {
       customer.getCustomerPlanById(user.me.id).then(plans => {
         setData({ id: user.me.id, plans });
       });
     }
-  }
+  };
 
   useFocusEffect(
     useCallback(() => {
-      getCustomerInfo()
+      getCustomerInfo();
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isClient]),
   );
@@ -90,7 +90,7 @@ export const LkScreen = observer(() => {
         </TouchableOpacity>
       </Flex>
 
-      {isCouch ? (
+      {isCoach ? (
         <LkClients />
       ) : (
         <Plans

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import moment from 'moment';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { ArrowRightIcon } from '@assets';
@@ -13,69 +12,45 @@ import { FontSize } from '~types';
 type ClientCardProps = {
   firstName: string;
   lastName: string;
-  dateEnd: string;
+  text: string;
+  status: BadgeStatuses;
   onPress: () => void;
 };
 
 export const ClientCard: React.FC<ClientCardProps> = ({
   firstName,
   lastName,
-  dateEnd,
+  text,
+  status,
   onPress,
 }) => {
-  const [bageStatus, setBageStatus] = useState(BadgeStatuses.PLAN_NOT_EXISTS);
-  const [toCompletion, setToCompletion] = useState(0);
+  const [lineColor, setLineColor] = useState('');
+
+  const switchLineColor = (status: BadgeStatuses) => {
+    let color = '';
+
+    if (status === BadgeStatuses.GOOD) {
+      color = colors.green;
+    } else if (status === BadgeStatuses.WARNING) {
+      color = colors.orange;
+    } else if (status === BadgeStatuses.EXPIRED) {
+      color = colors.red;
+    } else if (status === BadgeStatuses.PLAN_NOT_EXISTS) {
+      color = colors.grey4;
+    }
+    setLineColor(color);
+  };
 
   useEffect(() => {
-    setBageStatus(getStatus());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const getStatus = () => {
-    if (!dateEnd) {
-      return BadgeStatuses.PLAN_NOT_EXISTS;
-    } else {
-      const currentDate = moment();
-      const dateCompletion = moment(dateEnd);
-
-      const duration = moment.duration(dateCompletion.diff(currentDate));
-      const differenceInDays = Math.round(duration.asDays());
-      setToCompletion(differenceInDays);
-
-      if (differenceInDays > 3) {
-        return BadgeStatuses.GOOD;
-      } else if (0 < differenceInDays && differenceInDays < 3) {
-        return BadgeStatuses.WARNING;
-      } else {
-        return BadgeStatuses.EXPIRED;
-      }
-    }
-  };
-
-  const getLineColor = (status: string) => {
-    switch (status) {
-      case BadgeStatuses.GOOD:
-        return colors.green;
-      case BadgeStatuses.WARNING:
-        return colors.orange;
-      case BadgeStatuses.EXPIRED:
-        return colors.red;
-      case BadgeStatuses.PLAN_NOT_EXISTS:
-        return colors.grey4;
-      default:
-        return colors.grey4;
-    }
-  };
+    switchLineColor(status);
+  }, [status]);
 
   return (
     <TouchableOpacity onPress={onPress} style={styles.card}>
-      {/* статусную линию связать с бейджом и удалить getStatus и getLineColor из компонента */}
-      <View
-        style={[styles.line, { backgroundColor: getLineColor(bageStatus) }]}
-      />
+      <View style={[styles.line, { backgroundColor: lineColor }]} />
       <View style={styles.userInfo}>
         <View>
-          <Badge dateEnd={dateEnd} />
+          <Badge status={status} text={text} />
         </View>
         <View style={styles.names}>
           <Text color={colors.white} fontSize={FontSize.S17}>
