@@ -5,28 +5,31 @@ import styled from 'styled-components';
 
 import { TOP_PADDING } from '@constants';
 import { colors, normHor, normVert } from '@theme';
-import { Keyboard } from '@ui';
 import { isIOS } from '@utils';
 
 export const ModalLayout = ({
   children,
-  isScroll = true,
-}: PropsWithChildren<{ isScroll?: boolean }>) => {
-  const Container = isScroll ? Keyboard : View;
-
-  return (
-    <Container style={{ flex: 1, paddingTop: isIOS ? TOP_PADDING : 0 }}>
-      {isIOS && (
-        <TopBackground>
-          <Line />
-        </TopBackground>
-      )}
-      <Background style={{ paddingTop: isIOS ? 0 : TOP_PADDING }}>
-        {children}
-      </Background>
-    </Container>
-  );
-};
+  onPress,
+}: PropsWithChildren<{ isScroll?: boolean; onPress: () => void }>) => (
+  <View
+    onTouchEnd={onPress}
+    style={{ flex: 1, paddingTop: isIOS ? TOP_PADDING : 0 }}
+  >
+    {isIOS && (
+      <TopBackground>
+        <Line />
+      </TopBackground>
+    )}
+    <Background
+      style={{ paddingTop: isIOS ? 0 : TOP_PADDING }}
+      onTouchEnd={e => {
+        e.stopPropagation();
+      }}
+    >
+      {children}
+    </Background>
+  </View>
+);
 
 const Background = styled(View)`
   background-color: ${colors.black6};

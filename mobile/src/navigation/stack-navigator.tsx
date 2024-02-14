@@ -69,7 +69,13 @@ export const StackNavigator = observer(() => {
       ) : (
         <Stack.Group>
           <Stack.Screen name={Screens.LkScreen} component={LkScreen} />
-          <Stack.Screen name={Screens.DetailClient} component={DetailClient} />
+          <Stack.Screen
+            options={{
+              animationEnabled: true,
+            }}
+            name={Screens.DetailClient}
+            component={DetailClient}
+          />
           <Stack.Screen
             options={{
               presentation: 'modal',
