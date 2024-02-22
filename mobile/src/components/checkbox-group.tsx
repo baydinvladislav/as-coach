@@ -29,11 +29,17 @@ export const CheckboxGroup = ({
   dayNumber,
   errors,
 }: TProps) => {
-  const handlePress = (id: string) => {
-    setValues(values => addExerciseToPlan(values, dayName, id));
+  const handlePress = (id: string, name: string) => {
+    setValues(values => addExerciseToPlan(values, dayName, id, name));
   };
-  const handleChangeSets = (id: string, e: React.ChangeEvent<any>) => {
-    setValues(values => addExerciseToPlan(values, dayName, id, e.target.value));
+  const handleChangeSets = (
+    id: string,
+    name: string,
+    e: React.ChangeEvent<any>,
+  ) => {
+    setValues(values =>
+      addExerciseToPlan(values, dayName, id, name, e.target.value),
+    );
   };
 
   return (
@@ -55,10 +61,10 @@ export const CheckboxGroup = ({
                 key={item.id}
                 placeholder={item.name}
                 isFirst={key === 0}
-                handlePress={() => handlePress(item.id)}
+                handlePress={() => handlePress(item.id, item.name)}
                 exercise={exercise}
                 errors={errors}
-                handleChangeSets={e => handleChangeSets(item.id, e)}
+                handleChangeSets={e => handleChangeSets(item.id, item.name, e)}
                 index={key}
               />
             );

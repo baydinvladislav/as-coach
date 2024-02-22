@@ -43,10 +43,12 @@ export const modifyPlan = (
     ],
   } as TPlan);
 
+// TODO: refactor the logic too complicated
 export const addExerciseToPlan = (
   values: TPlan,
   dayName: string,
   id: string,
+  name: string,
   value?: string[],
 ) =>
   ({
@@ -63,7 +65,9 @@ export const addExerciseToPlan = (
                 const arr = exercises
                   .map(exercise => {
                     if (exercise.id === id) {
-                      return value ? { ...exercise, sets: value } : undefined;
+                      return value
+                        ? { ...exercise, sets: value, name }
+                        : undefined;
                     } else {
                       return exercise;
                     }
@@ -72,10 +76,10 @@ export const addExerciseToPlan = (
                 if (isExists) {
                   return arr;
                 } else {
-                  return [...arr, { id, sets: ['12', '12', '12'] }];
+                  return [...arr, { id, sets: ['12', '12', '12'], name }];
                 }
               } else {
-                return [{ id, sets: ['12', '12', '12'] }];
+                return [{ id, sets: ['12', '12', '12'], name }];
               }
             })(),
           };

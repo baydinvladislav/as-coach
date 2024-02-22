@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react';
-import moment from 'moment';
 
 import { createPlan } from '@api';
 import { useStateCallback } from '@hooks';

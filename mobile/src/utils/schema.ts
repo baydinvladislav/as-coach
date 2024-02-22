@@ -99,6 +99,7 @@ export const createPlanValidationSchema = () =>
         exercises: yup.array().of(
           yup.object().shape({
             id: yup.string().required(t('errors.required')),
+            name: yup.string().required(t('errors.required')),
             sets: yup.array().of(yup.string().required(t('errors.required'))),
           }),
         ),
