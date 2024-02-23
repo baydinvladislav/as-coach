@@ -1,6 +1,9 @@
+import moment from 'moment';
 import { Asset } from 'react-native-image-picker';
 
 import { URL_ANDROID, URL_IOS } from '@constants';
+import { t } from '@i18n';
+import { BadgeStatuses } from '@ui';
 
 import { TPlan, TPropsExercises } from '~types';
 
@@ -190,4 +193,55 @@ export const renderNumber = (number: string, join: string) => {
   const arr = number.split('/');
 
   return arr.join(join) + ' гр';
+};
+
+const getDifferenceInDays = (dateEnd: string) => {
+  const currentDate = moment();
+  const dateCompletion = moment(dateEnd);
+  const duration = moment.duration(dateCompletion.diff(currentDate));
+  return Math.round(duration.asDays());
+};
+
+const getCustomerStatus = (dateEnd: string) => {
+  if (!dateEnd) {
+    return BadgeStatuses.PLAN_NOT_EXISTS;
+  } else {
+    const differenceInDays = getDifferenceInDays(dateEnd);
+
+    if (differenceInDays > 3) {
+      return BadgeStatuses.GOOD;
+    } else if (0 < differenceInDays && differenceInDays <= 3) {
+      return BadgeStatuses.WARNING;
+    } else {
+      return BadgeStatuses.EXPIRED;
+    }
+  }
+};
+
+const getTextByCustomerStatus = (status: BadgeStatuses, dateEnd: string) => {
+  const differenceInDays = getDifferenceInDays(dateEnd);
+  let text = '';
+
+  if (status === BadgeStatuses.GOOD) {
+    text = t('lk.customerStatus.expiring', {
+      days: differenceInDays,
+    });
+  } else if (status === BadgeStatuses.WARNING) {
+    text = t('lk.customerStatus.expiring', {
+      days: differenceInDays,
+    });
+  } else if (status === BadgeStatuses.EXPIRED) {
+    text = t('lk.customerStatus.expired', {
+      days: Math.abs(differenceInDays),
+    });
+  } else if (status === BadgeStatuses.PLAN_NOT_EXISTS) {
+    text = t('lk.customerStatus.noPlan');
+  }
+  return text;
+};
+
+export const getCustomerStatusAndText = (dateEnd: string) => {
+  const status = getCustomerStatus(dateEnd);
+  const text = getTextByCustomerStatus(status, dateEnd);
+  return { status, text };
 };

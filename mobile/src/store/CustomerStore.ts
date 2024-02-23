@@ -109,6 +109,7 @@ export default class CustomerStore {
   async getCustomerPlanById(id: string) {
     try {
       const { data } = await getCustomerPlan(id);
+      console.log('updated customer list');
       return data;
     } catch (e) {
       console.warn(e);

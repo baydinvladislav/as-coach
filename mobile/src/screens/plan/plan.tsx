@@ -4,11 +4,11 @@ import { useFormik } from 'formik';
 import { observer } from 'mobx-react';
 
 import { createPlan } from '@api';
-import { useStateCallback } from '@hooks';
+import { useStateCallback, useStore } from '@hooks';
 import { RoutesProps, Screens, useNavigation } from '@navigation';
 import { CustomerProps } from '@store';
 import { ModalLayout } from '@ui';
-import { createPlanValidationSchema } from '@utils';
+import { createPlanValidationSchema, getCustomerStatusAndText } from '@utils';
 
 import { TPlan } from '~types';
 
@@ -35,29 +35,44 @@ export const PlanScreen = observer(({ route }: RoutesProps) => {
   const [currentScreen, setCurrentScreen] = useState(
     PlanScreens.CREATE_DATE_SCREEN,
   );
-
   const [isLoading, setIsLoading] = useStateCallback(false);
-
+  const { customer: customerStore } = useStore();
   const [params, setParams] = useState({});
-
   const customer = route.params as CustomerProps;
 
-  const onSubmit = (values: TPlan) => {
-    createPlan(customer.id, {
-      ...values,
-      diets: values.diets
-        .map((diet, index) => {
-          if (index !== 0 && !values.different_time) {
-            return undefined;
-          }
-          return {
-            carbs: Number(diet.carbs),
-            fats: Number(diet.fats),
-            proteins: Number(diet.proteins),
-          };
-        })
-        .filter(item => item),
-    }).then(() => navigate(Screens.DetailClient, { id: customer.id }));
+  const onSubmit = async (values: TPlan) => {
+    try {
+      await createPlan(customer.id, {
+        ...values,
+        diets: values.diets
+          .map((diet, index) => {
+            if (index !== 0 && !values.different_time) {
+              return undefined;
+            }
+            return {
+              carbs: Number(diet.carbs),
+              fats: Number(diet.fats),
+              proteins: Number(diet.proteins),
+            };
+          })
+          .filter(item => item),
+      });
+
+      await customerStore.getCustomers();
+      const updatedCustomer = customerStore.getCustomerById(customer.id);
+      const { text, status } = getCustomerStatusAndText(
+        updatedCustomer.last_plan_end_date,
+      );
+
+      navigate(Screens.DetailClient, {
+        id: customer.id,
+        status,
+        text,
+        from: Screens.PlanScreen,
+      });
+    } catch (error) {
+      console.error('Failed to create plan or fetch customers', error);
+    }
   };
 
   const {
