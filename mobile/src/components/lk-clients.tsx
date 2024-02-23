@@ -3,7 +3,6 @@ import { FlatList, ListRenderItemInfo, StyleSheet, View } from 'react-native';
 
 import { debounce } from 'lodash';
 import { observer } from 'mobx-react';
-import moment from 'moment';
 import styled from 'styled-components';
 
 import { AddIcon } from '@assets';
@@ -83,7 +82,9 @@ export const LkClients = observer(() => {
   };
 
   const renderItem = (customer: ListRenderItemInfo<CustomerProps>) => {
-    const { status, text } = getCustomerStatusAndText(customer.item.last_plan_end_date);
+    const { status, text } = getCustomerStatusAndText(
+      customer.item.last_plan_end_date,
+    );
 
     return (
       <ClientCard
