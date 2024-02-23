@@ -3,7 +3,6 @@ import { FlatList, ListRenderItemInfo, StyleSheet, View } from 'react-native';
 
 import { debounce } from 'lodash';
 import { observer } from 'mobx-react';
-import moment from 'moment';
 import styled from 'styled-components';
 
 import { AddIcon } from '@assets';
@@ -15,6 +14,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { CustomerProps } from '@store';
 import { colors, normVert } from '@theme';
 import { BadgeStatuses, Button, Text } from '@ui';
+import { getCustomerStatusAndText } from '@utils';
 
 import { ButtonType, FontSize, FontWeight } from '~types';
 
@@ -22,53 +22,7 @@ export const LkClients = observer(() => {
   const [searchInputKey, setSearchInputKey] = useState(0);
   const [searchValue, setSearchValue] = useState<string | undefined>();
   const [isFetching, setIsFetching] = useState(false);
-
   const { customer, loading } = useStore();
-
-  const getDifferenceInDays = (dateEnd: string) => {
-    const currentDate = moment();
-    const dateCompletion = moment(dateEnd);
-    const duration = moment.duration(dateCompletion.diff(currentDate));
-    return Math.round(duration.asDays());
-  };
-
-  const getCustomerStatus = (dateEnd: string) => {
-    if (!dateEnd) {
-      return BadgeStatuses.PLAN_NOT_EXISTS;
-    } else {
-      const differenceInDays = getDifferenceInDays(dateEnd);
-
-      if (differenceInDays > 3) {
-        return BadgeStatuses.GOOD;
-      } else if (0 < differenceInDays && differenceInDays <= 3) {
-        return BadgeStatuses.WARNING;
-      } else {
-        return BadgeStatuses.EXPIRED;
-      }
-    }
-  };
-
-  const getTextByCustomerStatus = (status: BadgeStatuses, dateEnd: string) => {
-    const differenceInDays = getDifferenceInDays(dateEnd);
-    let text = '';
-
-    if (status === BadgeStatuses.GOOD) {
-      text = t('lk.customerStatus.expiring', {
-        days: differenceInDays,
-      });
-    } else if (status === BadgeStatuses.WARNING) {
-      text = t('lk.customerStatus.expiring', {
-        days: differenceInDays,
-      });
-    } else if (status === BadgeStatuses.EXPIRED) {
-      text = t('lk.customerStatus.expired', {
-        days: Math.abs(differenceInDays),
-      });
-    } else if (status === BadgeStatuses.PLAN_NOT_EXISTS) {
-      text = t('lk.customerStatus.noPlan');
-    }
-    return text;
-  };
 
   const clearSearch = () => {
     setSearchInputKey(key => key + 1);
@@ -128,9 +82,7 @@ export const LkClients = observer(() => {
   };
 
   const renderItem = (customer: ListRenderItemInfo<CustomerProps>) => {
-    const status = getCustomerStatus(customer.item.last_plan_end_date);
-    const text = getTextByCustomerStatus(
-      status,
+    const { status, text } = getCustomerStatusAndText(
       customer.item.last_plan_end_date,
     );
 
