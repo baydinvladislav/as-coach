@@ -23,9 +23,10 @@ async def test_get_all_training_plans(
     response_data = response.json()
     assert len(create_training_plans) == len(response_data)
 
+    # check descending dates
     first_date_end = datetime.strptime(response_data[0]["end_date"], "%Y-%m-%d").date()
     last_date_end = datetime.strptime(response_data[-1]["end_date"], "%Y-%m-%d").date()
-    assert first_date_end < last_date_end
+    assert first_date_end > last_date_end
 
 
 @pytest.mark.asyncio
