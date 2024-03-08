@@ -6,9 +6,7 @@
 https://www.figma.com/file/l8H9Q4ZCd00mEOV9YPLDlP/Ascoach?type=design&node-id=30-16481&mode=design
 
 <h2>Environments</h2>
-DEV: http://54.167.94.215/docs  <i>development server</i>  
-  
-RC: http://54.208.37.132/docs   <i>Apple release candidate server</i>
+Prod: http://34.229.134.78/docs
 
 <h2>Local Testing</h2>
 
