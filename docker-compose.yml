@@ -14,6 +14,8 @@ services:
       - kafka
     networks:
       - backend-network
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
 
   telegram-support:
     image: baydinvladislav/telegram-support:1.0.1

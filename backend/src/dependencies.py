@@ -20,6 +20,7 @@ from src.repository.coach import CoachRepository
 from src.repository.customer import CustomerRepository
 from src.service.authentication.coach import CoachService
 from src.service.authentication.customer import CustomerService
+from src.supplier.kafka import KafkaSupplier, kafka_settings
 from src.service.authentication.exceptions import TokenExpired, NotValidCredentials
 from src.service.training_plan import TrainingPlanService
 from src.service.training import TrainingService
@@ -50,7 +51,11 @@ async def provide_customer_service(database: Session = Depends(get_db)) -> Custo
     """
     Returns service responsible to interact with Customer domain
     """
-    return CustomerService(CustomerRepository(database))
+    kafka_supplier = KafkaSupplier(
+        topic=kafka_settings.topic, config={"bootstrap.servers": kafka_settings.bootstrap_servers}
+    )
+    customer_repository = CustomerRepository(database)
+    return CustomerService(customer_repository, kafka_supplier=kafka_supplier)
 
 
 async def provide_library_service(database: Session = Depends(get_db)) -> LibraryService:

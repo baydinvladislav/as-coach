@@ -1,23 +1,38 @@
+import json
+import logging
 from datetime import datetime, timedelta
 
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src import Customer
+from src.supplier.kafka import KafkaSupplier
 from src.utils import verify_password
 from src.repository.customer import CustomerRepository
 from src.service.authentication.exceptions import NotValidCredentials
 from src.service.authentication.user import UserService, UserType
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
 
 class CustomerService(UserService):
 
-    def __init__(self, customer_repository: CustomerRepository):
+    def __init__(self, customer_repository: CustomerRepository, kafka_supplier: KafkaSupplier):
         self.user = None
         self.user_type = UserType.CUSTOMER.value
         self.customer_repository = customer_repository
+        self.kafka_supplier = kafka_supplier
 
     async def register(self, coach_id: str, **kwargs) -> Customer:
         customer = await self.customer_repository.create(coach_id=coach_id, **kwargs)
+
+        if "username" in kwargs and kwargs["username"] is not None:
+            message = json.dumps(
+                {"tg_username": kwargs["username"], "message": "Приглашение скачать приложение"}
+            )
+            self.kafka_supplier.send_message(message)
+
+        logger.info(f"Customer created successfully: {customer.first_name} {customer.last_name}")
         return customer
 
     async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Customer:
