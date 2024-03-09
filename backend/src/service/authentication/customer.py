@@ -26,6 +26,8 @@ class CustomerService(UserService):
     async def register(self, coach_id: str, **kwargs) -> Customer:
         customer = await self.customer_repository.create(coach_id=coach_id, **kwargs)
 
+        logger.info(f"We have username to send invite: {kwargs.get('username')}")
+
         if "username" in kwargs and kwargs["username"] is not None:
             message = json.dumps(
                 {"tg_username": kwargs["username"], "message": "Приглашение скачать приложение"}
