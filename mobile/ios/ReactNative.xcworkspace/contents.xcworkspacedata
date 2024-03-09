@@ -10,4 +10,7 @@
    <FileRef
       location = "group:ReactNative">
    </FileRef>
+   <FileRef
+      location = "group:ReactNative.xcodeproj">
+   </FileRef>
 </Workspace>
