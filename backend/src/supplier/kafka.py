@@ -19,6 +19,7 @@ class KafkaSupplier:
     def __init__(self, config, topic):
         self.producer = Producer(**config)
         self.topic = topic
+        logger.info(f"Kafka init")
 
     def acked(self, err, msg):
         if err is not None:
@@ -27,6 +28,7 @@ class KafkaSupplier:
             logger.info(f"Message delivered to {msg.topic()} [{msg.partition()}]")
 
     def send_message(self, message):
+        logger.info(f"Send in {self.topic=} topic {message}")
         self.producer.produce(self.topic, message.encode('utf-8'), callback=self.acked)
         self.producer.poll(0)
 
