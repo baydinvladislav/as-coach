@@ -19,7 +19,7 @@ services:
       - KAFKA_CUSTOMER_INVITE_TOPIC=customer.invitations
 
   telegram-support:
-    image: baydinvladislav/telegram-support:2.0.2
+    image: baydinvladislav/telegram-support:2.0.3
     ports:
       - 8077:8077
     depends_on:
