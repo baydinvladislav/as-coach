@@ -10,8 +10,8 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class KafkaSettings:
-    customer_invite_topic: str = os.getenv("KAFKA_CUSTOMER_INVITE_TOPIC")
-    bootstrap_servers: str = os.getenv("KAFKA_BOOTSTRAP_SERVERS")
+    customer_invite_topic: str = os.getenv("KAFKA_CUSTOMER_INVITE_TOPIC", "")
+    bootstrap_servers: str = os.getenv("KAFKA_BOOTSTRAP_SERVERS", "")
 
 
 class KafkaSupplier:

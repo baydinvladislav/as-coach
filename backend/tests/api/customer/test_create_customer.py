@@ -10,7 +10,7 @@ from src.config import TEST_CUSTOMER_FIRST_NAME, TEST_CUSTOMER_LAST_NAME, TEST_C
 
 
 @pytest.mark.asyncio
-async def test_create_customer_successfully(create_user, override_get_db):
+async def test_create_customer_successfully(create_user, override_get_db, mock_send_kafka_message):
     """
     Successfully customer creation
     """
@@ -39,6 +39,8 @@ async def test_create_customer_successfully(create_user, override_get_db):
             delete(Customer).where(Customer.username == response.json()["id"])
         )
         await override_get_db.commit()
+
+    mock_send_kafka_message.assert_called_once()
 
 
 @pytest.mark.asyncio

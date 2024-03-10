@@ -7,6 +7,7 @@ from src.utils import create_access_token
 from src.dependencies import get_db
 from src.main import app
 from tests.fixtures import *
+from tests.mocks import *
 
 TestingSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
