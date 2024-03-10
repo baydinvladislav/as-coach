@@ -29,6 +29,7 @@ class KafkaSupplier:
     def send_message(self, message):
         self.producer.produce(self.topic, message.encode('utf-8'), callback=self.acked)
         self.producer.poll(0)
+        logger.info(f"Message successfully sent in {self.topic}: {message}")
 
     def close(self):
         self.producer.flush()
