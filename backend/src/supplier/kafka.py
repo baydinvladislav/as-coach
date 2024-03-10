@@ -19,18 +19,16 @@ class KafkaSupplier:
     def __init__(self, config, topic):
         self.producer = Producer(**config)
         self.topic = topic
-        logger.info(f"Kafka init")
 
     def acked(self, err, msg):
         if err is not None:
             logger.warning(f"Failed to deliver message: {msg.value()}: {err}")
         else:
-            logger.info(f"Message delivered to {msg.customer_invite_topic()} [{msg.partition()}]")
+            logger.info(f"Message successfully sent in {msg.customer_invite_topic()} [{msg.partition()}]")
 
     def send_message(self, message):
         self.producer.produce(self.topic, message.encode('utf-8'), callback=self.acked)
         self.producer.poll(0)
-        logger.info(f"Message successfully sent in {self.topic} topic {message=}")
 
     def close(self):
         self.producer.flush()
