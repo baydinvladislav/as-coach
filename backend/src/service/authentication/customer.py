@@ -26,7 +26,8 @@ class CustomerService(UserService):
 
     async def _invite_customer(self, coach_name: str, customer_username: str, customer_password: str):
         message = json.dumps(
-            {"username": customer_username, "password": customer_password, "coach_name": coach_name}
+            {"username": customer_username, "customer_password": customer_password, "coach_name": coach_name},
+            ensure_ascii=False,
         )
         self.kafka_supplier.send_message(message)
 
