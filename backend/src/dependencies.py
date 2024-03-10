@@ -25,8 +25,8 @@ from src.service.authentication.exceptions import TokenExpired, NotValidCredenti
 from src.service.training_plan import TrainingPlanService
 from src.service.training import TrainingService
 from src.service.diet import DietService
-from src.service.notifications.notification_service import NotificationService
-from src.service.notifications.push_firebase_notificator import PushFirebaseNotificator
+from src.service.notification import NotificationService
+from src.supplier.firebase import PushFirebaseNotificator
 
 
 async def get_db() -> AsyncSession:

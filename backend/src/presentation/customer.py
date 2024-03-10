@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 from typing import Union, Any, List
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -22,7 +21,7 @@ from src.dependencies import (
     provide_push_notification_service,
 )
 from src.utils import validate_uuid, generate_random_password
-from src.service.notifications.notification_service import NotificationService
+from src.service.notification import NotificationService
 
 customer_router = APIRouter()
 

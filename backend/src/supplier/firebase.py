@@ -16,7 +16,6 @@ from src.config import (
     FIREBASE_CLIENT_CERT_URL,
     FIREBASE_UNIVERSE_DOMAIN,
 )
-from src.service.notifications.notificator import AbstractNotificator
 
 
 class PushNotificationEmptyDataMessage(Exception):
@@ -41,7 +40,7 @@ class FirebaseConfig:
     universe_domain: str = FIREBASE_UNIVERSE_DOMAIN
 
 
-class PushFirebaseNotificator(AbstractNotificator):
+class PushFirebaseNotificator:
     """
     Implements interface to send push notification
     to user device through Firebase platform
