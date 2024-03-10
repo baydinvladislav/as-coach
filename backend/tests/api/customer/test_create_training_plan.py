@@ -1,18 +1,11 @@
 from datetime import date, timedelta
 import pytest
-from unittest.mock import patch
 
 from sqlalchemy import select, delete
 from sqlalchemy.orm import selectinload
 
 from src import TrainingPlan, MuscleGroup, ExercisesOnTraining
 from tests.conftest import make_test_http_request
-
-
-@pytest.fixture
-def mock_send_notification():
-    with patch("src.service.notifications.notification_service.NotificationService.send_notification") as mock:
-        yield mock
 
 
 @pytest.mark.asyncio

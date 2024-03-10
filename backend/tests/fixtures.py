@@ -5,11 +5,26 @@ import pytest_asyncio
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from src import ExercisesOnTraining, Training, TrainingPlan, MuscleGroup, Exercise, Coach, Customer
+from src import (
+    ExercisesOnTraining,
+    Training,
+    TrainingPlan,
+    MuscleGroup,
+    Exercise,
+    Coach,
+    Customer
+)
 from src.utils import generate_random_password, get_hashed_password
 from tests.conftest import TestingSessionLocal
-from src.config import TEST_COACH_FIRST_NAME, TEST_COACH_LAST_NAME, TEST_COACH_USERNAME, TEST_COACH_PASSWORD, \
-    TEST_CUSTOMER_FIRST_NAME, TEST_CUSTOMER_LAST_NAME, TEST_CUSTOMER_USERNAME
+from src.config import (
+    TEST_COACH_FIRST_NAME,
+    TEST_COACH_LAST_NAME,
+    TEST_COACH_USERNAME,
+    TEST_COACH_PASSWORD,
+    TEST_CUSTOMER_FIRST_NAME,
+    TEST_CUSTOMER_LAST_NAME,
+    TEST_CUSTOMER_USERNAME
+)
 
 
 @pytest_asyncio.fixture()

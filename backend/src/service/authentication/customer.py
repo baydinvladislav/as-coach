@@ -1,23 +1,50 @@
+import json
+import logging
 from datetime import datetime, timedelta
 
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src import Customer
+from src.schemas.customer import CustomerRegistrationData
+from src.supplier.kafka import KafkaSupplier
 from src.utils import verify_password
 from src.repository.customer import CustomerRepository
 from src.service.authentication.exceptions import NotValidCredentials
 from src.service.authentication.user import UserService, UserType
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
 
 class CustomerService(UserService):
 
-    def __init__(self, customer_repository: CustomerRepository):
+    def __init__(self, customer_repository: CustomerRepository, kafka_supplier: KafkaSupplier):
         self.user = None
         self.user_type = UserType.CUSTOMER.value
         self.customer_repository = customer_repository
+        self.kafka_supplier = kafka_supplier
 
-    async def register(self, coach_id: str, **kwargs) -> Customer:
-        customer = await self.customer_repository.create(coach_id=coach_id, **kwargs)
+    async def _invite_customer(self, coach_name: str, customer_username: str, customer_password: str):
+        message = json.dumps(
+            {"username": customer_username, "customer_password": customer_password, "coach_name": coach_name},
+            ensure_ascii=False,
+        )
+        self.kafka_supplier.send_message(message)
+
+    async def register(self, customer_reg_data: CustomerRegistrationData) -> Customer:
+        customer = await self.customer_repository.create(
+            coach_id=customer_reg_data.coach_id,
+            username=customer_reg_data.username,
+            password=customer_reg_data.password,
+            first_name=customer_reg_data.first_name,
+            last_name=customer_reg_data.last_name,
+        )
+
+        if customer_reg_data.username is not None:
+            logger.info(f"Will be invited new customer: {customer_reg_data.username}")
+            await self._invite_customer(customer_reg_data.coach_name, customer.username, customer.password)
+
+        logger.info(f"Customer created successfully: {customer.first_name} {customer.last_name}")
         return customer
 
     async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Customer:
@@ -36,7 +63,7 @@ class CustomerService(UserService):
         if password_in_db == form_data.password \
                 or await verify_password(form_data.password, password_in_db):
 
-            if self.fcm_token_actualize(fcm_token) is False:
+            if await self.fcm_token_actualize(fcm_token) is False:
                 await self.customer_repository.update(str(self.user.id), fcm_token=fcm_token)
 
             return self.user

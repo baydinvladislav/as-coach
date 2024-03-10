@@ -7,7 +7,7 @@ from tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
-async def test_get_customers(create_user, override_get_db):
+async def test_get_customers(create_user, override_get_db, mock_send_kafka_message):
     """
     Gets all user's customers
     """

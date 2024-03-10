@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 from typing import Union, Any, List
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -12,7 +11,8 @@ from src.schemas.customer import (
     CustomerCreateIn,
     TrainingPlanOut,
     TrainingPlanIn,
-    TrainingPlanOutFull
+    TrainingPlanOutFull,
+    CustomerRegistrationData,
 )
 from src.dependencies import (
     provide_customer_service,
@@ -21,7 +21,7 @@ from src.dependencies import (
     provide_push_notification_service,
 )
 from src.utils import validate_uuid, generate_random_password
-from src.service.notifications.notification_service import NotificationService
+from src.service.notification import NotificationService
 
 customer_router = APIRouter()
 
@@ -70,13 +70,16 @@ async def create_customer(
                    f"{customer_data.last_name} already exists."
         )
 
-    customer = await customer_service.register(
+    customer_reg_data = CustomerRegistrationData(
         coach_id=str(user.id),
+        coach_name=user.first_name,
         username=customer_data.phone_number,
-        password=generate_random_password(8),
+        password=generate_random_password(4),
         first_name=customer_data.first_name,
-        last_name=customer_data.last_name
+        last_name=customer_data.last_name,
     )
+
+    customer = await customer_service.register(customer_reg_data)
 
     return {
         "id": str(customer.id),

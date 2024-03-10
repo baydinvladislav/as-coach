@@ -35,6 +35,18 @@ class CustomerOut(CustomerCreateIn, BaseModel):
     last_plan_end_date: Union[str, None]
 
 
+class CustomerRegistrationData(BaseModel):
+    """
+    DB schema before saving
+    """
+    coach_id: str
+    coach_name: str
+    username: str | None
+    password: str
+    first_name: str
+    last_name: str
+
+
 class TrainingPlanIn(BaseModel):
     """
     Income JSON for creating training plan for user

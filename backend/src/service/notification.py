@@ -1,5 +1,5 @@
 import logging
-from src.service.notifications.notificator import AbstractNotificator
+from src.supplier.firebase import PushFirebaseNotificator
 
 logger = logging.getLogger(__name__)
 
@@ -9,7 +9,7 @@ class NotificationService:
     Entrypoint to push notification functionality.
     Uses notificator instance to notify clients
     """
-    def __init__(self, notificator: AbstractNotificator):
+    def __init__(self, notificator: PushFirebaseNotificator):
         self.push_notificator = notificator
 
     async def send_notification(self, recipient_id: str, recipient_data: dict[str, str]):
