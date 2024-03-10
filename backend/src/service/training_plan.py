@@ -7,7 +7,7 @@ from datetime import datetime
 from src.service.abstract import TrainingManagerInterface
 from src.service.training import TrainingService
 from src.service.diet import DietService
-from src.repository.abstract import AbstractRepository
+from src.repository.training_plan import TrainingPlanRepository
 from src.schemas.customer import TrainingPlanIn
 from src import TrainingPlan
 
@@ -24,7 +24,7 @@ class TrainingPlanService(TrainingManagerInterface):
 
     def __init__(
             self,
-            repositories: dict[str, AbstractRepository],
+            repositories: dict[str, TrainingPlanRepository],
             training_service: TrainingService,
             diet_service: DietService
     ):
@@ -133,6 +133,13 @@ class TrainingPlanService(TrainingManagerInterface):
                 "exercise_rest": training_plan.exercise_rest,
                 "notes": training_plan.notes
             }
+
+    async def get_customer_training_plans(self, customer_id: str) -> list:
+        training_plans = await self.training_plan_repository.provide_customer_plans_by_customer_id(
+            customer_id
+        )
+
+        return training_plans
 
     async def get_all_customer_training_plans(self, customer_id: str) -> list:
         foreign_keys, sub_queries = ["trainings"], ["exercises"]

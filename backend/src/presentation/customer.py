@@ -258,7 +258,7 @@ async def get_all_training_plans(
             detail=f"customer with id={customer_id} doesn't exist"
         )
 
-    training_plans = await training_plan_service.get_all_customer_training_plans(str(customer.id))
+    training_plans = await training_plan_service.get_customer_training_plans(str(customer.id))
 
     response = []
     for training_plan in training_plans:
