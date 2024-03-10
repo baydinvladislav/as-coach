@@ -52,7 +52,7 @@ async def provide_customer_service(database: Session = Depends(get_db)) -> Custo
     Returns service responsible to interact with Customer domain
     """
     kafka_supplier = KafkaSupplier(
-        topic=kafka_settings.topic, config={"bootstrap.servers": kafka_settings.bootstrap_servers}
+        topic=kafka_settings.customer_invite_topic, config={"bootstrap.servers": kafka_settings.bootstrap_servers}
     )
     customer_repository = CustomerRepository(database)
     return CustomerService(customer_repository, kafka_supplier=kafka_supplier)

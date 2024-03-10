@@ -12,7 +12,8 @@ from src.schemas.customer import (
     CustomerCreateIn,
     TrainingPlanOut,
     TrainingPlanIn,
-    TrainingPlanOutFull
+    TrainingPlanOutFull,
+    CustomerRegistrationData,
 )
 from src.dependencies import (
     provide_customer_service,
@@ -70,13 +71,16 @@ async def create_customer(
                    f"{customer_data.last_name} already exists."
         )
 
-    customer = await customer_service.register(
+    customer_reg_data = CustomerRegistrationData(
         coach_id=str(user.id),
+        coach_name=user.first_name,
         username=customer_data.phone_number,
         password=generate_random_password(8),
         first_name=customer_data.first_name,
-        last_name=customer_data.last_name
+        last_name=customer_data.last_name,
     )
+
+    customer = await customer_service.register(customer_reg_data)
 
     return {
         "id": str(customer.id),

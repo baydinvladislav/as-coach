@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class KafkaSettings:
-    topic: str = "new.topic.name"
+    customer_invite_topic: str = os.getenv("KAFKA_CUSTOMER_INVITE_TOPIC")
     bootstrap_servers: str = os.getenv("KAFKA_BOOTSTRAP_SERVERS")
 
 
@@ -25,12 +25,12 @@ class KafkaSupplier:
         if err is not None:
             logger.warning(f"Failed to deliver message: {msg.value()}: {err}")
         else:
-            logger.info(f"Message delivered to {msg.topic()} [{msg.partition()}]")
+            logger.info(f"Message delivered to {msg.customer_invite_topic()} [{msg.partition()}]")
 
     def send_message(self, message):
-        logger.info(f"Send in {self.topic=} topic {message}")
         self.producer.produce(self.topic, message.encode('utf-8'), callback=self.acked)
         self.producer.poll(0)
+        logger.info(f"Message successfully sent in {self.topic} topic {message=}")
 
     def close(self):
         self.producer.flush()

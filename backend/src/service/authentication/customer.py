@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src import Customer
+from src.schemas.customer import CustomerRegistrationData
 from src.supplier.kafka import KafkaSupplier
 from src.utils import verify_password
 from src.repository.customer import CustomerRepository
@@ -23,16 +24,26 @@ class CustomerService(UserService):
         self.customer_repository = customer_repository
         self.kafka_supplier = kafka_supplier
 
-    async def register(self, coach_id: str, **kwargs) -> Customer:
-        customer = await self.customer_repository.create(coach_id=coach_id, **kwargs)
+    async def _invite_customer(self, coach_name: str, customer_username: str, customer_password: str):
+        message = json.dumps(
+            f"Ваш тренер {coach_name} приглашает Вас в тренинг-трекер AsCoach!\n"
+            f"Ваш логин: {customer_username}\nВаш пароль: {customer_password}",
+            ensure_ascii=False,
+        )
+        self.kafka_supplier.send_message(message)
 
-        logger.info(f"We have username to send invite: {kwargs.get('username')}")
+    async def register(self, customer_reg_data: CustomerRegistrationData) -> Customer:
+        customer = await self.customer_repository.create(
+            coach_id=customer_reg_data.coach_id,
+            username=customer_reg_data.username,
+            password=customer_reg_data.password,
+            first_name=customer_reg_data.first_name,
+            last_name=customer_reg_data.last_name,
+        )
 
-        if "username" in kwargs and kwargs["username"] is not None:
-            message = json.dumps(
-                {"tg_username": kwargs["username"], "message": "Приглашение скачать приложение"}
-            )
-            self.kafka_supplier.send_message(message)
+        if customer_reg_data.username is not None:
+            logger.info(f"Will be invited new customer: {customer_reg_data.username}")
+            await self._invite_customer(customer_reg_data.coach_name, customer.username, customer.password)
 
         logger.info(f"Customer created successfully: {customer.first_name} {customer.last_name}")
         return customer
