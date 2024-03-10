@@ -75,7 +75,7 @@ async def create_customer(
         coach_id=str(user.id),
         coach_name=user.first_name,
         username=customer_data.phone_number,
-        password=generate_random_password(8),
+        password=generate_random_password(4),
         first_name=customer_data.first_name,
         last_name=customer_data.last_name,
     )
