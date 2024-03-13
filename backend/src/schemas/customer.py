@@ -16,7 +16,7 @@ class CustomerCreateIn(BaseModel):
     """
     first_name: str
     last_name: str
-    tg_username: Optional[str]
+    phone_number: Optional[str]
 
     # @validator("phone_number")
     # def validate_phone_number(cls, value):

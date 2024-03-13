@@ -52,8 +52,8 @@ async def create_customer(
     """
     user = user_service.user
 
-    customer_in_db = await customer_service.get_customer_by_username(username=customer_data.tg_username)
-    if customer_data.tg_username and customer_in_db:
+    customer_in_db = await customer_service.get_customer_by_username(username=customer_data.phone_number)
+    if customer_data.phone_number and customer_in_db:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Customer {customer_in_db.first_name} {customer_in_db.last_name} "
@@ -73,7 +73,7 @@ async def create_customer(
     customer_reg_data = CustomerRegistrationData(
         coach_id=str(user.id),
         coach_name=user.first_name,
-        username=customer_data.tg_username,
+        username=customer_data.phone_number,
         password=generate_random_password(4),
         first_name=customer_data.first_name,
         last_name=customer_data.last_name,
