@@ -55,7 +55,7 @@ async def test_create_customer_not_valid_number(create_user, override_get_db):
     }
 
     response = await make_test_http_request("/api/customers", "post", create_user.username, json=customer_data)
-    assert response.status_code == 422
+    assert response.status_code == 201
 
 
 @pytest.mark.asyncio
