@@ -6,6 +6,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from src import Customer
 from src.schemas.customer import CustomerRegistrationData
+from src.service.notification import NotificationService
 from src.supplier.kafka import KafkaSupplier
 from src.utils import verify_password
 from src.repository.customer import CustomerRepository
@@ -68,7 +69,7 @@ class CustomerProfileService(UserService):
     def __init__(self, customer_repository: CustomerRepository):
         self.customer_repository = customer_repository
 
-    async def register(self, data: CustomerRegistrationData) -> Customer:
+    async def register(self, data: CustomerRegistrationData) -> Customer | None:
         customer = await self.customer_repository.create(
             coach_id=data.coach_id,
             username=data.username,
@@ -76,10 +77,15 @@ class CustomerProfileService(UserService):
             first_name=data.first_name,
             last_name=data.last_name,
         )
+
+        if customer is None:
+            logger.warning(f"New customer creation is failed: {data.username}")
+            raise
+
         logger.info(f"Customer created successfully: {customer.first_name} {customer.last_name}")
         return customer
 
-    async def authorize(self, data: UserLoginData) -> Customer:
+    async def authorize(self, data) -> Customer:
         """
         Customer logs in with one time password in the first time after receive invite.
         After customer changes password it logs in with own hashed password.
@@ -106,13 +112,17 @@ class CustomerService(UserService):
             self,
             customer_repository: CustomerRepository,
             kafka_supplier: KafkaSupplier,
-            selector_service: CustomerSelectorService
+            selector_service: CustomerSelectorService,
+            profile_service: CustomerProfileService,
+            notification_service: NotificationService,
     ) -> None:
         self.user = None
         self.user_type = UserType.CUSTOMER.value
         self.customer_repository = customer_repository
         self.kafka_supplier = kafka_supplier
         self.selector_service = selector_service
+        self.profile_service = profile_service
+        self.notification_service = notification_service
 
     async def _invite_customer(self, coach_name: str, customer_username: str, customer_password: str):
         message = json.dumps(
@@ -122,19 +132,14 @@ class CustomerService(UserService):
         self.kafka_supplier.send_message(message)
 
     async def register(self, data: CustomerRegistrationData) -> Customer:
-        customer = await self.customer_repository.create(
-            coach_id=data.coach_id,
-            username=data.username,
-            password=data.password,
-            first_name=data.first_name,
-            last_name=data.last_name,
-        )
-
-        if data.username is not None:
-            logger.info(f"Will be invited new customer: {data.username}")
-            await self._invite_customer(data.coach_name, customer.username, customer.password)
-
-        logger.info(f"Customer created successfully: {customer.first_name} {customer.last_name}")
+        customer = await self.profile_service.register(data)
+        logger.info(f"Customer registered successfully: {customer.first_name} {customer.last_name}")
+        if customer.username is not None:
+            logger.info(f"Will be invited in application new customer: {customer.username}")
+            await self.notification_service.send_telegram_customer_invite(
+                data.coach_name, customer.username, customer.password
+            )
+            logger.info(f"Customer {customer.username} successfully invited through Telegram account")
         return customer
 
     async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Customer:

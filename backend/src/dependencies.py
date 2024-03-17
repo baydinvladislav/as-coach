@@ -3,7 +3,7 @@ Common dependencies for application
 """
 
 from fastapi import Depends, HTTPException
-from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -19,7 +19,7 @@ from src.repository.training_plan import TrainingPlanRepository
 from src.repository.coach import CoachRepository
 from src.repository.customer import CustomerRepository
 from src.service.authentication.coach import CoachService
-from src.service.authentication.customer import CustomerService, CustomerSelectorService
+from src.service.authentication.customer import CustomerService, CustomerSelectorService, CustomerProfileService
 from src.supplier.kafka import KafkaSupplier, kafka_settings
 from src.service.authentication.exceptions import TokenExpired, NotValidCredentials
 from src.service.training_plan import TrainingPlanService
@@ -45,18 +45,6 @@ async def provide_coach_service(database: Session = Depends(get_db)) -> CoachSer
     Returns service responsible to interact with Coach domain
     """
     return CoachService(CoachRepository(database))
-
-
-async def provide_customer_service(database: Session = Depends(get_db)) -> CustomerService:
-    """
-    Returns service responsible to interact with Customer domain
-    """
-    kafka_supplier = KafkaSupplier(
-        topic=kafka_settings.customer_invite_topic, config={"bootstrap.servers": kafka_settings.bootstrap_servers}
-    )
-    customer_repository = CustomerRepository(database)
-    selector = CustomerSelectorService(customer_repository)
-    return CustomerService(customer_repository, kafka_supplier=kafka_supplier, selector_service=selector)
 
 
 async def provide_library_service(database: Session = Depends(get_db)) -> LibraryService:
@@ -88,6 +76,39 @@ async def provide_training_plan_service(database: Session = Depends(get_db)) -> 
         }
     )
     return TrainingPlanService({"training_plan": TrainingPlanRepository(database)}, training_service, diet_service)
+
+
+async def provide_push_notification_service() -> NotificationService:
+    """
+    Returns service responsible to send push notification through FireBase service
+    """
+    kafka_supplier = KafkaSupplier(
+        topic=kafka_settings.customer_invite_topic, config={"bootstrap.servers": kafka_settings.bootstrap_servers}
+    )
+    firebase_supplier = PushFirebaseNotificator()
+    return NotificationService(firebase_supplier, kafka_supplier)
+
+
+async def provide_customer_service(
+        database: Session = Depends(get_db),
+        notification_service: NotificationService = Depends(provide_push_notification_service)
+) -> CustomerService:
+    """
+    Returns service responsible to interact with Customer domain
+    """
+    kafka_supplier = KafkaSupplier(
+        topic=kafka_settings.customer_invite_topic, config={"bootstrap.servers": kafka_settings.bootstrap_servers}
+    )
+    customer_repository = CustomerRepository(database)
+    selector = CustomerSelectorService(customer_repository)
+    profile_service = CustomerProfileService(customer_repository)
+    return CustomerService(
+        customer_repository=customer_repository,
+        kafka_supplier=kafka_supplier,
+        selector_service=selector,
+        profile_service=profile_service,
+        notification_service=notification_service,
+    )
 
 
 async def provide_user_service(
@@ -138,10 +159,3 @@ async def provide_user_service(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="User not found"
             )
-
-
-async def provide_push_notification_service() -> NotificationService:
-    """
-    Returns service responsible to send push notification through FireBase service
-    """
-    return NotificationService(PushFirebaseNotificator())
