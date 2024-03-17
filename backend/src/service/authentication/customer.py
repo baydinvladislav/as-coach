@@ -16,6 +16,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 
+# TODO form Customer aggregate in this layer
 class CustomerSelectorService:
 
     def __init__(self, customer_repository: CustomerRepository) -> None:
@@ -54,10 +55,12 @@ class CustomerSelectorService:
         return customers
 
     async def select_customer_by_username(self, username: str) -> Customer | None:
-        ...
+        customer = await self.customer_repository.provide_by_username(username)
+        return customer
 
     async def select_customer_by_full_name(self, first_name: str, last_name: str) -> Customer | None:
-        ...
+        customer = await self.customer_repository.provide_by_full_name(first_name, last_name)
+        return customer
 
 
 class CustomerService(UserService):
@@ -136,15 +139,15 @@ class CustomerService(UserService):
         return customers
 
     async def get_customer_by_username(self, username: str) -> Customer | None:
-        customer = await self.customer_repository.provide_by_username(username)
-
-        if customer:
+        customer = await self.selector_service.select_customer_by_username(username)
+        if customer is not None:
             self.user = customer[0]
             return self.user
+        return None
 
     async def get_customer_by_full_name(self, first_name: str, last_name: str) -> Customer | None:
-        customer = await self.customer_repository.provide_by_full_name(first_name, last_name)
-
-        if customer:
+        customer = await self.selector_service.select_customer_by_full_name(first_name, last_name)
+        if customer is not None:
             self.user = customer[0]
             return self.user
+        return None
