@@ -79,7 +79,7 @@ async def create_customer(
         last_name=customer_data.last_name,
     )
 
-    customer = await customer_service.register(customer_reg_data)
+    customer = await customer_service.register_customer(customer_reg_data)
 
     return {
         "id": str(customer.id),
@@ -209,7 +209,7 @@ async def create_training_plan(
             "body": f"с {training_plan.start_date} до {training_plan.end_date}",
         }
 
-        await push_notification_service.send_notification(
+        await push_notification_service.send_push_notification(
             customer.fcm_token,
             notification_data
         )

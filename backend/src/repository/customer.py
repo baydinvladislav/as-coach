@@ -20,6 +20,18 @@ class CustomerRepository(BaseRepository):
         customer = result.scalar_one_or_none()
         return customer
 
+    async def provide_by_otp(self, password: str) -> Customer | None:
+        query = select(self.model).where(
+            self.model.password == password
+        ).options(
+            selectinload(Customer.training_plans).subqueryload(TrainingPlan.trainings),
+            selectinload(Customer.training_plans).subqueryload(TrainingPlan.diets)
+        )
+
+        result = await self.session.execute(query)
+        customer = result.scalar_one_or_none()
+        return customer
+
     async def provide_by_username(self, username: str) -> Customer | None:
         query = select(self.model).where(self.model.username == username)
         result = await self.session.execute(query)
