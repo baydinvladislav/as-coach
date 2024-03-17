@@ -1,3 +1,6 @@
+# описать когда они рейзятся в док стринге
+
+
 class UserDoesNotExist(Exception):
     pass
 
