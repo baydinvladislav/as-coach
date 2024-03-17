@@ -53,5 +53,5 @@ app = get_application()
 
 
 @app.get("/health")
-async def health_endpoint():
-    return "version: AsCoach v1.0.0"
+async def check_health():
+    return {"version": "AsCoach v1.0.0"}
