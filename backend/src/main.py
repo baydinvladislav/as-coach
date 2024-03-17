@@ -52,9 +52,6 @@ def get_application() -> FastAPI:
 app = get_application()
 
 
-@app.get("/")
-async def root():
-    """
-    Test endpoint.
-    """
-    return "Hello!"
+@app.get("/health")
+async def health_endpoint():
+    return "version: AsCoach v.1.0"
