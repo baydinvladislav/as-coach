@@ -25,6 +25,40 @@ class CustomerSelectorService:
         customer = await self.customer_repository.provide_by_pk(pk=pk)
         return customer
 
+    async def select_customers_by_coach_id(self, coach_id: str) -> list[dict[str, str]]:
+        customers_aggregates = await self.customer_repository.provide_customers_by_coach_id(coach_id)
+
+        customers = []
+        archive_customers = []
+        for customer in customers_aggregates:
+            last_plan_end_date = customer[4]
+
+            if last_plan_end_date and datetime.now().date() - last_plan_end_date > timedelta(days=30):
+                archive_customers.append({
+                    "id": str(customer[0]),
+                    "first_name": customer[1],
+                    "last_name": customer[2],
+                    "phone_number": customer[3],
+                    "last_plan_end_date": last_plan_end_date.strftime("%Y-%m-%d")
+                })
+            else:
+                customers.append({
+                    "id": str(customer[0]),
+                    "first_name": customer[1],
+                    "last_name": customer[2],
+                    "phone_number": customer[3],
+                    "last_plan_end_date": last_plan_end_date.strftime("%Y-%m-%d") if last_plan_end_date else None
+                })
+
+        customers.extend(archive_customers)
+        return customers
+
+    async def select_customer_by_username(self, username: str) -> Customer | None:
+        ...
+
+    async def select_customer_by_full_name(self, first_name: str, last_name: str) -> Customer | None:
+        ...
+
 
 class CustomerService(UserService):
 
@@ -98,31 +132,7 @@ class CustomerService(UserService):
         return None
 
     async def get_customers_by_coach_id(self, coach_id: str) -> list[dict[str, str]]:
-        customers_aggregates = await self.customer_repository.provide_customers_by_coach_id(coach_id)
-
-        customers = []
-        archive_customers = []
-        for customer in customers_aggregates:
-            last_plan_end_date = customer[4]
-
-            if last_plan_end_date and datetime.now().date() - last_plan_end_date > timedelta(days=30):
-                archive_customers.append({
-                    "id": str(customer[0]),
-                    "first_name": customer[1],
-                    "last_name": customer[2],
-                    "phone_number": customer[3],
-                    "last_plan_end_date": last_plan_end_date.strftime("%Y-%m-%d")
-                })
-            else:
-                customers.append({
-                    "id": str(customer[0]),
-                    "first_name": customer[1],
-                    "last_name": customer[2],
-                    "phone_number": customer[3],
-                    "last_plan_end_date": last_plan_end_date.strftime("%Y-%m-%d") if last_plan_end_date else None
-                })
-
-        customers.extend(archive_customers)
+        customers = await self.selector_service.select_customers_by_coach_id(coach_id)
         return customers
 
     async def get_customer_by_username(self, username: str) -> Customer | None:
