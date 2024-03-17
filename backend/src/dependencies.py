@@ -19,7 +19,7 @@ from src.repository.training_plan import TrainingPlanRepository
 from src.repository.coach import CoachRepository
 from src.repository.customer import CustomerRepository
 from src.service.authentication.coach import CoachService
-from src.service.authentication.customer import CustomerService
+from src.service.authentication.customer import CustomerService, CustomerSelectorService
 from src.supplier.kafka import KafkaSupplier, kafka_settings
 from src.service.authentication.exceptions import TokenExpired, NotValidCredentials
 from src.service.training_plan import TrainingPlanService
@@ -55,7 +55,8 @@ async def provide_customer_service(database: Session = Depends(get_db)) -> Custo
         topic=kafka_settings.customer_invite_topic, config={"bootstrap.servers": kafka_settings.bootstrap_servers}
     )
     customer_repository = CustomerRepository(database)
-    return CustomerService(customer_repository, kafka_supplier=kafka_supplier)
+    selector = CustomerSelectorService(customer_repository)
+    return CustomerService(customer_repository, kafka_supplier=kafka_supplier, selector_service=selector)
 
 
 async def provide_library_service(database: Session = Depends(get_db)) -> LibraryService:

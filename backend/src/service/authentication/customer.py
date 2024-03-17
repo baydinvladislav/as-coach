@@ -16,13 +16,29 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 
+class CustomerSelectorService:
+
+    def __init__(self, customer_repository: CustomerRepository) -> None:
+        self.customer_repository = customer_repository
+
+    async def select_by_pk(self, pk: str) -> Customer | None:
+        customer = await self.customer_repository.provide_by_pk(pk=pk)
+        return customer
+
+
 class CustomerService(UserService):
 
-    def __init__(self, customer_repository: CustomerRepository, kafka_supplier: KafkaSupplier):
+    def __init__(
+            self,
+            customer_repository: CustomerRepository,
+            kafka_supplier: KafkaSupplier,
+            selector_service: CustomerSelectorService
+    ) -> None:
         self.user = None
         self.user_type = UserType.CUSTOMER.value
         self.customer_repository = customer_repository
         self.kafka_supplier = kafka_supplier
+        self.selector_service = selector_service
 
     async def _invite_customer(self, coach_name: str, customer_username: str, customer_password: str):
         message = json.dumps(
@@ -75,11 +91,11 @@ class CustomerService(UserService):
         await self.customer_repository.update(str(self.user.id), **params)
 
     async def get_customer_by_pk(self, pk: str) -> Customer | None:
-        customer = await self.customer_repository.provide_by_pk(pk=pk)
-
-        if customer:
+        customer = await self.selector_service.select_by_pk(pk=pk)
+        if customer is not None:
             self.user = customer
             return self.user
+        return None
 
     async def get_customers_by_coach_id(self, coach_id: str) -> list[dict[str, str]]:
         customers_aggregates = await self.customer_repository.provide_customers_by_coach_id(coach_id)
