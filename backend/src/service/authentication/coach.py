@@ -5,7 +5,7 @@ from src.utils import get_hashed_password, verify_password
 from src.repository.coach import CoachRepository
 from src.service.authentication.exceptions import NotValidCredentials, UsernameIsTaken
 from src.service.authentication.user import UserService, UserType
-from src.schemas.authentication import UserRegisterIn
+from src.schemas.authentication import CoachRegistrationData
 
 
 class CoachService(UserService):
@@ -15,7 +15,7 @@ class CoachService(UserService):
         self.user_type = UserType.COACH.value
         self.coach_repository = coach_repository
 
-    async def register(self, data: UserRegisterIn) -> Coach:
+    async def register(self, data: CoachRegistrationData) -> Coach:
         existed_coach = await self.get_coach_by_username(username=data.username)
         if existed_coach:
             raise UsernameIsTaken

@@ -4,9 +4,8 @@ Schemas for customer service
 
 from typing import Optional, List, Union
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 
-from src.utils import validate_phone_number
 from src.schemas.library import Diet, Training
 
 
@@ -33,18 +32,6 @@ class CustomerOut(CustomerCreateIn, BaseModel):
     last_name: str
     phone_number: Optional[str]
     last_plan_end_date: Union[str, None]
-
-
-class CustomerRegistrationData(BaseModel):
-    """
-    DB schema before saving
-    """
-    coach_id: str
-    coach_name: str
-    username: str | None
-    password: str
-    first_name: str
-    last_name: str
 
 
 class TrainingPlanIn(BaseModel):

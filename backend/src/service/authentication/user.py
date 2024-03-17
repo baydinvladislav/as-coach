@@ -15,7 +15,7 @@ from src.config import (
     STATIC_DIR,
 )
 from src.utils import verify_password
-from src.schemas.authentication import UserRegisterIn
+from src.schemas.authentication import UserRegistrationData
 
 
 class UserType(Enum):
@@ -31,7 +31,7 @@ class UserService(ABC):
         self.user_type = ""
 
     @abstractmethod
-    async def register(self, data: UserRegisterIn):
+    async def register(self, data: UserRegistrationData):
         raise NotImplementedError
 
     @abstractmethod

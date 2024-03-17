@@ -12,8 +12,8 @@ from src.schemas.customer import (
     TrainingPlanOut,
     TrainingPlanIn,
     TrainingPlanOutFull,
-    CustomerRegistrationData,
 )
+from src.schemas.authentication import CustomerRegistrationData
 from src.dependencies import (
     provide_customer_service,
     provide_user_service,

@@ -11,25 +11,29 @@ from src.utils import validate_phone_number, validate_password
 from src.persistence.models import Gender
 
 
-class UserRegisterIn(BaseModel):
-    """
-    Schema for user registration
-    """
-    username: str
-    password: str
+class UserRegistrationData(BaseModel):
     first_name: str
+    password: str
+
+
+class CoachRegistrationData(UserRegistrationData):
+    username: str
     fcm_token: str
 
     @validator("username")
-    def validate_phone_number(cls, value):  # pylint: disable=no-self-argument
+    def validate_phone_number(cls, value: str):
         return validate_phone_number(value)
 
     @validator("password")
-    def validate_password(cls, value):  # pylint: disable=no-self-argument
-        """
-        Simple password
-        """
+    def validate_password(cls, value: str):
         return validate_password(value)
+
+
+class CustomerRegistrationData(UserRegistrationData):
+    coach_id: str
+    coach_name: str
+    username: str | None
+    last_name: str
 
 
 class UserRegisterOut(BaseModel):
@@ -85,7 +89,7 @@ class NewUserPassword(BaseModel):
     password: str
 
     @validator("password")
-    def validate_password(cls, value):  # pylint: disable=no-self-argument
+    def validate_password(cls, value):
         """
         Simple password
         """

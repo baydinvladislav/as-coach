@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src import Customer
-from src.schemas.customer import CustomerRegistrationData
+from src.schemas.authentication import CustomerRegistrationData
 from src.service.notification import NotificationService
 from src.supplier.kafka import KafkaSupplier
 from src.utils import verify_password

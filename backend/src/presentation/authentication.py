@@ -11,7 +11,6 @@ from fastapi import (
     Form
 )
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 
 from src.service.authentication.coach import CoachService
 from src.service.authentication.customer import CustomerService
@@ -23,50 +22,37 @@ from src.schemas.authentication import (
     UserProfileOut,
     NewUserPassword,
     LoginOut,
-    UserRegisterIn,
+    CoachRegistrationData,
     UserRegisterOut
 )
-from src.utils import password_context, create_access_token, create_refresh_token
+from src.utils import password_context
 
 auth_router = APIRouter()
 
 
 @auth_router.post(
     "/signup",
-    summary="Create new user",
+    summary="Creates new coach",
     status_code=status.HTTP_201_CREATED,
     response_model=UserRegisterOut)
-async def register_user(
-        user_data: UserRegisterIn,
-        service: CoachService = Depends(provide_coach_service)
-) -> dict:
-    """
-    Registration endpoint, creates new user in database.
-    Registration for customers implemented through adding coach's invites.
-
-    Args:
-        user_data: data schema for user registration
-        service: service for interacting with profile
-    Raises:
-        400 in case if user with the phone number already created
-    Returns:
-        dictionary with just created user
-    """
+async def register_coach(
+        coach_data: CoachRegistrationData,
+        coach_service: CoachService = Depends(provide_coach_service)
+) -> UserRegisterOut:
     try:
-        user = await service.register(user_data)
+        coach = await coach_service.register(coach_data)
     except UsernameIsTaken:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"User with phone number: {user_data.username} already exists"
+            detail=f"Coach with phone number: {coach_data.username} already exists"
         )
-
-    return {
-        "id": str(user.id),
-        "first_name": user.first_name,
-        "username": user.username,
-        "access_token": await service.generate_jwt_token(access=True),
-        "refresh_token": await service.generate_jwt_token(refresh=True),
-    }
+    return UserRegisterOut(
+        id=str(coach.id),
+        first_name=coach.first_name,
+        username=coach.username,
+        access_token=await coach_service.generate_jwt_token(access=True),
+        refresh_token=await coach_service.generate_jwt_token(refresh=True),
+    )
 
 
 @auth_router.post(
