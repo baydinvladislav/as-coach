@@ -63,6 +63,43 @@ class CustomerSelectorService:
         return customer
 
 
+# auth logic
+class CustomerProfileService(UserService):
+    def __init__(self, customer_repository: CustomerRepository):
+        self.customer_repository = customer_repository
+
+    async def register(self, data: CustomerRegistrationData) -> Customer:
+        customer = await self.customer_repository.create(
+            coach_id=data.coach_id,
+            username=data.username,
+            password=data.password,
+            first_name=data.first_name,
+            last_name=data.last_name,
+        )
+        logger.info(f"Customer created successfully: {customer.first_name} {customer.last_name}")
+        return customer
+
+    async def authorize(self, data: UserLoginData) -> Customer:
+        """
+        Customer logs in with one time password in the first time after receive invite.
+        After customer changes password it logs in with own hashed password.
+        """
+        OTP_LENGTH = 4
+        first_login = len(data.received_password) == OTP_LENGTH and data.db_password == data.received_password
+        regular_login = await verify_password(data.received_password, data.db_password)
+
+        if first_login or regular_login:
+            if await self.fcm_token_actualize(data.fcm_token) is False:
+                await self.customer_repository.update(data.user_id, fcm_token=data.fcm_token)
+            return self.user
+
+        raise NotValidCredentials
+
+    async def update(self, user_id: str, **params) -> None:
+        await self.handle_profile_photo(params.pop("photo"))
+        await self.customer_repository.update(user_id, **params)
+
+
 class CustomerService(UserService):
 
     def __init__(
@@ -84,18 +121,18 @@ class CustomerService(UserService):
         )
         self.kafka_supplier.send_message(message)
 
-    async def register(self, customer_reg_data: CustomerRegistrationData) -> Customer:
+    async def register(self, data: CustomerRegistrationData) -> Customer:
         customer = await self.customer_repository.create(
-            coach_id=customer_reg_data.coach_id,
-            username=customer_reg_data.username,
-            password=customer_reg_data.password,
-            first_name=customer_reg_data.first_name,
-            last_name=customer_reg_data.last_name,
+            coach_id=data.coach_id,
+            username=data.username,
+            password=data.password,
+            first_name=data.first_name,
+            last_name=data.last_name,
         )
 
-        if customer_reg_data.username is not None:
-            logger.info(f"Will be invited new customer: {customer_reg_data.username}")
-            await self._invite_customer(customer_reg_data.coach_name, customer.username, customer.password)
+        if data.username is not None:
+            logger.info(f"Will be invited new customer: {data.username}")
+            await self._invite_customer(data.coach_name, customer.username, customer.password)
 
         logger.info(f"Customer created successfully: {customer.first_name} {customer.last_name}")
         return customer
