@@ -59,7 +59,7 @@ class CoachService:
             raise UsernameIsTaken
 
         data.password = await get_hashed_password(data.password)
-        coach = await self.profile_service.register(**dict(data))
+        coach = await self.profile_service.register(data)
         if coach:
             self.user = coach
             return coach
