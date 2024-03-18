@@ -22,6 +22,7 @@ from src.dependencies import (
 )
 from src.utils import validate_uuid, generate_random_password
 from src.service.notification import NotificationService
+from src.config import OTP_LENGTH
 
 customer_router = APIRouter()
 
@@ -74,7 +75,7 @@ async def create_customer(
         coach_id=str(user.id),
         coach_name=user.first_name,
         username=customer_data.phone_number,
-        password=generate_random_password(4),
+        password=generate_random_password(OTP_LENGTH),
         first_name=customer_data.first_name,
         last_name=customer_data.last_name,
     )

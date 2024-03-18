@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src import Customer
+from src.config import OTP_LENGTH
 from src.schemas.authentication import CustomerRegistrationData, UserLoginData
 from src.service.notification import NotificationService
 from src.utils import verify_password
@@ -12,8 +13,6 @@ from src.service.authentication.user import UserService, UserType
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
-
-OTP_LENGTH = 4
 
 
 # TODO form Customer aggregate in this layer
