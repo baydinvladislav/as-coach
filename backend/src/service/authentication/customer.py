@@ -178,8 +178,8 @@ class CustomerService:
             return True
         return False
 
-    async def update(self, **params) -> None:
-        await self.profile_service.update(str(self.user.id), **params)
+    async def update(self, user: Customer, **params) -> None:
+        await self.profile_service.update(user, **params)
 
     async def get_customer_by_pk(self, pk: str) -> Customer | None:
         customer = await self.selector_service.select_customer_by_pk(pk=pk)
