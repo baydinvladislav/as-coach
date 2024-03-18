@@ -57,7 +57,7 @@ class UserService(ABC):
         return encoded_jwt
 
     @staticmethod
-    async def handle_profile_photo(user: USER_MODEL,photo) -> None:
+    async def handle_profile_photo(user: USER_MODEL, photo) -> None:
         if photo is not None:
             saving_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
             file_name = f"{user.username}_{saving_time}.jpeg"

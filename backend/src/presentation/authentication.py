@@ -14,7 +14,6 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from src.service.authentication.coach import CoachService
 from src.service.authentication.customer import CustomerService
-from src.service.authentication.user import UserService
 from src.service.authentication.exceptions import UsernameIsTaken
 from src.dependencies import provide_user_service, provide_coach_service, provide_customer_service
 from src.persistence.models import Gender
@@ -205,6 +204,7 @@ async def update_profile(
     user = service.user
 
     await service.update(
+        user=user,
         first_name=first_name,
         username=username,
         last_name=last_name,
@@ -274,7 +274,7 @@ async def change_password(
     """
     user = service.user
 
-    is_changed = await service.update(password=new_password)
+    is_changed = await service.update(user=user, password=new_password)
     if is_changed:
         return {"user_id": str(user.id), "changed_password": True}
     return {"user_id": str(user.id), "changed_password": False}
