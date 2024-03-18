@@ -3,8 +3,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from src import Coach
 from src.utils import get_hashed_password, verify_password
 from src.repository.coach import CoachRepository
-from src.service.authentication.exceptions import UsernameIsTaken
-from src.service.authentication.user import UserService, UserType
+from src.service.exceptions import UsernameIsTaken
+from src.service.user import UserService, UserType
 from src.schemas.authentication import CoachRegistrationData, UserLoginData
 
 

@@ -18,10 +18,10 @@ from src.repository.training import TrainingRepository, ExercisesOnTrainingRepos
 from src.repository.training_plan import TrainingPlanRepository
 from src.repository.coach import CoachRepository
 from src.repository.customer import CustomerRepository
-from src.service.authentication.coach import CoachService, CoachProfileService, CoachSelectorService
-from src.service.authentication.customer import CustomerService, CustomerSelectorService, CustomerProfileService
+from src.service.coach import CoachService, CoachProfileService, CoachSelectorService
+from src.service.customer import CustomerService, CustomerSelectorService, CustomerProfileService
 from src.supplier.kafka import KafkaSupplier, kafka_settings
-from src.service.authentication.exceptions import TokenExpired, NotValidCredentials
+from src.service.exceptions import TokenExpired, NotValidCredentials
 from src.service.training_plan import TrainingPlanService
 from src.service.training import TrainingService
 from src.service.diet import DietService
