@@ -17,11 +17,6 @@ class CustomerCreateIn(BaseModel):
     last_name: str
     phone_number: Optional[str]
 
-    # @validator("phone_number")
-    # def validate_phone_number(cls, value):
-    #     if value is not None:
-    #         return validate_phone_number(value)
-
 
 class CustomerOut(CustomerCreateIn, BaseModel):
     """

@@ -64,7 +64,7 @@ async def login_user(
         fcm_token: str = Form(...),
         coach_service: CoachService = Depends(provide_coach_service),
         customer_service: CustomerService = Depends(provide_customer_service)
-) -> dict:
+) -> LoginOut:
     """
     Login endpoint authenticates user
 
@@ -80,18 +80,12 @@ async def login_user(
     Returns:
         access_token and refresh_token inside dictionary
     """
-    if not form_data.username or not form_data.password:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Empty fields"
-        )
+    if form_data.username is None or form_data.password is None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Empty fields")
 
-    coach = await coach_service.authorize(form_data, fcm_token)
-    customer = await customer_service.authorize(form_data, fcm_token)
-
-    if coach is not None:
+    if coach := await coach_service.authorize(form_data, fcm_token) is not None:
         user, service = coach, coach_service
-    elif customer is not None:
+    elif customer := await customer_service.authorize(form_data, fcm_token) is not None:
         user, service = customer, customer_service
     else:
         raise HTTPException(
@@ -99,14 +93,14 @@ async def login_user(
             detail=f"Not found any user"
         )
 
-    return {
-        "id": str(user.id),
-        "user_type": service.user_type,
-        "first_name": user.first_name,
-        "access_token": await service.profile_service.generate_jwt_token(user.username, access=True),
-        "refresh_token": await service.profile_service.generate_jwt_token(user.username, refresh=True),
-        "password_changed": bool(password_context.identify(user.password)),
-    }
+    return LoginOut(
+        id=str(user.id),
+        user_type=service.user_type,
+        first_name=user.first_name,
+        access_token=await service.profile_service.generate_jwt_token(user.username, access=True),
+        refresh_token=await service.profile_service.generate_jwt_token(user.username, refresh=True),
+        password_changed=bool(password_context.identify(user.password)),
+    )
 
 
 @auth_router.get(

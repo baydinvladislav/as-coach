@@ -154,6 +154,7 @@ class CustomerService:
 
         data = UserLoginData(received_password=form_data.password, fcm_token=fcm_token)
         if await self.profile_service.authorize(self.user, data) is True:
+            await self.update(self.user, phone_number=form_data.username)
             logger.info(f"Customer successfully {self.user.last_name} {self.user.first_name} login")
             return self.user
 
