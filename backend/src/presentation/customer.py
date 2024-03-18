@@ -22,7 +22,7 @@ from src.dependencies import (
 )
 from src.utils import validate_uuid, generate_random_password
 from src.service.notification import NotificationService
-from src.config import OTP_LENGTH
+from src.shared.config import OTP_LENGTH
 
 customer_router = APIRouter()
 

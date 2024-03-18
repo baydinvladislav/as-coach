@@ -9,7 +9,7 @@ from starlette import status
 
 from src.database import SessionLocal
 from src.service.library import LibraryService
-from src.config import reuseable_oauth
+from src.shared.config import reuseable_oauth
 from src.utils import decode_jwt_token
 
 from src.repository.library import ExerciseRepository, MuscleGroupRepository

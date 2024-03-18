@@ -16,7 +16,7 @@ from src import (
 )
 from src.utils import generate_random_password, get_hashed_password
 from tests.conftest import TestingSessionLocal
-from src.config import (
+from src.shared.config import (
     TEST_COACH_FIRST_NAME,
     TEST_COACH_LAST_NAME,
     TEST_COACH_USERNAME,

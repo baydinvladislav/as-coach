@@ -3,7 +3,7 @@ from dataclasses import dataclass, asdict
 import firebase_admin
 from firebase_admin import initialize_app, messaging, credentials
 
-from src.config import (
+from src.shared.config import (
     FIREBASE_TYPE,
     FIREBASE_PROJECT_ID,
     FIREBASE_PRIVATE_KEY_ID,

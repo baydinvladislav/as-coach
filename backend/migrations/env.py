@@ -17,7 +17,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 
-from src.config import DATABASE_URL, TEST_ENV, TEST_DATABASE_URL
+from src.shared.config import DATABASE_URL, TEST_ENV, TEST_DATABASE_URL
 
 config.set_main_option('sqlalchemy.url', TEST_DATABASE_URL if TEST_ENV == "active" else DATABASE_URL)
 
@@ -26,18 +26,6 @@ config.set_main_option('sqlalchemy.url', TEST_DATABASE_URL if TEST_ENV == "activ
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from src import (
-    Coach,
-    Customer,
-    Diet,
-    DietOnTrainingPlan,
-    TrainingPlan,
-    Training,
-    Exercise,
-    ExercisesOnTraining,
-    MuscleGroup,
-    BaseModel,
-    Gender,
-    engine,
     Base
 )
 

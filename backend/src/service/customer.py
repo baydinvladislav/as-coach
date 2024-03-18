@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src import Customer
-from src.config import OTP_LENGTH
+from src.shared.config import OTP_LENGTH
 from src.schemas.authentication import CustomerRegistrationData, UserLoginData
 from src.service.notification import NotificationService
 from src.utils import verify_password

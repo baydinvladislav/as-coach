@@ -7,7 +7,7 @@ from jose import jwt
 from sqlalchemy.orm.attributes import set_attribute
 
 from src import Coach, Customer
-from src.config import (
+from src.shared.config import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     REFRESH_TOKEN_EXPIRE_MINUTES,
     ALGORITHM, JWT_SECRET_KEY,

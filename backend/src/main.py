@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 
-from src.config import STATIC_DIR
+from src.shared.config import STATIC_DIR
 from src.presentation.authentication import auth_router
 from src.presentation.customer import customer_router
 from src.presentation.library import gym_router

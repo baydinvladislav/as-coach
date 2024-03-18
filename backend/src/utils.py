@@ -12,7 +12,7 @@ from jose import jwt
 from passlib.context import CryptContext
 from pydantic import ValidationError
 
-from src.config import (
+from src.shared.config import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     REFRESH_TOKEN_EXPIRE_MINUTES,
     ALGORITHM, JWT_SECRET_KEY,
