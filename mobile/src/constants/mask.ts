@@ -33,3 +33,5 @@ export const DATE_MASK = [
   /\d/,
   /\d/,
 ];
+
+export const TELEGRAM_USERNAME_MASK = '@[a-zA-Z0-9_]{4,31}';

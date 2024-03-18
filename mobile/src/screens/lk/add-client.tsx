@@ -3,16 +3,15 @@ import { StyleSheet, View } from 'react-native';
 
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react';
-import styled from 'styled-components';
 
-import { PHONE_MASK, TOP_PADDING } from '@constants';
+import { TELEGRAM_USERNAME_MASK } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { CustomerProps } from '@store';
-import { colors, normHor, normVert } from '@theme';
-import { Input, Keyboard, ModalLayout, Text, ViewWithButtons } from '@ui';
-import { addClientValidationSchema, isIOS, transformPhone } from '@utils';
+import { colors, normVert } from '@theme';
+import { Input, ModalLayout, Text, ViewWithButtons } from '@ui';
+import { addClientValidationSchema } from '@utils';
 
 import { FontSize, FontWeight } from '~types';
 
@@ -27,7 +26,7 @@ export const AddClientScreen = observer(() => {
     customer
       .createCustomer({
         ...values,
-        phone_number: transformPhone(values.phone_number),
+        phone_number: values.phone_number,
       })
       .then(() => navigate(Screens.LkScreen));
   };
@@ -74,9 +73,9 @@ export const AddClientScreen = observer(() => {
           />
           <Input
             keyboardType={'phone-pad'}
-            mask={PHONE_MASK}
+            // mask={TELEGRAM_USERNAME_MASK}
             style={styles.input}
-            placeholder={t('inputs.phone')}
+            placeholder={t('inputs.tg_username')}
             value={values.phone_number}
             onChangeText={handleChange('phone_number')}
             error={errors.phone_number}
