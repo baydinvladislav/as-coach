@@ -50,8 +50,8 @@ async def register_coach(
         id=str(coach.id),
         first_name=coach.first_name,
         username=coach.username,
-        access_token=await coach_service.generate_jwt_token(access=True),
-        refresh_token=await coach_service.generate_jwt_token(refresh=True),
+        access_token=await coach_service.profile_service.generate_jwt_token(access=True),
+        refresh_token=await coach_service.profile_service.generate_jwt_token(refresh=True),
     )
 
 
