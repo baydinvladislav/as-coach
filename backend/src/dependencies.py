@@ -18,7 +18,7 @@ from src.repository.training import TrainingRepository, ExercisesOnTrainingRepos
 from src.repository.training_plan import TrainingPlanRepository
 from src.repository.coach import CoachRepository
 from src.repository.customer import CustomerRepository
-from src.service.authentication.coach import CoachService
+from src.service.authentication.coach import CoachService, CoachProfileService, CoachSelectorService
 from src.service.authentication.customer import CustomerService, CustomerSelectorService, CustomerProfileService
 from src.supplier.kafka import KafkaSupplier, kafka_settings
 from src.service.authentication.exceptions import TokenExpired, NotValidCredentials
@@ -44,7 +44,14 @@ async def provide_coach_service(database: Session = Depends(get_db)) -> CoachSer
     """
     Returns service responsible to interact with Coach domain
     """
-    return CoachService(CoachRepository(database))
+    coach_repository = CoachRepository(database)
+    profile_service = CoachProfileService(coach_repository)
+    selector_service = CoachSelectorService(coach_repository)
+    return CoachService(
+        coach_repository=coach_repository,
+        profile_service=profile_service,
+        selector_service=selector_service,
+    )
 
 
 async def provide_library_service(database: Session = Depends(get_db)) -> LibraryService:
