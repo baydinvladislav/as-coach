@@ -21,7 +21,7 @@ from src.repository.customer import CustomerRepository
 from src.service.coach import CoachService, CoachProfileService, CoachSelectorService
 from src.service.customer import CustomerService, CustomerSelectorService, CustomerProfileService
 from src.supplier.kafka import KafkaSupplier, kafka_settings
-from src.service.exceptions import TokenExpired, NotValidCredentials
+from src.shared.exceptions import TokenExpired, NotValidCredentials
 from src.service.training_plan import TrainingPlanService
 from src.service.training import TrainingService
 from src.service.diet import DietService

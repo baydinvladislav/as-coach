@@ -14,7 +14,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from src.service.coach import CoachService
 from src.service.customer import CustomerService
-from src.service.exceptions import UsernameIsTaken
+from src.shared.exceptions import UsernameIsTaken
 from src.dependencies import provide_user_service, provide_coach_service, provide_customer_service
 from src.persistence.models import Gender
 from src.schemas.authentication import (
