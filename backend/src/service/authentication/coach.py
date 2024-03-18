@@ -67,6 +67,9 @@ class CoachService:
 
     async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Coach | None:
         existed_coach = await self.get_coach_by_username(username=form_data.username)
+        if existed_coach is None:
+            return None
+
         data = UserLoginData(
             user_id=str(existed_coach.id),
             db_password=existed_coach.password,
@@ -82,7 +85,7 @@ class CoachService:
 
     async def get_coach_by_username(self, username: str) -> Coach | None:
         coach = await self.selector_service.select_coach_by_username(username)
-        if coach:
+        if coach is not None:
             self.user = coach[0]
             return self.user
         return None
