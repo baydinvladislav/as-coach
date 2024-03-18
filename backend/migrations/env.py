@@ -26,7 +26,19 @@ config.set_main_option('sqlalchemy.url', TEST_DATABASE_URL if TEST_ENV == "activ
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from src import (
-    Base
+    Coach,
+    Customer,
+    Diet,
+    DietOnTrainingPlan,
+    TrainingPlan,
+    Training,
+    Exercise,
+    ExercisesOnTraining,
+    MuscleGroup,
+    BaseModel,
+    Gender,
+    engine,
+    Base,
 )
 
 target_metadata = Base.metadata
