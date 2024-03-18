@@ -11,62 +11,47 @@ from fastapi import (
     Form
 )
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
 
-from src.service.authentication.coach import CoachService
-from src.service.authentication.customer import CustomerService
-from src.service.authentication.user import UserService
-from src.service.authentication.exceptions import NotValidCredentials, UsernameIsTaken
-from src.dependencies import provide_user_service, provide_coach_service, provide_customer_service
+from src.service.coach import CoachService
+from src.service.customer import CustomerService
+from src.shared.exceptions import UsernameIsTaken
+from src.shared.dependencies import provide_user_service, provide_coach_service, provide_customer_service
 from src.persistence.models import Gender
 from src.schemas.authentication import (
     UserProfileOut,
     NewUserPassword,
     LoginOut,
-    UserRegisterIn,
-    UserRegisterOut
+    CoachRegistrationData,
+    UserRegisterOut,
 )
-from src.utils import password_context, create_access_token, create_refresh_token
+from src.utils import password_context
 
 auth_router = APIRouter()
 
 
 @auth_router.post(
     "/signup",
-    summary="Create new user",
+    summary="Creates new coach",
     status_code=status.HTTP_201_CREATED,
     response_model=UserRegisterOut)
-async def register_user(
-        user_data: UserRegisterIn,
-        service: CoachService = Depends(provide_coach_service)
-) -> dict:
-    """
-    Registration endpoint, creates new user in database.
-    Registration for customers implemented through adding coach's invites.
-
-    Args:
-        user_data: data schema for user registration
-        service: service for interacting with profile
-    Raises:
-        400 in case if user with the phone number already created
-    Returns:
-        dictionary with just created user
-    """
+async def register_coach(
+        coach_data: CoachRegistrationData,
+        coach_service: CoachService = Depends(provide_coach_service)
+) -> UserRegisterOut:
     try:
-        user = await service.register(user_data)
+        coach = await coach_service.register(coach_data)
     except UsernameIsTaken:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"User with phone number: {user_data.username} already exists"
+            detail=f"Coach with phone number: {coach_data.username} already exists"
         )
-
-    return {
-        "id": str(user.id),
-        "first_name": user.first_name,
-        "username": user.username,
-        "access_token": await service.generate_jwt_token(access=True),
-        "refresh_token": await service.generate_jwt_token(refresh=True),
-    }
+    return UserRegisterOut(
+        id=str(coach.id),
+        first_name=coach.first_name,
+        username=coach.username,
+        access_token=await coach_service.profile_service.generate_jwt_token(coach.username, access=True),
+        refresh_token=await coach_service.profile_service.generate_jwt_token(coach.username, refresh=True),
+    )
 
 
 @auth_router.post(
@@ -101,33 +86,25 @@ async def login_user(
             detail="Empty fields"
         )
 
-    coach = await coach_service.get_coach_by_username(username=form_data.username)
-    customer = await customer_service.get_customer_by_username(username=form_data.username)
+    coach = await coach_service.authorize(form_data, fcm_token)
+    customer = await customer_service.authorize(form_data, fcm_token)
 
-    if coach:
-        service = coach_service
-    elif customer:
-        service = customer_service
+    if coach is not None:
+        user, service = coach, coach_service
+    elif customer is not None:
+        user, service = customer, customer_service
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Not found any user"
         )
 
-    try:
-        user = await service.authorize(form_data, fcm_token)
-    except NotValidCredentials:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Not valid credentials for: {form_data.username}"
-        )
-
     return {
         "id": str(user.id),
         "user_type": service.user_type,
         "first_name": user.first_name,
-        "access_token": await service.generate_jwt_token(access=True),
-        "refresh_token": await service.generate_jwt_token(refresh=True),
+        "access_token": await service.profile_service.generate_jwt_token(user.username, access=True),
+        "refresh_token": await service.profile_service.generate_jwt_token(user.username, refresh=True),
         "password_changed": bool(password_context.identify(user.password)),
     }
 
@@ -137,7 +114,7 @@ async def login_user(
     status_code=status.HTTP_200_OK,
     summary="Get details of currently logged in user")
 async def get_me(
-        service: UserService = Depends(provide_user_service)
+        service: CoachService | CustomerService = Depends(provide_user_service)
 ) -> dict:
     """
     Returns short info about current user
@@ -165,7 +142,7 @@ async def get_me(
     response_model=UserProfileOut,
     summary="Get user profile")
 async def get_profile(
-        service: UserService = Depends(provide_user_service)
+        service: CoachService | CustomerService = Depends(provide_user_service)
 ) -> dict:
     """
     Returns full info about user
@@ -198,7 +175,7 @@ async def get_profile(
     response_model=UserProfileOut,
     status_code=status.HTTP_200_OK)
 async def update_profile(
-        service: UserService = Depends(provide_user_service),
+        service: CoachService | CustomerService = Depends(provide_user_service),
         first_name: str = Form(...),
         username: str = Form(...),
         last_name: str = Form(None),
@@ -227,6 +204,7 @@ async def update_profile(
     user = service.user
 
     await service.update(
+        user=user,
         first_name=first_name,
         username=username,
         last_name=last_name,
@@ -255,7 +233,7 @@ async def update_profile(
     status_code=status.HTTP_200_OK)
 async def confirm_password(
         current_password: str = Form(...),
-        service: UserService = Depends(provide_user_service)
+        service: CoachService | CustomerService = Depends(provide_user_service)
 ) -> dict:
     """
     Confirms that user knows current password before it is changed.
@@ -269,7 +247,7 @@ async def confirm_password(
     """
     user = service.user
 
-    is_confirmed = await service.confirm_password(current_password)
+    is_confirmed = await service.confirm_password(user, current_password)
     if is_confirmed:
         return {"user_id": str(user.id), "confirmed_password": True}
     return {"user_id": str(user.id), "confirmed_password": False}
@@ -281,7 +259,7 @@ async def confirm_password(
     status_code=status.HTTP_200_OK)
 async def change_password(
         new_password: NewUserPassword,
-        service: UserService = Depends(provide_user_service)
+        service: CoachService | CustomerService = Depends(provide_user_service)
 ) -> dict:
     """
     Changes user password.
@@ -296,7 +274,7 @@ async def change_password(
     """
     user = service.user
 
-    is_changed = await service.update(password=new_password)
-    if await is_changed:
+    is_changed = await service.update(user=user, password=new_password)
+    if is_changed:
         return {"user_id": str(user.id), "changed_password": True}
     return {"user_id": str(user.id), "changed_password": False}

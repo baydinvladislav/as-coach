@@ -13,7 +13,7 @@ async def test_create_training_plan_successfully(
         create_customer,
         create_exercises,
         override_get_db,
-        mock_send_notification,
+        mock_send_push_notification,
 ):
     """
     Successfully training plan creation
@@ -68,12 +68,12 @@ async def test_create_training_plan_successfully(
     assert response["carbs"] == str(training_plan_data["diets"][0]["carbs"])
 
     # check that we called firebase notification service with correct args
-    assert create_customer.fcm_token in mock_send_notification.call_args.args
+    assert create_customer.fcm_token in mock_send_push_notification.call_args.args
     excepted_push_notification_sent_data = {
         "title": "Новый тренировочный план",
         "body": f"с {training_plan_data['start_date']} до {training_plan_data['end_date']}",
     }
-    assert excepted_push_notification_sent_data in mock_send_notification.call_args.args
+    assert excepted_push_notification_sent_data in mock_send_push_notification.call_args.args
 
     if status_code == 201:
         await override_get_db.execute(
@@ -87,7 +87,7 @@ async def test_create_training_plan_with_supersets_successfully(
         create_customer,
         create_exercises,
         override_get_db,
-        mock_send_notification,
+        mock_send_push_notification,
 ):
     """
     Successfully creating training plan with supersets
@@ -152,12 +152,12 @@ async def test_create_training_plan_with_supersets_successfully(
     assert response.status_code == 201
 
     # check that we called firebase notification service with correct args
-    assert create_customer.fcm_token in mock_send_notification.call_args.args
+    assert create_customer.fcm_token in mock_send_push_notification.call_args.args
     excepted_push_notification_sent_data = {
         "title": "Новый тренировочный план",
         "body": f"с {training_plan_data['start_date']} до {training_plan_data['end_date']}",
     }
-    assert excepted_push_notification_sent_data in mock_send_notification.call_args.args
+    assert excepted_push_notification_sent_data in mock_send_push_notification.call_args.args
 
     superset_exercises_ids = (
         first_exercise_id_in_superset,

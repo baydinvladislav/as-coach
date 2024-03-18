@@ -3,8 +3,8 @@ from typing import Union, Any, List
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
-from src.service.authentication.coach import CoachService
-from src.service.authentication.customer import CustomerService
+from src.service.coach import CoachService
+from src.service.customer import CustomerService
 from src.service.training_plan import TrainingPlanService
 from src.schemas.customer import (
     CustomerOut,
@@ -12,9 +12,9 @@ from src.schemas.customer import (
     TrainingPlanOut,
     TrainingPlanIn,
     TrainingPlanOutFull,
-    CustomerRegistrationData,
 )
-from src.dependencies import (
+from src.schemas.authentication import CustomerRegistrationData
+from src.shared.dependencies import (
     provide_customer_service,
     provide_user_service,
     provide_training_plan_service,
@@ -22,6 +22,7 @@ from src.dependencies import (
 )
 from src.utils import validate_uuid, generate_random_password
 from src.service.notification import NotificationService
+from src.shared.config import OTP_LENGTH
 
 customer_router = APIRouter()
 
@@ -74,7 +75,7 @@ async def create_customer(
         coach_id=str(user.id),
         coach_name=user.first_name,
         username=customer_data.phone_number,
-        password=generate_random_password(4),
+        password=generate_random_password(OTP_LENGTH),
         first_name=customer_data.first_name,
         last_name=customer_data.last_name,
     )
@@ -209,7 +210,7 @@ async def create_training_plan(
             "body": f"с {training_plan.start_date} до {training_plan.end_date}",
         }
 
-        await push_notification_service.send_notification(
+        await push_notification_service.send_push_notification(
             customer.fcm_token,
             notification_data
         )

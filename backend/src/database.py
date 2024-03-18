@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession  # type: ig
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import NullPool
 
-from .config import DATABASE_URL, TEST_ENV
+from src.shared.config import DATABASE_URL, TEST_ENV
 
 
 if TEST_ENV == "active":

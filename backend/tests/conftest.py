@@ -1,10 +1,10 @@
 from httpx import AsyncClient, Response
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.asyncio import AsyncSession  # type: ignore
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import engine
 from src.utils import create_access_token
-from src.dependencies import get_db
+from src.shared.dependencies import get_db
 from src.main import app
 from tests.fixtures import *
 from tests.mocks import *

@@ -6,7 +6,7 @@ from src import Customer
 from tests.conftest import (
     make_test_http_request
 )
-from src.config import TEST_CUSTOMER_FIRST_NAME, TEST_CUSTOMER_LAST_NAME, TEST_CUSTOMER_USERNAME
+from src.shared.config import TEST_CUSTOMER_FIRST_NAME, TEST_CUSTOMER_LAST_NAME, TEST_CUSTOMER_USERNAME
 
 
 @pytest.mark.asyncio

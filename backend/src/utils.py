@@ -12,13 +12,13 @@ from jose import jwt
 from passlib.context import CryptContext
 from pydantic import ValidationError
 
-from src.config import (
+from src.shared.config import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     REFRESH_TOKEN_EXPIRE_MINUTES,
     ALGORITHM, JWT_SECRET_KEY,
     JWT_REFRESH_SECRET_KEY
 )
-from src.service.authentication.exceptions import TokenExpired, NotValidCredentials
+from src.shared.exceptions import TokenExpired, NotValidCredentials
 
 password_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

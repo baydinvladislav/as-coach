@@ -37,6 +37,7 @@ reuseable_oauth = OAuth2PasswordBearer(
     tokenUrl="/api/login",
     scheme_name="JWT"
 )
+OTP_LENGTH = 4
 
 # firebase push notifications
 FIREBASE_TYPE = os.environ.get("FIREBASE_TYPE", "")
