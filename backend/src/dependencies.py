@@ -122,7 +122,7 @@ async def provide_user_service(
         token: str = Depends(reuseable_oauth),
         coach_service: CoachService = Depends(provide_coach_service),
         customer_service: CustomerService = Depends(provide_customer_service)
-):
+) -> CoachService | CustomerService:
     """
     Checks that token from client request is valid
 

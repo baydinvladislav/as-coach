@@ -50,8 +50,8 @@ async def register_coach(
         id=str(coach.id),
         first_name=coach.first_name,
         username=coach.username,
-        access_token=await coach_service.profile_service.generate_jwt_token(access=True),
-        refresh_token=await coach_service.profile_service.generate_jwt_token(refresh=True),
+        access_token=await coach_service.profile_service.generate_jwt_token(coach.username, access=True),
+        refresh_token=await coach_service.profile_service.generate_jwt_token(coach.username, refresh=True),
     )
 
 
@@ -104,8 +104,8 @@ async def login_user(
         "id": str(user.id),
         "user_type": service.user_type,
         "first_name": user.first_name,
-        "access_token": await service.profile_service.generate_jwt_token(access=True),
-        "refresh_token": await service.profile_service.generate_jwt_token(refresh=True),
+        "access_token": await service.profile_service.generate_jwt_token(user.username, access=True),
+        "refresh_token": await service.profile_service.generate_jwt_token(user.username, refresh=True),
         "password_changed": bool(password_context.identify(user.password)),
     }
 
@@ -115,7 +115,7 @@ async def login_user(
     status_code=status.HTTP_200_OK,
     summary="Get details of currently logged in user")
 async def get_me(
-        service: UserService = Depends(provide_user_service)
+        service: CoachService | CustomerService = Depends(provide_user_service)
 ) -> dict:
     """
     Returns short info about current user
@@ -143,7 +143,7 @@ async def get_me(
     response_model=UserProfileOut,
     summary="Get user profile")
 async def get_profile(
-        service: UserService = Depends(provide_user_service)
+        service: CoachService | CustomerService = Depends(provide_user_service)
 ) -> dict:
     """
     Returns full info about user
@@ -176,7 +176,7 @@ async def get_profile(
     response_model=UserProfileOut,
     status_code=status.HTTP_200_OK)
 async def update_profile(
-        service: UserService = Depends(provide_user_service),
+        service: CoachService | CustomerService = Depends(provide_user_service),
         first_name: str = Form(...),
         username: str = Form(...),
         last_name: str = Form(None),
@@ -233,7 +233,7 @@ async def update_profile(
     status_code=status.HTTP_200_OK)
 async def confirm_password(
         current_password: str = Form(...),
-        service: UserService = Depends(provide_user_service)
+        service: CoachService | CustomerService = Depends(provide_user_service)
 ) -> dict:
     """
     Confirms that user knows current password before it is changed.
@@ -247,7 +247,7 @@ async def confirm_password(
     """
     user = service.user
 
-    is_confirmed = await service.confirm_password(current_password)
+    is_confirmed = await service.confirm_password(user, current_password)
     if is_confirmed:
         return {"user_id": str(user.id), "confirmed_password": True}
     return {"user_id": str(user.id), "confirmed_password": False}
@@ -259,7 +259,7 @@ async def confirm_password(
     status_code=status.HTTP_200_OK)
 async def change_password(
         new_password: NewUserPassword,
-        service: UserService = Depends(provide_user_service)
+        service: CoachService | CustomerService = Depends(provide_user_service)
 ) -> dict:
     """
     Changes user password.
@@ -275,6 +275,6 @@ async def change_password(
     user = service.user
 
     is_changed = await service.update(password=new_password)
-    if await is_changed:
+    if is_changed:
         return {"user_id": str(user.id), "changed_password": True}
     return {"user_id": str(user.id), "changed_password": False}

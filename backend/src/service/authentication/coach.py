@@ -75,6 +75,11 @@ class CoachService:
             return existed_coach
         return None
 
+    async def confirm_password(self, user: Coach, current_password: str) -> bool:
+        if await self.profile_service.confirm_password(user, current_password):
+            return True
+        return False
+
     async def update(self, **params) -> None:
         await self.profile_service.update(str(self.user.id), **params)
 
