@@ -43,13 +43,11 @@ class CoachService:
 
     def __init__(
             self,
-            coach_repository: CoachRepository,
             selector_service: CoachSelectorService,
             profile_service: CoachProfileService,
     ):
         self.user = None
         self.user_type = UserType.COACH.value
-        self.coach_repository = coach_repository
         self.selector_service = selector_service
         self.profile_service = profile_service
 

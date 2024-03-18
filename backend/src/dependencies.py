@@ -48,7 +48,6 @@ async def provide_coach_service(database: Session = Depends(get_db)) -> CoachSer
     profile_service = CoachProfileService(coach_repository)
     selector_service = CoachSelectorService(coach_repository)
     return CoachService(
-        coach_repository=coach_repository,
         profile_service=profile_service,
         selector_service=selector_service,
     )
@@ -110,7 +109,6 @@ async def provide_customer_service(
     selector = CustomerSelectorService(customer_repository)
     profile_service = CustomerProfileService(customer_repository)
     return CustomerService(
-        customer_repository=customer_repository,
         kafka_supplier=kafka_supplier,
         selector_service=selector,
         profile_service=profile_service,

@@ -113,7 +113,6 @@ class CustomerService:
 
     def __init__(
             self,
-            customer_repository: CustomerRepository,
             kafka_supplier: KafkaSupplier,
             selector_service: CustomerSelectorService,
             profile_service: CustomerProfileService,
@@ -121,7 +120,6 @@ class CustomerService:
     ) -> None:
         self.user = None
         self.user_type = UserType.CUSTOMER.value
-        self.customer_repository = customer_repository
         self.kafka_supplier = kafka_supplier
         self.selector_service = selector_service
         self.profile_service = profile_service
