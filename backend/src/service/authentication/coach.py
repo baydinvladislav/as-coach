@@ -27,10 +27,10 @@ class CoachProfileService(UserService):
         coach = await self.coach_repository.create(**dict(data))
         return coach
 
-    async def authorize(self, data: UserLoginData) -> bool:
-        if await verify_password(data.received_password, data.db_password):
-            if await self.fcm_token_actualize(data.fcm_token) is False:
-                await self.coach_repository.update(data.user_id, fcm_token=data.fcm_token)
+    async def authorize(self, user: Coach, data: UserLoginData) -> bool:
+        if await verify_password(data.received_password, user.password):
+            if await self.fcm_token_actualize(user, data.fcm_token) is False:
+                await self.coach_repository.update(str(user.id), fcm_token=data.fcm_token)
             return True
         return False
 
@@ -70,13 +70,8 @@ class CoachService:
         if existed_coach is None:
             return None
 
-        data = UserLoginData(
-            user_id=str(existed_coach.id),
-            db_password=existed_coach.password,
-            received_password=form_data.password,
-            fcm_token=fcm_token,
-        )
-        if await self.profile_service.authorize(data) is True:
+        data = UserLoginData(received_password=form_data.password, fcm_token=fcm_token)
+        if await self.profile_service.authorize(existed_coach, data) is True:
             return existed_coach
         return None
 

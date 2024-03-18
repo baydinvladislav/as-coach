@@ -63,8 +63,6 @@ class UserProfileOut(BaseModel):
 
 
 class UserLoginData(BaseModel):
-    user_id: str
-    db_password: str
     received_password: str
     fcm_token: str
 

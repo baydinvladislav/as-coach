@@ -37,7 +37,7 @@ class UserService(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def authorize(self, data: UserLoginData) -> bool:
+    async def authorize(self, user: USER_MODEL, data: UserLoginData) -> bool:
         raise NotImplementedError
 
     @abstractmethod
@@ -75,13 +75,14 @@ class UserService(ABC):
             return True
         return False
 
-    async def set_fcm_token(self, fcm_token: str) -> None:
-        self.user.fcm_token = fcm_token
-        set_attribute(self.user, "fcm_token", fcm_token)
+    @staticmethod
+    async def set_fcm_token(user: USER_MODEL, fcm_token: str) -> None:
+        user.fcm_token = fcm_token
+        set_attribute(user, "fcm_token", fcm_token)
 
-    async def fcm_token_actualize(self, fcm_token: str) -> bool:
-        if self.user.fcm_token is None or self.user.fcm_token != fcm_token:
-            await self.set_fcm_token(fcm_token)
+    async def fcm_token_actualize(self, user: USER_MODEL, fcm_token: str) -> bool:
+        if user.fcm_token is None or user.fcm_token != fcm_token:
+            await self.set_fcm_token(user, fcm_token)
             return True
         else:
             return False

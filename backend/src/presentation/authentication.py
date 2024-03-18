@@ -15,7 +15,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from src.service.authentication.coach import CoachService
 from src.service.authentication.customer import CustomerService
 from src.service.authentication.user import UserService
-from src.service.authentication.exceptions import NotValidCredentials, UsernameIsTaken
+from src.service.authentication.exceptions import UsernameIsTaken
 from src.dependencies import provide_user_service, provide_coach_service, provide_customer_service
 from src.persistence.models import Gender
 from src.schemas.authentication import (

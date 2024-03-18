@@ -90,17 +90,17 @@ class CustomerProfileService(UserService):
         logger.info(f"Customer created successfully: {customer.first_name} {customer.last_name}")
         return customer
 
-    async def authorize(self, data: UserLoginData) -> bool:
+    async def authorize(self, user: Customer, data: UserLoginData) -> bool:
         """
         Customer logs in with one time password in the first time after receive invite.
         After customer changes password it logs in with own hashed password.
         """
-        first_login = len(data.received_password) == OTP_LENGTH and data.db_password == data.received_password
-        regular_login = await verify_password(data.received_password, data.db_password)
+        first_login = len(data.received_password) == OTP_LENGTH and user.password == data.received_password
+        regular_login = await verify_password(data.received_password, user.password)
 
         if first_login or regular_login:
-            if await self.fcm_token_actualize(data.fcm_token) is False:
-                await self.customer_repository.update(data.user_id, fcm_token=data.fcm_token)
+            if await self.fcm_token_actualize(user, data.fcm_token) is False:
+                await self.customer_repository.update(str(user.id), fcm_token=data.fcm_token)
             return True
         return False
 
@@ -166,14 +166,8 @@ class CustomerService:
             logger.warning(f"Not found any customer in database")
             return None
 
-        data = UserLoginData(
-            user_id=str(self.user.id),
-            db_password=str(self.user.password),
-            received_password=form_data.password,
-            fcm_token=fcm_token,
-        )
-
-        if await self.profile_service.authorize(data) is True:
+        data = UserLoginData(received_password=form_data.password, fcm_token=fcm_token)
+        if await self.profile_service.authorize(self.user, data) is True:
             logger.info(f"Customer successfully {self.user.last_name} {self.user.first_name} login")
             return self.user
 
