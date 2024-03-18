@@ -39,7 +39,8 @@ class UserService(ABC):
     async def update(self, **params):
         raise NotImplementedError
 
-    async def generate_jwt_token(self, username: str, access: bool = False, refresh: bool = False) -> str:
+    @staticmethod
+    async def generate_jwt_token(username: str, access: bool = False, refresh: bool = False) -> str:
         if not access and not refresh:
             raise ValueError("Specify what token type you're creating")
 
@@ -55,7 +56,8 @@ class UserService(ABC):
         )
         return encoded_jwt
 
-    async def handle_profile_photo(self, user: USER_MODEL,photo) -> None:
+    @staticmethod
+    async def handle_profile_photo(user: USER_MODEL,photo) -> None:
         if photo is not None:
             saving_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
             file_name = f"{user.username}_{saving_time}.jpeg"
@@ -65,7 +67,8 @@ class UserService(ABC):
 
             set_attribute(user, "photo_path", photo_path)
 
-    async def confirm_password(self, user: USER_MODEL, password: str) -> bool:
+    @staticmethod
+    async def confirm_password(user: USER_MODEL, password: str) -> bool:
         if await verify_password(password, str(user.password)):
             return True
         return False
