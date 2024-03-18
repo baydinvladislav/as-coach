@@ -13,7 +13,7 @@ class NotificationService:
         self.push_notificator = notificator
         self.kafka_supplier = kafka_supplier
 
-    async def send_notification(self, recipient_id: str, recipient_data: dict[str, str]):
+    async def send_push_notification(self, recipient_id: str, recipient_data: dict[str, str]):
         if recipient_id is None:
             logger.warning(f"Failed to send notification recipient id is not specified")
             return
