@@ -3,46 +3,86 @@ from fastapi.security import OAuth2PasswordRequestForm
 from src import Coach
 from src.utils import get_hashed_password, verify_password
 from src.repository.coach import CoachRepository
-from src.service.authentication.exceptions import NotValidCredentials, UsernameIsTaken
+from src.service.authentication.exceptions import UsernameIsTaken
 from src.service.authentication.user import UserService, UserType
-from src.schemas.authentication import CoachRegistrationData
+from src.schemas.authentication import CoachRegistrationData, UserLoginData
 
 
-class CoachService(UserService):
-
+# TODO form Customer aggregate in this layer
+class CoachSelectorService:
     def __init__(self, coach_repository: CoachRepository):
+        self.coach_repository = coach_repository
+
+    async def select_coach_by_username(self, username: str) -> Coach | None:
+        coach = await self.coach_repository.provide_by_username(username)
+        return coach
+
+
+# TODO form Customer aggregate in this layer
+class CoachProfileService(UserService):
+    def __init__(self, coach_repository: CoachRepository):
+        self.coach_repository = coach_repository
+
+    async def register(self, data: CoachRegistrationData) -> Coach | None:
+        coach = await self.coach_repository.create(**dict(data))
+        return coach
+
+    async def authorize(self, data: UserLoginData) -> bool:
+        if await verify_password(data.received_password, data.db_password):
+            if await self.fcm_token_actualize(data.fcm_token) is False:
+                await self.coach_repository.update(data.user_id, fcm_token=data.fcm_token)
+            return True
+        return False
+
+    async def update(self, user_id: str, **params) -> None:
+        await self.handle_profile_photo(params.pop("photo"))
+        await self.coach_repository.update(user_id, **params)
+
+
+class CoachService:
+
+    def __init__(
+            self,
+            coach_repository: CoachRepository,
+            selector_service: CoachSelectorService,
+            profile_service: CoachProfileService,
+    ):
         self.user = None
         self.user_type = UserType.COACH.value
         self.coach_repository = coach_repository
+        self.selector_service = selector_service
+        self.profile_service = profile_service
 
-    async def register(self, data: CoachRegistrationData) -> Coach:
-        existed_coach = await self.get_coach_by_username(username=data.username)
+    async def register(self, data: CoachRegistrationData) -> Coach | None:
+        existed_coach = await self.selector_service.select_coach_by_username(username=data.username)
         if existed_coach:
             raise UsernameIsTaken
 
         data.password = await get_hashed_password(data.password)
-        coach = await self.coach_repository.create(**dict(data))
-        self.user = coach
-        return coach
+        coach = await self.profile_service.register(**dict(data))
+        if coach:
+            self.user = coach
+            return coach
+        return None
 
-    async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Coach:
-        password_in_db = str(self.user.password)
-        if await verify_password(form_data.password, password_in_db):
-
-            if await self.fcm_token_actualize(fcm_token) is False:
-                await self.coach_repository.update(str(self.user.id), fcm_token=fcm_token)
-
-            return self.user
-
-        raise NotValidCredentials
+    async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Coach | None:
+        existed_coach = await self.get_coach_by_username(username=form_data.username)
+        data = UserLoginData(
+            user_id=str(existed_coach.id),
+            db_password=existed_coach.password,
+            received_password=form_data.password,
+            fcm_token=fcm_token,
+        )
+        if await self.profile_service.authorize(data) is True:
+            return existed_coach
+        return None
 
     async def update(self, **params) -> None:
-        await self.handle_profile_photo(params.pop("photo"))
-        await self.coach_repository.update(str(self.user.id), **params)
+        await self.profile_service.update(str(self.user.id), **params)
 
     async def get_coach_by_username(self, username: str) -> Coach | None:
-        coach = await self.coach_repository.provide_by_username(username)
-
+        coach = await self.selector_service.select_coach_by_username(username)
         if coach:
             self.user = coach[0]
             return self.user
+        return None

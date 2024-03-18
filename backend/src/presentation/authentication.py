@@ -23,7 +23,7 @@ from src.schemas.authentication import (
     NewUserPassword,
     LoginOut,
     CoachRegistrationData,
-    UserRegisterOut
+    UserRegisterOut,
 )
 from src.utils import password_context
 
@@ -87,33 +87,25 @@ async def login_user(
             detail="Empty fields"
         )
 
-    coach = await coach_service.get_coach_by_username(username=form_data.username)
-    customer = await customer_service.get_customer_by_username(username=form_data.username)
+    coach = await coach_service.authorize(form_data, fcm_token)
+    customer = await customer_service.authorize(form_data, fcm_token)
 
-    if coach:
-        service = coach_service
-    elif customer:
-        service = customer_service
+    if coach is not None:
+        user, service = coach, coach_service
+    elif customer is not None:
+        user, service = customer, customer_service
     else:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Not found any user"
         )
 
-    try:
-        user = await service.authorize(form_data, fcm_token)
-    except NotValidCredentials:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Not valid credentials for: {form_data.username}"
-        )
-
     return {
         "id": str(user.id),
         "user_type": service.user_type,
         "first_name": user.first_name,
-        "access_token": await service.generate_jwt_token(access=True),
-        "refresh_token": await service.generate_jwt_token(refresh=True),
+        "access_token": await service.profile_service.generate_jwt_token(access=True),
+        "refresh_token": await service.profile_service.generate_jwt_token(refresh=True),
         "password_changed": bool(password_context.identify(user.password)),
     }
 

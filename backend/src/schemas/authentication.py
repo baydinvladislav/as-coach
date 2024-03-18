@@ -62,6 +62,13 @@ class UserProfileOut(BaseModel):
     photo_link: Optional[str]
 
 
+class UserLoginData(BaseModel):
+    user_id: str
+    db_password: str
+    received_password: str
+    fcm_token: str
+
+
 class LoginOut(BaseModel):
     """
     Response after successfully user login

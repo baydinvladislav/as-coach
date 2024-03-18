@@ -4,9 +4,9 @@ from enum import Enum
 
 import shutil
 from jose import jwt
-from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm.attributes import set_attribute
 
+from src import Coach, Customer
 from src.config import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     REFRESH_TOKEN_EXPIRE_MINUTES,
@@ -15,7 +15,9 @@ from src.config import (
     STATIC_DIR,
 )
 from src.utils import verify_password
-from src.schemas.authentication import UserRegistrationData
+from src.schemas.authentication import UserRegistrationData, UserLoginData
+
+USER_MODEL = Coach | Customer
 
 
 class UserType(Enum):
@@ -31,11 +33,11 @@ class UserService(ABC):
         self.user_type = ""
 
     @abstractmethod
-    async def register(self, data: UserRegistrationData):
+    async def register(self, data: UserRegistrationData) -> USER_MODEL:
         raise NotImplementedError
 
     @abstractmethod
-    async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str):
+    async def authorize(self, data: UserLoginData) -> bool:
         raise NotImplementedError
 
     @abstractmethod

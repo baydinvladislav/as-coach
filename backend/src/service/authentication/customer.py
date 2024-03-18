@@ -5,16 +5,17 @@ from datetime import datetime, timedelta
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src import Customer
-from src.schemas.authentication import CustomerRegistrationData
+from src.schemas.authentication import CustomerRegistrationData, UserLoginData
 from src.service.notification import NotificationService
 from src.supplier.kafka import KafkaSupplier
 from src.utils import verify_password
 from src.repository.customer import CustomerRepository
-from src.service.authentication.exceptions import NotValidCredentials
 from src.service.authentication.user import UserService, UserType
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+
+OTP_LENGTH = 4
 
 
 # TODO form Customer aggregate in this layer
@@ -23,8 +24,12 @@ class CustomerSelectorService:
     def __init__(self, customer_repository: CustomerRepository) -> None:
         self.customer_repository = customer_repository
 
-    async def select_by_pk(self, pk: str) -> Customer | None:
+    async def select_customer_by_pk(self, pk: str) -> Customer | None:
         customer = await self.customer_repository.provide_by_pk(pk=pk)
+        return customer
+
+    async def select_customer_by_otp(self, password) -> Customer | None:
+        customer = await self.customer_repository.provide_by_otp(password=password)
         return customer
 
     async def select_customers_by_coach_id(self, coach_id: str) -> list[dict[str, str]]:
@@ -64,7 +69,7 @@ class CustomerSelectorService:
         return customer
 
 
-# auth logic
+# TODO form Customer aggregate in this layer
 class CustomerProfileService(UserService):
     def __init__(self, customer_repository: CustomerRepository):
         self.customer_repository = customer_repository
@@ -85,28 +90,26 @@ class CustomerProfileService(UserService):
         logger.info(f"Customer created successfully: {customer.first_name} {customer.last_name}")
         return customer
 
-    async def authorize(self, data) -> Customer:
+    async def authorize(self, data: UserLoginData) -> bool:
         """
         Customer logs in with one time password in the first time after receive invite.
         After customer changes password it logs in with own hashed password.
         """
-        OTP_LENGTH = 4
         first_login = len(data.received_password) == OTP_LENGTH and data.db_password == data.received_password
         regular_login = await verify_password(data.received_password, data.db_password)
 
         if first_login or regular_login:
             if await self.fcm_token_actualize(data.fcm_token) is False:
                 await self.customer_repository.update(data.user_id, fcm_token=data.fcm_token)
-            return self.user
-
-        raise NotValidCredentials
+            return True
+        return False
 
     async def update(self, user_id: str, **params) -> None:
         await self.handle_profile_photo(params.pop("photo"))
         await self.customer_repository.update(user_id, **params)
 
 
-class CustomerService(UserService):
+class CustomerService:
 
     def __init__(
             self,
@@ -142,7 +145,7 @@ class CustomerService(UserService):
             logger.info(f"Customer {customer.username} successfully invited through Telegram account")
         return customer
 
-    async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Customer:
+    async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Customer | None:
         """
         Customer logs in with default password in the first time after receive invite.
         After customer changes password it logs in with own hashed password.
@@ -154,24 +157,43 @@ class CustomerService(UserService):
         Raises:
             NotValidCredentials: in case if credentials aren't valid
         """
-        password_in_db = str(self.user.password)
-        if password_in_db == form_data.password \
-                or await verify_password(form_data.password, password_in_db):
+        if len(form_data.password) == OTP_LENGTH:
+            self.user = await self.get_customer_by_otp(form_data.password)
+            logger.info(f"First customer login {self.user.id}")
+        else:
+            self.user = await self.get_customer_by_username(form_data.username)
+            logger.info(f"Regular customer login {self.user.id}")
 
-            if await self.fcm_token_actualize(fcm_token) is False:
-                await self.customer_repository.update(str(self.user.id), fcm_token=fcm_token)
+        if self.user is None:
+            logger.warning(f"Not found any customer in database")
+            return None
 
+        data = UserLoginData(
+            user_id=str(self.user.id),
+            db_password=str(self.user.password),
+            received_password=form_data.password,
+            fcm_token=fcm_token,
+        )
+
+        if await self.profile_service.authorize(data) is True:
+            logger.info(f"Customer successfully {self.user.last_name} {self.user.first_name} login")
             return self.user
 
-        raise NotValidCredentials
+        return None
 
     async def update(self, **params) -> None:
-        await self.handle_profile_photo(params.pop("photo"))
-        await self.customer_repository.update(str(self.user.id), **params)
+        await self.profile_service.update(str(self.user.id), **params)
 
     async def get_customer_by_pk(self, pk: str) -> Customer | None:
-        customer = await self.selector_service.select_by_pk(pk=pk)
+        customer = await self.selector_service.select_customer_by_pk(pk=pk)
         if customer is not None:
+            self.user = customer
+            return self.user
+        return None
+
+    async def get_customer_by_otp(self, otp: str) -> Customer | None:
+        customer = await self.selector_service.select_customer_by_otp(password=otp)
+        if customer:
             self.user = customer
             return self.user
         return None
