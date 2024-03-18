@@ -159,10 +159,8 @@ class CustomerService:
         """
         if len(form_data.password) == OTP_LENGTH:
             self.user = await self.get_customer_by_otp(form_data.password)
-            logger.info(f"First customer login {self.user.id}")
         else:
             self.user = await self.get_customer_by_username(form_data.username)
-            logger.info(f"Regular customer login {self.user.id}")
 
         if self.user is None:
             logger.warning(f"Not found any customer in database")
