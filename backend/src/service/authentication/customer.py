@@ -1,4 +1,3 @@
-import json
 import logging
 from datetime import datetime, timedelta
 
@@ -7,7 +6,6 @@ from fastapi.security import OAuth2PasswordRequestForm
 from src import Customer
 from src.schemas.authentication import CustomerRegistrationData, UserLoginData
 from src.service.notification import NotificationService
-from src.supplier.kafka import KafkaSupplier
 from src.utils import verify_password
 from src.repository.customer import CustomerRepository
 from src.service.authentication.user import UserService, UserType
@@ -113,24 +111,15 @@ class CustomerService:
 
     def __init__(
             self,
-            kafka_supplier: KafkaSupplier,
             selector_service: CustomerSelectorService,
             profile_service: CustomerProfileService,
             notification_service: NotificationService,
     ) -> None:
         self.user = None
         self.user_type = UserType.CUSTOMER.value
-        self.kafka_supplier = kafka_supplier
         self.selector_service = selector_service
         self.profile_service = profile_service
         self.notification_service = notification_service
-
-    async def _invite_customer(self, coach_name: str, customer_username: str, customer_password: str):
-        message = json.dumps(
-            {"username": customer_username, "customer_password": customer_password, "coach_name": coach_name},
-            ensure_ascii=False,
-        )
-        self.kafka_supplier.send_message(message)
 
     async def register(self, data: CustomerRegistrationData) -> Customer:
         customer = await self.profile_service.register(data)

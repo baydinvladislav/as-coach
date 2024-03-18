@@ -102,14 +102,10 @@ async def provide_customer_service(
     """
     Returns service responsible to interact with Customer domain
     """
-    kafka_supplier = KafkaSupplier(
-        topic=kafka_settings.customer_invite_topic, config={"bootstrap.servers": kafka_settings.bootstrap_servers}
-    )
     customer_repository = CustomerRepository(database)
     selector = CustomerSelectorService(customer_repository)
     profile_service = CustomerProfileService(customer_repository)
     return CustomerService(
-        kafka_supplier=kafka_supplier,
         selector_service=selector,
         profile_service=profile_service,
         notification_service=notification_service,
