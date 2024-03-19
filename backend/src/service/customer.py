@@ -102,7 +102,8 @@ class CustomerProfileService(UserService):
         return False
 
     async def update(self, user: Customer, **params) -> None:
-        await self.handle_profile_photo(user, params.pop("photo"))
+        if "photo" in params:
+            await self.handle_profile_photo(user, params.pop("photo"))
         await self.customer_repository.update(str(user.id), **params)
 
 

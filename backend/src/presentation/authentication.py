@@ -83,9 +83,9 @@ async def login_user(
     if form_data.username is None or form_data.password is None:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Empty fields")
 
-    if coach := await coach_service.authorize(form_data, fcm_token) is not None:
+    if coach := await coach_service.authorize(form_data, fcm_token):
         user, service = coach, coach_service
-    elif customer := await customer_service.authorize(form_data, fcm_token) is not None:
+    elif customer := await customer_service.authorize(form_data, fcm_token):
         user, service = customer, customer_service
     else:
         raise HTTPException(

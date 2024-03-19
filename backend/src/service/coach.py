@@ -35,7 +35,8 @@ class CoachProfileService(UserService):
         return False
 
     async def update(self, user: Coach, **params) -> None:
-        await self.handle_profile_photo(user, params.pop("photo"))
+        if "photo" in params:
+            await self.handle_profile_photo(user, params.pop("photo"))
         await self.coach_repository.update(str(user.id), **params)
 
 
