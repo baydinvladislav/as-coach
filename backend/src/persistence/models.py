@@ -70,11 +70,8 @@ class Customer(Base, BaseModel):
     __table_args__ = {'extend_existing': True}
 
     username = Column(
-        "username",
-        String(100), nullable=True, index=True, unique=True,
-        doc="Customer's username is his Telegram username",
+        "username", String(100), nullable=True, index=True, doc="Customer's username is his Telegram username"
     )
-    phone_number = Column("phone_number", String(100), index=True, nullable=True, unique=True)
     password = Column("password", String(255), nullable=True)
     first_name = Column("first_name", String(50), nullable=False)
     last_name = Column("last_name", String(50), nullable=False)
