@@ -25,8 +25,8 @@ class CustomerOut(CustomerCreateIn, BaseModel):
     id: str
     first_name: str
     last_name: str
-    phone_number: Optional[str]
-    last_plan_end_date: Union[str, None]
+    phone_number: str | None
+    last_plan_end_date: str | None
 
 
 class TrainingPlanIn(BaseModel):
