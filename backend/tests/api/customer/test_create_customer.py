@@ -17,7 +17,7 @@ async def test_create_customer_successfully(create_user, override_get_db, mock_s
     customer_data = {
         "first_name": TEST_CUSTOMER_FIRST_NAME,
         "last_name": TEST_CUSTOMER_LAST_NAME,
-        "phone_number": TEST_CUSTOMER_USERNAME
+        "phone_number": "@test_telegram_user"
     }
 
     customer = await override_get_db.execute(

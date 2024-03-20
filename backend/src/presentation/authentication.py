@@ -14,7 +14,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from src.service.coach import CoachService
 from src.service.customer import CustomerService
-from src.shared.exceptions import UsernameIsTaken
+from src.shared.exceptions import UsernameIsTaken, NotValidCredentials
 from src.shared.dependencies import provide_user_service, provide_coach_service, provide_customer_service
 from src.persistence.models import Gender
 from src.schemas.authentication import (
@@ -81,17 +81,28 @@ async def login_user(
         access_token and refresh_token inside dictionary
     """
     if form_data.username is None or form_data.password is None:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Empty fields")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Empty credential fields")
 
-    if coach := await coach_service.authorize(form_data, fcm_token):
+    try:
+        coach = await coach_service.authorize(form_data, fcm_token)
+    except NotValidCredentials:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Not valid credentials for coach")
+
+    if coach is not None:
         user, service = coach, coach_service
-    elif customer := await customer_service.authorize(form_data, fcm_token):
-        user, service = customer, customer_service
     else:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Not found any user"
-        )
+        try:
+            customer = await customer_service.authorize(form_data, fcm_token)
+        except NotValidCredentials:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Not valid credentials for customer")
+
+        if customer is not None:
+            user, service = customer, customer_service
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Not found any user"
+            )
 
     return LoginOut(
         id=str(user.id),

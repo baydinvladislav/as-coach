@@ -7,6 +7,7 @@ from src import Customer
 from src.shared.config import OTP_LENGTH
 from src.schemas.authentication import CustomerRegistrationData, UserLoginData
 from src.service.notification import NotificationService
+from src.shared.exceptions import NotValidCredentials
 from src.utils import verify_password
 from src.repository.customer import CustomerRepository
 from src.service.user import UserService, UserType
@@ -158,8 +159,7 @@ class CustomerService:
             await self.update(self.user, username=form_data.username)
             logger.info(f"Customer successfully {self.user.last_name} {self.user.first_name} login")
             return self.user
-
-        return None
+        raise NotValidCredentials("Not correct customer password")
 
     async def confirm_password(self, user: Customer, current_password: str) -> bool:
         if await self.profile_service.confirm_password(user, current_password):
