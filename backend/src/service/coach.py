@@ -1,3 +1,5 @@
+import logging
+
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src import Coach
@@ -6,6 +8,9 @@ from src.repository.coach import CoachRepository
 from src.shared.exceptions import UsernameIsTaken
 from src.service.user import UserService, UserType
 from src.schemas.authentication import CoachRegistrationData, UserLoginData
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 
 # TODO form Customer aggregate in this layer
