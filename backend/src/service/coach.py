@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from src import Coach
 from src.utils import get_hashed_password, verify_password
 from src.repository.coach import CoachRepository
-from src.shared.exceptions import UsernameIsTaken
+from src.shared.exceptions import UsernameIsTaken, NotValidCredentials
 from src.service.user import UserService, UserType
 from src.schemas.authentication import CoachRegistrationData, UserLoginData
 
@@ -79,7 +79,7 @@ class CoachService:
         if await self.profile_service.authorize(existed_coach, data) is True:
             logger.info(f"Coach with username {existed_coach.username} successfully login")
             return existed_coach
-        return None
+        raise NotValidCredentials("Not correct coach password")
 
     async def confirm_password(self, user: Coach, current_password: str) -> bool:
         if await self.profile_service.confirm_password(user, current_password):
