@@ -125,12 +125,14 @@ class CustomerService:
     async def register(self, data: CustomerRegistrationData) -> Customer:
         customer = await self.profile_service.register(data)
         logger.info(f"Customer registered successfully: {customer.first_name} {customer.last_name}")
-        if customer.username is not None:
-            logger.info(f"Will be invited in application new customer: {customer.username}")
+        if customer.telegram_username is not None:
+            logger.info(f"Will be invited in application new customer: {customer.telegram_username}")
             await self.notification_service.send_telegram_customer_invite(
-                data.coach_name, customer.username, customer.password
+                coach_name=data.coach_name,
+                customer_username=customer.telegram_username,
+                customer_password=customer.password,
             )
-            logger.info(f"Customer {customer.username} successfully invited through Telegram account")
+            logger.info(f"Customer {customer.telegram_username} successfully invited through Telegram account")
         return customer
 
     async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Customer | None:
