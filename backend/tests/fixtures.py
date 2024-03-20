@@ -23,7 +23,8 @@ from src.shared.config import (
     TEST_COACH_PASSWORD,
     TEST_CUSTOMER_FIRST_NAME,
     TEST_CUSTOMER_LAST_NAME,
-    TEST_CUSTOMER_USERNAME
+    TEST_CUSTOMER_USERNAME,
+    OTP_LENGTH,
 )
 
 
@@ -288,7 +289,7 @@ async def create_customer(create_user, override_get_db):
             username=TEST_CUSTOMER_USERNAME,
             first_name=TEST_CUSTOMER_FIRST_NAME,
             last_name=TEST_CUSTOMER_LAST_NAME,
-            password=generate_random_password(8),
+            password=generate_random_password(OTP_LENGTH),
             coach=create_user
         )
 
