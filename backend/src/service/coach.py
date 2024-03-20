@@ -69,8 +69,10 @@ class CoachService:
         if existed_coach is None:
             return None
 
+        logger.info(f"Authorizing coach with username {existed_coach.username}")
         data = UserLoginData(received_password=form_data.password, fcm_token=fcm_token)
         if await self.profile_service.authorize(existed_coach, data) is True:
+            logger.info(f"Coach with username {existed_coach.username} successfully login")
             return existed_coach
         return None
 

@@ -89,7 +89,7 @@ async def create_access_token(subject: str) -> str:
     Returns:
         access token
     """
-    time_delta = timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES))  # type: ignore
+    time_delta = timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES))
     expires_delta = datetime.utcnow() + time_delta
     to_encode = {"exp": expires_delta, "sub": str(subject)}
     encoded_jwt = jwt.encode(to_encode, str(JWT_SECRET_KEY), str(ALGORITHM))

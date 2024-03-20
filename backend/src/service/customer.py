@@ -81,10 +81,10 @@ class CustomerProfileService(UserService):
         )
 
         if customer is None:
-            logger.warning(f"New customer creation is failed: {data.username}")
+            logger.warning(f"New customer creation is failed: {data.last_name} {data.first_name}")
             raise
 
-        logger.info(f"Customer created successfully: {customer.first_name} {customer.last_name}")
+        logger.info(f"Customer created successfully: {data.last_name} {data.first_name}")
         return customer
 
     async def authorize(self, user: Customer, data: UserLoginData) -> bool:
