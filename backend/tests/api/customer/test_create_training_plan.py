@@ -12,13 +12,13 @@ from tests.conftest import make_test_http_request
 async def test_create_training_plan_successfully(
         create_customer,
         create_exercises,
-        override_get_db,
+        db,
         mock_send_push_notification,
 ):
     """
     Successfully training plan creation
     """
-    muscle_groups = await override_get_db.execute(
+    muscle_groups = await db.execute(
         select(MuscleGroup).options(selectinload(MuscleGroup.exercises))
     )
 
@@ -76,23 +76,23 @@ async def test_create_training_plan_successfully(
     assert excepted_push_notification_sent_data in mock_send_push_notification.call_args.args
 
     if status_code == 201:
-        await override_get_db.execute(
+        await db.execute(
             delete(TrainingPlan).where(TrainingPlan.id == response["id"])
         )
-        await override_get_db.commit()
+        await db.commit()
 
 
 @pytest.mark.asyncio
 async def test_create_training_plan_with_supersets_successfully(
         create_customer,
         create_exercises,
-        override_get_db,
+        db,
         mock_send_push_notification,
 ):
     """
     Successfully creating training plan with supersets
     """
-    muscle_groups = await override_get_db.execute(
+    muscle_groups = await db.execute(
         select(MuscleGroup).options(selectinload(MuscleGroup.exercises))
     )
 
@@ -163,7 +163,7 @@ async def test_create_training_plan_with_supersets_successfully(
         first_exercise_id_in_superset,
         second_exercise_id_in_superset
     )
-    exercises_in_superset = await override_get_db.execute(
+    exercises_in_superset = await db.execute(
         select(ExercisesOnTraining).where(
             ExercisesOnTraining.exercise_id.in_(superset_exercises_ids)
         )
@@ -182,7 +182,7 @@ async def test_create_training_plan_with_supersets_successfully(
         second_exercise_id_in_triset,
         third_exercise_id_in_triset
     )
-    exercises_in_triset = await override_get_db.execute(
+    exercises_in_triset = await db.execute(
         select(ExercisesOnTraining).where(
             ExercisesOnTraining.exercise_id.in_(triset_exercises_ids)
         )
@@ -195,10 +195,10 @@ async def test_create_training_plan_with_supersets_successfully(
     assert len(s) == 1
 
     if response.status_code == 201:
-        await override_get_db.execute(
+        await db.execute(
             delete(TrainingPlan).where(TrainingPlan.id == response.json()["id"])
         )
-        await override_get_db.commit()
+        await db.commit()
 
 
 @pytest.mark.asyncio
@@ -206,7 +206,7 @@ async def test_get_training_plan_with_supersets(
     create_customer,
     create_training_plans,
     create_training_exercises,
-    override_get_db
+    db,
 ):
     response = await make_test_http_request(
         url=f"/api/customers/{create_customer.id}/training_plans/{create_training_plans[0].id}",
@@ -224,7 +224,7 @@ async def test_get_training_plan_with_supersets(
     assert len(superset_ids_set) == 1
 
     if response.status_code == 200:
-        await override_get_db.execute(
+        await db.execute(
             delete(TrainingPlan).where(TrainingPlan.id == str(create_training_plans[0].id))
         )
-        await override_get_db.commit()
+        await db.commit()

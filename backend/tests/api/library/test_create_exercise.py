@@ -11,12 +11,12 @@ async def test_create_exercise_successfully(
     create_coach,
     create_customer,
     create_exercises,
-    override_get_db
+    db,
 ):
     """
     Successfully exercise creation
     """
-    muscle_groups = await override_get_db.execute(select(MuscleGroup))
+    muscle_groups = await db.execute(select(MuscleGroup))
     muscle_groups = muscle_groups.scalars().first()
     exercise_data = {
         "name": "My custom exercise",
@@ -27,7 +27,7 @@ async def test_create_exercise_successfully(
     assert response.status_code == 201
 
     if response.status_code == 201:
-        await override_get_db.execute(
+        await db.execute(
             delete(Exercise).where(Exercise.id == response.json()["id"])
         )
-        await override_get_db.commit()
+        await db.commit()

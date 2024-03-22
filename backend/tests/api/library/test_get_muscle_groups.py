@@ -4,11 +4,7 @@ from tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
-async def test_get_all_muscle_groups(
-    create_coach,
-    create_exercises,
-    override_get_db
-):
+async def test_get_all_muscle_groups(create_coach, create_exercises, db):
     """
     Test providing list of available muscle groups
     """

@@ -10,7 +10,7 @@ from tests.conftest import make_test_http_request
 async def test_get_all_exercises(
     create_coach,
     create_exercises,
-    override_get_db
+    db,
 ):
     """
     Check list of all exercises
@@ -20,7 +20,7 @@ async def test_get_all_exercises(
 
     available_coach_ids = {create_coach.id, None}
     for exercise in response.json():
-        exercise_in_db = await override_get_db.execute(
+        exercise_in_db = await db.execute(
             select(Exercise).where(Exercise.id == exercise["id"])
         )
         # return only user's and default exercises

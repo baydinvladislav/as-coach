@@ -7,7 +7,7 @@ from tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
-async def test_get_customers(create_coach, override_get_db, mock_send_kafka_message):
+async def test_get_customers(create_coach, db, mock_send_kafka_message):
     """
     Gets all user's customers
     """
@@ -39,14 +39,14 @@ async def test_get_customers(create_coach, override_get_db, mock_send_kafka_mess
     response = await make_test_http_request("/api/customers", "get", user_username)
     assert response.status_code == 200
 
-    await override_get_db.execute(
+    await db.execute(
         delete(Customer).where(Customer.id.in_(ids))
     )
-    await override_get_db.commit()
+    await db.commit()
 
 
 @pytest.mark.asyncio
-async def test_get_specific_customer(create_customer, override_get_db):
+async def test_get_specific_customer(create_customer, db):
     """
     Gets specific customer
     """
@@ -55,14 +55,14 @@ async def test_get_specific_customer(create_customer, override_get_db):
     )
     assert response.status_code == 200
 
-    await override_get_db.execute(
+    await db.execute(
         delete(Customer).where(Customer.id == str(create_customer.id))
     )
-    await override_get_db.commit()
+    await db.commit()
 
 
 @pytest.mark.asyncio
-async def test_get_specific_customer_failed_not_valid_uuid(create_coach, override_get_db):
+async def test_get_specific_customer_failed_not_valid_uuid(create_coach, db):
     """
     Failed because client sent is not valid UUID
     """
