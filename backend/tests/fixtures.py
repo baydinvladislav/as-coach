@@ -1,3 +1,4 @@
+import os
 import uuid
 from datetime import date, timedelta
 
@@ -170,7 +171,7 @@ async def create_coach(db) -> Coach:
 
 @pytest_asyncio.fixture()
 async def db_engine():
-    engine = create_async_engine("postgresql+asyncpg://postgres:postgres@localhost:5432/as_coach")
+    engine = create_async_engine(os.environ.get("TEST_DATABASE_URL"))
     yield engine
 
 
