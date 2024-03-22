@@ -74,7 +74,7 @@ async def create_customer(
     customer_reg_data = CustomerRegistrationData(
         coach_id=str(user.id),
         coach_name=user.first_name,
-        username=customer_data.phone_number,
+        telegram_username=customer_data.phone_number,
         password=generate_random_password(OTP_LENGTH),
         first_name=customer_data.first_name,
         last_name=customer_data.last_name,

@@ -75,7 +75,7 @@ class CustomerProfileService(UserService):
     async def register(self, data: CustomerRegistrationData) -> Customer | None:
         customer = await self.customer_repository.create(
             coach_id=data.coach_id,
-            username=data.username,
+            telegram_username=data.telegram_username,
             password=data.password,
             first_name=data.first_name,
             last_name=data.last_name,
@@ -158,7 +158,8 @@ class CustomerService:
 
         data = UserLoginData(received_password=form_data.password, fcm_token=fcm_token)
         if await self.profile_service.authorize(self.user, data) is True:
-            await self.update(self.user, username=form_data.username)
+            if self.user.username is None:
+                await self.update(self.user, username=form_data.username)
             logger.info(f"Customer successfully {self.user.last_name} {self.user.first_name} login")
             return self.user
         raise NotValidCredentials("Not correct customer password")
