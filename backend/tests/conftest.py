@@ -4,19 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import engine
 from src.utils import create_access_token
-from tests.fixtures import (
-    db,
-    db_engine,
-    client,
-    create_coach,
-    create_customer,
-    create_muscle_groups,
-    create_exercises,
-    create_training_plans,
-    create_trainings,
-    create_training_exercises,
-)
-from tests.mocks import mock_send_kafka_message, mock_send_push_notification
+from tests.fixtures import *
+from tests.mocks import *
 
 TestingSessionLocal = sessionmaker(
     engine, autocommit=False, expire_on_commit=False, autoflush=False, class_=AsyncSession
