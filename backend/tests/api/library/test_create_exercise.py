@@ -8,7 +8,7 @@ from tests.conftest import make_test_http_request
 
 @pytest.mark.asyncio
 async def test_create_exercise_successfully(
-    create_user,
+    create_coach,
     create_customer,
     create_exercises,
     override_get_db
@@ -23,7 +23,7 @@ async def test_create_exercise_successfully(
         "muscle_group_id": str(muscle_groups.id)
     }
 
-    response = await make_test_http_request(f"/api/exercises", "post", create_user.username, json=exercise_data)
+    response = await make_test_http_request(f"/api/exercises", "post", create_coach.username, json=exercise_data)
     assert response.status_code == 201
 
     if response.status_code == 201:

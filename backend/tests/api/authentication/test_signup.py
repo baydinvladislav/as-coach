@@ -93,7 +93,7 @@ async def test_signup_too_short_password(override_get_db):
 
 
 @pytest.mark.asyncio
-async def test_signup_failed_username_already_registered(create_user):
+async def test_signup_failed_username_already_registered(create_coach):
     """
     Failed because username already registered
     """

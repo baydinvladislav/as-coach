@@ -7,7 +7,7 @@ from src.shared.config import TEST_COACH_FIRST_NAME, TEST_COACH_USERNAME, TEST_C
 
 
 @pytest.mark.asyncio
-async def test_login_successfully(create_user, override_get_db):
+async def test_login_successfully(create_coach, override_get_db):
     """
     Tests success user login on /api/login
     Checks tokens in the response
