@@ -13,9 +13,10 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 
-# TODO form Customer aggregate in this layer
 class CoachSelectorService:
-    def __init__(self, coach_repository: CoachRepository):
+    """Responsible for getting coach data from storage"""
+
+    def __init__(self, coach_repository: CoachRepository) -> None:
         self.coach_repository = coach_repository
 
     async def select_coach_by_username(self, username: str) -> Coach | None:
@@ -23,9 +24,10 @@ class CoachSelectorService:
         return coach
 
 
-# TODO form Customer aggregate in this layer
 class CoachProfileService(UserService):
-    def __init__(self, coach_repository: CoachRepository):
+    """Responsible for coach profile operations"""
+
+    def __init__(self, coach_repository: CoachRepository) -> None:
         self.coach_repository = coach_repository
 
     async def register(self, data: CoachRegistrationData) -> Coach | None:
@@ -46,12 +48,9 @@ class CoachProfileService(UserService):
 
 
 class CoachService:
+    """Contains business rules for Coach subdomain"""
 
-    def __init__(
-            self,
-            selector_service: CoachSelectorService,
-            profile_service: CoachProfileService,
-    ):
+    def __init__(self, selector_service: CoachSelectorService, profile_service: CoachProfileService) -> None:
         self.user = None
         self.user_type = UserType.COACH.value
         self.selector_service = selector_service

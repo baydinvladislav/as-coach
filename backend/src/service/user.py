@@ -26,6 +26,7 @@ class UserType(Enum):
 
 
 class UserService(ABC):
+    """Contains base user logic"""
 
     @abstractmethod
     async def register(self, data: UserRegistrationData) -> USER_MODEL:

@@ -16,8 +16,8 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 
-# TODO form Customer aggregate in this layer
 class CustomerSelectorService:
+    """Responsible for getting customer data from storage"""
 
     def __init__(self, customer_repository: CustomerRepository) -> None:
         self.customer_repository = customer_repository
@@ -67,9 +67,10 @@ class CustomerSelectorService:
         return customer
 
 
-# TODO form Customer aggregate in this layer
 class CustomerProfileService(UserService):
-    def __init__(self, customer_repository: CustomerRepository):
+    """Responsible for customer profile operations"""
+
+    def __init__(self, customer_repository: CustomerRepository) -> None:
         self.customer_repository = customer_repository
 
     async def register(self, data: CustomerRegistrationData) -> Customer | None:
@@ -109,6 +110,7 @@ class CustomerProfileService(UserService):
 
 
 class CustomerService:
+    """Contains business rules for Customer subdomain"""
 
     def __init__(
             self,
