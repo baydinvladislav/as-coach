@@ -10,20 +10,20 @@ from src.shared.config import TEST_COACH_FIRST_NAME, TEST_COACH_USERNAME, TEST_C
 
 
 @pytest.mark.asyncio
-async def test_signup_successfully(override_get_db):
+async def test_signup_successfully(db):
     """
     Success registration
     """
-    user = await override_get_db.execute(
+    user = await db.execute(
         select(Coach).where(Coach.username == TEST_COACH_USERNAME)
     )
 
     user_instance = user.scalar()
     if user_instance:
-        await override_get_db.execute(
+        await db.execute(
             delete(Coach).where(Coach.username == TEST_COACH_USERNAME)
         )
-        await override_get_db.commit()
+        await db.commit()
 
     signup_data = {
         "username": TEST_COACH_USERNAME,
@@ -37,20 +37,20 @@ async def test_signup_successfully(override_get_db):
 
 
 @pytest.mark.asyncio
-async def test_signup_validation_error(override_get_db):
+async def test_signup_validation_error(db):
     """
     Failed registration because of validation error
     """
-    user = await override_get_db.execute(
+    user = await db.execute(
         select(Coach).where(Coach.username == TEST_COACH_USERNAME)
     )
 
     user_instance = user.scalar()
     if user_instance:
-        await override_get_db.execute(
+        await db.execute(
             delete(Coach).where(Coach.username == TEST_COACH_USERNAME)
         )
-        await override_get_db.commit()
+        await db.commit()
 
     not_valid_signup_data = {
         # without "+"
@@ -65,20 +65,20 @@ async def test_signup_validation_error(override_get_db):
 
 
 @pytest.mark.asyncio
-async def test_signup_too_short_password(override_get_db):
+async def test_signup_too_short_password(db):
     """
     Failed registration because of validation error
     """
-    user = await override_get_db.execute(
+    user = await db.execute(
         select(Coach).where(Coach.username == TEST_COACH_USERNAME)
     )
 
     user_instance = user.scalar()
     if user_instance:
-        await override_get_db.execute(
+        await db.execute(
             delete(Coach).where(Coach.username == TEST_COACH_USERNAME)
         )
-        await override_get_db.commit()
+        await db.commit()
 
     not_valid_signup_data = {
         "username": TEST_COACH_USERNAME,
@@ -93,7 +93,7 @@ async def test_signup_too_short_password(override_get_db):
 
 
 @pytest.mark.asyncio
-async def test_signup_failed_username_already_registered(create_user):
+async def test_signup_failed_username_already_registered(create_coach):
     """
     Failed because username already registered
     """

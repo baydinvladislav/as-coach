@@ -12,12 +12,12 @@ from src.utils import generate_random_password
 
 
 @pytest.mark.asyncio
-async def test_create_method_positive(override_get_db):
+async def test_create_method_positive(db):
     """
     Tests method to create new record through SQLAlchemy repo
     """
 
-    repo = BaseRepository(session=override_get_db)
+    repo = BaseRepository(session=db)
     repo.model = Coach
 
     coach_data = {
@@ -36,19 +36,17 @@ async def test_create_method_positive(override_get_db):
     assert coach.username == coach_data["username"]
     assert coach.first_name == coach_data["first_name"]
 
-    await override_get_db.execute(
-        delete(Coach).where(Coach.username == coach_data["username"])
-    )
-    await override_get_db.commit()
+    await db.execute(delete(Coach).where(Coach.username == coach_data["username"]))
+    await db.commit()
 
 
 @pytest.mark.asyncio
-async def test_create_method_raise_attribute_error(override_get_db):
+async def test_create_method_raise_attribute_error(db):
     """
     Tests raising error because of invalid attributes
     """
 
-    repo = BaseRepository(session=override_get_db)
+    repo = BaseRepository(session=db)
     repo.model = Coach
 
     coach_data = {
@@ -62,12 +60,12 @@ async def test_create_method_raise_attribute_error(override_get_db):
 
 
 @pytest.mark.asyncio
-async def test_get_method(create_customer, override_get_db):
+async def test_get_method(create_customer, db):
     """
     Tests the successful receiving of the object
     """
 
-    repo = BaseRepository(session=override_get_db)
+    repo = BaseRepository(session=db)
     repo.model = Coach
 
     customer = create_customer
@@ -77,12 +75,12 @@ async def test_get_method(create_customer, override_get_db):
 
 
 @pytest.mark.asyncio
-async def test_get_all_method(override_get_db):
+async def test_get_all_method(db):
     """
     Tests the successful receiving all objects from table
     """
 
-    repo = BaseRepository(session=override_get_db)
+    repo = BaseRepository(session=db)
     repo.model = Exercise
 
     result = await repo.get_all()
@@ -91,12 +89,12 @@ async def test_get_all_method(override_get_db):
 
 
 @pytest.mark.asyncio
-async def test_filter_method(create_customer, override_get_db):
+async def test_filter_method(create_customer, db):
     """
     Tests the filtering correctness
     """
 
-    repo = BaseRepository(session=override_get_db)
+    repo = BaseRepository(session=db)
     repo.model = Exercise
 
     result = await repo.filter(filters={"name": "Жим штанги лежа"}, foreign_keys=[], sub_queries=[])

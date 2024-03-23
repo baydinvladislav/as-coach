@@ -7,7 +7,7 @@ from tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
-async def test_get_customers(create_user, override_get_db, mock_send_kafka_message):
+async def test_get_customers(create_coach, db, mock_send_kafka_message):
     """
     Gets all user's customers
     """
@@ -28,7 +28,7 @@ async def test_get_customers(create_user, override_get_db, mock_send_kafka_messa
             "phone_number": "+79267334422"
         }
     ]
-    user_username = create_user.username
+    user_username = create_coach.username
 
     ids = []
     for customer in customers_data:
@@ -39,14 +39,14 @@ async def test_get_customers(create_user, override_get_db, mock_send_kafka_messa
     response = await make_test_http_request("/api/customers", "get", user_username)
     assert response.status_code == 200
 
-    await override_get_db.execute(
+    await db.execute(
         delete(Customer).where(Customer.id.in_(ids))
     )
-    await override_get_db.commit()
+    await db.commit()
 
 
 @pytest.mark.asyncio
-async def test_get_specific_customer(create_customer, override_get_db):
+async def test_get_specific_customer(create_customer, db):
     """
     Gets specific customer
     """
@@ -55,16 +55,16 @@ async def test_get_specific_customer(create_customer, override_get_db):
     )
     assert response.status_code == 200
 
-    await override_get_db.execute(
+    await db.execute(
         delete(Customer).where(Customer.id == str(create_customer.id))
     )
-    await override_get_db.commit()
+    await db.commit()
 
 
 @pytest.mark.asyncio
-async def test_get_specific_customer_failed_not_valid_uuid(create_user, override_get_db):
+async def test_get_specific_customer_failed_not_valid_uuid(create_coach, db):
     """
     Failed because client sent is not valid UUID
     """
-    response = await make_test_http_request(f"/api/customers/7a8sdgajksd8asdb", "get", create_user.username)
+    response = await make_test_http_request(f"/api/customers/7a8sdgajksd8asdb", "get", create_coach.username)
     assert response.status_code == 400

@@ -8,19 +8,18 @@ from tests.conftest import make_test_http_request
 
 @pytest.mark.asyncio
 async def test_get_all_exercises(
-    create_user,
-    create_exercises,
-    override_get_db
+    create_coach,
+    db,
 ):
     """
     Check list of all exercises
     """
-    response = await make_test_http_request(f"/api/exercises", "get", create_user.username)
+    response = await make_test_http_request(f"/api/exercises", "get", create_coach.username)
     assert response.status_code == 200
 
-    available_coach_ids = {create_user.id, None}
+    available_coach_ids = {create_coach.id, None}
     for exercise in response.json():
-        exercise_in_db = await override_get_db.execute(
+        exercise_in_db = await db.execute(
             select(Exercise).where(Exercise.id == exercise["id"])
         )
         # return only user's and default exercises
