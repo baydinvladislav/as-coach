@@ -9,7 +9,6 @@ from tests.conftest import make_test_http_request
 @pytest.mark.asyncio
 async def test_get_all_exercises(
     create_coach,
-    create_exercises,
     db,
 ):
     """
