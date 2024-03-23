@@ -11,7 +11,6 @@ from tests.conftest import make_test_http_request
 @pytest.mark.asyncio
 async def test_create_training_plan_successfully(
         create_customer,
-        # create_exercises,
         db,
         mock_send_push_notification,
 ):
@@ -85,7 +84,6 @@ async def test_create_training_plan_successfully(
 @pytest.mark.asyncio
 async def test_create_training_plan_with_supersets_successfully(
         create_customer,
-        # create_exercises,
         db,
         mock_send_push_notification,
 ):
