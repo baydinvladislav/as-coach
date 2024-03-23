@@ -72,7 +72,7 @@ export const AddClientScreen = observer(() => {
             error={errors.last_name}
           />
           <Input
-            keyboardType={'phone-pad'}
+            // keyboardType={'phone-pad'}
             // mask={TELEGRAM_USERNAME_MASK}
             style={styles.input}
             placeholder={t('inputs.tg_username')}
