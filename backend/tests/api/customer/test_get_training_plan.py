@@ -9,7 +9,7 @@ async def test_get_all_training_plans(
         create_customer,
         create_exercises,
         create_training_plans,
-        override_get_db
+        db,
 ):
     """
     Checks that user can get all customer's training plans
@@ -34,7 +34,7 @@ async def test_get_specified_training_plan(
         create_customer,
         create_training_exercises,
         create_trainings,
-        override_get_db
+        db,
 ):
     """
     Returns specified training plan

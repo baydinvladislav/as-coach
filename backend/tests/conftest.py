@@ -4,12 +4,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import engine
 from src.utils import create_access_token
-from src.shared.dependencies import get_db
-from src.main import app
 from tests.fixtures import *
 from tests.mocks import *
 
-TestingSessionLocal = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+TestingSessionLocal = sessionmaker(
+    engine, autocommit=False, expire_on_commit=False, autoflush=False, class_=AsyncSession
+)
 
 
 async def make_test_http_request(
@@ -47,15 +47,3 @@ async def make_test_http_request(
                 raise ValueError("Unexpected method")
 
         return response
-
-
-@app.on_event("startup")
-async def startup_event():
-    """
-    In the beginning on each test creates database schema,
-    also changes production db to testing db
-    """
-    from src import Base, engine
-
-    Base.metadata.create_all(bind=engine)
-    app.dependency_overrides[get_db] = override_get_db

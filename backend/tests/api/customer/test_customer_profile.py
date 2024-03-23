@@ -4,7 +4,7 @@ from tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
-async def test_customer_get_profile(create_customer, override_get_db):
+async def test_customer_get_profile(create_customer, db):
     """
     Tests that customer can get profile on /api/profiles
     """
@@ -14,7 +14,7 @@ async def test_customer_get_profile(create_customer, override_get_db):
 
 
 @pytest.mark.asyncio
-async def test_customer_update_profile(create_customer, override_get_db):
+async def test_customer_update_profile(create_customer, db):
     """
     Tests that customer can update profile on /api/profiles
     """

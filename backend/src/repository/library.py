@@ -9,19 +9,13 @@ class ExerciseRepository(BaseRepository):
     model = Exercise
 
     async def filter(self, filters: dict, foreign_keys: list = None, sub_queries: list = None):
-        result = await self.session.execute(
-            select(Exercise).where(
-                or_(
-                    Exercise.coach_id.is_(None),
-                    Exercise.coach_id == filters["coach_id"]
-                )
-            ).options(
-                selectinload(Exercise.muscle_group)
-            )
-        )
+        query = select(Exercise).where(
+            or_(Exercise.coach_id.is_(None), Exercise.coach_id == filters["coach_id"])
+        ).options(selectinload(Exercise.muscle_group))
 
-        instances = result.scalars().all()
-        return instances
+        result = await self.session.execute(query)
+        exercises = result.scalars().all()
+        return exercises
 
 
 class MuscleGroupRepository(BaseRepository):
