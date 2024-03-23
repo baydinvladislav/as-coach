@@ -28,7 +28,7 @@ async def test_login_successfully(create_coach, db):
 
 
 @pytest.mark.asyncio
-async def test_login_failed():
+async def test_login_failed(create_coach):
     """
     Failed because user is not found
     """
