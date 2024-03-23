@@ -4,7 +4,7 @@ from tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
-async def test_get_user_profile(create_coach):
+async def test_get_coach_profile(create_coach):
     """
     Success getting user profile
     """
@@ -18,7 +18,7 @@ async def test_get_user_profile(create_coach):
 
 
 @pytest.mark.asyncio
-async def test_update_user_profile(create_coach):
+async def test_update_coach_profile(create_coach):
     """
     Success updating user profile
     """

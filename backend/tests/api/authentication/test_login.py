@@ -1,18 +1,13 @@
 import pytest
 
-from tests.conftest import (
-    make_test_http_request,
-)
-from src.shared.config import TEST_COACH_FIRST_NAME, TEST_COACH_USERNAME, TEST_COACH_PASSWORD
+from src.shared.config import TEST_COACH_USERNAME, TEST_COACH_PASSWORD
+from tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
-async def test_login_successfully(create_coach, db):
-    """
-    Tests success user login on /api/login
-    Checks tokens in the response
-    """
-    # test user is "registered" by fixture
+async def test_coach_login_successfully(create_coach, db):
+    """Tests success user login on /api/login"""
+
     login_data = {
         "username": TEST_COACH_USERNAME,
         "password": TEST_COACH_PASSWORD,
@@ -28,16 +23,28 @@ async def test_login_successfully(create_coach, db):
 
 
 @pytest.mark.asyncio
-async def test_login_failed(create_coach):
-    """
-    Failed because user is not found
-    """
+async def test_coach_login_failed(create_coach):
+    """Login failed because such coach is not found"""
+
     login_data = {
         "username": "username_do_not_exist",
-        "first_name": TEST_COACH_FIRST_NAME,
-        "password": TEST_COACH_PASSWORD,
+        "password": "some_password",
         "fcm_token": "test token value",
     }
 
     response = await make_test_http_request("/api/login", "post", data=login_data)
     assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_customer_login_by_otp_successfully(create_customer):
+    """Tests success customer login by otp which created during customer creation"""
+
+    login_data = {
+        "username": create_customer.username,
+        "password": create_customer.password,
+        "fcm_token": "test token value",
+    }
+
+    response = await make_test_http_request("/api/login", "post", create_customer.username, data=login_data)
+    assert response.status_code == 200

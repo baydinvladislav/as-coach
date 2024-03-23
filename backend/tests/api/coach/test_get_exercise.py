@@ -7,10 +7,7 @@ from tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
-async def test_get_all_exercises(
-    create_coach,
-    db,
-):
+async def test_get_all_exercises(create_coach, db):
     """
     Check list of all exercises
     """
