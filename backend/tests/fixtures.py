@@ -34,7 +34,7 @@ from src.shared.config import (
 
 @pytest_asyncio.fixture()
 async def create_training_exercises(create_trainings, create_exercises, db):
-    superset_id = str(uuid.uuid4())
+    superset_id = uuid.uuid4()
 
     training_exercises = [
         ExercisesOnTraining(
@@ -112,7 +112,7 @@ async def create_exercises(create_muscle_groups, db):
     async def add_exercises_for_muscle_group(muscle_group_name, exercise_names):
         muscle_group = await db.execute(select(MuscleGroup).where(MuscleGroup.name == muscle_group_name))
         muscle_group = muscle_group.scalar()
-        return [Exercise(name=exercise_name, muscle_group_id=str(muscle_group.id)) for exercise_name in exercise_names]
+        return [Exercise(name=exercise_name, muscle_group_id=muscle_group.id) for exercise_name in exercise_names]
 
     exercises_by_muscle_group = {
         "Грудь": ['Жим штанги лежа', 'Разводка с гантелями', 'Сведения в кроссовере'],
@@ -132,7 +132,8 @@ async def create_exercises(create_muscle_groups, db):
     db.add_all(exercises)
     await db.commit()
 
-    result = await db.execute(select(Exercise))
+    query = select(Exercise).options(selectinload(Exercise.muscle_group))
+    result = await db.execute(query)
     exercises = result.scalars().all()
     return exercises
 
