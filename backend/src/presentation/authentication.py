@@ -276,7 +276,7 @@ async def change_password(
     """
     user = service.user
 
-    is_changed = await service.update(user=user, password=new_password)
+    is_changed = await service.update(user=user, password=new_password.password)
     if is_changed:
         return {"user_id": str(user.id), "changed_password": True}
     return {"user_id": str(user.id), "changed_password": False}

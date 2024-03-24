@@ -123,7 +123,7 @@ export default class UserStore {
   @action
   @actionLoading()
   async login(values: Partial<UserProps>) {
-    console.log(values)
+    console.log(values);
     try {
       const {
         data: { access_token },
