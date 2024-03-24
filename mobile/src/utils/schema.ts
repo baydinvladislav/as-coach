@@ -8,7 +8,7 @@ import {
 } from '@constants';
 import { t } from '@i18n';
 
-const PASSWORD_MIN = 8;
+const PASSWORD_MIN = 4;
 
 export const confirmPasswordSchema = () =>
   yup.object().shape({
