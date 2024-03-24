@@ -99,10 +99,7 @@ async def login_user(
         if customer is not None:
             user, service = customer, customer_service
         else:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"Not found any user"
-            )
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found any user")
 
     return LoginOut(
         id=str(user.id),
