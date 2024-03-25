@@ -11,7 +11,7 @@ import { Screens, useNavigation } from '@navigation';
 import { CustomerProps } from '@store';
 import { colors, normVert } from '@theme';
 import { Input, ModalLayout, Text, ViewWithButtons } from '@ui';
-import { addClientValidationSchema } from '@utils';
+import { addClientValidationSchema, transformTelegramUsername } from '@utils';
 
 import { FontSize, FontWeight } from '~types';
 
@@ -26,7 +26,7 @@ export const AddClientScreen = observer(() => {
     customer
       .createCustomer({
         ...values,
-        phone_number: values.phone_number,
+        phone_number: transformTelegramUsername(values.phone_number),
       })
       .then(() => navigate(Screens.LkScreen));
   };
@@ -72,8 +72,8 @@ export const AddClientScreen = observer(() => {
             error={errors.last_name}
           />
           <Input
-            // keyboardType={'phone-pad'}
-            // mask={TELEGRAM_USERNAME_MASK}
+            mask={TELEGRAM_USERNAME_MASK}
+            autoCapitalize="none"
             style={styles.input}
             placeholder={t('inputs.tg_username')}
             value={values.phone_number}
