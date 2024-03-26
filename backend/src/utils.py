@@ -151,6 +151,5 @@ def generate_random_password(length: int) -> str:
     Args:
        length: length of result password
     """
-    letters = string.ascii_letters + string.digits
-    password = "".join(random.choice(letters) for _ in range(length))
+    password = "".join(random.choice(string.digits) for _ in range(length))
     return password
