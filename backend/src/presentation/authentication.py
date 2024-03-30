@@ -263,20 +263,6 @@ async def change_password(
         new_password: NewUserPassword,
         service: CoachService | CustomerService = Depends(provide_user_service)
 ) -> dict:
-    """
-    Changes user password.
-    Validation set in schemas.
-
-    Args:
-        new_password: new user password
-        service: service for interacting with profile
-
-    Returns:
-        success response
-    """
     user = service.user
-
-    is_changed = await service.update(user=user, password=await get_hashed_password(new_password.password))
-    if is_changed:
-        return {"user_id": str(user.id), "changed_password": True}
-    return {"user_id": str(user.id), "changed_password": False}
+    await service.update(user=user, password=await get_hashed_password(new_password.password))
+    return {"user_id": str(user.id), "changed_password": True}
