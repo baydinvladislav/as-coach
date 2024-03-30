@@ -9,7 +9,7 @@ import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
 import { PasswordInput } from '@components';
-import { PHONE_MASK, TOP_PADDING } from '@constants';
+import { OTP_LENGTH, PHONE_MASK, TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
@@ -35,7 +35,7 @@ export const LoginScreen = observer(() => {
         fcm_token: fcmToken,
       })
       .then(() => {
-        if (values.password && values.password.length === 4) {
+        if (values.password && values.password.length === OTP_LENGTH) {
           navigate(Screens.NewChangePasswordScreen);
         } else {
           navigate(Screens.LkScreen);

@@ -1,10 +1,4 @@
-import {
-  action,
-  computed,
-  makeAutoObservable,
-  makeObservable,
-  observable,
-} from 'mobx';
+import { action, computed, makeObservable, observable } from 'mobx';
 
 export class LoadingStore {
   @observable loadingStatus = 0;

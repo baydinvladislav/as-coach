@@ -18,3 +18,4 @@ export const ENCRYPTION_KEY = 'development';
 export const TOKEN = 'token';
 
 export const TOP_PADDING = normVert(60);
+export const OTP_LENGTH = 4;
