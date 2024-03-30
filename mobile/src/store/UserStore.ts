@@ -1,10 +1,10 @@
 import { action, computed, makeObservable, observable } from 'mobx';
 
 import {
-  createExercise,
-  getMuscleGroups,
   changePassword,
   confirmPassword,
+  createExercise,
+  getMuscleGroups,
   login,
   me,
   profileEdit,
@@ -13,8 +13,7 @@ import {
 import { TOKEN } from '@constants';
 import { storage } from '@utils';
 
-import { TExercises, TMuscleGroups } from '~types';
-import { UserType } from '~types';
+import { TExercises, TMuscleGroups, UserType } from '~types';
 
 import { RootStore } from './RootStore';
 import { actionLoading } from './action-loading';
@@ -123,14 +122,14 @@ export default class UserStore {
   @action
   @actionLoading()
   async login(values: Partial<UserProps>) {
-    console.log(values)
+    console.log(values);
     try {
       const {
-        data: { access_token },
+        data: { access_token, user_type, first_name },
       } = await login(values);
 
+      this.setMe({ user_type, first_name });
       await storage.setItem(TOKEN, access_token ?? '');
-
       this.setHasAccess(true);
     } catch (e) {
       console.warn(e);

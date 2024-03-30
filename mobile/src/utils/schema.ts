@@ -1,9 +1,14 @@
 import * as yup from 'yup';
 
-import { BIRTHDAY_REGEXP, EMAIL_REGEXP, PHONE_REGEXP } from '@constants';
+import {
+  BIRTHDAY_REGEXP,
+  EMAIL_REGEXP,
+  PHONE_REGEXP,
+  TELEGRAM_USERNAME_REGEXP,
+} from '@constants';
 import { t } from '@i18n';
 
-const PASSWORD_MIN = 8;
+const PASSWORD_MIN = 4;
 
 export const confirmPasswordSchema = () =>
   yup.object().shape({
@@ -78,7 +83,7 @@ export const addClientValidationSchema = () =>
     last_name: yup.string().required(t('errors.required')),
     phone_number: yup
       .string()
-      .matches(PHONE_REGEXP, t('errors.phoneError'))
+      .matches(TELEGRAM_USERNAME_REGEXP, t('errors.tgUsernameError'))
       .required(t('errors.required')),
   });
 

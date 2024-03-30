@@ -4,11 +4,12 @@ import { StyleSheet, View } from 'react-native';
 import { AxiosError } from 'axios';
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react';
+import { getFcmToken } from 'src/push/notificationServices';
 import styled from 'styled-components';
 
 import { LogoIcon } from '@assets';
 import { PasswordInput } from '@components';
-import { PHONE_MASK, TOP_PADDING } from '@constants';
+import { OTP_LENGTH, PHONE_MASK, TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
@@ -16,7 +17,6 @@ import { UserProps } from '@store';
 import { colors, normVert } from '@theme';
 import { Button, Input, Keyboard, Text } from '@ui';
 import { loginValidationSchema, transformPhone } from '@utils';
-import { getFcmToken } from 'src/push/notificationServices';
 
 import { ButtonType, FontSize } from '~types';
 
@@ -34,7 +34,13 @@ export const LoginScreen = observer(() => {
         username: transformPhone(values.username),
         fcm_token: fcmToken,
       })
-      .then(() => navigate(Screens.LkScreen))
+      .then(() => {
+        if (values.password && values.password.length === OTP_LENGTH) {
+          navigate(Screens.NewChangePasswordScreen);
+        } else {
+          navigate(Screens.LkScreen);
+        }
+      })
       .catch((e: AxiosError<{ detail: string }>) => {
         setErrors({ password: e.response?.data?.detail });
       });

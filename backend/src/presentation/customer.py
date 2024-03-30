@@ -36,7 +36,7 @@ async def create_customer(
         customer_data: CustomerCreateIn,
         user_service: CoachService = Depends(provide_user_service),
         customer_service: CustomerService = Depends(provide_customer_service)
-) -> dict:
+) -> CustomerOut:
     """
     Creates new customer for coach
 
@@ -74,7 +74,7 @@ async def create_customer(
     customer_reg_data = CustomerRegistrationData(
         coach_id=str(user.id),
         coach_name=user.first_name,
-        username=customer_data.phone_number,
+        telegram_username=customer_data.phone_number,
         password=generate_random_password(OTP_LENGTH),
         first_name=customer_data.first_name,
         last_name=customer_data.last_name,
@@ -82,13 +82,13 @@ async def create_customer(
 
     customer = await customer_service.register(customer_reg_data)
 
-    return {
-        "id": str(customer.id),
-        "first_name": customer.first_name,
-        "last_name": customer.last_name,
-        "phone_number": customer.username,
-        "last_plan_end_date": None
-    }
+    return CustomerOut(
+        id=str(customer.id),
+        first_name=customer.first_name,
+        last_name=customer.last_name,
+        phone_number=customer.username,
+        last_plan_end_date=None,
+    )
 
 
 @customer_router.get(
@@ -122,7 +122,7 @@ async def get_customer(
         user_service: CoachService = Depends(provide_user_service),
         customer_service: CustomerService = Depends(provide_customer_service),
         training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
-) -> dict:
+) -> CustomerOut:
     """
     Gets specific customer by ID.
 
@@ -158,13 +158,13 @@ async def get_customer(
         )
 
     training_plans = await training_plan_service.get_all_customer_training_plans(str(customer.id))
-    return {
-        "id": str(customer.id),
-        "first_name": customer.first_name,
-        "last_name": customer.last_name,
-        "phone_number": customer.username,
-        "last_plan_end_date": training_plans[0].end_date.strftime('%Y-%m-%d') if training_plans else None
-    }
+    return CustomerOut(
+        id=str(customer.id),
+        first_name=customer.first_name,
+        last_name=customer.last_name,
+        phone_number=customer.username,
+        last_plan_end_date=training_plans[0].end_date.strftime("%Y-%m-%d") if training_plans else None
+    )
 
 
 @customer_router.post(

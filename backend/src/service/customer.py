@@ -7,6 +7,7 @@ from src import Customer
 from src.shared.config import OTP_LENGTH
 from src.schemas.authentication import CustomerRegistrationData, UserLoginData
 from src.service.notification import NotificationService
+from src.shared.exceptions import NotValidCredentials
 from src.utils import verify_password
 from src.repository.customer import CustomerRepository
 from src.service.user import UserService, UserType
@@ -15,8 +16,8 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 
-# TODO form Customer aggregate in this layer
 class CustomerSelectorService:
+    """Responsible for getting customer data from storage"""
 
     def __init__(self, customer_repository: CustomerRepository) -> None:
         self.customer_repository = customer_repository
@@ -66,25 +67,26 @@ class CustomerSelectorService:
         return customer
 
 
-# TODO form Customer aggregate in this layer
 class CustomerProfileService(UserService):
-    def __init__(self, customer_repository: CustomerRepository):
+    """Responsible for customer profile operations"""
+
+    def __init__(self, customer_repository: CustomerRepository) -> None:
         self.customer_repository = customer_repository
 
     async def register(self, data: CustomerRegistrationData) -> Customer | None:
         customer = await self.customer_repository.create(
             coach_id=data.coach_id,
-            username=data.username,
+            telegram_username=data.telegram_username,
             password=data.password,
             first_name=data.first_name,
             last_name=data.last_name,
         )
 
         if customer is None:
-            logger.warning(f"New customer creation is failed: {data.username}")
+            logger.warning(f"New customer creation is failed: {data.last_name} {data.first_name}")
             raise
 
-        logger.info(f"Customer created successfully: {customer.first_name} {customer.last_name}")
+        logger.info(f"Customer created successfully: {data.last_name} {data.first_name}")
         return customer
 
     async def authorize(self, user: Customer, data: UserLoginData) -> bool:
@@ -102,11 +104,13 @@ class CustomerProfileService(UserService):
         return False
 
     async def update(self, user: Customer, **params) -> None:
-        await self.handle_profile_photo(user, params.pop("photo"))
+        if "photo" in params:
+            await self.handle_profile_photo(user, params.pop("photo"))
         await self.customer_repository.update(str(user.id), **params)
 
 
 class CustomerService:
+    """Contains business rules for Customer subdomain"""
 
     def __init__(
             self,
@@ -123,12 +127,14 @@ class CustomerService:
     async def register(self, data: CustomerRegistrationData) -> Customer:
         customer = await self.profile_service.register(data)
         logger.info(f"Customer registered successfully: {customer.first_name} {customer.last_name}")
-        if customer.username is not None:
-            logger.info(f"Will be invited in application new customer: {customer.username}")
+        if customer.telegram_username is not None:
+            logger.info(f"Will be invited in application new customer: {customer.telegram_username}")
             await self.notification_service.send_telegram_customer_invite(
-                data.coach_name, customer.username, customer.password
+                coach_name=data.coach_name,
+                customer_username=customer.telegram_username,
+                customer_password=customer.password,
             )
-            logger.info(f"Customer {customer.username} successfully invited through Telegram account")
+            logger.info(f"Customer {customer.telegram_username} successfully invited through Telegram account")
         return customer
 
     async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Customer | None:
@@ -154,10 +160,11 @@ class CustomerService:
 
         data = UserLoginData(received_password=form_data.password, fcm_token=fcm_token)
         if await self.profile_service.authorize(self.user, data) is True:
+            if self.user.username is None:
+                await self.update(self.user, username=form_data.username)
             logger.info(f"Customer successfully {self.user.last_name} {self.user.first_name} login")
             return self.user
-
-        return None
+        raise NotValidCredentials("Not correct customer password")
 
     async def confirm_password(self, user: Customer, current_password: str) -> bool:
         if await self.profile_service.confirm_password(user, current_password):

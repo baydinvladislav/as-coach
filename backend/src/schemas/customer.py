@@ -17,11 +17,6 @@ class CustomerCreateIn(BaseModel):
     last_name: str
     phone_number: Optional[str]
 
-    # @validator("phone_number")
-    # def validate_phone_number(cls, value):
-    #     if value is not None:
-    #         return validate_phone_number(value)
-
 
 class CustomerOut(CustomerCreateIn, BaseModel):
     """
@@ -30,8 +25,8 @@ class CustomerOut(CustomerCreateIn, BaseModel):
     id: str
     first_name: str
     last_name: str
-    phone_number: Optional[str]
-    last_plan_end_date: Union[str, None]
+    phone_number: str | None
+    last_plan_end_date: str | None
 
 
 class TrainingPlanIn(BaseModel):

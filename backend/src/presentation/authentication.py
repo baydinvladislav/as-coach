@@ -14,7 +14,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from src.service.coach import CoachService
 from src.service.customer import CustomerService
-from src.shared.exceptions import UsernameIsTaken
+from src.shared.exceptions import UsernameIsTaken, NotValidCredentials
 from src.shared.dependencies import provide_user_service, provide_coach_service, provide_customer_service
 from src.persistence.models import Gender
 from src.schemas.authentication import (
@@ -24,7 +24,7 @@ from src.schemas.authentication import (
     CoachRegistrationData,
     UserRegisterOut,
 )
-from src.utils import password_context
+from src.utils import password_context, get_hashed_password
 
 auth_router = APIRouter()
 
@@ -64,7 +64,7 @@ async def login_user(
         fcm_token: str = Form(...),
         coach_service: CoachService = Depends(provide_coach_service),
         customer_service: CustomerService = Depends(provide_customer_service)
-) -> dict:
+) -> LoginOut:
     """
     Login endpoint authenticates user
 
@@ -80,33 +80,35 @@ async def login_user(
     Returns:
         access_token and refresh_token inside dictionary
     """
-    if not form_data.username or not form_data.password:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Empty fields"
-        )
+    if form_data.username is None or form_data.password is None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Empty credential fields")
 
-    coach = await coach_service.authorize(form_data, fcm_token)
-    customer = await customer_service.authorize(form_data, fcm_token)
+    try:
+        coach = await coach_service.authorize(form_data, fcm_token)
+    except NotValidCredentials:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Not valid credentials for coach")
 
     if coach is not None:
         user, service = coach, coach_service
-    elif customer is not None:
-        user, service = customer, customer_service
     else:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Not found any user"
-        )
+        try:
+            customer = await customer_service.authorize(form_data, fcm_token)
+        except NotValidCredentials:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Not valid credentials for customer")
 
-    return {
-        "id": str(user.id),
-        "user_type": service.user_type,
-        "first_name": user.first_name,
-        "access_token": await service.profile_service.generate_jwt_token(user.username, access=True),
-        "refresh_token": await service.profile_service.generate_jwt_token(user.username, refresh=True),
-        "password_changed": bool(password_context.identify(user.password)),
-    }
+        if customer is not None:
+            user, service = customer, customer_service
+        else:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Not found any user")
+
+    return LoginOut(
+        id=str(user.id),
+        user_type=service.user_type,
+        first_name=user.first_name,
+        access_token=await service.profile_service.generate_jwt_token(user.username, access=True),
+        refresh_token=await service.profile_service.generate_jwt_token(user.username, refresh=True),
+        password_changed=bool(password_context.identify(user.password)),
+    )
 
 
 @auth_router.get(
@@ -261,20 +263,6 @@ async def change_password(
         new_password: NewUserPassword,
         service: CoachService | CustomerService = Depends(provide_user_service)
 ) -> dict:
-    """
-    Changes user password.
-    Validation set in schemas.
-
-    Args:
-        new_password: new user password
-        service: service for interacting with profile
-
-    Returns:
-        success response
-    """
     user = service.user
-
-    is_changed = await service.update(user=user, password=new_password)
-    if is_changed:
-        return {"user_id": str(user.id), "changed_password": True}
-    return {"user_id": str(user.id), "changed_password": False}
+    await service.update(user=user, password=await get_hashed_password(new_password.password))
+    return {"user_id": str(user.id), "changed_password": True}

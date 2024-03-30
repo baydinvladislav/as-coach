@@ -26,7 +26,7 @@ export const NewChangePasswordScreen = observer(() => {
 
   const handleChangePassword = (values: Pick<UserProps, 'password'>) => {
     user.changePassword(values).then(() => {
-      navigate(Screens.ProfileScreen);
+      navigate(Screens.LkScreen);
     });
   };
 

@@ -89,6 +89,7 @@ export const ru = {
   },
   inputs: {
     phone: 'Номер телефона',
+    tg_username: 'Имя пользователя в Telegram',
     password: 'Пароль',
     newPassword: 'Повтори пароль',
     firstName: 'Имя',
@@ -127,6 +128,7 @@ export const ru = {
   errors: {
     required: 'Заполните обязательное поле',
     phoneError: 'Некорректный номер телефона',
+    tgUsernameError: 'Некорректное имя пользователя в Telegram',
     birthdayError: 'Некорректная дата рождения',
     emailError: 'Некорректная почта',
     confirmPasswordError: 'Вы ввели неправильный пароль',

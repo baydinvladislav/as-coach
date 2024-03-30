@@ -1,16 +1,22 @@
+import logging
+
 from fastapi.security import OAuth2PasswordRequestForm
 
 from src import Coach
 from src.utils import get_hashed_password, verify_password
 from src.repository.coach import CoachRepository
-from src.shared.exceptions import UsernameIsTaken
+from src.shared.exceptions import UsernameIsTaken, NotValidCredentials
 from src.service.user import UserService, UserType
 from src.schemas.authentication import CoachRegistrationData, UserLoginData
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
-# TODO form Customer aggregate in this layer
+
 class CoachSelectorService:
-    def __init__(self, coach_repository: CoachRepository):
+    """Responsible for getting coach data from storage"""
+
+    def __init__(self, coach_repository: CoachRepository) -> None:
         self.coach_repository = coach_repository
 
     async def select_coach_by_username(self, username: str) -> Coach | None:
@@ -18,9 +24,10 @@ class CoachSelectorService:
         return coach
 
 
-# TODO form Customer aggregate in this layer
 class CoachProfileService(UserService):
-    def __init__(self, coach_repository: CoachRepository):
+    """Responsible for coach profile operations"""
+
+    def __init__(self, coach_repository: CoachRepository) -> None:
         self.coach_repository = coach_repository
 
     async def register(self, data: CoachRegistrationData) -> Coach | None:
@@ -35,17 +42,15 @@ class CoachProfileService(UserService):
         return False
 
     async def update(self, user: Coach, **params) -> None:
-        await self.handle_profile_photo(user, params.pop("photo"))
+        if "photo" in params:
+            await self.handle_profile_photo(user, params.pop("photo"))
         await self.coach_repository.update(str(user.id), **params)
 
 
 class CoachService:
+    """Contains business rules for Coach subdomain"""
 
-    def __init__(
-            self,
-            selector_service: CoachSelectorService,
-            profile_service: CoachProfileService,
-    ):
+    def __init__(self, selector_service: CoachSelectorService, profile_service: CoachProfileService) -> None:
         self.user = None
         self.user_type = UserType.COACH.value
         self.selector_service = selector_service
@@ -68,10 +73,12 @@ class CoachService:
         if existed_coach is None:
             return None
 
+        logger.info(f"Authorizing coach with username {existed_coach.username}")
         data = UserLoginData(received_password=form_data.password, fcm_token=fcm_token)
         if await self.profile_service.authorize(existed_coach, data) is True:
+            logger.info(f"Coach with username {existed_coach.username} successfully login")
             return existed_coach
-        return None
+        raise NotValidCredentials("Not correct coach password")
 
     async def confirm_password(self, user: Coach, current_password: str) -> bool:
         if await self.profile_service.confirm_password(user, current_password):

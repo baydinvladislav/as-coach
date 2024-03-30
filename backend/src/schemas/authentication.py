@@ -32,7 +32,7 @@ class CoachRegistrationData(UserRegistrationData):
 class CustomerRegistrationData(UserRegistrationData):
     coach_id: str
     coach_name: str
-    username: str | None
+    telegram_username: str | None
     last_name: str
 
 
@@ -88,14 +88,8 @@ class TokenPayload(BaseModel):
 
 
 class NewUserPassword(BaseModel):
-    """
-    Schema for changing user password
-    """
     password: str
 
     @validator("password")
     def validate_password(cls, value):
-        """
-        Simple password
-        """
         return validate_password(value)
