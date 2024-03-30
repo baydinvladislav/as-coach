@@ -125,10 +125,10 @@ export default class UserStore {
     console.log(values);
     try {
       const {
-        data: { access_token, user_type },
+        data: { access_token, user_type, first_name },
       } = await login(values);
 
-      this.setMe({ user_type });
+      this.setMe({ user_type, first_name });
       await storage.setItem(TOKEN, access_token ?? '');
       this.setHasAccess(true);
     } catch (e) {
