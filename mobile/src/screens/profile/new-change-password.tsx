@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { AxiosError } from 'axios';
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
@@ -25,18 +26,26 @@ export const NewChangePasswordScreen = observer(() => {
   const isLoading = loading.isLoading;
 
   const handleChangePassword = (values: Pick<UserProps, 'password'>) => {
-    user.changePassword(values).then(() => {
-      navigate(Screens.LkScreen);
-    });
+    user
+      .changePassword(values)
+      .then(() => {
+        navigate(Screens.LkScreen);
+      })
+      .catch((e: AxiosError<{ detail: string }>) => {
+        setErrors({
+          password: e.response?.data?.detail,
+          newPassword: e.response?.data?.detail,
+        });
+      });
   };
 
-  const { errors, handleChange, handleSubmit, values } = useFormik({
+  const { setErrors, errors, handleChange, handleSubmit, values } = useFormik({
     initialValues: {
       password: '',
       newPassword: '',
     },
-    validationSchema: changePasswordSchema,
     onSubmit: handleChangePassword,
+    validationSchema: changePasswordSchema,
     validateOnChange: false,
     validateOnBlur: false,
   });
@@ -68,7 +77,6 @@ export const NewChangePasswordScreen = observer(() => {
           value={values.password}
           onChangeText={handleChange('password')}
           error={errors.password}
-          showError={errors.password !== t('errors.minPassword')}
         />
         <PasswordInput
           style={styles.input}
