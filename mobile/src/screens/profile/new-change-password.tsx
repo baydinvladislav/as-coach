@@ -77,6 +77,10 @@ export const NewChangePasswordScreen = observer(() => {
           value={values.password}
           onChangeText={handleChange('password')}
           error={errors.password}
+          showError={
+            errors.password !== t('errors.minPassword') &&
+            errors.password !== t('errors.passwordNotMatch')
+          }
         />
         <PasswordInput
           style={styles.input}
