@@ -134,6 +134,7 @@ export const ru = {
     confirmPasswordError: 'Вы ввели неправильный пароль',
     minPassword: 'Минимальная длина пароля 8 символов',
     passwordNotMatch: 'Пароли не совпадают',
+    specifyMuscleGroup: 'Выберите категорию упражнения',
   },
   common: {
     nonePlan: 'Нет плана',

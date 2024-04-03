@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { AxiosError } from 'axios';
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react';
 import { RadioButton } from 'react-native-radio-buttons-group';
@@ -26,20 +27,10 @@ type TProps = {
   ) => void;
 };
 
-/**
- * Screen for creating new exercise in library.
- *
- * @param handleNavigate - use to move in next screen
- * @param params - screen params
- */
 export const CreateExerciseScreen = observer(
   ({ handleNavigate, params }: TProps) => {
     const { loading, user } = useStore();
 
-    /**
-     * Formats data for every radio button
-     * based on muscle group
-     */
     const formattedOptions = user.muscleGroups.map(option => ({
       id: option.id,
       label: option.name,
@@ -52,11 +43,6 @@ export const CreateExerciseScreen = observer(
       },
     }));
 
-    /**
-     * If user submits the form,
-     * it sends request to server and moves user
-     * to exercises mapping screen again
-     */
     const handleCreation = () => {
       user
         .createExercise({
@@ -65,19 +51,22 @@ export const CreateExerciseScreen = observer(
         })
         .then(() =>
           handleNavigate(PlanScreens.CREATE_DAY_EXERCISES_SCREEN, params, true),
-        );
+        )
+        .catch((e: AxiosError<{ detail: string }>) => {
+          setErrors({
+            name: e.response?.data?.detail,
+            muscle_group_id: e.response?.data?.detail,
+          });
+        });
     };
 
-    const { handleSubmit, handleChange, values, setValues } = useFormik({
-      initialValues: { name: '', muscle_group_id: '' },
-      onSubmit: handleCreation,
-      validationSchema: createExerciseSchema,
-    });
+    const { setErrors, errors, handleSubmit, handleChange, values, setValues } =
+      useFormik({
+        initialValues: { name: '', muscle_group_id: '' },
+        onSubmit: handleCreation,
+        validationSchema: createExerciseSchema,
+      });
 
-    /**
-     * Changes active element in
-     * muscle group radio button list
-     */
     function handlePress(id: string) {
       if (id !== values.muscle_group_id) {
         setValues(values => ({
@@ -101,6 +90,7 @@ export const CreateExerciseScreen = observer(
             placeholder={t('newExercise.placeholder')}
             onChangeText={handleChange('name')}
             value={values.name}
+            error={errors.name}
           />
         </View>
         <Text
@@ -126,6 +116,9 @@ export const CreateExerciseScreen = observer(
           isScroll={true}
         >
           <View>
+            {errors.muscle_group_id && (
+              <Text style={styles.errorText}>{errors.muscle_group_id}</Text>
+            )}
             {formattedOptions.map(button => (
               <RadioButton
                 {...button}
@@ -145,6 +138,14 @@ export const CreateExerciseScreen = observer(
 );
 
 const styles = StyleSheet.create({
+  errorText: {
+    color: 'red',
+    marginTop: normVert(4),
+    marginLeft: normHor(16),
+    fontSize: 12,
+    fontWeight: 'normal',
+  },
+
   radioButton: {
     alignItems: 'flex-start',
   },
