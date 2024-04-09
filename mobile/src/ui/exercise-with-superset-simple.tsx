@@ -14,21 +14,29 @@ type TProps = {
 };
 
 export const ExerciseWithSupersetSimple = ({ exercises }: TProps) => {
-  const isFromServer = exercises[0].superset_id !== undefined;
+  const CheckFirstInSuperset = (
+    current: TPropsExercises,
+    previous?: TPropsExercises,
+  ): boolean => {
+    if (current.superset_id == 'None') return false;
+
+    if (
+      previous &&
+      previous.superset_id != 'None' &&
+      current.superset_id == previous.superset_id
+    )
+      return true;
+
+    return false;
+  };
+
   return (
     <>
-      {exercises.map((exercise, key, arr) => {
+      {exercises.map((exercise, key) => {
         const name = exercise.name;
         const supersets = exercise.supersets;
 
-        const isFirstInSuperset =
-          (exercise.supersets && supersets?.[0] !== exercise.id) ||
-          (arr[key - 1] && exercise.superset_id === arr[key - 1]?.superset_id);
-
-        const isHasLine = isFromServer
-          ? isFirstInSuperset
-          : exercise?.supersets?.length &&
-            exercise.supersets[0] !== exercise.id;
+        const isHasLine = CheckFirstInSuperset(exercise, exercises[key - 1]);
         return (
           <View key={key}>
             {isHasLine && <Line />}
