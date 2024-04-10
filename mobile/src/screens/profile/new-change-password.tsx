@@ -20,7 +20,7 @@ import { changePasswordSchema } from '@utils';
 import { ButtonType, FontSize, FontWeight } from '~types';
 
 export const NewChangePasswordScreen = observer(() => {
-  const { user, loading } = useStore();
+  const { user, loading, customer } = useStore();
   const { navigate } = useNavigation();
 
   const isLoading = loading.isLoading;
@@ -37,6 +37,11 @@ export const NewChangePasswordScreen = observer(() => {
           newPassword: e.response?.data?.detail,
         });
       });
+  };
+
+  const handleCancel = () => {
+    customer.setInitialCustomers();
+    user.logout().then(() => navigate(Screens.WelcomeScreen));
   };
 
   const { setErrors, errors, handleChange, handleSubmit, values } = useFormik({
@@ -101,7 +106,7 @@ export const NewChangePasswordScreen = observer(() => {
       <Button
         style={styles.button2}
         type={ButtonType.TEXT}
-        onPress={() => navigate(Screens.ProfileScreen)}
+        onPress={() => handleCancel()}
       >
         {t('buttons.cancel')}
       </Button>
