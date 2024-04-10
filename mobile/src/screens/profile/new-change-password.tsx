@@ -17,7 +17,7 @@ import { colors, normVert } from '@theme';
 import { Button, Keyboard, Text } from '@ui';
 import { changePasswordSchema } from '@utils';
 
-import { ButtonType, FontSize, FontWeight } from '~types';
+import { ButtonType, FontSize, FontWeight, UserType } from '~types';
 
 export const NewChangePasswordScreen = observer(() => {
   const { user, loading, customer } = useStore();
@@ -40,8 +40,12 @@ export const NewChangePasswordScreen = observer(() => {
   };
 
   const handleCancel = () => {
-    customer.setInitialCustomers();
-    user.logout().then(() => navigate(Screens.WelcomeScreen));
+    if (user.me.user_type === UserType.CLIENT && !user.me.confirmed_password) {
+      customer.setInitialCustomers();
+      user.logout().then(() => navigate(Screens.WelcomeScreen));
+    } else {
+      navigate(Screens.ProfileScreen);
+    }
   };
 
   const { setErrors, errors, handleChange, handleSubmit, values } = useFormik({

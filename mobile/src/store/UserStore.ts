@@ -35,6 +35,7 @@ export type UserProps = {
     uri?: string;
   };
   fcm_token: string | null;
+  confirmed_password: boolean | null;
 };
 
 export default class UserStore {
@@ -58,6 +59,7 @@ export default class UserStore {
     email: '',
     photo_link: null,
     photo: {},
+    confirmed_password: null,
   };
   @observable muscleGroups: TMuscleGroups[] = [];
 
@@ -122,13 +124,12 @@ export default class UserStore {
   @action
   @actionLoading()
   async login(values: Partial<UserProps>) {
-    console.log(values);
     try {
       const {
-        data: { access_token, user_type, first_name },
+        data: { id, access_token, user_type, first_name },
       } = await login(values);
 
-      this.setMe({ user_type, first_name });
+      this.setMe({ id, user_type, first_name });
       await storage.setItem(TOKEN, access_token ?? '');
       this.setHasAccess(true);
     } catch (e) {
@@ -171,6 +172,8 @@ export default class UserStore {
   async confirmPassword(values: Pick<UserProps, 'password'>) {
     try {
       const { data } = await confirmPassword(values);
+      const { confirmed_password } = data;
+      this.me['confirmed_password'] = confirmed_password;
       return data;
     } catch (e) {
       console.warn(e);
