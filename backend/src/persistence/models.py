@@ -18,7 +18,7 @@ class BaseModel:
     Base model class with common column.
     """
     id = Column("id", UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
-    created = Column("created", DateTime, default=datetime.datetime.now(), nullable=False)
+    created = Column("created", DateTime, default=datetime.datetime.now, nullable=False)
     modified = Column("modified", DateTime)
     deleted = Column("deleted", DateTime)
 
