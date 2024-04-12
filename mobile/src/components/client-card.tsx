@@ -31,7 +31,11 @@ export const ClientCard: React.FC<ClientCardProps> = ({
 
     if (status === BadgeStatuses.GOOD) {
       color = colors.green;
-    } else if (status === BadgeStatuses.WARNING) {
+    } else if (
+      status === BadgeStatuses.WARNING ||
+      status === BadgeStatuses.WARNING_TODAY ||
+      status === BadgeStatuses.WARNING_TOMORROW
+    ) {
       color = colors.orange;
     } else if (status === BadgeStatuses.EXPIRED) {
       color = colors.red;

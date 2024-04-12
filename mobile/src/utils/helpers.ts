@@ -210,6 +210,10 @@ const getCustomerStatus = (dateEnd: string) => {
 
     if (differenceInDays > 3) {
       return BadgeStatuses.GOOD;
+    } else if (differenceInDays == 0) {
+      return BadgeStatuses.WARNING_TODAY;
+    } else if (differenceInDays == 1) {
+      return BadgeStatuses.WARNING_TOMORROW;
     } else if (0 < differenceInDays && differenceInDays <= 3) {
       return BadgeStatuses.WARNING;
     } else {
@@ -226,6 +230,10 @@ const getTextByCustomerStatus = (status: BadgeStatuses, dateEnd: string) => {
     text = t('lk.customerStatus.expiring', {
       days: differenceInDays,
     });
+  } else if (status === BadgeStatuses.WARNING_TODAY) {
+    text = t('lk.customerStatus.expiring_today');
+  } else if (status === BadgeStatuses.WARNING_TOMORROW) {
+    text = t('lk.customerStatus.expiring_tomorrow');
   } else if (status === BadgeStatuses.WARNING) {
     text = t('lk.customerStatus.expiring', {
       days: differenceInDays,

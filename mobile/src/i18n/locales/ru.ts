@@ -19,6 +19,8 @@ export const ru = {
       noPlan: 'Нет плана',
       expired: 'Истек {days} дней назад',
       expiring: 'Истечет через {days} дней',
+      expiring_today: 'Истечет сегодня',
+      expiring_tomorrow: 'Истечет завтра',
     },
   },
   detailCustomer: {
