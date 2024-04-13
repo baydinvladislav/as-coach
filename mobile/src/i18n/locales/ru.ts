@@ -17,6 +17,7 @@ export const ru = {
     hereAddPlans: 'В этом разделе тренер\nбудет создавать вам планы',
     customerStatus: {
       noPlan: 'Нет плана',
+      expired_yesterday: 'Истек вчера',
       expired: 'Истек {days} дней назад',
       expiring: 'Истечет через {days} дней',
       expiring_today: 'Истечет сегодня',
