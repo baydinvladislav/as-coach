@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 100,
   },
   last: {
-    width: normHor(32),
+    width: normHor(82),
     borderTopRightRadius: 100,
     borderBottomRightRadius: 100,
   },
