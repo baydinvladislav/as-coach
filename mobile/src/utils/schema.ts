@@ -85,7 +85,6 @@ export const addClientValidationSchema = () =>
     phone_number: yup
       .string()
       .matches(TELEGRAM_USERNAME_REGEXP, t('errors.tgUsernameError'))
-      .required(t('errors.required')),
   });
 
 export const createPlanValidationSchema = () =>
