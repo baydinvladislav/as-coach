@@ -18,8 +18,8 @@ export const ru = {
     customerStatus: {
       noPlan: 'Нет плана',
       expired_yesterday: 'Истек вчера',
-      expired: 'Истек {days} дней назад',
-      expiring: 'Истечет через {days} дней',
+      expired: 'Истек {days} {dayWord} назад',
+      expiring: 'Истечет через {days} {dayWord}',
       expiring_today: 'Истечет сегодня',
       expiring_tomorrow: 'Истечет завтра',
     },
