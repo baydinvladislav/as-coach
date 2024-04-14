@@ -226,7 +226,6 @@ const getCustomerStatus = (dateEnd: string) => {
   }
 };
 
-
 const getDayWord = (difference: number) => {
   let num = Math.abs(difference);
   num = num % 100;
@@ -244,8 +243,7 @@ const getDayWord = (difference: number) => {
     default:
       return 'дней';
   }
-}
-
+};
 
 const getTextByCustomerStatus = (status: BadgeStatuses, dateEnd: string) => {
   const differenceInDays = getDifferenceInDays(dateEnd);
@@ -253,7 +251,8 @@ const getTextByCustomerStatus = (status: BadgeStatuses, dateEnd: string) => {
 
   if (status === BadgeStatuses.GOOD) {
     text = t('lk.customerStatus.expiring', {
-      days: Math.abs(differenceInDays), dayWord: getDayWord(differenceInDays),
+      days: Math.abs(differenceInDays),
+      dayWord: getDayWord(differenceInDays),
     });
   } else if (status === BadgeStatuses.WARNING_TODAY) {
     text = t('lk.customerStatus.expiring_today');
@@ -261,11 +260,13 @@ const getTextByCustomerStatus = (status: BadgeStatuses, dateEnd: string) => {
     text = t('lk.customerStatus.expiring_tomorrow');
   } else if (status === BadgeStatuses.WARNING) {
     text = t('lk.customerStatus.expiring', {
-      days: Math.abs(differenceInDays), dayWord: getDayWord(differenceInDays),
+      days: Math.abs(differenceInDays),
+      dayWord: getDayWord(differenceInDays),
     });
   } else if (status === BadgeStatuses.EXPIRED) {
     text = t('lk.customerStatus.expired', {
-      days: Math.abs(differenceInDays), dayWord: getDayWord(differenceInDays),
+      days: Math.abs(differenceInDays),
+      dayWord: getDayWord(differenceInDays),
     });
   } else if (status === BadgeStatuses.EXPIRED_YESTERDAY) {
     text = t('lk.customerStatus.expired_yesterday');
