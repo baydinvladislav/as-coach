@@ -61,8 +61,10 @@ async def create_customer(
                    f"with this phone number already exists."
         )
 
-    customer_in_db = await customer_service.get_customer_by_full_name(
-        first_name=customer_data.first_name, last_name=customer_data.last_name
+    customer_in_db = await customer_service.get_customer_by_full_name_for_coach(
+        coach_id=str(user.id),
+        first_name=customer_data.first_name,
+        last_name=customer_data.last_name,
     )
     if customer_in_db:
         raise HTTPException(

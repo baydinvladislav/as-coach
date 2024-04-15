@@ -62,8 +62,12 @@ class CustomerSelectorService:
         customer = await self.customer_repository.provide_by_username(username)
         return customer
 
-    async def select_customer_by_full_name(self, first_name: str, last_name: str) -> Customer | None:
-        customer = await self.customer_repository.provide_by_full_name(first_name, last_name)
+    async def select_customer_by_full_name(self, coach_id: str, first_name: str, last_name: str) -> Customer | None:
+        customer = await self.customer_repository.provide_by_coach_id_and_full_name(
+            coach_id=coach_id,
+            first_name=first_name,
+            last_name=last_name,
+        )
         return customer
 
 
@@ -199,8 +203,14 @@ class CustomerService:
             return self.user
         return None
 
-    async def get_customer_by_full_name(self, first_name: str, last_name: str) -> Customer | None:
-        customer = await self.selector_service.select_customer_by_full_name(first_name, last_name)
+    async def get_customer_by_full_name_for_coach(
+        self, coach_id: str, first_name: str, last_name: str
+    ) -> Customer | None:
+        customer = await self.selector_service.select_customer_by_full_name(
+            coach_id=coach_id,
+            first_name=first_name,
+            last_name=last_name,
+        )
         if customer is not None:
             self.user = customer[0]
             return self.user

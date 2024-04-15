@@ -38,10 +38,14 @@ class CustomerRepository(BaseRepository):
         customer = result.fetchone()
         return customer
 
-    async def provide_by_full_name(self, first_name: str, last_name: str) -> Customer | None:
+    async def provide_by_coach_id_and_full_name(
+        self, coach_id: str, first_name: str, last_name: str
+    ) -> Customer | None:
         query = select(self.model).where(
             and_(
-                self.model.first_name == first_name, self.model.last_name == last_name
+                self.model.coach_id == coach_id,
+                self.model.first_name == first_name,
+                self.model.last_name == last_name,
             )
         )
         result = await self.session.execute(query)
