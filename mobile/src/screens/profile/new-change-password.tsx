@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { AxiosError } from 'axios';
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
@@ -16,27 +17,44 @@ import { colors, normVert } from '@theme';
 import { Button, Keyboard, Text } from '@ui';
 import { changePasswordSchema } from '@utils';
 
-import { ButtonType, FontSize, FontWeight } from '~types';
+import { ButtonType, FontSize, FontWeight, UserType } from '~types';
 
 export const NewChangePasswordScreen = observer(() => {
-  const { user, loading } = useStore();
+  const { user, loading, customer } = useStore();
   const { navigate } = useNavigation();
 
   const isLoading = loading.isLoading;
 
   const handleChangePassword = (values: Pick<UserProps, 'password'>) => {
-    user.changePassword(values).then(() => {
-      navigate(Screens.LkScreen);
-    });
+    user
+      .changePassword(values)
+      .then(() => {
+        navigate(Screens.LkScreen);
+      })
+      .catch((e: AxiosError<{ detail: string }>) => {
+        setErrors({
+          password: e.response?.data?.detail,
+          newPassword: e.response?.data?.detail,
+        });
+      });
   };
 
-  const { errors, handleChange, handleSubmit, values } = useFormik({
+  const handleCancel = () => {
+    if (user.me.user_type === UserType.CLIENT && !user.me.confirmed_password) {
+      customer.setInitialCustomers();
+      user.logout().then(() => navigate(Screens.WelcomeScreen));
+    } else {
+      navigate(Screens.ProfileScreen);
+    }
+  };
+
+  const { setErrors, errors, handleChange, handleSubmit, values } = useFormik({
     initialValues: {
       password: '',
       newPassword: '',
     },
-    validationSchema: changePasswordSchema,
     onSubmit: handleChangePassword,
+    validationSchema: changePasswordSchema,
     validateOnChange: false,
     validateOnBlur: false,
   });
@@ -68,7 +86,10 @@ export const NewChangePasswordScreen = observer(() => {
           value={values.password}
           onChangeText={handleChange('password')}
           error={errors.password}
-          showError={errors.password !== t('errors.minPassword')}
+          showError={
+            errors.password !== t('errors.minPassword') &&
+            errors.password !== t('errors.passwordNotMatch')
+          }
         />
         <PasswordInput
           style={styles.input}
@@ -89,7 +110,7 @@ export const NewChangePasswordScreen = observer(() => {
       <Button
         style={styles.button2}
         type={ButtonType.TEXT}
-        onPress={() => navigate(Screens.ProfileScreen)}
+        onPress={() => handleCancel()}
       >
         {t('buttons.cancel')}
       </Button>

@@ -12,6 +12,9 @@ import { Text } from './text';
 export enum BadgeStatuses {
   GOOD = 'good',
   WARNING = 'warning',
+  WARNING_TODAY = 'warning_today',
+  WARNING_TOMORROW = 'warning_tomorrow',
+  EXPIRED_YESTERDAY = 'expired_yesterday',
   EXPIRED = 'expired',
   PLAN_NOT_EXISTS = 'plan_not_exists',
 }
@@ -46,7 +49,10 @@ const switchFontColor = (status: BadgeStatuses) => {
     case BadgeStatuses.GOOD:
       return colors.green;
     case BadgeStatuses.WARNING:
+    case BadgeStatuses.WARNING_TODAY:
+    case BadgeStatuses.WARNING_TOMORROW:
       return colors.orange;
+    case BadgeStatuses.EXPIRED_YESTERDAY:
     case BadgeStatuses.EXPIRED:
       return colors.red;
     case BadgeStatuses.PLAN_NOT_EXISTS:
@@ -61,7 +67,10 @@ const switchBackgroundColor = (status: BadgeStatuses) => {
     case BadgeStatuses.GOOD:
       return colors.green3;
     case BadgeStatuses.WARNING:
+    case BadgeStatuses.WARNING_TODAY:
+    case BadgeStatuses.WARNING_TOMORROW:
       return colors.orange2;
+    case BadgeStatuses.EXPIRED_YESTERDAY:
     case BadgeStatuses.EXPIRED:
       return colors.red2;
     case BadgeStatuses.PLAN_NOT_EXISTS:

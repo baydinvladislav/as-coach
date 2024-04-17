@@ -5,7 +5,6 @@ import { observer } from 'mobx-react';
 import moment from 'moment';
 import styled from 'styled-components';
 
-import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';

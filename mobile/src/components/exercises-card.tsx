@@ -123,42 +123,44 @@ export const ExercisesCard = ({
   const quantity = exercises.exercises.length;
 
   return (
-    <Reanimated.View style={[styles.box, heightStyles, widthStyles]}>
-      <Container
-        colors={[colors.black3, colors.black3]}
-        animatedProps={gradientProps}
-      >
-        <View style={[!isEndAnimation && styles.topContainer, styles.row]}>
-          <View>
-            <View style={[styles.row, { justifyContent: 'flex-start' }]}>
-              <Text color={colors.white} fontSize={FontSize.S17}>
-                {exercises.name}
+    <TouchableOpacity activeOpacity={0.9} onPress={() => handleOpen('ui')}>
+      <Reanimated.View style={[styles.box, heightStyles, widthStyles]}>
+        <Container
+          colors={[colors.black3, colors.black3]}
+          animatedProps={gradientProps}
+        >
+          <View style={[!isEndAnimation && styles.topContainer, styles.row]}>
+            <View>
+              <View style={[styles.row, { justifyContent: 'flex-start' }]}>
+                <Text color={colors.white} fontSize={FontSize.S17}>
+                  {exercises.name}
+                </Text>
+                {onEdit && (
+                  <Icon onPress={onEdit}>
+                    <EditIcon fill={colors.green} />
+                  </Icon>
+                )}
+              </View>
+              <Text
+                style={styles.exercisesText}
+                color={colors.black4}
+                fontSize={FontSize.S12}
+              >
+                {quantity} {t('createPlan.exercises')}
               </Text>
-              {onEdit && (
-                <Icon onPress={onEdit}>
-                  <EditIcon fill={colors.green} />
-                </Icon>
-              )}
             </View>
-            <Text
-              style={styles.exercisesText}
-              color={colors.black4}
-              fontSize={FontSize.S12}
-            >
-              {quantity} {t('createPlan.exercises')}
-            </Text>
+            {exercises.exercises.length ? (
+              <Icon onPress={() => handleOpen('ui')}>
+                {isLocallyOpen ? <ArrowUp2Icon /> : <ArrowDownIcon />}
+              </Icon>
+            ) : null}
           </View>
-          {exercises.exercises.length ? (
-            <Icon onPress={() => handleOpen('ui')}>
-              {isLocallyOpen ? <ArrowUp2Icon /> : <ArrowDownIcon />}
-            </Icon>
-          ) : null}
-        </View>
-        {!isEndAnimation && (
-          <ExerciseWithSupersetSimple exercises={exercises.exercises} />
-        )}
-      </Container>
-    </Reanimated.View>
+          {!isEndAnimation && (
+            <ExerciseWithSupersetSimple exercises={exercises.exercises} />
+          )}
+        </Container>
+      </Reanimated.View>
+    </TouchableOpacity>
   );
 };
 

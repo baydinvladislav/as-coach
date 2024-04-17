@@ -3,16 +3,17 @@ import { StyleSheet, View } from 'react-native';
 
 import { useFormik } from 'formik';
 import { observer } from 'mobx-react';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import styled from 'styled-components';
 
-import { LogoIcon } from '@assets';
+import { ArrowLeftIcon, LogoIcon } from '@assets';
 import { PasswordInput } from '@components';
 import { TOP_PADDING } from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { UserProps } from '@store';
-import { colors, normVert } from '@theme';
+import { colors, normHor, normVert } from '@theme';
 import { Button, Keyboard, Text } from '@ui';
 import { confirmPasswordSchema } from '@utils';
 
@@ -21,7 +22,7 @@ import { ButtonType, FontSize } from '~types';
 export const ChangePasswordScreen = observer(() => {
   const { user, loading } = useStore();
   const { navigate } = useNavigation();
-
+  const { goBack } = useNavigation();
   const isLoading = loading.isLoading;
 
   const handleConfirmPassword = (values: Pick<UserProps, 'password'>) => {
@@ -46,6 +47,9 @@ export const ChangePasswordScreen = observer(() => {
 
   return (
     <Keyboard style={{ flex: 1, paddingTop: TOP_PADDING }}>
+      <Circle style={styles.back} onPress={goBack}>
+        <ArrowLeftIcon />
+      </Circle>
       <Logo />
       <Text
         style={styles.title}
@@ -98,7 +102,19 @@ const styles = StyleSheet.create({
   input: {
     marginBottom: normVert(20),
   },
+  back: {
+    marginBottom: normVert(24),
+  },
 });
+
+const Circle = styled(TouchableOpacity)`
+  border-radius: 100px;
+  background-color: ${colors.grey};
+  width: ${normHor(32)}px;
+  height: ${normVert(32)}px;
+  align-items: center;
+  justify-content: center;
+`;
 
 const Inputs = styled(View)`
   flex: 1;

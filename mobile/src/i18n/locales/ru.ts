@@ -17,8 +17,11 @@ export const ru = {
     hereAddPlans: 'В этом разделе тренер\nбудет создавать вам планы',
     customerStatus: {
       noPlan: 'Нет плана',
-      expired: 'Истек {days} дней назад',
-      expiring: 'Истечет через {days} дней',
+      expired_yesterday: 'Истек вчера',
+      expired: 'Истек {days} {dayWord} назад',
+      expiring: 'Истечет через {days} {dayWord}',
+      expiring_today: 'Истечет сегодня',
+      expiring_tomorrow: 'Истечет завтра',
     },
   },
   detailCustomer: {
@@ -134,6 +137,7 @@ export const ru = {
     confirmPasswordError: 'Вы ввели неправильный пароль',
     minPassword: 'Минимальная длина пароля 8 символов',
     passwordNotMatch: 'Пароли не совпадают',
+    specifyMuscleGroup: 'Выберите категорию упражнения',
   },
   common: {
     nonePlan: 'Нет плана',

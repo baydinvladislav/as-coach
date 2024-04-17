@@ -3,12 +3,12 @@ import * as yup from 'yup';
 import {
   BIRTHDAY_REGEXP,
   EMAIL_REGEXP,
+  OTP_LENGTH,
+  PASSWORD_MIN,
   PHONE_REGEXP,
   TELEGRAM_USERNAME_REGEXP,
 } from '@constants';
 import { t } from '@i18n';
-
-const PASSWORD_MIN = 4;
 
 export const confirmPasswordSchema = () =>
   yup.object().shape({
@@ -22,11 +22,12 @@ export const changePasswordSchema = () =>
   yup.object().shape({
     password: yup
       .string()
-      .oneOf([yup.ref('newPassword')], t('errors.minPassword'))
+      .oneOf([yup.ref('newPassword')], t('errors.passwordNotMatch'))
       .min(PASSWORD_MIN, t('errors.minPassword'))
       .required(t('errors.required')),
     newPassword: yup
       .string()
+      .min(PASSWORD_MIN, t('errors.minPassword'))
       .oneOf([yup.ref('password')], t('errors.passwordNotMatch'))
       .required(t('errors.required')),
   });
@@ -39,7 +40,7 @@ export const loginValidationSchema = () =>
       .required(t('errors.required')),
     password: yup
       .string()
-      .min(PASSWORD_MIN, t('errors.minPassword'))
+      .min(OTP_LENGTH, t('errors.minPassword'))
       .required(t('errors.required')),
   });
 
@@ -84,7 +85,6 @@ export const addClientValidationSchema = () =>
     phone_number: yup
       .string()
       .matches(TELEGRAM_USERNAME_REGEXP, t('errors.tgUsernameError'))
-      .required(t('errors.required')),
   });
 
 export const createPlanValidationSchema = () =>
@@ -115,5 +115,5 @@ export const createPlanValidationSchema = () =>
 export const createExerciseSchema = () =>
   yup.object().shape({
     name: yup.string().required(t('errors.required')),
-    muscle_group_id: yup.string().required(t('errors.required')),
+    muscle_group_id: yup.string().required(t('errors.specifyMuscleGroup')),
   });

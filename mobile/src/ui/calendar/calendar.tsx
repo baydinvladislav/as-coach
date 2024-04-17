@@ -136,6 +136,7 @@ export const Calendar = forwardRef(
           horizontal={horizontalView}
           pagingEnabled={horizontalView}
           staticHeader={horizontalView}
+          firstDay={1}
         />
       </View>
     );

@@ -32,7 +32,7 @@ export const LkScreen = observer(() => {
   const [data, setData] = useState<Partial<CustomerProps>>({});
 
   const getCustomerInfo = () => {
-    if (isClient) {
+    if (isClient && user.me.id) {
       customer.getCustomerPlanById(user.me.id).then(plans => {
         setData({ id: user.me.id, plans });
       });
