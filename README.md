@@ -6,7 +6,7 @@
 https://www.figma.com/file/l8H9Q4ZCd00mEOV9YPLDlP/Ascoach?type=design&node-id=30-16481&mode=design
 
 <h2>Environments</h2>
-Prod: http://34.229.134.78/docs
+Prod: http://50.16.210.223/docs
 
 <h2>Local Testing</h2>
 
