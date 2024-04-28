@@ -195,12 +195,10 @@ export const renderNumber = (number: string, join: string) => {
   return arr.join(join) + ' гр';
 };
 
-const getDifferenceInDays = (dateEnd: string) => {
-  const currentDate = moment().add(3, 'hours');
-  const dateCompletion = moment(dateEnd).add(3, 'hours');
-
-  const duration = moment.duration(dateCompletion.diff(currentDate));
-  return Math.round(duration.asDays());
+const getDifferenceInDays = (dateEnd: string): number => {
+  const currentDate = moment().startOf('day');
+  const dateCompletion = moment(dateEnd).startOf('day');
+  return dateCompletion.diff(currentDate, 'days');
 };
 
 const getCustomerStatus = (dateEnd: string) => {
