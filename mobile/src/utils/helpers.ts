@@ -196,8 +196,7 @@ export const renderNumber = (number: string, join: string) => {
 };
 
 const getDifferenceInDays = (dateEnd: string) => {
-  // because I do not want to include today only past
-  const currentDate = moment().subtract(1, 'days').add(3, 'hours');
+  const currentDate = moment().add(3, 'hours');
   const dateCompletion = moment(dateEnd).add(3, 'hours');
 
   const duration = moment.duration(dateCompletion.diff(currentDate));
