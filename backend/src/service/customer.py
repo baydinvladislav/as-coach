@@ -112,6 +112,10 @@ class CustomerProfileService(UserService):
             await self.handle_profile_photo(user, params.pop("photo"))
         await self.customer_repository.update(str(user.id), **params)
 
+    async def delete(self, user: Customer) -> None:
+        deleted_id = await self.customer_repository.delete(str(user.id))
+        return deleted_id
+
 
 class CustomerService:
     """Contains business rules for Customer subdomain"""
@@ -177,6 +181,13 @@ class CustomerService:
 
     async def update(self, user: Customer, **params) -> None:
         await self.profile_service.update(user, **params)
+
+    async def delete(self, user: Customer) -> None:
+        deleted_id = await self.profile_service.delete(user)
+        if deleted_id is not None:
+            logger.info(f"Customer {user.username} successfully deleted")
+        else:
+            logger.info(f"Couldn't delete customer {user.username}")
 
     async def get_customer_by_pk(self, pk: str) -> Customer | None:
         customer = await self.selector_service.select_customer_by_pk(pk=pk)

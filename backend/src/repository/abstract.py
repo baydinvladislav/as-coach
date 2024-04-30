@@ -46,6 +46,16 @@ class AbstractRepository(ABC):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def delete(self, pk: str) -> str | None:
+        """
+        Deletes instance in storage by primary key
+
+        Args:
+            pk: primary key of the instance being deleted
+        """
+        raise NotImplementedError
+
     def update(self, pk, **params):
         """
         Updates instance in storage by primary key
@@ -53,14 +63,5 @@ class AbstractRepository(ABC):
         Args:
             pk: primary key of the instance being updated
             params: parameters for instance updating
-        """
-        raise NotImplementedError
-
-    def delete(self, pk):
-        """
-        Deletes instance in storage by primary key
-
-        Args:
-            pk: primary key of the instance being deleted
         """
         raise NotImplementedError

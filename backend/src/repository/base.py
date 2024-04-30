@@ -69,6 +69,17 @@ class BaseRepository(AbstractRepository):
         await self.session.commit()
         await self.session.refresh(instance)
 
+    async def delete(self, row_id: str) -> str | None:
+        instance = await self.get(row_id)
+
+        if not instance:
+            return None
+
+        deleted_pk = str(instance.id)
+        await self.session.delete(instance)
+        await self.session.commit()
+        return deleted_pk
+
     async def filter(self, filters: dict, foreign_keys: list = None, sub_queries: list = None):
         if foreign_keys is None:
             foreign_keys = []
@@ -103,14 +114,3 @@ class BaseRepository(AbstractRepository):
 
         instances = result.scalars().all()
         return instances
-
-    async def delete(self, pk, **params) -> str | None:
-        instance = await self.get(pk)
-
-        if not instance:
-            return None
-
-        deleted_instance_pk = str(instance.pk)
-        self.session.delete(instance)
-        await self.session.commit()
-        return deleted_instance_pk

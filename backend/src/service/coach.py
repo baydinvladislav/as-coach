@@ -46,6 +46,10 @@ class CoachProfileService(UserService):
             await self.handle_profile_photo(user, params.pop("photo"))
         await self.coach_repository.update(str(user.id), **params)
 
+    async def delete(self, user: Coach) -> None:
+        deleted_id = await self.coach_repository.delete(str(user.id))
+        return deleted_id
+
 
 class CoachService:
     """Contains business rules for Coach subdomain"""
@@ -87,6 +91,13 @@ class CoachService:
 
     async def update(self, user: Coach, **params) -> None:
         await self.profile_service.update(user, **params)
+
+    async def delete(self, user: Coach) -> None:
+        deleted_id = await self.profile_service.delete(user)
+        if deleted_id is not None:
+            logger.info(f"Coach {user.username} successfully deleted")
+        else:
+            logger.info(f"Couldn't delete coach {user.username}")
 
     async def get_coach_by_username(self, username: str) -> Coach | None:
         coach = await self.selector_service.select_coach_by_username(username)
