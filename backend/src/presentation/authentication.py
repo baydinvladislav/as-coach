@@ -230,7 +230,7 @@ async def update_profile(
 
 
 @auth_router.delete(
-    "/delete_profile",
+    "/profiles",
     summary="Delete user profile",
     status_code=status.HTTP_204_NO_CONTENT)
 async def delete_profile(service: CoachService | CustomerService = Depends(provide_user_service)):
