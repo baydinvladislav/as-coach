@@ -55,20 +55,17 @@ const DeleteAccountContainer = styled(View)`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding-left: 15%;
+  margin-top: ${normVert(100)}px;
 `;
 
 const RegularText = styled(Text)`
   color: ${colors.grey9};
   font-size: ${FontSize.S12};
-  margin-top: ${normVert(100)}px;
-  flex: 1;
 `;
 
 const ClickableText = styled(Text)`
   color: ${colors.grey9};
   text-decoration-line: underline;
-  margin-top: ${normVert(100)}px;
   font-size: ${FontSize.S12};
 `;
 
@@ -157,12 +154,10 @@ export const ProfileScreen = observer(() => {
         ),
       )}
       <DeleteAccountContainer>
-        <RegularText>
-          {t('profile.profileDeletionPrefix') + ' '}
-          <ClickableText onPress={showConfirmationDialog}>
-            {t('profile.profileDeletionClickable')}
-          </ClickableText>
-        </RegularText>
+        <RegularText>{t('profile.profileDeletionPrefix') + ' '}</RegularText>
+        <TouchableOpacity onPress={showConfirmationDialog}>
+          <ClickableText>{t('profile.profileDeletionClickable')}</ClickableText>
+        </TouchableOpacity>
       </DeleteAccountContainer>
     </View>
   );
