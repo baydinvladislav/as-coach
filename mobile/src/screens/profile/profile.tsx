@@ -55,7 +55,7 @@ const DeleteAccountContainer = styled(View)`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding-horizontal: 14.5%;
+  padding-left: 15%;
 `;
 
 const RegularText = styled(Text)`
