@@ -1,16 +1,16 @@
 import React from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { observer } from 'mobx-react';
 import styled from 'styled-components';
 
+import { profileDelete } from '@api';
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
   DefaultAvatarImage,
   LockIcon,
   LogoutIcon,
-  NotificationIcon,
   UserEditIcon,
 } from '@assets';
 import { ProfileListItem } from '@components';
@@ -19,7 +19,7 @@ import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
 import { colors, normHor, normVert } from '@theme';
-import { Switch, Text } from '@ui';
+import { Text } from '@ui';
 
 import { FontSize } from '~types';
 
@@ -27,7 +27,6 @@ const DATA = (
   onPress1: () => void,
   onPress2: () => void,
   onPress3: () => void,
-  onPress4: () => void,
 ) => [
   {
     id: 1,
@@ -45,19 +44,26 @@ const DATA = (
   },
   {
     id: 3,
-    name: t('profile.nav3'),
-    icon: <NotificationIcon stroke={colors.green} />,
-    rightIcon: <Switch />,
-    onPress: onPress3,
-  },
-  {
-    id: 4,
     color: colors.red,
     name: t('profile.nav4'),
     icon: <LogoutIcon stroke={colors.red} />,
-    onPress: onPress4,
+    onPress: onPress3,
   },
 ];
+
+const DeleteAccountPrompt = styled(Text)`
+  color: ${colors.grey9};
+  font-size: ${FontSize.S12};
+  text-align: center;
+  margin-top: ${normVert(100)}px;
+  padding-horizontal: ${normHor(20)}px;
+`;
+
+const ClickableText = styled(Text)`
+  color: ${colors.grey9};
+  text-decoration-line: underline;
+  font-size: ${FontSize.S12};
+`;
 
 export const ProfileScreen = observer(() => {
   const { user, customer } = useStore();
@@ -75,6 +81,33 @@ export const ProfileScreen = observer(() => {
   const handleLogout = () => {
     customer.setInitialCustomers();
     user.logout().then(() => navigate(Screens.WelcomeScreen));
+  };
+
+  const handleDeleteAccount = () => {
+    console.log();
+    profileDelete().then(() =>
+      user.logout().then(() => navigate(Screens.WelcomeScreen)),
+    );
+  };
+
+  const showConfirmationDialog = () => {
+    Alert.alert(
+      t('profile.confirmDeleteDialogQuestion'),
+      t('profile.confirmDeleteDialogWarning'),
+      [
+        {
+          text: t('profile.confirmDeleteDialogCancel'),
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: t('profile.confirmDeleteDialogConfirm'),
+          onPress: () => handleDeleteAccount(),
+          style: 'destructive',
+        },
+      ],
+      { cancelable: false },
+    );
   };
 
   return (
@@ -103,7 +136,7 @@ export const ProfileScreen = observer(() => {
       >
         {user.me.first_name}
       </Text>
-      {DATA(handleGoEdit, handleGoChangePassword, () => null, handleLogout).map(
+      {DATA(handleGoEdit, handleGoChangePassword, handleLogout).map(
         (item, key) => (
           <ProfileListItem
             index={key}
@@ -116,6 +149,12 @@ export const ProfileScreen = observer(() => {
           />
         ),
       )}
+      <DeleteAccountPrompt>
+        {t('profile.profileDeletionPrefix')}{' '}
+        <ClickableText onPress={showConfirmationDialog}>
+          {t('profile.profileDeletionClickable')}
+        </ClickableText>
+      </DeleteAccountPrompt>
     </View>
   );
 });

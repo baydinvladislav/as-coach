@@ -71,6 +71,13 @@ export const ru = {
     nav2: 'Смена пароля',
     nav3: 'Уведомления',
     nav4: 'Выйти из аккаунта',
+    profileDeletionPrefix: 'Если хочешь удалить аккаунт, нажми',
+    profileDeletionClickable: 'здесь',
+    confirmDeleteDialogQuestion: 'Вы уверены, что хотите удалить аккаунт?',
+    confirmDeleteDialogWarning:
+      'Все ваши данные будут удалены без возможности восстановления',
+    confirmDeleteDialogConfirm: 'Удалить',
+    confirmDeleteDialogCancel: 'Оставить',
   },
   edit: {
     editTitle: 'Личные данные',
