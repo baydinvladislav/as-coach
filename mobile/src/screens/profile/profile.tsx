@@ -151,9 +151,9 @@ export const ProfileScreen = observer(() => {
       )}
       <DeleteAccountPrompt>
         {t('profile.profileDeletionPrefix')}{' '}
-        <ClickableText onPress={showConfirmationDialog}>
-          {t('profile.profileDeletionClickable')}
-        </ClickableText>
+        <TouchableOpacity onPress={showConfirmationDialog}>
+          <ClickableText>{t('profile.profileDeletionClickable')}</ClickableText>
+        </TouchableOpacity>
       </DeleteAccountPrompt>
     </View>
   );
