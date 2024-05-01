@@ -54,7 +54,7 @@ const DATA = (
 const DeleteAccountContainer = styled(View)`
   flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: center; // Centers horizontally
   margin-top: ${normVert(100)}px;
   padding-horizontal: ${normHor(20)}px;
 `;
@@ -161,7 +161,9 @@ export const ProfileScreen = observer(() => {
       )}
       <DeleteAccountContainer>
         <RegularText>{t('profile.profileDeletionPrefix')} </RegularText>
-          <ClickableText onPress={showConfirmationDialog}>{t('profile.profileDeletionClickable')}</ClickableText>
+        <ClickableText onPress={showConfirmationDialog}>
+          {t('profile.profileDeletionClickable')}
+        </ClickableText>
       </DeleteAccountContainer>
     </View>
   );
