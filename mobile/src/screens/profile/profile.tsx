@@ -55,13 +55,12 @@ const DeleteAccountContainer = styled(View)`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding-horizontal: ${normHor(20)}px;
+  padding-horizontal: ${normHor(50)}px;
 `;
 
 const RegularText = styled(Text)`
   color: ${colors.grey9};
   font-size: ${FontSize.S12};
-  margin-left: ${normVert(28)}px;
   margin-top: ${normVert(100)}px;
   flex: 1;
 `;
@@ -70,7 +69,6 @@ const ClickableText = styled(Text)`
   color: ${colors.grey9};
   text-decoration-line: underline;
   margin-top: ${normVert(100)}px;
-  margin-right: ${normVert(33)}px;
   font-size: ${FontSize.S12};
 `;
 
