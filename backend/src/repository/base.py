@@ -75,10 +75,10 @@ class BaseRepository(AbstractRepository):
         if not instance:
             return None
 
-        deleted_pk = str(instance.id)
+        deleted_item_id = str(instance.id)
         await self.session.delete(instance)
         await self.session.commit()
-        return deleted_pk
+        return deleted_item_id
 
     async def filter(self, filters: dict, foreign_keys: list = None, sub_queries: list = None):
         if foreign_keys is None:

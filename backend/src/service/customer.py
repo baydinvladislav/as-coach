@@ -184,10 +184,10 @@ class CustomerService:
 
     async def delete(self, user: Customer) -> None:
         deleted_id = await self.profile_service.delete(user)
-        if deleted_id is not None:
-            logger.info(f"Customer {user.username} successfully deleted")
-        else:
+        if deleted_id is None:
             logger.info(f"Couldn't delete customer {user.username}")
+            return
+        logger.info(f"Customer {user.username} successfully deleted")
 
     async def get_customer_by_pk(self, pk: str) -> Customer | None:
         customer = await self.selector_service.select_customer_by_pk(pk=pk)

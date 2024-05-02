@@ -94,10 +94,10 @@ class CoachService:
 
     async def delete(self, user: Coach) -> None:
         deleted_id = await self.profile_service.delete(user)
-        if deleted_id is not None:
-            logger.info(f"Coach {user.username} successfully deleted")
-        else:
+        if deleted_id is None:
             logger.info(f"Couldn't delete coach {user.username}")
+            return
+        logger.info(f"Coach {user.username} successfully deleted")
 
     async def get_coach_by_username(self, username: str) -> Coach | None:
         coach = await self.selector_service.select_coach_by_username(username)
