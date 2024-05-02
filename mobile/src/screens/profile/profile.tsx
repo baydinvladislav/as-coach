@@ -101,7 +101,7 @@ export const ProfileScreen = observer(() => {
       [
         {
           text: t('profile.confirmDeleteDialogCancel'),
-          onPress: () => console.log('Cancel Pressed'),
+          onPress: () => console.log('profile.deletion.is.canceled'),
           style: 'cancel',
         },
         {
