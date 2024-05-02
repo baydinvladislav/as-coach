@@ -19,6 +19,9 @@ export const profileEdit = (values: Partial<UserProps>) =>
     isWithImage: true,
   });
 
+export const profileDelete = () =>
+  axiosBase.delete<Partial<UserProps>>('/profiles');
+
 export const me = () => axiosBase.get('/profiles');
 
 export const changePassword = ({ password }: Pick<UserProps, 'password'>) =>
