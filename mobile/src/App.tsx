@@ -21,7 +21,12 @@ import {
 } from '@react-navigation/native';
 import { colors } from '@theme';
 import { Layout } from '@ui';
-import { notificationListener, requestUserPermission } from './push/notificationServices';
+
+import { checkTrackingPermission } from './permissions/trackingTransparency';
+import {
+  notificationListener,
+  requestUserPermission,
+} from './push/notificationServices';
 
 moment.locale('ru');
 moment.updateLocale('ru', {
@@ -48,6 +53,7 @@ const App = () => {
   useEffect(() => {
     requestUserPermission();
     notificationListener();
+    checkTrackingPermission();
   }, []);
 
   return (
