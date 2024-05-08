@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { useFormik } from 'formik';
 import { isEmpty } from 'lodash';
@@ -73,6 +73,15 @@ export const ProfileEditScreen = observer(() => {
       },
       async response => {
         if (!isEmpty(response)) {
+          const imageSize = response.assets && response.assets[0].fileSize;
+          if (imageSize && imageSize > 5 * 1024 * 1024) {
+            Alert.alert(
+              'Превышен размер',
+              'Этот файл слишком большой, максимальный размер файла 5мб.',
+            );
+            return;
+          }
+
           setResponse(response);
           setUri(
             'file:///' +
