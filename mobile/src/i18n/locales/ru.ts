@@ -78,6 +78,9 @@ export const ru = {
       'Все ваши данные будут удалены без возможности восстановления',
     confirmDeleteDialogConfirm: 'Удалить',
     confirmDeleteDialogCancel: 'Оставить',
+    maxFileSizeAlertTitle: 'Превышен размер',
+    maxFileSizeAlertDescription:
+      'Этот файл слишком большой, максимальный размер файла 5мб',
   },
   edit: {
     editTitle: 'Личные данные',

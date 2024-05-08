@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { useFormik } from 'formik';
 import { isEmpty } from 'lodash';
@@ -13,7 +13,12 @@ import { formatWithMask } from 'react-native-mask-input';
 import styled from 'styled-components';
 
 import { CameraIcon, DefaultAvatarImage } from '@assets';
-import { BASE_URL, DATE_MASK, PHONE_MASK } from '@constants';
+import {
+  BASE_URL,
+  DATE_MASK,
+  MAX_PROFILE_FILE_SIZE,
+  PHONE_MASK,
+} from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
@@ -73,6 +78,15 @@ export const ProfileEditScreen = observer(() => {
       },
       async response => {
         if (!isEmpty(response)) {
+          const imageSize = response.assets && response.assets[0].fileSize;
+          if (imageSize && imageSize > MAX_PROFILE_FILE_SIZE) {
+            Alert.alert(
+              t('profile.maxFileSizeAlertTitle'),
+              t('profile.maxFileSizeAlertDescription'),
+            );
+            return;
+          }
+
           setResponse(response);
           setUri(
             'file:///' +
