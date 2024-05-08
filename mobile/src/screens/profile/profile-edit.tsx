@@ -13,7 +13,12 @@ import { formatWithMask } from 'react-native-mask-input';
 import styled from 'styled-components';
 
 import { CameraIcon, DefaultAvatarImage } from '@assets';
-import { BASE_URL, DATE_MASK, PHONE_MASK } from '@constants';
+import {
+  BASE_URL,
+  DATE_MASK,
+  MAX_PROFILE_FILE_SIZE,
+  PHONE_MASK,
+} from '@constants';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
 import { Screens, useNavigation } from '@navigation';
@@ -74,10 +79,10 @@ export const ProfileEditScreen = observer(() => {
       async response => {
         if (!isEmpty(response)) {
           const imageSize = response.assets && response.assets[0].fileSize;
-          if (imageSize && imageSize > 5 * 1024 * 1024) {
+          if (imageSize && imageSize > MAX_PROFILE_FILE_SIZE) {
             Alert.alert(
-              'Превышен размер',
-              'Этот файл слишком большой, максимальный размер файла 5мб.',
+              t('profile.maxFileSizeAlertTitle'),
+              t('profile.maxFileSizeAlertDescription'),
             );
             return;
           }

@@ -20,3 +20,4 @@ export const TOKEN = 'token';
 export const TOP_PADDING = normVert(60);
 export const OTP_LENGTH = 4;
 export const PASSWORD_MIN = 8;
+export const MAX_PROFILE_FILE_SIZE = 5 * 1024 * 1024; // 5mb
