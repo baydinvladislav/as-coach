@@ -51,11 +51,12 @@ const DATA = (
   },
 ];
 
-const DeleteAccountContainer = styled(View)`
+const DeleteAccountContainer = styled(TouchableOpacity)`
   flex-direction: row;
   align-items: center;
+  height: ${normVert(100)}px;
   justify-content: center;
-  margin-top: ${normVert(100)}px;
+  margin-top: ${normVert(40)}px;
 `;
 
 const RegularText = styled(Text)`
@@ -153,11 +154,9 @@ export const ProfileScreen = observer(() => {
           />
         ),
       )}
-      <DeleteAccountContainer>
+      <DeleteAccountContainer onPress={showConfirmationDialog}>
         <RegularText>{t('profile.profileDeletionPrefix') + ' '}</RegularText>
-        <TouchableOpacity onPress={showConfirmationDialog}>
-          <ClickableText>{t('profile.profileDeletionClickable')}</ClickableText>
-        </TouchableOpacity>
+        <ClickableText>{t('profile.profileDeletionClickable')}</ClickableText>
       </DeleteAccountContainer>
     </View>
   );
