@@ -18,16 +18,15 @@ export const ExerciseWithSupersetSimple = ({ exercises }: TProps) => {
     current: TPropsExercises,
     previous?: TPropsExercises,
   ): boolean => {
-    if (current.superset_id == 'None') return false;
+    if (current.superset_id === undefined || current.superset_id === 'None') {
+      return false;
+    }
 
-    if (
+    return !!(
       previous &&
-      previous.superset_id != 'None' &&
+      previous.superset_id != undefined &&
       current.superset_id == previous.superset_id
-    )
-      return true;
-
-    return false;
+    );
   };
 
   return (
