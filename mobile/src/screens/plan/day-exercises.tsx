@@ -38,7 +38,7 @@ export const DayExercisesScreen = observer(
     const clearSearch = () => {
       setSearchInputKey(key => key + 1);
       setSearchValue(undefined);
-      customer.setSearchCustomer([]);
+      customer.searchExercisesByName('');
     };
 
     const [data, keys] = [
