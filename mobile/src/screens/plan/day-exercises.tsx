@@ -9,6 +9,7 @@ import { AddIcon } from '@assets';
 import { CheckboxGroup, NotFound, SearchInput } from '@components';
 import { useStore } from '@hooks';
 import { t } from '@i18n';
+import { useFocusEffect } from '@react-navigation/native';
 import { colors, normHor, normVert } from '@theme';
 import { Button, Text, ViewWithButtons } from '@ui';
 
@@ -18,20 +19,27 @@ import {
   FontWeight,
   TExercises,
   TFormProps,
-  TPlan,
 } from '~types';
 
 import { PlanScreens } from './plan';
 
 export const DayExercisesScreen = observer(
   ({ handleNavigate, values, setValues, params, errors }: TFormProps) => {
+    const [searchInputKey, setSearchInputKey] = useState(0);
+
     const [searchValue, setSearchValue] = useState<string | undefined>();
 
-    const { loading, user, customer } = useStore();
+    const { loading, customer } = useStore();
 
     const isLoading = loading.isLoading;
 
     const isEmptySearchExercises = isEmpty(customer.searchExercises);
+
+    const clearSearch = () => {
+      setSearchInputKey(key => key + 1);
+      setSearchValue(undefined);
+      customer.setSearchCustomer([]);
+    };
 
     const [data, keys] = [
       Object.values(
@@ -57,12 +65,15 @@ export const DayExercisesScreen = observer(
       search();
     }, [search, searchValue]);
 
+    useFocusEffect(useCallback(() => () => clearSearch(), []));
+
     useEffect(() => {
       customer.getExercises();
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleCancel = () => {
+      clearSearch();
       if (!params.isExists) {
         setValues(values => ({
           ...values,
@@ -76,11 +87,11 @@ export const DayExercisesScreen = observer(
           trainings: params.oldValue,
         }));
       }
-
       handleNavigate(PlanScreens.CREATE_PLAN_SCREEN);
     };
 
     const handleConfirm = () => {
+      clearSearch();
       handleNavigate(PlanScreens.CREATE_SUPERSETS_SCREEN, params, true);
     };
 
@@ -109,7 +120,11 @@ export const DayExercisesScreen = observer(
           {t('createPlan.exercises')}
         </Text>
         <View style={styles.searchInput}>
-          <SearchInput value={searchValue} onChangeText={setSearchValue} />
+          <SearchInput
+            key={searchInputKey}
+            value={searchValue}
+            onChangeText={setSearchValue}
+          />
         </View>
         <Button
           style={styles.addExercisesButton}
