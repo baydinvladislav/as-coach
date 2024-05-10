@@ -65,6 +65,7 @@ export const DayExercisesScreen = observer(
       search();
     }, [search, searchValue]);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useFocusEffect(useCallback(() => () => clearSearch(), []));
 
     useEffect(() => {
