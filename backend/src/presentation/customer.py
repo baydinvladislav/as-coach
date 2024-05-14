@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
 from src.service.coach_service import CoachService
-from src.service.customer import CustomerService
+from src.service.customer_service import CustomerService
 from src.service.training_plan import TrainingPlanService
 from src.schemas.customer import (
     CustomerOut,
