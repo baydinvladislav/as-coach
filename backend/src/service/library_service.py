@@ -1,4 +1,4 @@
-from src.repository.abstract import AbstractRepository
+from src.repository.abstract_repository import AbstractRepository
 
 
 class LibraryService:

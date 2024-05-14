@@ -6,7 +6,7 @@ from datetime import datetime
 
 from src.service.training_service import TrainingService
 from src.service.diet_service import DietService
-from src.repository.training_plan import TrainingPlanRepository
+from src.repository.training_plan_repository import TrainingPlanRepository
 from src.schemas.customer import TrainingPlanIn
 from src import TrainingPlan
 

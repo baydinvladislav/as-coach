@@ -1,7 +1,7 @@
 import uuid
 
 from src import ExercisesOnTraining
-from src.repository.abstract import AbstractRepository
+from src.repository.abstract_repository import AbstractRepository
 
 
 class TrainingService:

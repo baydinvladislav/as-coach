@@ -1,7 +1,7 @@
 from sqlalchemy import select
 
 from src import Coach
-from src.repository.base import BaseRepository
+from src.repository.base_repository import BaseRepository
 
 
 class CoachRepository(BaseRepository):

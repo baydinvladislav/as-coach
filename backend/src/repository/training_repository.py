@@ -1,7 +1,7 @@
 from sqlalchemy import select
 
 from src import Training, ExercisesOnTraining
-from src.repository.base import BaseRepository
+from src.repository.base_repository import BaseRepository
 
 
 class TrainingRepository(BaseRepository):

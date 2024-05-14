@@ -12,12 +12,12 @@ from src.service.library_service import LibraryService
 from src.shared.config import reuseable_oauth
 from src.utils import decode_jwt_token
 
-from src.repository.library import ExerciseRepository, MuscleGroupRepository
-from src.repository.diet import DietRepository, DietOnTrainingPlanRepository
-from src.repository.training import TrainingRepository, ExercisesOnTrainingRepository
-from src.repository.training_plan import TrainingPlanRepository
-from src.repository.coach import CoachRepository
-from src.repository.customer import CustomerRepository
+from src.repository.library_repository import ExerciseRepository, MuscleGroupRepository
+from src.repository.diet_repository import DietRepository, DietOnTrainingPlanRepository
+from src.repository.training_repository import TrainingRepository, ExercisesOnTrainingRepository
+from src.repository.training_plan_repository import TrainingPlanRepository
+from src.repository.coach_repository import CoachRepository
+from src.repository.customer_repository import CustomerRepository
 from src.service.coach_service import CoachService, CoachProfileService, CoachSelectorService
 from src.service.customer_service import CustomerService, CustomerSelectorService, CustomerProfileService
 from src.supplier.kafka import KafkaSupplier, kafka_settings

@@ -9,7 +9,7 @@ from src.schemas.authentication import CustomerRegistrationData, UserLoginData
 from src.service.notification_service import NotificationService
 from src.shared.exceptions import NotValidCredentials
 from src.utils import verify_password
-from src.repository.customer import CustomerRepository
+from src.repository.customer_repository import CustomerRepository
 from src.service.user_service import UserService, UserType
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')

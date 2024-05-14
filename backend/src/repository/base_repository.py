@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import select, update
 from sqlalchemy.orm import selectinload
 
-from src.repository.abstract import AbstractRepository
+from src.repository.abstract_repository import AbstractRepository
 from src.utils import validate_uuid
 
 
