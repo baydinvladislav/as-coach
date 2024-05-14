@@ -6,11 +6,11 @@ from fastapi.security import OAuth2PasswordRequestForm
 from src import Customer
 from src.shared.config import OTP_LENGTH
 from src.schemas.authentication import CustomerRegistrationData, UserLoginData
-from src.service.notification import NotificationService
+from src.service.notification_service import NotificationService
 from src.shared.exceptions import NotValidCredentials
 from src.utils import verify_password
 from src.repository.customer import CustomerRepository
-from src.service.user import UserService, UserType
+from src.service.user_service import UserService, UserType
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)

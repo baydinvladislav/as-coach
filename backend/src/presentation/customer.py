@@ -21,7 +21,7 @@ from src.shared.dependencies import (
     provide_push_notification_service,
 )
 from src.utils import validate_uuid, generate_random_password
-from src.service.notification import NotificationService
+from src.service.notification_service import NotificationService
 from src.shared.config import OTP_LENGTH
 
 customer_router = APIRouter()

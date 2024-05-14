@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from src.database import SessionLocal
-from src.service.library import LibraryService
+from src.service.library_service import LibraryService
 from src.shared.config import reuseable_oauth
 from src.utils import decode_jwt_token
 
@@ -23,9 +23,9 @@ from src.service.customer_service import CustomerService, CustomerSelectorServic
 from src.supplier.kafka import KafkaSupplier, kafka_settings
 from src.shared.exceptions import TokenExpired, NotValidCredentials
 from src.service.training_plan import TrainingPlanService
-from src.service.training import TrainingService
-from src.service.diet import DietService
-from src.service.notification import NotificationService
+from src.service.training_service import TrainingService
+from src.service.diet_service import DietService
+from src.service.notification_service import NotificationService
 from src.supplier.firebase import PushFirebaseNotificator
 
 
