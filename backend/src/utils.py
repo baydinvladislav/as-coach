@@ -118,7 +118,7 @@ async def decode_jwt_token(token: str):
     Decodes given token
     """
     # TODO: fix it
-    from src.schemas.authentication import TokenPayload
+    from src.schemas.authentication_schema import TokenPayload
 
     try:
         payload = jwt.decode(

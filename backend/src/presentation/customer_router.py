@@ -6,14 +6,14 @@ from starlette import status
 from src.service.coach_service import CoachService
 from src.service.customer_service import CustomerService
 from src.service.training_plan_service import TrainingPlanService
-from src.schemas.customer import (
+from src.schemas.customer_schema import (
     CustomerOut,
     CustomerCreateIn,
     TrainingPlanOut,
     TrainingPlanIn,
     TrainingPlanOutFull,
 )
-from src.schemas.authentication import CustomerRegistrationData
+from src.schemas.authentication_schema import CustomerRegistrationData
 from src.shared.dependencies import (
     provide_customer_service,
     provide_user_service,

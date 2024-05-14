@@ -15,7 +15,7 @@ from src.shared.config import (
     STATIC_DIR,
 )
 from src.utils import verify_password
-from src.schemas.authentication import UserRegistrationData, UserLoginData
+from src.schemas.authentication_schema import UserRegistrationData, UserLoginData
 
 USER_MODEL = Coach | Customer
 

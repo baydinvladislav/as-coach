@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from src import Customer
 from src.shared.config import OTP_LENGTH
-from src.schemas.authentication import CustomerRegistrationData, UserLoginData
+from src.schemas.authentication_schema import CustomerRegistrationData, UserLoginData
 from src.service.notification_service import NotificationService
 from src.shared.exceptions import NotValidCredentials
 from src.utils import verify_password
