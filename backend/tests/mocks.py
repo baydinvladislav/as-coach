@@ -10,5 +10,5 @@ def mock_send_kafka_message():
 
 @pytest.fixture
 def mock_send_push_notification():
-    with patch("src.service.notification.NotificationService.send_push_notification") as mock:
+    with patch("src.service.notification_service.NotificationService.send_push_notification") as mock:
         yield mock
