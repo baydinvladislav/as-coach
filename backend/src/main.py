@@ -9,9 +9,9 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
 
 from src.shared.config import STATIC_DIR
-from src.presentation.authentication import auth_router
-from src.presentation.customer import customer_router
-from src.presentation.library import gym_router
+from src.presentation.authentication_router import auth_router
+from src.presentation.customer_router import customer_router
+from src.presentation.library_router import gym_router
 
 
 def get_application() -> FastAPI:
