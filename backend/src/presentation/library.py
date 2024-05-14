@@ -4,7 +4,7 @@ Library routing
 
 from fastapi import APIRouter, Depends, status
 
-from src.service.coach import CoachService
+from src.service.coach_service import CoachService
 from src.service.library import LibraryService
 from src.shared.dependencies import provide_user_service, provide_library_service
 from src.schemas.library import ExerciseCreateIn, ExerciseCreateOut

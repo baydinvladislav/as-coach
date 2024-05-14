@@ -12,7 +12,7 @@ from fastapi import (
 )
 from fastapi.security import OAuth2PasswordRequestForm
 
-from src.service.coach import CoachService
+from src.service.coach_service import CoachService
 from src.service.customer import CustomerService
 from src.shared.exceptions import UsernameIsTaken, NotValidCredentials
 from src.shared.dependencies import provide_user_service, provide_coach_service, provide_customer_service
