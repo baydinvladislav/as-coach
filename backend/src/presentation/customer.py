@@ -5,7 +5,7 @@ from starlette import status
 
 from src.service.coach_service import CoachService
 from src.service.customer_service import CustomerService
-from src.service.training_plan import TrainingPlanService
+from src.service.training_plan_service import TrainingPlanService
 from src.schemas.customer import (
     CustomerOut,
     CustomerCreateIn,
