@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 @pytest.fixture
 def mock_send_kafka_message():
-    with patch("src.supplier.kafka.KafkaSupplier.send_message") as mock:
+    with patch("src.supplier.kafka_supplier.KafkaSupplier.send_message") as mock:
         yield mock
 
 

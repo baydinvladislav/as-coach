@@ -20,13 +20,13 @@ from src.repository.coach_repository import CoachRepository
 from src.repository.customer_repository import CustomerRepository
 from src.service.coach_service import CoachService, CoachProfileService, CoachSelectorService
 from src.service.customer_service import CustomerService, CustomerSelectorService, CustomerProfileService
-from src.supplier.kafka import KafkaSupplier, kafka_settings
+from src.supplier.kafka_supplier import KafkaSupplier, kafka_settings
 from src.shared.exceptions import TokenExpired, NotValidCredentials
 from src.service.training_plan_service import TrainingPlanService
 from src.service.training_service import TrainingService
 from src.service.diet_service import DietService
 from src.service.notification_service import NotificationService
-from src.supplier.firebase import PushFirebaseNotificator
+from src.supplier.firebase_supplier import PushFirebaseNotificator
 
 
 async def get_db() -> AsyncSession:

@@ -1,8 +1,8 @@
 import json
 import logging
 
-from src.supplier.firebase import PushFirebaseNotificator
-from src.supplier.kafka import KafkaSupplier
+from src.supplier.firebase_supplier import PushFirebaseNotificator
+from src.supplier.kafka_supplier import KafkaSupplier
 
 logger = logging.getLogger(__name__)
 
