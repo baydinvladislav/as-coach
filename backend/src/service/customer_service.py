@@ -74,8 +74,15 @@ class CustomerSelectorService:
 class CustomerProfileService(UserService):
     """Responsible for customer profile operations"""
 
-    def __init__(self, customer_repository: CustomerRepository) -> None:
+    def __init__(
+            self,
+            # uow_write_factory: UnitOfWorkFactory,
+            # uow_ro_factory: UnitOfWorkFactory,
+            customer_repository: CustomerRepository
+    ) -> None:
         self.customer_repository = customer_repository
+        # self.uow_write_factory = uow_write_factory
+        # self.uow_ro_factory = uow_ro_factory
 
     async def register(self, data: CustomerRegistrationData) -> Customer | None:
         customer = await self.customer_repository.create(
