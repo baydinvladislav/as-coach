@@ -2,7 +2,7 @@ from sqlalchemy import select, or_
 from sqlalchemy.orm import selectinload
 
 from src import Exercise, MuscleGroup
-from src.repository.base import BaseRepository
+from src.repository.base_repository import BaseRepository
 
 
 class ExerciseRepository(BaseRepository):

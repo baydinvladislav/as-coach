@@ -8,25 +8,25 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from src.database import SessionLocal
-from src.service.library import LibraryService
+from src.service.library_service import LibraryService
 from src.shared.config import reuseable_oauth
 from src.utils import decode_jwt_token
 
-from src.repository.library import ExerciseRepository, MuscleGroupRepository
-from src.repository.diet import DietRepository, DietOnTrainingPlanRepository
-from src.repository.training import TrainingRepository, ExercisesOnTrainingRepository
-from src.repository.training_plan import TrainingPlanRepository
-from src.repository.coach import CoachRepository
-from src.repository.customer import CustomerRepository
-from src.service.coach import CoachService, CoachProfileService, CoachSelectorService
-from src.service.customer import CustomerService, CustomerSelectorService, CustomerProfileService
-from src.supplier.kafka import KafkaSupplier, kafka_settings
+from src.repository.library_repository import ExerciseRepository, MuscleGroupRepository
+from src.repository.diet_repository import DietRepository, DietOnTrainingPlanRepository
+from src.repository.training_repository import TrainingRepository, ExercisesOnTrainingRepository
+from src.repository.training_plan_repository import TrainingPlanRepository
+from src.repository.coach_repository import CoachRepository
+from src.repository.customer_repository import CustomerRepository
+from src.service.coach_service import CoachService, CoachProfileService, CoachSelectorService
+from src.service.customer_service import CustomerService, CustomerSelectorService, CustomerProfileService
+from src.supplier.kafka_supplier import KafkaSupplier, kafka_settings
 from src.shared.exceptions import TokenExpired, NotValidCredentials
-from src.service.training_plan import TrainingPlanService
-from src.service.training import TrainingService
-from src.service.diet import DietService
-from src.service.notification import NotificationService
-from src.supplier.firebase import PushFirebaseNotificator
+from src.service.training_plan_service import TrainingPlanService
+from src.service.training_service import TrainingService
+from src.service.diet_service import DietService
+from src.service.notification_service import NotificationService
+from src.supplier.firebase_supplier import PushFirebaseNotificator
 
 
 async def get_db() -> AsyncSession:

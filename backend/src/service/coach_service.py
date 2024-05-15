@@ -4,10 +4,10 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from src import Coach
 from src.utils import get_hashed_password, verify_password
-from src.repository.coach import CoachRepository
+from src.repository.coach_repository import CoachRepository
 from src.shared.exceptions import UsernameIsTaken, NotValidCredentials
-from src.service.user import UserService, UserType
-from src.schemas.authentication import CoachRegistrationData, UserLoginData
+from src.service.user_service import UserService, UserType
+from src.schemas.authentication_schema import CoachRegistrationData, UserLoginData
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)

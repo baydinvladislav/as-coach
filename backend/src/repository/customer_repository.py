@@ -2,7 +2,7 @@ from sqlalchemy import select, func, nullsfirst, and_
 from sqlalchemy.orm import selectinload
 
 from src import Customer, TrainingPlan
-from src.repository.base import BaseRepository
+from src.repository.base_repository import BaseRepository
 
 
 class CustomerRepository(BaseRepository):

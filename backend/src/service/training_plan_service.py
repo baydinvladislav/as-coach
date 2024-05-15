@@ -4,15 +4,14 @@ Contains services related to the Gym functionality
 
 from datetime import datetime
 
-from src.service.abstract import TrainingManagerInterface
-from src.service.training import TrainingService
-from src.service.diet import DietService
-from src.repository.training_plan import TrainingPlanRepository
-from src.schemas.customer import TrainingPlanIn
+from src.service.training_service import TrainingService
+from src.service.diet_service import DietService
+from src.repository.training_plan_repository import TrainingPlanRepository
+from src.schemas.customer_schema import TrainingPlanIn
 from src import TrainingPlan
 
 
-class TrainingPlanService(TrainingManagerInterface):
+class TrainingPlanService:
     """
     The service to provide fitness services for customers.
 

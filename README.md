@@ -1,12 +1,8 @@
-<img src="assets/attachment01.png" alt="attachment01.png" width=50% height=50%>
-<img src="assets/attachment02.png" alt="attachment02.png" width=50% height=50%>
-<img src="assets/attachment03.png" alt="attachment03.png" width=50% height=50%>
+<h2>Deployment</h2>
 
-<h2>Figma</h2>
-https://www.figma.com/file/l8H9Q4ZCd00mEOV9YPLDlP/Ascoach?type=design&node-id=30-16481&mode=design
-
-<h2>Environments</h2>
-Prod: http://50.16.210.223/docs
+```bash
+docker-compose up --build
+```
 
 <h2>Local Testing</h2>
 
@@ -16,8 +12,8 @@ cd backend
 pytest tests
 ```
 
-<h2>Deployment</h2>
+<h2>Environments</h2>
+Prod: http://50.16.210.223/docs
 
-```bash
-docker-compose up --build
-```
+<h2>Figma UI</h2>
+https://www.figma.com/file/l8H9Q4ZCd00mEOV9YPLDlP/Ascoach?type=design&node-id=30-16481&mode=design
