@@ -67,7 +67,7 @@ class UserService(ABC):
             width, height = 140, 140
             with Image.open(photo.file) as img:
                 img.resize((width, height))
-                img.save(photo_path, "PNG", optimize=True)
+                img.save(photo_path, "PNG")
 
             set_attribute(user, "photo_path", photo_path)
 
