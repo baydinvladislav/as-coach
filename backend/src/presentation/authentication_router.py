@@ -185,7 +185,7 @@ async def update_profile(
         gender: Optional[Gender] = Form(None),
         birthday: date = Form(None),
         email: str = Form(None)
-) -> dict:
+) -> UserProfileOut:
     """
     Updated full info about user
     Endpoint can be used by both the coach and the customer
@@ -205,7 +205,7 @@ async def update_profile(
     """
     user = service.user
 
-    await service.update(
+    await service.update_profile(
         user=user,
         first_name=first_name,
         username=username,
@@ -213,20 +213,20 @@ async def update_profile(
         photo=photo,
         gender=gender,
         birthday=birthday,
-        email=email
+        email=email,
     )
 
-    return {
-        "id": str(user.id),
-        "first_name": user.first_name,
-        "last_name": user.last_name,
-        "user_type": service.user_type,
-        "gender": user.gender,
-        "birthday": user.birthday,
-        "email": user.email,
-        "username": user.username,
-        "photo_link": user.photo_path.split('/backend')[1] if user.photo_path else None
-    }
+    return UserProfileOut(
+        id=str(user.id),
+        first_name=user.first_name,
+        last_name=user.last_name,
+        user_type=service.user_type,
+        gender=user.gender,
+        birthday=user.birthday,
+        email=user.email,
+        usernam=user.username,
+        photo_link=user.photo_path.split('/backend')[1] if user.photo_path else None,
+    )
 
 
 @auth_router.delete(
