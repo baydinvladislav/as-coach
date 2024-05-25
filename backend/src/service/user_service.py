@@ -64,9 +64,10 @@ class UserService(ABC):
             file_name = f"{user.username}_{saving_time}.jpeg"
             photo_path = f"{STATIC_DIR}/{file_name}"
 
+            width, height = 140, 140
             with Image.open(photo.file) as img:
-                img.thumbnail((120, 120))
-                img.save(photo_path, "JPEG")
+                img.resize((width, height))
+                img.save(photo_path, "PNG", optimize=True)
 
             set_attribute(user, "photo_path", photo_path)
 
