@@ -102,9 +102,17 @@ async def provide_customer_service(
     """
     Returns service responsible to interact with Customer domain
     """
+    uow_write_factory = UnitOfWorkFactory(dsn=app_settings.db_write.dsn, max_overflow=200)
+    uow_ro_factory = UnitOfWorkFactory(dsn=app_settings.db_ro.dsn, max_overflow=200)
+
     customer_repository = CustomerRepository(database)
     selector = CustomerSelectorService(customer_repository)
-    profile_service = CustomerProfileService(customer_repository)
+
+    profile_service = CustomerProfileService(
+        uow_write_factory=uow_write_factory,
+        uow_ro_factory=uow_ro_factory,
+        customer_repository=customer_repository,
+    )
     return CustomerService(
         selector_service=selector,
         profile_service=profile_service,
