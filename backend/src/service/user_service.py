@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 from enum import Enum
 
-import shutil
+from PIL import Image
 from jose import jwt
 from sqlalchemy.orm.attributes import set_attribute
 
@@ -63,8 +63,10 @@ class UserService(ABC):
             saving_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
             file_name = f"{user.username}_{saving_time}.jpeg"
             photo_path = f"{STATIC_DIR}/{file_name}"
-            with open(photo_path, 'wb') as buffer:
-                shutil.copyfileobj(photo.file, buffer)
+
+            with Image.open(photo.file) as img:
+                img.thumbnail((120, 120))
+                img.save(photo_path, "JPEG")
 
             set_attribute(user, "photo_path", photo_path)
 
