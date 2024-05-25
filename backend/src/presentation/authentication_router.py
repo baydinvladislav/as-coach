@@ -224,7 +224,7 @@ async def update_profile(
         gender=user.gender,
         birthday=user.birthday,
         email=user.email,
-        usernam=user.username,
+        username=user.username,
         photo_link=user.photo_path.split('/backend')[1] if user.photo_path else None,
     )
 
