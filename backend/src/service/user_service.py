@@ -37,7 +37,7 @@ class UserService(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def update(self, **params):
+    async def update_user_profile(self, **params):
         raise NotImplementedError
 
     @staticmethod

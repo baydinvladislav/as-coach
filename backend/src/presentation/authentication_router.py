@@ -274,5 +274,5 @@ async def change_password(
         service: CoachService | CustomerService = Depends(provide_user_service)
 ) -> dict:
     user = service.user
-    await service.update(user=user, password=await get_hashed_password(new_password.password))
+    await service.update_profile(user=user, password=await get_hashed_password(new_password.password))
     return {"user_id": str(user.id), "changed_password": True}

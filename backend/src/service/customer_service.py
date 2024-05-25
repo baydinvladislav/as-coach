@@ -107,7 +107,7 @@ class CustomerProfileService(UserService):
             return True
         return False
 
-    async def update(self, user: Customer, **params) -> None:
+    async def update_user_profile(self, user: Customer, **params) -> None:
         if "photo" in params:
             await self.handle_profile_photo(user, params.pop("photo"))
         await self.customer_repository.update(str(user.id), **params)
@@ -169,7 +169,7 @@ class CustomerService:
         data = UserLoginData(received_password=form_data.password, fcm_token=fcm_token)
         if await self.profile_service.authorize(self.user, data) is True:
             if self.user.username is None:
-                await self.update(self.user, username=form_data.username)
+                await self.update_profile(self.user, username=form_data.username)
             logger.info(f"Customer successfully {self.user.last_name} {self.user.first_name} login")
             return self.user
         raise NotValidCredentials("Not correct customer password")
@@ -179,8 +179,8 @@ class CustomerService:
             return True
         return False
 
-    async def update(self, user: Customer, **params) -> None:
-        await self.profile_service.update(user, **params)
+    async def update_profile(self, user: Customer, **params) -> None:
+        await self.profile_service.update_user_profile(user, **params)
 
     async def delete(self, user: Customer) -> None:
         deleted_id = await self.profile_service.delete(user)
