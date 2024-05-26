@@ -41,7 +41,7 @@ class CoachProfileService(UserService):
             return True
         return False
 
-    async def update(self, user: Coach, **params) -> None:
+    async def update_user_profile(self, user: Coach, **params) -> None:
         if "photo" in params:
             await self.handle_profile_photo(user, params.pop("photo"))
         await self.coach_repository.update(str(user.id), **params)
@@ -89,8 +89,8 @@ class CoachService:
             return True
         return False
 
-    async def update(self, user: Coach, **params) -> None:
-        await self.profile_service.update(user, **params)
+    async def update_profile(self, user: Coach, **params) -> None:
+        await self.profile_service.update_user_profile(user, **params)
 
     async def delete(self, user: Coach) -> None:
         deleted_id = await self.profile_service.delete(user)

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 from enum import Enum
 
-import shutil
+from PIL import Image
 from jose import jwt
 from sqlalchemy.orm.attributes import set_attribute
 
@@ -37,7 +37,7 @@ class UserService(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def update(self, **params):
+    async def update_user_profile(self, **params):
         raise NotImplementedError
 
     @staticmethod
@@ -63,8 +63,11 @@ class UserService(ABC):
             saving_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
             file_name = f"{user.username}_{saving_time}.jpeg"
             photo_path = f"{STATIC_DIR}/{file_name}"
-            with open(photo_path, 'wb') as buffer:
-                shutil.copyfileobj(photo.file, buffer)
+
+            width, height = 140, 140
+            with Image.open(photo.file) as img:
+                img.thumbnail((width, height))
+                img.save(photo_path, "PNG")
 
             set_attribute(user, "photo_path", photo_path)
 

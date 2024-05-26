@@ -58,7 +58,7 @@ class UserProfileOut(BaseModel):
     user_type: str
     birthday: Optional[date]
     email: Optional[str]
-    username: Optional[str]
+    username: str
     photo_link: Optional[str]
 
 

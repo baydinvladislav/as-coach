@@ -80,7 +80,7 @@ export const ru = {
     confirmDeleteDialogCancel: 'Оставить',
     maxFileSizeAlertTitle: 'Превышен размер',
     maxFileSizeAlertDescription:
-      'Этот файл слишком большой, максимальный размер файла 5мб',
+      'Этот файл слишком большой, максимальный размер файла 10 мб',
   },
   edit: {
     editTitle: 'Личные данные',
