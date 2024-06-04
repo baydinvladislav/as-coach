@@ -52,6 +52,7 @@ export const SearchInput = (props: TInputProps) => {
             handleChangeText('');
             setKey(key => key + 1);
             customer.setSearchCustomer([]);
+            customer.searchExercisesByName('');
           }}
         >
           {t('buttons.cancel')}
