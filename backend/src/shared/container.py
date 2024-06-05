@@ -13,6 +13,7 @@ from src.service.notification_service import NotificationService
 from src.service.training_plan_service import TrainingPlanService
 from src.service.training_service import TrainingService
 from src.service.user_service import UserService
+from src.shared.settings import AppSettings
 
 
 @dataclass
@@ -25,6 +26,8 @@ class Container:
 
 
 def init_combat_container() -> Container:
+    app_settings = AppSettings()
+
     notification_service = NotificationService()
 
     coach_repository = CoachRepository()
@@ -50,10 +53,15 @@ def init_combat_container() -> Container:
         "muscle_group": MuscleGroupRepository(),
     })
 
-    training_service = TrainingService({
-        "training_repo": TrainingRepository(),
-        "exercises_on_training_repo": ExercisesOnTrainingRepository()
-    })
+    # training_service = TrainingService({
+    #     "training_repo": TrainingRepository(),
+    #     "exercises_on_training_repo": ExercisesOnTrainingRepository()
+    # })
+
+    training_service = TrainingService(
+        training_repository=TrainingRepository(),
+        exercises_on_training_repository=ExercisesOnTrainingRepository(),
+    )
 
     training_plan_service = TrainingPlanService(
         training_service=training_service,

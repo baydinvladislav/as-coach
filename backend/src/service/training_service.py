@@ -1,7 +1,7 @@
 import uuid
 
 from src import ExercisesOnTraining
-from src.repository.abstract_repository import AbstractRepository
+from src.repository.training_repository import TrainingRepository, ExercisesOnTrainingRepository
 
 
 class TrainingService:
@@ -15,11 +15,22 @@ class TrainingService:
         ordering: make order for supersets
     """
 
-    def __init__(self, repositories: dict[str, AbstractRepository]):
-        self.training_repository = repositories["training_repo"]
-        self.exercises_on_training_repository = repositories["exercises_on_training_repo"]
+    def __init__(
+        self,
+        uow_ro_factory: UnitOfWorkFactory,
+        uow_write_factory: UnitOfWorkFactory,
+        training_repository: TrainingRepository,
+        exercises_on_training_repository: ExercisesOnTrainingRepository,
+    ) -> None:
+        self.uow_ro_factory = uow_ro_factory
+        self.uow_write_factory = uow_write_factory
+        self.training_repository = training_repository
+        self.exercises_on_training_repository = exercises_on_training_repository
         self.superset_dict = {}
         self.ordering = 0
+
+    async def _create_trainings(self, training_plan_id: str, trainings: list):
+        ...
 
     async def update_superset_dict(self, exercise_item):
         """
