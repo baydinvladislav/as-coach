@@ -1,11 +1,33 @@
-from sqlalchemy import select, func, nullsfirst, and_
-from sqlalchemy.orm import selectinload
+from sqlalchemy import select, func, nullsfirst, and_, literal_column
+from sqlalchemy.orm import Session, selectinload
+from sqlalchemy.dialects.postgresql import insert
 
 from src import Customer, TrainingPlan
 from src.repository.base_repository import BaseRepository
+from src.schemas.authentication_schema import CustomerRegistrationData
+from src.schemas.customer_schema import CustomerOut
 
 
 class CustomerRepository(BaseRepository):
+    async def create(self, db_session: Session, data: CustomerRegistrationData) -> CustomerOut | None:
+        statement = (
+            insert(Customer)
+            .values(
+                coach_id=data.coach_id,
+                telegram_username=data.telegram_username,
+                first_name=data.first_name,
+                last_name=data.last_name,
+            )
+            .on_conflict_do_nothing()
+            .returning(literal_column("*"))
+        )
+
+        result = db_session.execute(statement).fetchone()
+        if result is None:
+            return None
+
+        return CustomerOut.from_orm(result)
+
     async def provide_by_pk(self, pk: str) -> Customer | None:
         query = (select(Customer).where(Customer.id == pk)
         .options(
