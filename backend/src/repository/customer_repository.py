@@ -44,10 +44,11 @@ class CustomerRepository(BaseRepository):
     async def provide_by_otp(self, password: str) -> Customer | None:
         query = (
             select(Customer).where(Customer.password == password)
-        .options(
-            selectinload(Customer.training_plans).subqueryload(TrainingPlan.trainings),
-            selectinload(Customer.training_plans).subqueryload(TrainingPlan.diets)
-        ))
+            .options(
+                selectinload(Customer.training_plans).subqueryload(TrainingPlan.trainings),
+                selectinload(Customer.training_plans).subqueryload(TrainingPlan.diets)
+            )
+        )
 
         result = await self.session.execute(query)
         customer = result.scalar_one_or_none()
