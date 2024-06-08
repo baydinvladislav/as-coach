@@ -171,7 +171,7 @@ class CustomerService:
             return None
 
         data = UserLoginData(received_password=form_data.password, fcm_token=fcm_token)
-        if await self.profile_service.authorize_user(self.user, data) is True:
+        if await self.profile_service.authorize_user(uow, self.user, data) is True:
             if self.user.username is None:
                 await self.update_profile(uow, self.user, username=form_data.username)
             logger.info(f"Customer successfully {self.user.last_name} {self.user.first_name} login")
