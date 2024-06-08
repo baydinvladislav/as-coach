@@ -3,10 +3,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy.dialects.postgresql import insert
 
 from src import Coach
+from src.schemas.authentication_schema import CoachRegistrationData
 
 
 class CoachRepository:
-    async def create_coach(self, uow: Session, data: CustomerRegistrationData) -> CustomerOut | None:
+    async def create_coach(self, uow: Session, data: CoachRegistrationData):
         statement = (
             insert(Coach)
             .values(
@@ -25,10 +26,10 @@ class CoachRepository:
 
         return Coach.from_orm(result)
 
-    async def update_coach(self, uow: Session, data: CustomerRegistrationData) -> CustomerOut | None:
+    async def update_coach(self, uow: Session, data: CoachRegistrationData):
         ...
 
-    async def delete_coach(self, uow: Session, data: CustomerRegistrationData) -> CustomerOut | None:
+    async def delete_coach(self, uow: Session, data: CoachRegistrationData):
         ...
 
     async def provide_by_username(self, uow: Session, username: str) -> Coach | None:
