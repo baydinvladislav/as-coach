@@ -20,7 +20,7 @@ class CoachRepository:
             .returning(literal_column("*"))
         )
 
-        result = await uow.execute(statement).fetchone()
+        result = await uow.execute(statement)
         coach = result.fetchone()
 
         if coach is None:

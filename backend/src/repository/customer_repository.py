@@ -21,7 +21,7 @@ class CustomerRepository:
             .returning(literal_column("*"))
         )
 
-        result = await uow.execute(statement).fetchone()
+        result = await uow.execute(statement)
         customer = result.fetchone()
 
         if customer is None:
