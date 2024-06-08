@@ -2,6 +2,7 @@ from typing import Union, Any, List
 
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
+from sqlalchemy.orm import Session
 
 from src.service.coach_service import CoachService
 from src.service.customer_service import CustomerService
@@ -15,6 +16,7 @@ from src.schemas.customer_schema import (
 )
 from src.schemas.authentication_schema import CustomerRegistrationData
 from src.shared.dependencies import (
+    get_db,
     provide_customer_service,
     provide_user_service,
     provide_training_plan_service,
@@ -35,7 +37,8 @@ customer_router = APIRouter()
 async def create_customer(
         customer_data: CustomerCreateIn,
         user_service: CoachService = Depends(provide_user_service),
-        customer_service: CustomerService = Depends(provide_customer_service)
+        customer_service: CustomerService = Depends(provide_customer_service),
+        database: Session = Depends(get_db),
 ) -> CustomerOut:
     """
     Creates new customer for coach
@@ -44,6 +47,7 @@ async def create_customer(
         customer_data: data to create new customer
         user_service: service for interacting with profile
         customer_service: service for interacting with customer
+        database: db session injection
     Raises:
         400 in case if customer with the phone number already created
         400 in case if couple last name and first name already exist
@@ -53,7 +57,9 @@ async def create_customer(
     """
     user = user_service.user
 
-    customer_in_db = await customer_service.get_customer_by_username(username=customer_data.phone_number)
+    customer_in_db = await customer_service.get_customer_by_username(
+        uow=database, username=customer_data.phone_number
+    )
     if customer_data.phone_number and customer_in_db:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -62,6 +68,7 @@ async def create_customer(
         )
 
     customer_in_db = await customer_service.get_customer_by_full_name_for_coach(
+        uow=database,
         coach_id=str(user.id),
         first_name=customer_data.first_name,
         last_name=customer_data.last_name,
@@ -100,6 +107,7 @@ async def create_customer(
 async def get_customers(
         coach_service: CoachService = Depends(provide_user_service),
         customer_service: CustomerService = Depends(provide_customer_service),
+        database: Session = Depends(get_db),
 ) -> List[dict[str, Any]]:
     """
     Gets all customer for current coach
@@ -107,11 +115,12 @@ async def get_customers(
     Args:
         coach_service: current application coach
         customer_service: service to work with customer domain
+        database: db session injection
     Returns:
         list of customers
     """
     coach = coach_service.user
-    customers = await customer_service.get_customers_by_coach_id(str(coach.id))
+    customers = await customer_service.get_customers_by_coach_id(database, str(coach.id))
     return customers
 
 
@@ -124,6 +133,7 @@ async def get_customer(
         user_service: CoachService = Depends(provide_user_service),
         customer_service: CustomerService = Depends(provide_customer_service),
         training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
+        database: Session = Depends(get_db),
 ) -> CustomerOut:
     """
     Gets specific customer by ID.
@@ -133,6 +143,7 @@ async def get_customer(
         user_service: service for interacting with profile
         customer_service: service for interacting with customer
         training_plan_service: service for interacting with customer training plans
+        database: db session injection
 
     Raise:
         HTTPException: 400 when passed is not correct UUID as customer_id.
@@ -145,7 +156,7 @@ async def get_customer(
             detail="Passed customer_id is not correct UUID value"
         )
 
-    customer = await customer_service.get_customer_by_pk(pk=customer_id)
+    customer = await customer_service.get_customer_by_pk(database, pk=customer_id)
 
     if str(customer.coach_id) != str(user_service.user.id):
         raise HTTPException(
@@ -181,6 +192,7 @@ async def create_training_plan(
         user_service: CoachService = Depends(provide_user_service),
         training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
         push_notification_service: NotificationService = Depends(provide_push_notification_service),
+        database: Session = Depends(get_db),
 ) -> dict:
     """
     Creates new training plan for specified customer.
@@ -193,8 +205,9 @@ async def create_training_plan(
         user_service: service for interacting with profile
         training_plan_service: service for interacting with customer training plans
         push_notification_service: service responsible to send push notification through FireBase service
+        database: db session injection
     """
-    customer = await customer_service.get_customer_by_pk(pk=customer_id)
+    customer = await customer_service.get_customer_by_pk(database, pk=customer_id)
     if not customer:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -242,7 +255,8 @@ async def get_all_training_plans(
         customer_id: str,
         user_service: CoachService = Depends(provide_user_service),
         customer_service: CustomerService = Depends(provide_customer_service),
-        training_plan_service: TrainingPlanService = Depends(provide_training_plan_service)
+        training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
+        database: Session = Depends(get_db),
 ) -> Union[list[dict], list[None]]:
     """
     Returns all training plans for specific customer
@@ -253,8 +267,9 @@ async def get_all_training_plans(
         user_service: service for interacting with profile
         customer_service: service for interacting with customer
         training_plan_service: service responsible for training plans creation
+        database: db session injection
     """
-    customer = await customer_service.get_customer_by_pk(pk=customer_id)
+    customer = await customer_service.get_customer_by_pk(database, pk=customer_id)
     if customer is None:
         raise HTTPException(
             status_code=404,
@@ -287,7 +302,8 @@ async def get_training_plan(
         customer_id: str,
         user_service: CoachService = Depends(provide_user_service),
         training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
-        customer_service: CustomerService = Depends(provide_customer_service)
+        customer_service: CustomerService = Depends(provide_customer_service),
+        database: Session = Depends(get_db),
 ) -> dict:
     """
     Gets full info for specific training plan by their ID
@@ -299,11 +315,12 @@ async def get_training_plan(
         user_service: service for interacting with profile
         training_plan_service: service for interacting with customer training plans
         customer_service: service for interacting with customer
+        database: db session injection
 
     Raise:
         HTTPException: 404 when customer or training plan are not found
     """
-    customer = await customer_service.get_customer_by_pk(pk=customer_id)
+    customer = await customer_service.get_customer_by_pk(database, pk=customer_id)
     if customer is None:
         raise HTTPException(
             status_code=404,

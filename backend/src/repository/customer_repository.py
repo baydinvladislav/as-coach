@@ -3,13 +3,12 @@ from sqlalchemy.orm import Session, selectinload
 from sqlalchemy.dialects.postgresql import insert
 
 from src import Customer, TrainingPlan
-from src.repository.base_repository import BaseRepository
 from src.schemas.authentication_schema import CustomerRegistrationData
 from src.schemas.customer_schema import CustomerOut
 
 
-class CustomerRepository(BaseRepository):
-    async def create(self, db_session: Session, data: CustomerRegistrationData) -> CustomerOut | None:
+class CustomerRepository:
+    async def create_customer(self, uow: Session, data: CustomerRegistrationData) -> CustomerOut | None:
         statement = (
             insert(Customer)
             .values(
@@ -22,13 +21,19 @@ class CustomerRepository(BaseRepository):
             .returning(literal_column("*"))
         )
 
-        result = db_session.execute(statement).fetchone()
+        result = uow.execute(statement).fetchone()
         if result is None:
             return None
 
         return CustomerOut.from_orm(result)
 
-    async def provide_by_pk(self, pk: str) -> Customer | None:
+    async def update_customer(self, uow: Session, data: CustomerRegistrationData) -> CustomerOut | None:
+        ...
+
+    async def delete_customer(self, uow: Session, data: CustomerRegistrationData) -> CustomerOut | None:
+        ...
+
+    async def provide_by_pk(self, uow: Session, pk: str) -> Customer | None:
         query = (
             select(Customer).where(Customer.id == pk)
             .options(
@@ -37,11 +42,11 @@ class CustomerRepository(BaseRepository):
             )
         )
 
-        result = await self.session.execute(query)
+        result = await uow.execute(query)
         customer = result.scalar_one_or_none()
         return customer
 
-    async def provide_by_otp(self, password: str) -> Customer | None:
+    async def provide_by_otp(self, uow: Session, password: str) -> Customer | None:
         query = (
             select(Customer).where(Customer.password == password)
             .options(
@@ -50,20 +55,20 @@ class CustomerRepository(BaseRepository):
             )
         )
 
-        result = await self.session.execute(query)
+        result = await uow.execute(query)
         customer = result.scalar_one_or_none()
         return customer
 
-    async def provide_by_username(self, username: str) -> Customer | None:
+    async def provide_by_username(self, uow: Session, username: str) -> Customer | None:
         query = (
             select(Customer).where(Customer.username == username)
         )
-        result = await self.session.execute(query)
+        result = await uow.execute(query)
         customer = result.fetchone()
         return customer
 
     async def provide_by_coach_id_and_full_name(
-        self, coach_id: str, first_name: str, last_name: str
+        self, uow: Session, coach_id: str, first_name: str, last_name: str
     ) -> Customer | None:
         query = (
             select(Customer).where(
@@ -74,11 +79,11 @@ class CustomerRepository(BaseRepository):
                 )
             )
         )
-        result = await self.session.execute(query)
+        result = await uow.execute(query)
         customer = result.fetchone()
         return customer
 
-    async def provide_customers_by_coach_id(self, coach_id: str) -> list[Customer]:
+    async def provide_customers_by_coach_id(self, uow: Session, coach_id: str) -> list[Customer]:
         query = (
             select(
                 Customer.id,
@@ -93,5 +98,5 @@ class CustomerRepository(BaseRepository):
             .order_by(nullsfirst(func.max(TrainingPlan.end_date).asc()))
         )
 
-        result = await self.session.execute(query)
+        result = await uow.execute(query)
         return result.fetchall()

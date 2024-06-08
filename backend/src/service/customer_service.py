@@ -2,8 +2,10 @@ import logging
 from datetime import datetime, timedelta
 
 from fastapi.security import OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
 
 from src import Customer
+from src.schemas.customer_schema import CustomerOut
 from src.shared.config import OTP_LENGTH
 from src.schemas.authentication_schema import CustomerRegistrationData, UserLoginData
 from src.service.notification_service import NotificationService
@@ -22,16 +24,16 @@ class CustomerSelectorService:
     def __init__(self, customer_repository: CustomerRepository) -> None:
         self.customer_repository = customer_repository
 
-    async def select_customer_by_pk(self, pk: str) -> Customer | None:
-        customer = await self.customer_repository.provide_by_pk(pk=pk)
+    async def select_customer_by_pk(self, uow: Session, pk: str) -> Customer | None:
+        customer = await self.customer_repository.provide_by_pk(uow, pk=pk)
         return customer
 
-    async def select_customer_by_otp(self, password) -> Customer | None:
-        customer = await self.customer_repository.provide_by_otp(password=password)
+    async def select_customer_by_otp(self, uow: Session, password) -> Customer | None:
+        customer = await self.customer_repository.provide_by_otp(uow, password=password)
         return customer
 
-    async def select_customers_by_coach_id(self, coach_id: str) -> list[dict[str, str]]:
-        customers_aggregates = await self.customer_repository.provide_customers_by_coach_id(coach_id)
+    async def select_customers_by_coach_id(self, uow: Session, coach_id: str) -> list[dict[str, str]]:
+        customers_aggregates = await self.customer_repository.provide_customers_by_coach_id(uow, coach_id)
 
         customers = []
         archive_customers = []
@@ -58,12 +60,15 @@ class CustomerSelectorService:
         customers.extend(archive_customers)
         return customers
 
-    async def select_customer_by_username(self, username: str) -> Customer | None:
-        customer = await self.customer_repository.provide_by_username(username)
+    async def select_customer_by_username(self, uow: Session, username: str) -> Customer | None:
+        customer = await self.customer_repository.provide_by_username(uow, username)
         return customer
 
-    async def select_customer_by_full_name(self, coach_id: str, first_name: str, last_name: str) -> Customer | None:
+    async def select_customer_by_full_name(
+        self, uow: Session, coach_id: str, first_name: str, last_name: str
+    ) -> Customer | None:
         customer = await self.customer_repository.provide_by_coach_id_and_full_name(
+            uow=uow,
             coach_id=coach_id,
             first_name=first_name,
             last_name=last_name,
@@ -77,14 +82,8 @@ class CustomerProfileService(UserService):
     def __init__(self, customer_repository: CustomerRepository) -> None:
         self.customer_repository = customer_repository
 
-    async def register(self, data: CustomerRegistrationData) -> Customer | None:
-        customer = await self.customer_repository.create(
-            coach_id=data.coach_id,
-            telegram_username=data.telegram_username,
-            password=data.password,
-            first_name=data.first_name,
-            last_name=data.last_name,
-        )
+    async def register_user(self, uow: Session, data: CustomerRegistrationData) -> CustomerOut | None:
+        customer = await self.customer_repository.create_customer(uow, data)
 
         if customer is None:
             logger.warning(f"New customer creation is failed: {data.last_name} {data.first_name}")
@@ -93,7 +92,7 @@ class CustomerProfileService(UserService):
         logger.info(f"Customer created successfully: {data.last_name} {data.first_name}")
         return customer
 
-    async def authorize(self, user: Customer, data: UserLoginData) -> bool:
+    async def authorize_user(self, uow: Session, user: Customer, data: UserLoginData) -> bool:
         """
         Customer logs in with one time password in the first time after receive invite.
         After customer changes password it logs in with own hashed password.
@@ -107,7 +106,7 @@ class CustomerProfileService(UserService):
             return True
         return False
 
-    async def update_user_profile(self, user: Customer, **params) -> None:
+    async def update_user_profile(self, uow: Session, user: Customer, **params) -> None:
         if "photo" in params:
             await self.handle_profile_photo(user, params.pop("photo"))
         await self.customer_repository.update(str(user.id), **params)
@@ -121,10 +120,10 @@ class CustomerService:
     """Contains business rules for Customer subdomain"""
 
     def __init__(
-            self,
-            selector_service: CustomerSelectorService,
-            profile_service: CustomerProfileService,
-            notification_service: NotificationService,
+        self,
+        selector_service: CustomerSelectorService,
+        profile_service: CustomerProfileService,
+        notification_service: NotificationService,
     ) -> None:
         self.user = None
         self.user_type = UserType.CUSTOMER.value
@@ -132,25 +131,30 @@ class CustomerService:
         self.profile_service = profile_service
         self.notification_service = notification_service
 
-    async def register(self, data: CustomerRegistrationData) -> Customer:
-        customer = await self.profile_service.register(data)
+    async def register(self, uow: Session, data: CustomerRegistrationData) -> CustomerOut:
+        customer = await self.profile_service.register_user(uow, data)
         logger.info(f"Customer registered successfully: {customer.first_name} {customer.last_name}")
+        uow.commit()
+
         if customer.telegram_username is not None:
             logger.info(f"Will be invited in application new customer: {customer.telegram_username}")
+            # pass write_uow to use outbox service
             await self.notification_service.send_telegram_customer_invite(
                 coach_name=data.coach_name,
                 customer_username=customer.telegram_username,
                 customer_password=customer.password,
             )
             logger.info(f"Customer {customer.telegram_username} successfully invited through Telegram account")
+
         return customer
 
-    async def authorize(self, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Customer | None:
+    async def authorize(self, uow: Session, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Customer | None:
         """
         Customer logs in with default password in the first time after receive invite.
         After customer changes password it logs in with own hashed password.
 
         Args:
+            uow: db session
             form_data: customer credentials passed by client
             fcm_token: token to send push notification on user device
 
@@ -158,18 +162,18 @@ class CustomerService:
             NotValidCredentials: in case if credentials aren't valid
         """
         if len(form_data.password) == OTP_LENGTH:
-            self.user = await self.get_customer_by_otp(form_data.password)
+            self.user = await self.get_customer_by_otp(uow, form_data.password)
         else:
-            self.user = await self.get_customer_by_username(form_data.username)
+            self.user = await self.get_customer_by_username(uow, form_data.username)
 
         if self.user is None:
             logger.warning(f"Not found any customer in database")
             return None
 
         data = UserLoginData(received_password=form_data.password, fcm_token=fcm_token)
-        if await self.profile_service.authorize(self.user, data) is True:
+        if await self.profile_service.authorize_user(self.user, data) is True:
             if self.user.username is None:
-                await self.update_profile(self.user, username=form_data.username)
+                await self.update_profile(uow, self.user, username=form_data.username)
             logger.info(f"Customer successfully {self.user.last_name} {self.user.first_name} login")
             return self.user
         raise NotValidCredentials("Not correct customer password")
@@ -179,45 +183,46 @@ class CustomerService:
             return True
         return False
 
-    async def update_profile(self, user: Customer, **params) -> None:
-        await self.profile_service.update_user_profile(user, **params)
+    async def update_profile(self, uow: Session, user: Customer, **params) -> None:
+        await self.profile_service.update_user_profile(uow, user, **params)
 
-    async def delete(self, user: Customer) -> None:
-        deleted_id = await self.profile_service.delete(user)
+    async def delete(self, uow: Session, user: Customer) -> None:
+        deleted_id = await self.profile_service.delete(uow, user)
         if deleted_id is None:
             logger.info(f"Couldn't delete customer {user.username}")
             return
         logger.info(f"Customer {user.username} successfully deleted")
 
-    async def get_customer_by_pk(self, pk: str) -> Customer | None:
-        customer = await self.selector_service.select_customer_by_pk(pk=pk)
+    async def get_customer_by_pk(self, uow: Session, pk: str) -> Customer | None:
+        customer = await self.selector_service.select_customer_by_pk(uow, pk=pk)
         if customer is not None:
             self.user = customer
             return self.user
         return None
 
-    async def get_customer_by_otp(self, otp: str) -> Customer | None:
-        customer = await self.selector_service.select_customer_by_otp(password=otp)
+    async def get_customer_by_otp(self, uow: Session, otp: str) -> Customer | None:
+        customer = await self.selector_service.select_customer_by_otp(uow, password=otp)
         if customer:
             self.user = customer
             return self.user
         return None
 
-    async def get_customers_by_coach_id(self, coach_id: str) -> list[dict[str, str]]:
-        customers = await self.selector_service.select_customers_by_coach_id(coach_id)
+    async def get_customers_by_coach_id(self, uow: Session, coach_id: str) -> list[dict[str, str]]:
+        customers = await self.selector_service.select_customers_by_coach_id(uow, coach_id)
         return customers
 
-    async def get_customer_by_username(self, username: str) -> Customer | None:
-        customer = await self.selector_service.select_customer_by_username(username)
+    async def get_customer_by_username(self, uow: Session, username: str) -> Customer | None:
+        customer = await self.selector_service.select_customer_by_username(uow, username)
         if customer is not None:
             self.user = customer[0]
             return self.user
         return None
 
     async def get_customer_by_full_name_for_coach(
-        self, coach_id: str, first_name: str, last_name: str
+        self, uow: Session, coach_id: str, first_name: str, last_name: str
     ) -> Customer | None:
         customer = await self.selector_service.select_customer_by_full_name(
+            uow=uow,
             coach_id=coach_id,
             first_name=first_name,
             last_name=last_name,

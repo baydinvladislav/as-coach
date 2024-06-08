@@ -96,13 +96,12 @@ async def provide_push_notification_service() -> NotificationService:
 
 
 async def provide_customer_service(
-        database: Session = Depends(get_db),
         notification_service: NotificationService = Depends(provide_push_notification_service)
 ) -> CustomerService:
     """
     Returns service responsible to interact with Customer domain
     """
-    customer_repository = CustomerRepository(database)
+    customer_repository = CustomerRepository()
     selector = CustomerSelectorService(customer_repository)
     profile_service = CustomerProfileService(customer_repository)
     return CustomerService(
