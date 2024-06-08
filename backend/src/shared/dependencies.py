@@ -40,11 +40,11 @@ async def get_db() -> AsyncSession:
             await database.close()
 
 
-async def provide_coach_service(database: Session = Depends(get_db)) -> CoachService:
+async def provide_coach_service() -> CoachService:
     """
     Returns service responsible to interact with Coach domain
     """
-    coach_repository = CoachRepository(database)
+    coach_repository = CoachRepository()
     profile_service = CoachProfileService(coach_repository)
     selector_service = CoachSelectorService(coach_repository)
     return CoachService(
