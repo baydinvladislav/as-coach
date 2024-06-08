@@ -11,10 +11,10 @@ class CoachRepository:
         statement = (
             insert(Coach)
             .values(
-                coach_id=data.coach_id,
-                telegram_username=data.telegram_username,
+                username=data.username,
+                fcm_token=data.fcm_token,
                 first_name=data.first_name,
-                last_name=data.last_name,
+                password=data.password,
             )
             .on_conflict_do_nothing()
             .returning(literal_column("*"))

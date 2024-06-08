@@ -41,9 +41,9 @@ auth_router = APIRouter()
     status_code=status.HTTP_201_CREATED,
     response_model=UserRegisterOut)
 async def register_coach(
-        coach_data: CoachRegistrationData,
-        coach_service: CoachService = Depends(provide_coach_service),
-        database: Session = Depends(get_db),
+    coach_data: CoachRegistrationData,
+    coach_service: CoachService = Depends(provide_coach_service),
+    database: Session = Depends(get_db),
 ) -> UserRegisterOut:
     try:
         coach = await coach_service.register_coach(database, coach_data)
