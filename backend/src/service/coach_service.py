@@ -32,7 +32,7 @@ class CoachProfileService(UserService):
         self.coach_repository = coach_repository
 
     async def register_user(self, uow: Session, data: CoachRegistrationData) -> Coach | None:
-        coach = await self.coach_repository.create_coach(**dict(data))
+        coach = await self.coach_repository.create_coach(uow, **dict(data))
         return coach
 
     async def authorize_user(self, uow: Session, user: Coach, data: UserLoginData) -> bool:
