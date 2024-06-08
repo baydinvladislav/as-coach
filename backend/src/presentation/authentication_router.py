@@ -105,7 +105,11 @@ async def login_user(
         user, service = coach, coach_service
     else:
         try:
-            customer = await customer_service.authorize(form_data, fcm_token)
+            customer = await customer_service.authorize(
+                uow=database,
+                form_data=form_data,
+                fcm_token=fcm_token,
+            )
         except NotValidCredentials:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"Not valid credentials for customer")
 

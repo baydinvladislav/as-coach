@@ -89,7 +89,7 @@ async def create_customer(
         last_name=customer_data.last_name,
     )
 
-    customer = await customer_service.register(customer_reg_data)
+    customer = await customer_service.register(database, data=customer_reg_data)
 
     return CustomerOut(
         id=str(customer.id),
