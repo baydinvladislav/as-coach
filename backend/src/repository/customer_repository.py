@@ -22,10 +22,12 @@ class CustomerRepository:
         )
 
         result = await uow.execute(statement).fetchone()
-        if result is None:
+        customer = result.fetchone()
+
+        if customer is None:
             return None
 
-        return CustomerOut.from_orm(result)
+        return CustomerOut.from_orm(customer)
 
     async def update_customer(self, uow: Session, data: CustomerRegistrationData) -> CustomerOut | None:
         ...

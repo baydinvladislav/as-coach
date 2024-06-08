@@ -21,10 +21,12 @@ class CoachRepository:
         )
 
         result = await uow.execute(statement).fetchone()
-        if result is None:
+        coach = result.fetchone()
+
+        if coach is None:
             return None
 
-        return Coach.from_orm(result)
+        return Coach.from_orm(coach)
 
     async def update_coach(self, uow: Session, data: CoachRegistrationData):
         ...
