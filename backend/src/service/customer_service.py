@@ -109,7 +109,9 @@ class CustomerProfileService(UserService):
     async def update_user_profile(self, uow: Session, user: UserCustomerSchema, **params) -> None:
         if "photo" in params:
             await self.handle_profile_photo(user, params.pop("photo"))
-        await self.customer_repository.update_customer(uow, id=str(user.id), **params)
+
+        updated_profile = await self.customer_repository.update_customer(uow, id=str(user.id), **params)
+        return updated_profile
 
     async def delete(self, uow: Session, user: Customer) -> str | None:
         deleted_id = await self.customer_repository.delete_customer(uow, str(user.id))
@@ -186,7 +188,8 @@ class CustomerService:
         return False
 
     async def update_profile(self, uow: Session, user: UserCustomerSchema, **params) -> None:
-        await self.profile_service.update_user_profile(uow, user, **params)
+        updated_customer = await self.profile_service.update_user_profile(uow, user, **params)
+        return updated_customer
 
     async def delete(self, uow: Session, user: Customer) -> None:
         deleted_id = await self.profile_service.delete(uow, user)

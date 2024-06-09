@@ -97,7 +97,7 @@ class CustomerRepository:
             select(Customer).where(Customer.username == username)
         )
         result = await uow.execute(query)
-        customer = result.fetchone()
+        customer = result.scalar_one_or_none()
 
         if customer is None:
             return None
@@ -117,7 +117,7 @@ class CustomerRepository:
             )
         )
         result = await uow.execute(query)
-        customer = result.fetchone()
+        customer = result.scalar_one_or_none()
 
         if customer is None:
             return None
