@@ -36,7 +36,7 @@ class CoachProfileService(UserService):
         coach = await self.coach_repository.create_coach(uow, data)
         return coach
 
-    async def authorize_user(self, uow: Session, user: Coach, data: UserLoginData) -> bool:
+    async def authorize_user(self, uow: Session, user: UserCoachSchema, data: UserLoginData) -> bool:
         if await verify_password(data.received_password, user.password):
             if await self.fcm_token_actualize(user, data.fcm_token) is False:
                 await self.coach_repository.update_coach(uow, id=str(user.id), fcm_token=data.fcm_token)

@@ -5,7 +5,6 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from src import Customer
-from src.schemas.customer_schema import CustomerOut
 from src.shared.config import OTP_LENGTH
 from src.schemas.authentication_schema import CustomerRegistrationData, UserLoginData
 from src.schemas.user_coach_schema import UserCustomerSchema
@@ -217,7 +216,7 @@ class CustomerService:
     async def get_customer_by_username(self, uow: Session, username: str) -> UserCustomerSchema | None:
         customer = await self.selector_service.select_customer_by_username(uow, username)
         if customer is not None:
-            self.user = customer[0]
+            self.user = customer
             return self.user
         return None
 
@@ -231,6 +230,6 @@ class CustomerService:
             last_name=last_name,
         )
         if customer is not None:
-            self.user = customer[0]
+            self.user = customer
             return self.user
         return None
