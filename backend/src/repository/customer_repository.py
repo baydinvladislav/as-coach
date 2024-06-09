@@ -1,3 +1,6 @@
+from datetime import date
+
+from pydantic import BaseModel
 from sqlalchemy import select, func, nullsfirst, and_, literal_column
 from sqlalchemy.orm import Session, selectinload
 from sqlalchemy.dialects.postgresql import insert
@@ -5,6 +8,23 @@ from sqlalchemy.dialects.postgresql import insert
 from src import Customer, TrainingPlan
 from src.schemas.authentication_schema import CustomerRegistrationData
 from src.schemas.customer_schema import CustomerOut
+from src.persistence.models import Gender
+
+
+class UserSchema(BaseModel):
+    id: str
+    username: str
+    first_name: str
+    last_name: str | None
+    user_type: str
+    password_changed: bool
+    gender: Gender | None
+    birthday: date | None
+    email: str | None
+    photo_link: str | None
+
+    class Config:
+        orm_mode = True
 
 
 class CustomerRepository:

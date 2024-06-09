@@ -4,10 +4,11 @@ from sqlalchemy.dialects.postgresql import insert
 
 from src import Coach
 from src.schemas.authentication_schema import CoachRegistrationData
+from src.schemas.user_coach_schema import UserCoachSchema
 
 
 class CoachRepository:
-    async def create_coach(self, uow: Session, data: CoachRegistrationData):
+    async def create_coach(self, uow: Session, data: CoachRegistrationData) -> UserCoachSchema | None:
         statement = (
             insert(Coach)
             .values(
@@ -26,9 +27,9 @@ class CoachRepository:
         if coach is None:
             return None
 
-        return Coach.from_orm(coach)
+        return UserCoachSchema.from_orm(coach)
 
-    async def update_coach(self, uow: Session, **kwargs):
+    async def update_coach(self, uow: Session, **kwargs) -> UserCoachSchema | None:
         statement = (
             insert(Coach)
             .values(**kwargs)
@@ -42,11 +43,11 @@ class CoachRepository:
         if coach is None:
             return None
 
-        return Coach.from_orm(coach)
+        return UserCoachSchema.from_orm(coach)
 
-    async def delete_coach(self, uow: Session, pk: str):
-        delete_stmt = delete(Coach).where(Coach.id == pk)
-        result = await uow.execute(delete_stmt)
+    async def delete_coach(self, uow: Session, pk: str) -> str | None:
+        stmt = delete(Coach).where(Coach.id == pk)
+        result = await uow.execute(stmt)
         uow.commit()
 
         if result.rowcount == 0:
@@ -54,8 +55,12 @@ class CoachRepository:
 
         return pk
 
-    async def provide_by_username(self, uow: Session, username: str) -> Coach | None:
+    async def provide_by_username(self, uow: Session, username: str) -> UserCoachSchema | None:
         query = select(Coach).where(Coach.username == username)
         result = await uow.execute(query)
         coach = result.fetchone()
-        return coach
+
+        if coach is None:
+            return None
+
+        return UserCoachSchema.from_orm(coach)

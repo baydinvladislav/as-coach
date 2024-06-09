@@ -4,6 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from src import Coach
+from src.schemas.user_coach_schema import UserCoachSchema
 from src.utils import get_hashed_password, verify_password
 from src.repository.coach_repository import CoachRepository
 from src.shared.exceptions import UsernameIsTaken, NotValidCredentials
@@ -20,7 +21,7 @@ class CoachSelectorService:
     def __init__(self, coach_repository: CoachRepository) -> None:
         self.coach_repository = coach_repository
 
-    async def select_coach_by_username(self, uow: Session, username: str) -> Coach | None:
+    async def select_coach_by_username(self, uow: Session, username: str) -> UserCoachSchema | None:
         coach = await self.coach_repository.provide_by_username(uow, username)
         return coach
 
@@ -31,7 +32,7 @@ class CoachProfileService(UserService):
     def __init__(self, coach_repository: CoachRepository) -> None:
         self.coach_repository = coach_repository
 
-    async def register_user(self, uow: Session, data: CoachRegistrationData) -> Coach | None:
+    async def register_user(self, uow: Session, data: CoachRegistrationData) -> UserCoachSchema | None:
         coach = await self.coach_repository.create_coach(uow, data)
         return coach
 
@@ -42,12 +43,12 @@ class CoachProfileService(UserService):
             return True
         return False
 
-    async def update_user_profile(self, uow: Session, user: Coach, **params) -> None:
+    async def update_user_profile(self, uow: Session, user: Coach, **params) -> UserCoachSchema | None:
         if "photo" in params:
             await self.handle_profile_photo(user, params.pop("photo"))
-        await self.coach_repository.update_coach(uow, id=str(user.id), **params)
+        return await self.coach_repository.update_coach(uow, id=str(user.id), **params)
 
-    async def delete(self, uow: Session, user: Coach) -> None:
+    async def delete(self, uow: Session, user: Coach) -> str | None:
         deleted_id = await self.coach_repository.delete_coach(uow, str(user.id))
         return deleted_id
 
@@ -61,7 +62,7 @@ class CoachService:
         self.selector_service = selector_service
         self.profile_service = profile_service
 
-    async def register_coach(self, uow: Session, data: CoachRegistrationData) -> Coach | None:
+    async def register_coach(self, uow: Session, data: CoachRegistrationData) -> UserCoachSchema | None:
         existed_coach = await self.selector_service.select_coach_by_username(uow, username=data.username)
         if existed_coach:
             raise UsernameIsTaken
@@ -73,7 +74,12 @@ class CoachService:
             return coach
         return None
 
-    async def authorize_coach(self, uow: Session, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Coach | None:
+    async def authorize_coach(
+        self,
+        uow: Session,
+        form_data: OAuth2PasswordRequestForm,
+        fcm_token: str
+    ) -> UserCoachSchema | None:
         existed_coach = await self.get_coach_by_username(uow, username=form_data.username)
         if existed_coach is None:
             return None
@@ -90,19 +96,19 @@ class CoachService:
             return True
         return False
 
-    async def update_profile(self, uow: Session, user: Coach, **params) -> None:
-        await self.profile_service.update_user_profile(uow, user, **params)
+    async def update_profile(self, uow: Session, user: Coach, **params) -> UserCoachSchema | None:
+        return await self.profile_service.update_user_profile(uow, user, **params)
 
-    async def delete(self, uow: Session, user: Coach) -> None:
+    async def delete(self, uow: Session, user: Coach) -> str | None:
         deleted_id = await self.profile_service.delete(uow, user)
         if deleted_id is None:
             logger.info(f"Couldn't delete coach {user.username}")
             return
         logger.info(f"Coach {user.username} successfully deleted")
 
-    async def get_coach_by_username(self, uow: Session, username: str) -> Coach | None:
+    async def get_coach_by_username(self, uow: Session, username: str) -> UserCoachSchema | None:
         coach = await self.selector_service.select_coach_by_username(uow, username)
         if coach is not None:
-            self.user = coach[0]
+            self.user = coach
             return self.user
         return None
