@@ -81,7 +81,6 @@ class UserService(ABC):
     @staticmethod
     async def set_fcm_token(user: USER_MODEL, fcm_token: str) -> None:
         user.fcm_token = fcm_token
-        set_attribute(user, "fcm_token", fcm_token)
 
     async def fcm_token_actualize(self, user: USER_MODEL, fcm_token: str) -> bool:
         if user.fcm_token is None or user.fcm_token != fcm_token:
