@@ -58,7 +58,7 @@ class CoachRepository:
     async def provide_by_username(self, uow: Session, username: str) -> UserCoachSchema | None:
         query = select(Coach).where(Coach.username == username)
         result = await uow.execute(query)
-        coach = result.fetchone()
+        coach = result.scalars().first()
 
         if coach is None:
             return None

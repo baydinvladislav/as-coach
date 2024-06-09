@@ -1,8 +1,10 @@
 from datetime import date
+from uuid import UUID
 
 from pydantic import BaseModel
 from sqlalchemy import select, func, nullsfirst, and_, literal_column
 from sqlalchemy.orm import Session, selectinload
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import insert
 
 from src import Customer, TrainingPlan
@@ -11,13 +13,13 @@ from src.schemas.customer_schema import CustomerOut
 from src.persistence.models import Gender
 
 
-class UserSchema(BaseModel):
-    id: str
-    username: str
+class UserCustomerSchema(BaseModel):
+    id: UUID
+    username: str | None
     first_name: str
     last_name: str | None
-    user_type: str
-    password_changed: bool
+    password: str
+    telegram_username: str | None
     gender: Gender | None
     birthday: date | None
     email: str | None
@@ -28,6 +30,7 @@ class UserSchema(BaseModel):
 
 
 class CustomerRepository:
+    # TODO: AsyncSession
     async def create_customer(self, uow: Session, data: CustomerRegistrationData) -> CustomerOut | None:
         statement = (
             insert(Customer)
@@ -35,6 +38,7 @@ class CustomerRepository:
                 coach_id=data.coach_id,
                 telegram_username=data.telegram_username,
                 first_name=data.first_name,
+                password=data.password,
                 last_name=data.last_name,
             )
             .on_conflict_do_nothing()
@@ -42,12 +46,13 @@ class CustomerRepository:
         )
 
         result = await uow.execute(statement)
-        customer = result.fetchone()
+        customer_id = result.scalar_one_or_none()
 
-        if customer is None:
+        if customer_id is None:
             return None
 
-        return CustomerOut.from_orm(customer)
+        customer = await self.provide_by_pk(uow, str(customer_id))
+        return UserCustomerSchema.from_orm(customer)
 
     async def update_customer(self, uow: Session, data: CustomerRegistrationData) -> CustomerOut | None:
         ...

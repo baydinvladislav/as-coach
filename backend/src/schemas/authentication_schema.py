@@ -32,6 +32,7 @@ class CoachRegistrationData(UserRegistrationData):
 class CustomerRegistrationData(UserRegistrationData):
     coach_id: str
     coach_name: str
+    password: str
     telegram_username: str | None
     last_name: str
 
