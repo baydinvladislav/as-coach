@@ -27,6 +27,7 @@ class UserCustomerSchema(BaseModel):
     username: str | None
     first_name: str
     coach_id: UUID
+    fcm_token: str
     last_name: str | None
     password: str
     telegram_username: str | None
