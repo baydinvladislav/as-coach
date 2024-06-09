@@ -8,6 +8,7 @@ from src import Customer
 from src.schemas.customer_schema import CustomerOut
 from src.shared.config import OTP_LENGTH
 from src.schemas.authentication_schema import CustomerRegistrationData, UserLoginData
+from src.schemas.user_coach_schema import UserCustomerSchema
 from src.service.notification_service import NotificationService
 from src.shared.exceptions import NotValidCredentials
 from src.utils import verify_password
@@ -24,11 +25,11 @@ class CustomerSelectorService:
     def __init__(self, customer_repository: CustomerRepository) -> None:
         self.customer_repository = customer_repository
 
-    async def select_customer_by_pk(self, uow: Session, pk: str) -> Customer | None:
+    async def select_customer_by_pk(self, uow: Session, pk: str) -> UserCustomerSchema | None:
         customer = await self.customer_repository.provide_by_pk(uow, pk=pk)
         return customer
 
-    async def select_customer_by_otp(self, uow: Session, password) -> Customer | None:
+    async def select_customer_by_otp(self, uow: Session, password) -> UserCustomerSchema | None:
         customer = await self.customer_repository.provide_by_otp(uow, password=password)
         return customer
 
@@ -38,35 +39,35 @@ class CustomerSelectorService:
         customers = []
         archive_customers = []
         for customer in customers_aggregates:
-            last_plan_end_date = customer[4]
+            last_plan_end_date = customer.last_plan_end_date
 
             if last_plan_end_date and datetime.now().date() - last_plan_end_date > timedelta(days=30):
                 archive_customers.append({
-                    "id": str(customer[0]),
-                    "first_name": customer[1],
-                    "last_name": customer[2],
-                    "phone_number": customer[3],
+                    "id": str(customer.id),
+                    "first_name": customer.first_name,
+                    "last_name": customer.last_name,
+                    "phone_number": customer.username,
                     "last_plan_end_date": last_plan_end_date.strftime("%Y-%m-%d")
                 })
             else:
                 customers.append({
-                    "id": str(customer[0]),
-                    "first_name": customer[1],
-                    "last_name": customer[2],
-                    "phone_number": customer[3],
+                    "id": str(customer.id),
+                    "first_name": customer.first_name,
+                    "last_name": customer.last_name,
+                    "phone_number": customer.username,
                     "last_plan_end_date": last_plan_end_date.strftime("%Y-%m-%d") if last_plan_end_date else None
                 })
 
         customers.extend(archive_customers)
         return customers
 
-    async def select_customer_by_username(self, uow: Session, username: str) -> Customer | None:
+    async def select_customer_by_username(self, uow: Session, username: str) -> UserCustomerSchema | None:
         customer = await self.customer_repository.provide_by_username(uow, username)
         return customer
 
     async def select_customer_by_full_name(
         self, uow: Session, coach_id: str, first_name: str, last_name: str
-    ) -> Customer | None:
+    ) -> UserCustomerSchema | None:
         customer = await self.customer_repository.provide_by_coach_id_and_full_name(
             uow=uow,
             coach_id=coach_id,
@@ -82,7 +83,7 @@ class CustomerProfileService(UserService):
     def __init__(self, customer_repository: CustomerRepository) -> None:
         self.customer_repository = customer_repository
 
-    async def register_user(self, uow: Session, data: CustomerRegistrationData) -> CustomerOut | None:
+    async def register_user(self, uow: Session, data: CustomerRegistrationData) -> UserCustomerSchema | None:
         customer = await self.customer_repository.create_customer(uow, data)
 
         if customer is None:
@@ -109,9 +110,9 @@ class CustomerProfileService(UserService):
     async def update_user_profile(self, uow: Session, user: Customer, **params) -> None:
         if "photo" in params:
             await self.handle_profile_photo(user, params.pop("photo"))
-        await self.customer_repository.update_customer(uow, str(user.id), **params)
+        await self.customer_repository.update_customer(uow, id=str(user.id), **params)
 
-    async def delete(self, uow: Session, user: Customer) -> None:
+    async def delete(self, uow: Session, user: Customer) -> str | None:
         deleted_id = await self.customer_repository.delete_customer(uow, str(user.id))
         return deleted_id
 
@@ -131,7 +132,7 @@ class CustomerService:
         self.profile_service = profile_service
         self.notification_service = notification_service
 
-    async def register(self, uow: Session, data: CustomerRegistrationData) -> CustomerOut:
+    async def register(self, uow: Session, data: CustomerRegistrationData) -> UserCustomerSchema:
         customer = await self.profile_service.register_user(uow, data)
         logger.info(f"Customer registered successfully: {customer.first_name} {customer.last_name}")
         uow.commit()
@@ -148,7 +149,9 @@ class CustomerService:
 
         return customer
 
-    async def authorize(self, uow: Session, form_data: OAuth2PasswordRequestForm, fcm_token: str) -> Customer | None:
+    async def authorize(
+        self, uow: Session, form_data: OAuth2PasswordRequestForm, fcm_token: str
+    ) -> UserCustomerSchema | None:
         """
         Customer logs in with default password in the first time after receive invite.
         After customer changes password it logs in with own hashed password.
@@ -193,14 +196,14 @@ class CustomerService:
             return
         logger.info(f"Customer {user.username} successfully deleted")
 
-    async def get_customer_by_pk(self, uow: Session, pk: str) -> Customer | None:
+    async def get_customer_by_pk(self, uow: Session, pk: str) -> UserCustomerSchema | None:
         customer = await self.selector_service.select_customer_by_pk(uow, pk=pk)
         if customer is not None:
             self.user = customer
             return self.user
         return None
 
-    async def get_customer_by_otp(self, uow: Session, otp: str) -> Customer | None:
+    async def get_customer_by_otp(self, uow: Session, otp: str) -> UserCustomerSchema | None:
         customer = await self.selector_service.select_customer_by_otp(uow, password=otp)
         if customer:
             self.user = customer
@@ -211,7 +214,7 @@ class CustomerService:
         customers = await self.selector_service.select_customers_by_coach_id(uow, coach_id)
         return customers
 
-    async def get_customer_by_username(self, uow: Session, username: str) -> Customer | None:
+    async def get_customer_by_username(self, uow: Session, username: str) -> UserCustomerSchema | None:
         customer = await self.selector_service.select_customer_by_username(uow, username)
         if customer is not None:
             self.user = customer[0]
@@ -220,7 +223,7 @@ class CustomerService:
 
     async def get_customer_by_full_name_for_coach(
         self, uow: Session, coach_id: str, first_name: str, last_name: str
-    ) -> Customer | None:
+    ) -> UserCustomerSchema | None:
         customer = await self.selector_service.select_customer_by_full_name(
             uow=uow,
             coach_id=coach_id,

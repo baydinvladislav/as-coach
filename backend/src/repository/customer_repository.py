@@ -4,7 +4,7 @@ from sqlalchemy.dialects.postgresql import insert
 
 from src import Customer, TrainingPlan
 from src.schemas.authentication_schema import CustomerRegistrationData
-from src.schemas.user_coach_schema import UserCustomerSchema
+from src.schemas.user_coach_schema import UserCustomerSchema, UserCustomerShort
 
 
 class CustomerRepository:
@@ -124,11 +124,13 @@ class CustomerRepository:
 
         return UserCustomerSchema.from_orm(customer)
 
-    async def provide_customers_by_coach_id(self, uow: Session, coach_id: str) -> list[Customer]:
+    async def provide_customers_by_coach_id(self, uow: Session, coach_id: str) -> list[UserCustomerShort]:
         query = (
             select(
                 Customer.id,
                 Customer.first_name,
+                Customer.coach_id,
+                Customer.password,
                 Customer.last_name,
                 Customer.username,
                 func.max(TrainingPlan.end_date).label("last_plan_end_date")
@@ -141,4 +143,5 @@ class CustomerRepository:
 
         result = await uow.execute(query)
         customers = result.fetchall()
-        return [UserCustomerSchema.from_orm(customer) for customer in customers]
+        # a = [UserCustomerShort.from_orm(customer) for customer in customers]
+        return [UserCustomerShort.from_orm(customer) for customer in customers]

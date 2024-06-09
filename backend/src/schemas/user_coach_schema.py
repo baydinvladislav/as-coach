@@ -26,6 +26,7 @@ class UserCustomerSchema(BaseModel):
     id: UUID
     username: str | None
     first_name: str
+    coach_id: UUID
     last_name: str | None
     password: str
     telegram_username: str | None
@@ -33,6 +34,17 @@ class UserCustomerSchema(BaseModel):
     birthday: date | None
     email: str | None
     photo_link: str | None
+
+    class Config:
+        orm_mode = True
+
+
+class UserCustomerShort(BaseModel):
+    id: UUID
+    first_name: str
+    last_name: str | None
+    username: str | None
+    last_plan_end_date: date | None
 
     class Config:
         orm_mode = True
