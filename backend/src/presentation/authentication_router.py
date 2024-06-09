@@ -162,7 +162,7 @@ async def get_me(
     summary="Get user profile")
 async def get_profile(
         service: CoachService | CustomerService = Depends(provide_user_service),
-) -> dict:
+) -> UserProfileOut:
     """
     Returns full info about user
     Endpoint can be used by both the coach and the customer
@@ -175,17 +175,17 @@ async def get_profile(
     """
     user = service.user
 
-    return {
-        "id": str(user.id),
-        "first_name": user.first_name,
-        "last_name": user.last_name,
-        "user_type": service.user_type,
-        "gender": user.gender,
-        "birthday": user.birthday,
-        "email": user.email,
-        "username": user.username,
-        "photo_link": user.photo_path.split('/backend')[1] if user.photo_path else None
-    }
+    return UserProfileOut(
+        id=str(user.id),
+        first_name=user.first_name,
+        last_name=user.last_name,
+        gender=user.gender,
+        user_type=service.user_type,
+        birthday=user.birthday,
+        email=user.email,
+        username=user.username,
+        photo_link=user.photo_link.split('/backend')[1] if user.photo_link else None,
+    )
 
 
 @auth_router.post(
@@ -224,9 +224,11 @@ async def update_profile(
     """
     user = service.user
 
-    await service.update_profile(
+    updated_user = await service.update_profile(
         uow=database,
         user=user,
+        password=user.password,
+        fcm_token=user.fcm_token,
         first_name=first_name,
         username=username,
         last_name=last_name,
@@ -237,15 +239,15 @@ async def update_profile(
     )
 
     return UserProfileOut(
-        id=str(user.id),
-        first_name=user.first_name,
-        last_name=user.last_name,
+        id=str(updated_user.id),
+        first_name=updated_user.first_name,
+        last_name=updated_user.last_name,
         user_type=service.user_type,
-        gender=user.gender,
-        birthday=user.birthday,
-        email=user.email,
-        username=user.username,
-        photo_link=user.photo_path.split('/backend')[1] if user.photo_path else None,
+        gender=updated_user.gender,
+        birthday=updated_user.birthday,
+        email=updated_user.email,
+        username=updated_user.username,
+        photo_link=user.photo_link.split('/backend')[1] if user.photo_link else None,
     )
 
 

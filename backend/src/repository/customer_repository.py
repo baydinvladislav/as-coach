@@ -1,32 +1,11 @@
-from datetime import date
-from uuid import UUID
-
-from pydantic import BaseModel
 from sqlalchemy import select, func, nullsfirst, and_, literal_column
 from sqlalchemy.orm import Session, selectinload
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import insert
 
 from src import Customer, TrainingPlan
 from src.schemas.authentication_schema import CustomerRegistrationData
 from src.schemas.customer_schema import CustomerOut
-from src.persistence.models import Gender
-
-
-class UserCustomerSchema(BaseModel):
-    id: UUID
-    username: str | None
-    first_name: str
-    last_name: str | None
-    password: str
-    telegram_username: str | None
-    gender: Gender | None
-    birthday: date | None
-    email: str | None
-    photo_link: str | None
-
-    class Config:
-        orm_mode = True
+from src.schemas.user_coach_schema import UserCustomerSchema
 
 
 class CustomerRepository:

@@ -1,4 +1,4 @@
-from sqlalchemy import select, delete, literal_column
+from sqlalchemy import select, update, delete, literal_column
 from sqlalchemy.orm import Session
 from sqlalchemy.dialects.postgresql import insert
 
@@ -31,9 +31,9 @@ class CoachRepository:
 
     async def update_coach(self, uow: Session, **kwargs) -> UserCoachSchema | None:
         statement = (
-            insert(Coach)
+            update(Coach)
+            .where(Coach.id == kwargs["id"])
             .values(**kwargs)
-            .on_conflict_do_nothing()
             .returning(literal_column("*"))
         )
 
