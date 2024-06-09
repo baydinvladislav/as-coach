@@ -38,17 +38,17 @@ class CoachProfileService(UserService):
     async def authorize_user(self, uow: Session, user: Coach, data: UserLoginData) -> bool:
         if await verify_password(data.received_password, user.password):
             if await self.fcm_token_actualize(user, data.fcm_token) is False:
-                await self.coach_repository.update_coach(str(user.id), fcm_token=data.fcm_token)
+                await self.coach_repository.update_coach(uow, id=str(user.id), fcm_token=data.fcm_token)
             return True
         return False
 
     async def update_user_profile(self, uow: Session, user: Coach, **params) -> None:
         if "photo" in params:
             await self.handle_profile_photo(user, params.pop("photo"))
-        await self.coach_repository.update_coach(str(user.id), **params)
+        await self.coach_repository.update_coach(uow, id=str(user.id), **params)
 
-    async def delete(self, user: Coach) -> None:
-        deleted_id = await self.coach_repository.delete_coach(str(user.id))
+    async def delete(self, uow: Session, user: Coach) -> None:
+        deleted_id = await self.coach_repository.delete_coach(uow, str(user.id))
         return deleted_id
 
 
