@@ -143,5 +143,4 @@ class CustomerRepository:
 
         result = await uow.execute(query)
         customers = result.fetchall()
-        # a = [UserCustomerShort.from_orm(customer) for customer in customers]
         return [UserCustomerShort.from_orm(customer) for customer in customers]
