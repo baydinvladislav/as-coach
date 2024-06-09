@@ -92,7 +92,7 @@ class CustomerProfileService(UserService):
         logger.info(f"Customer created successfully: {data.last_name} {data.first_name}")
         return customer
 
-    async def authorize_user(self, uow: Session, user: Customer, data: UserLoginData) -> bool:
+    async def authorize_user(self, uow: Session, user: UserCustomerSchema, data: UserLoginData) -> bool:
         """
         Customer logs in with one time password in the first time after receive invite.
         After customer changes password it logs in with own hashed password.
@@ -102,11 +102,11 @@ class CustomerProfileService(UserService):
 
         if first_login or regular_login:
             if await self.fcm_token_actualize(user, data.fcm_token) is False:
-                await self.customer_repository.update(str(user.id), fcm_token=data.fcm_token)
+                await self.customer_repository.update_customer(uow, id=str(user.id), fcm_token=data.fcm_token)
             return True
         return False
 
-    async def update_user_profile(self, uow: Session, user: Customer, **params) -> None:
+    async def update_user_profile(self, uow: Session, user: UserCustomerSchema, **params) -> None:
         if "photo" in params:
             await self.handle_profile_photo(user, params.pop("photo"))
         await self.customer_repository.update_customer(uow, id=str(user.id), **params)
@@ -185,7 +185,7 @@ class CustomerService:
             return True
         return False
 
-    async def update_profile(self, uow: Session, user: Customer, **params) -> None:
+    async def update_profile(self, uow: Session, user: UserCustomerSchema, **params) -> None:
         await self.profile_service.update_user_profile(uow, user, **params)
 
     async def delete(self, uow: Session, user: Customer) -> None:
