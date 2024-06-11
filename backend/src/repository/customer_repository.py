@@ -1,6 +1,7 @@
 from sqlalchemy import select, delete, update, func, nullsfirst, and_, literal_column
 from sqlalchemy.orm import Session, selectinload
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import Customer, TrainingPlan
 from src.schemas.authentication_schema import CustomerRegistrationData
@@ -92,7 +93,7 @@ class CustomerRepository:
 
         return UserCustomerSchema.from_orm(customer)
 
-    async def provide_by_username(self, uow: Session, username: str) -> UserCustomerSchema | None:
+    async def provide_by_username(self, uow: AsyncSession, username: str) -> UserCustomerSchema | None:
         query = (
             select(Customer).where(Customer.username == username)
         )
