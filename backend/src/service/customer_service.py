@@ -78,7 +78,8 @@ class CustomerSelectorService:
 
 
 class CustomerProfileService(UserService):
-    """Responsible for customer profile operations"""
+    """Responsible for customer profile operations
+    """
 
     def __init__(self, customer_repository: CustomerRepository) -> None:
         self.customer_repository = customer_repository
