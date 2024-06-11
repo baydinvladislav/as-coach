@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import Customer
 from src.shared.config import OTP_LENGTH
@@ -82,7 +83,7 @@ class CustomerProfileService(UserService):
     def __init__(self, customer_repository: CustomerRepository) -> None:
         self.customer_repository = customer_repository
 
-    async def register_user(self, uow: Session, data: CustomerRegistrationData) -> UserCustomerSchema | None:
+    async def register_user(self, uow: AsyncSession, data: CustomerRegistrationData) -> UserCustomerSchema | None:
         customer = await self.customer_repository.create_customer(uow, data)
 
         if customer is None:
@@ -133,10 +134,10 @@ class CustomerService:
         self.profile_service = profile_service
         self.notification_service = notification_service
 
-    async def register(self, uow: Session, data: CustomerRegistrationData) -> UserCustomerSchema:
+    async def register(self, uow: AsyncSession, data: CustomerRegistrationData) -> UserCustomerSchema:
         customer = await self.profile_service.register_user(uow, data)
         logger.info(f"Customer registered successfully: {customer.first_name} {customer.last_name}")
-        uow.commit()
+        await uow.commit()
 
         if customer.telegram_username is not None:
             logger.info(f"Will be invited in application new customer: {customer.telegram_username}")

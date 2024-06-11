@@ -30,14 +30,11 @@ from src.supplier.firebase_supplier import PushFirebaseNotificator
 
 
 async def get_db() -> AsyncSession:
-    """
-    Creates new database session.
-    """
-    async with SessionLocal() as database:
+    async with SessionLocal() as unit_of_work:
         try:
-            yield database
+            yield unit_of_work
         finally:
-            await database.close()
+            await unit_of_work.close()
 
 
 async def provide_coach_service() -> CoachService:

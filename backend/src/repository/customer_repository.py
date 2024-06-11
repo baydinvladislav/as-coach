@@ -10,7 +10,7 @@ from src.schemas.user_coach_schema import UserCustomerSchema, UserCustomerShort
 
 class CustomerRepository:
     # TODO: AsyncSession
-    async def create_customer(self, uow: Session, data: CustomerRegistrationData) -> UserCustomerSchema | None:
+    async def create_customer(self, uow: AsyncSession, data: CustomerRegistrationData) -> UserCustomerSchema | None:
         statement = (
             insert(Customer)
             .values(
@@ -59,7 +59,7 @@ class CustomerRepository:
 
         return pk
 
-    async def provide_by_pk(self, uow: Session, pk: str) -> UserCustomerSchema | None:
+    async def provide_by_pk(self, uow: AsyncSession, pk: str) -> UserCustomerSchema | None:
         query = (
             select(Customer).where(Customer.id == pk)
             .options(
