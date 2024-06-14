@@ -23,7 +23,7 @@ from src.shared.dependencies import (
     provide_customer_service,
 )
 from src.persistence.models import Gender
-from src.schemas.authentication_schema import (
+from src.presentation.schemas.authentication_schema import (
     UserProfileOut,
     NewUserPassword,
     LoginOut,

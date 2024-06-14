@@ -7,14 +7,14 @@ from sqlalchemy.orm import Session
 from src.service.coach_service import CoachService
 from src.service.customer_service import CustomerService
 from src.service.training_plan_service import TrainingPlanService
-from src.schemas.customer_schema import (
+from src.presentation.schemas.customer_schema import (
     CustomerOut,
     CustomerCreateIn,
     TrainingPlanOut,
     TrainingPlanIn,
     TrainingPlanOutFull,
 )
-from src.schemas.authentication_schema import CustomerRegistrationData
+from src.presentation.schemas.authentication_schema import CustomerRegistrationData
 from src.shared.dependencies import (
     get_db,
     provide_customer_service,
@@ -327,7 +327,7 @@ async def get_training_plan(
             detail=f"Customer with id={customer_id} doesn't exist"
         )
 
-    training_plan = await training_plan_service.find_training_plan({"id": training_plan_id})
+    training_plan = await training_plan_service.get_training_plan_by_id(training_plan_id)
     if training_plan is None:
         raise HTTPException(
             status_code=404,
