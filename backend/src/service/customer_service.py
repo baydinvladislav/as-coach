@@ -97,7 +97,7 @@ class CustomerProfileService(UserService):
     async def authorize_user(self, uow: Session, user: UserCustomerSchema, data: UserLoginData) -> bool:
         """
         Customer logs in with one time password in the first time after receive invite.
-        After customer changes password it logs in with own hashed password.
+        After customer changes password it logs in with own hashed password
         """
         first_login = len(data.received_password) == OTP_LENGTH and user.password == data.received_password
         regular_login = await verify_password(data.received_password, user.password)
