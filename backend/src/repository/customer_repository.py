@@ -1,5 +1,5 @@
 from sqlalchemy import select, delete, update, func, nullsfirst, and_, literal_column
-from sqlalchemy.orm import Session, selectinload
+from sqlalchemy.orm import selectinload
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -9,7 +9,6 @@ from src.schemas.user_coach_schema import UserCustomerSchema, UserCustomerShort
 
 
 class CustomerRepository:
-    # TODO: AsyncSession
     async def create_customer(self, uow: AsyncSession, data: CustomerRegistrationData) -> UserCustomerSchema | None:
         statement = (
             insert(Customer)
@@ -33,7 +32,7 @@ class CustomerRepository:
         customer = await self.provide_by_pk(uow, str(customer_id))
         return UserCustomerSchema.from_orm(customer)
 
-    async def update_customer(self, uow: Session, **kwargs) -> UserCustomerSchema | None:
+    async def update_customer(self, uow: AsyncSession, **kwargs) -> UserCustomerSchema | None:
         statement = (
             update(Customer)
             .where(Customer.id == kwargs["id"])
@@ -49,7 +48,7 @@ class CustomerRepository:
 
         return UserCustomerSchema.from_orm(coach)
 
-    async def delete_customer(self, uow: Session, pk: str) -> str | None:
+    async def delete_customer(self, uow: AsyncSession, pk: str) -> str | None:
         stmt = delete(Customer).where(Customer.id == pk)
         result = await uow.execute(stmt)
         uow.commit()
@@ -76,7 +75,7 @@ class CustomerRepository:
 
         return UserCustomerSchema.from_orm(customer)
 
-    async def provide_by_otp(self, uow: Session, password: str) -> UserCustomerSchema | None:
+    async def provide_by_otp(self, uow: AsyncSession, password: str) -> UserCustomerSchema | None:
         query = (
             select(Customer).where(Customer.password == password)
             .options(
@@ -106,7 +105,7 @@ class CustomerRepository:
         return UserCustomerSchema.from_orm(customer)
 
     async def provide_by_coach_id_and_full_name(
-        self, uow: Session, coach_id: str, first_name: str, last_name: str
+        self, uow: AsyncSession, coach_id: str, first_name: str, last_name: str
     ) -> UserCustomerSchema | None:
         query = (
             select(Customer).where(
@@ -125,7 +124,7 @@ class CustomerRepository:
 
         return UserCustomerSchema.from_orm(customer)
 
-    async def provide_customers_by_coach_id(self, uow: Session, coach_id: str) -> list[UserCustomerShort]:
+    async def provide_customers_by_coach_id(self, uow: AsyncSession, coach_id: str) -> list[UserCustomerShort]:
         query = (
             select(
                 Customer.id,
