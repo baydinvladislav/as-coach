@@ -4,12 +4,12 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import Customer, TrainingPlan
-from src.schemas.authentication_schema import CustomerRegistrationData
-from src.schemas.user_coach_schema import UserCustomerSchema, UserCustomerShort
+from src.presentation.schemas.authentication_schema import CustomerRegistrationData
+from src.schemas.customer_dto import CustomerDtoSchema, CustomerShortDtoSchema
 
 
 class CustomerRepository:
-    async def create_customer(self, uow: AsyncSession, data: CustomerRegistrationData) -> UserCustomerSchema | None:
+    async def create_customer(self, uow: AsyncSession, data: CustomerRegistrationData) -> CustomerDtoSchema | None:
         statement = (
             insert(Customer)
             .values(
@@ -30,9 +30,9 @@ class CustomerRepository:
             return None
 
         customer = await self.provide_by_pk(uow, str(customer_id))
-        return UserCustomerSchema.from_orm(customer)
+        return CustomerDtoSchema.from_orm(customer)
 
-    async def update_customer(self, uow: AsyncSession, **kwargs) -> UserCustomerSchema | None:
+    async def update_customer(self, uow: AsyncSession, **kwargs) -> CustomerDtoSchema | None:
         statement = (
             update(Customer)
             .where(Customer.id == kwargs["id"])
@@ -46,7 +46,7 @@ class CustomerRepository:
         if coach is None:
             return None
 
-        return UserCustomerSchema.from_orm(coach)
+        return CustomerDtoSchema.from_orm(coach)
 
     async def delete_customer(self, uow: AsyncSession, pk: str) -> str | None:
         stmt = delete(Customer).where(Customer.id == pk)
@@ -58,7 +58,7 @@ class CustomerRepository:
 
         return pk
 
-    async def provide_by_pk(self, uow: AsyncSession, pk: str) -> UserCustomerSchema | None:
+    async def provide_by_pk(self, uow: AsyncSession, pk: str) -> CustomerDtoSchema | None:
         query = (
             select(Customer).where(Customer.id == pk)
             .options(
@@ -73,9 +73,9 @@ class CustomerRepository:
         if customer is None:
             return None
 
-        return UserCustomerSchema.from_orm(customer)
+        return CustomerDtoSchema.from_orm(customer)
 
-    async def provide_by_otp(self, uow: AsyncSession, password: str) -> UserCustomerSchema | None:
+    async def provide_by_otp(self, uow: AsyncSession, password: str) -> CustomerDtoSchema | None:
         query = (
             select(Customer).where(Customer.password == password)
             .options(
@@ -90,9 +90,9 @@ class CustomerRepository:
         if customer is None:
             return None
 
-        return UserCustomerSchema.from_orm(customer)
+        return CustomerDtoSchema.from_orm(customer)
 
-    async def provide_by_username(self, uow: AsyncSession, username: str) -> UserCustomerSchema | None:
+    async def provide_by_username(self, uow: AsyncSession, username: str) -> CustomerDtoSchema | None:
         query = (
             select(Customer).where(Customer.username == username)
         )
@@ -102,11 +102,11 @@ class CustomerRepository:
         if customer is None:
             return None
 
-        return UserCustomerSchema.from_orm(customer)
+        return CustomerDtoSchema.from_orm(customer)
 
     async def provide_by_coach_id_and_full_name(
         self, uow: AsyncSession, coach_id: str, first_name: str, last_name: str
-    ) -> UserCustomerSchema | None:
+    ) -> CustomerDtoSchema | None:
         query = (
             select(Customer).where(
                 and_(
@@ -122,9 +122,9 @@ class CustomerRepository:
         if customer is None:
             return None
 
-        return UserCustomerSchema.from_orm(customer)
+        return CustomerDtoSchema.from_orm(customer)
 
-    async def provide_customers_by_coach_id(self, uow: AsyncSession, coach_id: str) -> list[UserCustomerShort]:
+    async def provide_customers_by_coach_id(self, uow: AsyncSession, coach_id: str) -> list[CustomerShortDtoSchema]:
         query = (
             select(
                 Customer.id,
@@ -143,4 +143,4 @@ class CustomerRepository:
 
         result = await uow.execute(query)
         customers = result.fetchall()
-        return [UserCustomerShort.from_orm(customer) for customer in customers]
+        return [CustomerShortDtoSchema.from_orm(customer) for customer in customers]

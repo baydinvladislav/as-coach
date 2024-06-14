@@ -3,12 +3,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import insert
 
 from src import Coach
-from src.schemas.authentication_schema import CoachRegistrationData
-from src.schemas.user_coach_schema import UserCoachSchema
+from src.presentation.schemas.authentication_schema import CoachRegistrationData
+from src.schemas.coach_dto import CoachDtoSchema
 
 
 class CoachRepository:
-    async def create_coach(self, uow: AsyncSession, data: CoachRegistrationData) -> UserCoachSchema | None:
+    async def create_coach(self, uow: AsyncSession, data: CoachRegistrationData) -> CoachDtoSchema | None:
         statement = (
             insert(Coach)
             .values(
@@ -27,9 +27,9 @@ class CoachRepository:
         if coach is None:
             return None
 
-        return UserCoachSchema.from_orm(coach)
+        return CoachDtoSchema.from_orm(coach)
 
-    async def update_coach(self, uow: AsyncSession, **kwargs) -> UserCoachSchema | None:
+    async def update_coach(self, uow: AsyncSession, **kwargs) -> CoachDtoSchema | None:
         statement = (
             update(Coach)
             .where(Coach.id == kwargs["id"])
@@ -43,7 +43,7 @@ class CoachRepository:
         if coach is None:
             return None
 
-        return UserCoachSchema.from_orm(coach)
+        return CoachDtoSchema.from_orm(coach)
 
     async def delete_coach(self, uow: AsyncSession, pk: str) -> str | None:
         stmt = delete(Coach).where(Coach.id == pk)
@@ -55,7 +55,7 @@ class CoachRepository:
 
         return pk
 
-    async def provide_by_username(self, uow: AsyncSession, username: str) -> UserCoachSchema | None:
+    async def provide_by_username(self, uow: AsyncSession, username: str) -> CoachDtoSchema | None:
         query = select(Coach).where(Coach.username == username)
         result = await uow.execute(query)
         coach = result.scalars().first()
@@ -63,4 +63,4 @@ class CoachRepository:
         if coach is None:
             return None
 
-        return UserCoachSchema.from_orm(coach)
+        return CoachDtoSchema.from_orm(coach)

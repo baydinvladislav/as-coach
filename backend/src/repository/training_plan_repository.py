@@ -2,7 +2,6 @@ from sqlalchemy import select, desc
 from sqlalchemy.orm import selectinload
 
 from src import TrainingPlan, Training
-from src.repository.base_repository import BaseRepository
 
 
 class TrainingPlanRepository(BaseRepository):
