@@ -5,7 +5,7 @@ export const en = {
     noAccount: 'Don’t have an account?',
     hasAccount: 'Already have an account?',
     smsTitle: 'Enter the SMS code',
-    smsText1: 'A code has been sent', ###### - изменен порядок сообщений
+    smsText1: 'A code has been sent',
     smsText2: 'to your phone number',
   },
   lk: {
