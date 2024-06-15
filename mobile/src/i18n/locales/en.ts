@@ -40,7 +40,7 @@ export const en = {
     title: 'Choose Dates',
   },
   createPlan: {
-    exercises: 'exercises', #### почему маленькая буква
+    exercises: 'exercises',
     title: 'New Plan',
     title1: 'Nutrition',
     title2: 'Workouts',
