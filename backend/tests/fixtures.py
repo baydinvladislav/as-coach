@@ -16,7 +16,9 @@ from src import (
     MuscleGroup,
     Exercise,
     Coach,
-    Customer
+    Customer,
+    Diet,
+    DietOnTrainingPlan,
 )
 from src.utils import generate_random_password, get_hashed_password
 from tests.conftest import TestingSessionLocal

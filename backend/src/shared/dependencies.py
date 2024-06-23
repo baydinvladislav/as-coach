@@ -13,8 +13,8 @@ from src.shared.config import reuseable_oauth
 from src.utils import decode_jwt_token
 
 from src.repository.library_repository import ExerciseRepository, MuscleGroupRepository
-from src.repository.diet_repository import DietRepository, DietOnTrainingPlanRepository
-from src.repository.training_repository import TrainingRepository, ExercisesOnTrainingRepository
+from src.repository.diet_repository import DietRepository
+from src.repository.training_repository import TrainingRepository
 from src.repository.training_plan_repository import TrainingPlanRepository
 from src.repository.coach_repository import CoachRepository
 from src.repository.customer_repository import CustomerRepository
@@ -44,10 +44,7 @@ async def provide_coach_service() -> CoachService:
     coach_repository = CoachRepository()
     profile_service = CoachProfileService(coach_repository)
     selector_service = CoachSelectorService(coach_repository)
-    return CoachService(
-        profile_service=profile_service,
-        selector_service=selector_service,
-    )
+    return CoachService(profile_service=profile_service, selector_service=selector_service)
 
 
 async def provide_library_service(database: Session = Depends(get_db)) -> LibraryService:
@@ -62,23 +59,15 @@ async def provide_library_service(database: Session = Depends(get_db)) -> Librar
     )
 
 
-async def provide_training_plan_service(database: Session = Depends(get_db)) -> TrainingPlanService:
+async def provide_training_plan_service() -> TrainingPlanService:
     """
     Returns service responsible to interact with TrainingPlan domain
     """
-    training_service = TrainingService(
-        repositories={
-            "training_repo": TrainingRepository(database),
-            "exercises_on_training_repo": ExercisesOnTrainingRepository(database)
-        }
+    return TrainingPlanService(
+        training_plan_repository=TrainingPlanRepository(),
+        training_service=TrainingService(TrainingRepository()),
+        diet_service=DietService(DietRepository()),
     )
-    diet_service = DietService(
-        repositories={
-            "diet_repo": DietRepository(database),
-            "diets_on_training_repo": DietOnTrainingPlanRepository(database)
-        }
-    )
-    return TrainingPlanService({"training_plan": TrainingPlanRepository(database)}, training_service, diet_service)
 
 
 async def provide_push_notification_service() -> NotificationService:
@@ -99,17 +88,15 @@ async def provide_customer_service(
     Returns service responsible to interact with Customer domain
     """
     customer_repository = CustomerRepository()
-    selector = CustomerSelectorService(customer_repository)
-    profile_service = CustomerProfileService(customer_repository)
     return CustomerService(
-        selector_service=selector,
-        profile_service=profile_service,
+        selector_service=CustomerSelectorService(customer_repository),
+        profile_service=CustomerProfileService(customer_repository),
         notification_service=notification_service,
     )
 
 
 async def provide_user_service(
-    database: Session = Depends(get_db),
+    database: AsyncSession = Depends(get_db),
     token: str = Depends(reuseable_oauth),
     coach_service: CoachService = Depends(provide_coach_service),
     customer_service: CustomerService = Depends(provide_customer_service),
