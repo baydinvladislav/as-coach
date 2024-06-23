@@ -36,10 +36,10 @@ customer_router = APIRouter()
     status_code=status.HTTP_201_CREATED,
     response_model=CustomerOut)
 async def create_customer(
-        customer_data: CustomerCreateIn,
-        user_service: CoachService = Depends(provide_user_service),
-        customer_service: CustomerService = Depends(provide_customer_service),
-        database: Session = Depends(get_db),
+    customer_data: CustomerCreateIn,
+    user_service: CoachService = Depends(provide_user_service),
+    customer_service: CustomerService = Depends(provide_customer_service),
+    database: Session = Depends(get_db),
 ) -> CustomerOut:
     """
     Creates new customer for coach
@@ -106,9 +106,9 @@ async def create_customer(
     summary="Gets all user's customers",
     status_code=status.HTTP_200_OK)
 async def get_customers(
-        coach_service: CoachService = Depends(provide_user_service),
-        customer_service: CustomerService = Depends(provide_customer_service),
-        database: Session = Depends(get_db),
+    coach_service: CoachService = Depends(provide_user_service),
+    customer_service: CustomerService = Depends(provide_customer_service),
+    database: Session = Depends(get_db),
 ) -> List[dict[str, Any]]:
     """
     Gets all customer for current coach
@@ -130,11 +130,11 @@ async def get_customers(
     response_model=CustomerOut,
     status_code=status.HTTP_200_OK)
 async def get_customer(
-        customer_id: str,
-        user_service: CoachService = Depends(provide_user_service),
-        customer_service: CustomerService = Depends(provide_customer_service),
-        training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
-        database: Session = Depends(get_db),
+    customer_id: str,
+    user_service: CoachService = Depends(provide_user_service),
+    customer_service: CustomerService = Depends(provide_customer_service),
+    training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
+    database: Session = Depends(get_db),
 ) -> CustomerOut:
     """
     Gets specific customer by ID.
@@ -187,13 +187,13 @@ async def get_customer(
     status_code=status.HTTP_201_CREATED,
     response_model=TrainingPlanOut)
 async def create_training_plan(
-        training_plan_data: TrainingPlanIn,
-        customer_id: str,
-        customer_service: CustomerService = Depends(provide_customer_service),
-        user_service: CoachService = Depends(provide_user_service),
-        training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
-        push_notification_service: NotificationService = Depends(provide_push_notification_service),
-        database: Session = Depends(get_db),
+    training_plan_data: TrainingPlanIn,
+    customer_id: str,
+    customer_service: CustomerService = Depends(provide_customer_service),
+    user_service: CoachService = Depends(provide_user_service),
+    training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
+    push_notification_service: NotificationService = Depends(provide_push_notification_service),
+    uow: AsyncSession = Depends(get_db),
 ) -> dict:
     """
     Creates new training plan for specified customer.
@@ -206,7 +206,7 @@ async def create_training_plan(
         user_service: service for interacting with profile
         training_plan_service: service for interacting with customer training plans
         push_notification_service: service responsible to send push notification through FireBase service
-        database: db session injection
+        uow: db session injection
     """
     customer = await customer_service.get_customer_by_pk(database, pk=customer_id)
     if not customer:
@@ -253,11 +253,11 @@ async def create_training_plan(
     summary="Returns all training plans for customer",
     status_code=status.HTTP_200_OK)
 async def get_all_training_plans(
-        customer_id: str,
-        user_service: CoachService = Depends(provide_user_service),
-        customer_service: CustomerService = Depends(provide_customer_service),
-        training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
-        database: Session = Depends(get_db),
+    customer_id: str,
+    user_service: CoachService = Depends(provide_user_service),
+    customer_service: CustomerService = Depends(provide_customer_service),
+    training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
+    database: AsyncSession = Depends(get_db),
 ) -> Union[list[dict], list[None]]:
     """
     Returns all training plans for specific customer
@@ -299,12 +299,12 @@ async def get_all_training_plans(
     response_model=TrainingPlanOutFull,
     status_code=status.HTTP_200_OK)
 async def get_training_plan(
-        training_plan_id: str,
-        customer_id: str,
-        user_service: CoachService = Depends(provide_user_service),
-        training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
-        customer_service: CustomerService = Depends(provide_customer_service),
-        database: AsyncSession = Depends(get_db),
+    training_plan_id: str,
+    customer_id: str,
+    user_service: CoachService = Depends(provide_user_service),
+    training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
+    customer_service: CustomerService = Depends(provide_customer_service),
+    database: AsyncSession = Depends(get_db),
 ) -> dict:
     """
     Gets full info for specific training plan by their ID
