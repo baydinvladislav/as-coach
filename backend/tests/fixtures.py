@@ -59,6 +59,32 @@ async def create_training_exercises(create_trainings, create_exercises, db):
 
 
 @pytest_asyncio.fixture()
+async def create_diets(create_training_plans, db):
+    query = (
+        select(TrainingPlan.id)
+        # .options(selectinload(TrainingPlan.diets))
+    )
+    result = await db.execute(query)
+    training_plan_id = result.fetchone()[0]
+    diets_list = [Diet(proteins=200, fats=100, carbs=300), Diet(proteins=200, fats=100, carbs=200)]
+
+    db.add_all(diets_list)
+    await db.commit()
+
+    diets_on_training_plan = [
+        DietOnTrainingPlan(diet_id=diet.id, training_plan_id=training_plan_id) for diet in diets_list
+    ]
+
+    db.add_all(diets_on_training_plan)
+
+    await db.commit()
+
+    result = await db.execute(select(Diet))
+    diets = result.scalars().all()
+    return diets
+
+
+@pytest_asyncio.fixture()
 async def create_trainings(create_training_plans, db):
     training_plan = create_training_plans[0]
 

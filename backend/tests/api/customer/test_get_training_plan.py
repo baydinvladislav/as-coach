@@ -8,6 +8,7 @@ from tests.conftest import make_test_http_request
 async def test_get_all_training_plans(
         create_customer,
         create_exercises,
+        create_diets,
         create_training_plans,
         db,
 ):
@@ -34,6 +35,7 @@ async def test_get_specified_training_plan(
         create_customer,
         create_training_exercises,
         create_trainings,
+        create_diets,
         db,
 ):
     """
