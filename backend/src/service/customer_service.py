@@ -93,7 +93,7 @@ class CustomerProfileService(UserService):
         logger.info(f"Customer created successfully: {data.last_name} {data.first_name}")
         return customer
 
-    async def authorize_user(self, uow: Session, user: CustomerDtoSchema, data: UserLoginData) -> bool:
+    async def authorize_user(self, uow: AsyncSession, user: CustomerDtoSchema, data: UserLoginData) -> bool:
         """
         Customer logs in with one time password in the first time after receive invite.
         After customer changes password it logs in with own hashed password
@@ -107,14 +107,14 @@ class CustomerProfileService(UserService):
             return True
         return False
 
-    async def update_user_profile(self, uow: Session, user: CustomerDtoSchema, **params) -> None:
+    async def update_user_profile(self, uow: AsyncSession, user: CustomerDtoSchema, **params) -> None:
         if "photo" in params:
             await self.handle_profile_photo(user, params.pop("photo"))
 
         updated_profile = await self.customer_repository.update_customer(uow, id=str(user.id), **params)
         return updated_profile
 
-    async def delete(self, uow: Session, user: Customer) -> str | None:
+    async def delete(self, uow: AsyncSession, user: Customer) -> str | None:
         deleted_id = await self.customer_repository.delete_customer(uow, str(user.id))
         return deleted_id
 
@@ -188,7 +188,7 @@ class CustomerService:
             return True
         return False
 
-    async def update_profile(self, uow: Session, user: CustomerDtoSchema, **params) -> None:
+    async def update_profile(self, uow: AsyncSession, user: CustomerDtoSchema, **params) -> None:
         updated_customer = await self.profile_service.update_user_profile(uow, user, **params)
         return updated_customer
 
