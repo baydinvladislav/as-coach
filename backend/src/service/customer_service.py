@@ -2,7 +2,6 @@ import logging
 from datetime import datetime, timedelta
 
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import Customer
@@ -25,15 +24,15 @@ class CustomerSelectorService:
     def __init__(self, customer_repository: CustomerRepository) -> None:
         self.customer_repository = customer_repository
 
-    async def select_customer_by_pk(self, uow: Session, pk: str) -> CustomerDtoSchema | None:
+    async def select_customer_by_pk(self, uow: AsyncSession, pk: str) -> CustomerDtoSchema | None:
         customer = await self.customer_repository.provide_by_pk(uow, pk=pk)
         return customer
 
-    async def select_customer_by_otp(self, uow: Session, password) -> CustomerDtoSchema | None:
+    async def select_customer_by_otp(self, uow: AsyncSession, password) -> CustomerDtoSchema | None:
         customer = await self.customer_repository.provide_by_otp(uow, password=password)
         return customer
 
-    async def select_customers_by_coach_id(self, uow: Session, coach_id: str) -> list[dict[str, str]]:
+    async def select_customers_by_coach_id(self, uow: AsyncSession, coach_id: str) -> list[dict[str, str]]:
         customers_aggregates = await self.customer_repository.provide_customers_by_coach_id(uow, coach_id)
 
         customers = []
@@ -61,12 +60,12 @@ class CustomerSelectorService:
         customers.extend(archive_customers)
         return customers
 
-    async def select_customer_by_username(self, uow: Session, username: str) -> CustomerDtoSchema | None:
+    async def select_customer_by_username(self, uow: AsyncSession, username: str) -> CustomerDtoSchema | None:
         customer = await self.customer_repository.provide_by_username(uow, username)
         return customer
 
     async def select_customer_by_full_name(
-        self, uow: Session, coach_id: str, first_name: str, last_name: str
+        self, uow: AsyncSession, coach_id: str, first_name: str, last_name: str
     ) -> CustomerDtoSchema | None:
         customer = await self.customer_repository.provide_by_coach_id_and_full_name(
             uow=uow,
@@ -153,7 +152,7 @@ class CustomerService:
         return customer
 
     async def authorize(
-        self, uow: Session, form_data: OAuth2PasswordRequestForm, fcm_token: str
+        self, uow: AsyncSession, form_data: OAuth2PasswordRequestForm, fcm_token: str
     ) -> CustomerDtoSchema | None:
         """
         Customer logs in with default password in the first time after receive invite.
@@ -193,32 +192,32 @@ class CustomerService:
         updated_customer = await self.profile_service.update_user_profile(uow, user, **params)
         return updated_customer
 
-    async def delete(self, uow: Session, user: Customer) -> None:
+    async def delete(self, uow: AsyncSession, user: Customer) -> None:
         deleted_id = await self.profile_service.delete(uow, user)
         if deleted_id is None:
             logger.info(f"Couldn't delete customer {user.username}")
             return
         logger.info(f"Customer {user.username} successfully deleted")
 
-    async def get_customer_by_pk(self, uow: Session, pk: str) -> CustomerDtoSchema | None:
+    async def get_customer_by_pk(self, uow: AsyncSession, pk: str) -> CustomerDtoSchema | None:
         customer = await self.selector_service.select_customer_by_pk(uow, pk=pk)
         if customer is not None:
             self.user = customer
             return self.user
         return None
 
-    async def get_customer_by_otp(self, uow: Session, otp: str) -> CustomerDtoSchema | None:
+    async def get_customer_by_otp(self, uow: AsyncSession, otp: str) -> CustomerDtoSchema | None:
         customer = await self.selector_service.select_customer_by_otp(uow, password=otp)
         if customer:
             self.user = customer
             return self.user
         return None
 
-    async def get_customers_by_coach_id(self, uow: Session, coach_id: str) -> list[dict[str, str]]:
+    async def get_customers_by_coach_id(self, uow: AsyncSession, coach_id: str) -> list[dict[str, str]]:
         customers = await self.selector_service.select_customers_by_coach_id(uow, coach_id)
         return customers
 
-    async def get_customer_by_username(self, uow: Session, username: str) -> CustomerDtoSchema | None:
+    async def get_customer_by_username(self, uow: AsyncSession, username: str) -> CustomerDtoSchema | None:
         customer = await self.selector_service.select_customer_by_username(uow, username)
         if customer is not None:
             self.user = customer
@@ -226,7 +225,7 @@ class CustomerService:
         return None
 
     async def get_customer_by_full_name_for_coach(
-        self, uow: Session, coach_id: str, first_name: str, last_name: str
+        self, uow: AsyncSession, coach_id: str, first_name: str, last_name: str
     ) -> CustomerDtoSchema | None:
         customer = await self.selector_service.select_customer_by_full_name(
             uow=uow,

@@ -76,7 +76,7 @@ class TrainingPlanService:
 
             return training_plan_in_db[0] if training_plan_in_db else None
 
-    async def find_training_plan(self, filters: dict) -> dict:
+    async def get_training_plan_by_id(self, uow: AsyncSession, pk: str) -> dict:
         """
         Provides training plan from database in case it is found.
 
@@ -133,9 +133,10 @@ class TrainingPlanService:
                 "notes": training_plan.notes
             }
 
-    async def get_customer_training_plans(self, customer_id: str) -> list:
+    async def get_customer_training_plans(self, uow: AsyncSession, customer_id: str) -> list:
         training_plans = await self.training_plan_repository.provide_customer_plans_by_customer_id(
-            customer_id
+            uow=uow,
+            customer_id=customer_id,
         )
 
         return training_plans

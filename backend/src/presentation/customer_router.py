@@ -3,6 +3,7 @@ from typing import Union, Any, List
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.service.coach_service import CoachService
 from src.service.customer_service import CustomerService
@@ -303,7 +304,7 @@ async def get_training_plan(
         user_service: CoachService = Depends(provide_user_service),
         training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
         customer_service: CustomerService = Depends(provide_customer_service),
-        database: Session = Depends(get_db),
+        database: AsyncSession = Depends(get_db),
 ) -> dict:
     """
     Gets full info for specific training plan by their ID
@@ -327,7 +328,7 @@ async def get_training_plan(
             detail=f"Customer with id={customer_id} doesn't exist"
         )
 
-    training_plan = await training_plan_service.get_training_plan_by_id(training_plan_id)
+    training_plan = await training_plan_service.get_training_plan_by_id(database, training_plan_id)
     if training_plan is None:
         raise HTTPException(
             status_code=404,
