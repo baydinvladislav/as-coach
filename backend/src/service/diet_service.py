@@ -1,30 +1,20 @@
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src import DietOnTrainingPlan
-from src.repository.abstract_repository import AbstractRepository
+from src.repository.diet_repository import DietRepository, DietOnTrainingPlanRepository
 
 
 class DietService:
-    """
-    The service responsible for diets operations
+    def __init__(self, diet_repository: DietRepository) -> None:
+        self.diet_repository = diet_repository
 
-    Attributes:
-        diet_repository: repository to store Diet rows
-        diets_on_training_repository: repository to store DietsOnTrainingPlan rows
-    """
+    async def create_diets(self, uow: AsyncSession, training_plan_id: str, diets: list):
+        diets = await self.diet_repository.create_diets(uow=uow, diets=diets)
 
-    def __init__(self, repositories: dict[str, AbstractRepository]):
-        self.diet_repository = repositories["diet_repo"]
-        self.diets_on_training_repository = repositories["diets_on_training_repo"]
-
-    async def create_diets(self, training_plan_id: str, diets: list):
-        """
-        Creates diets in customer training plan
-
-        Args:
-            training_plan_id: UUID of training plan
-            diets: data for creating diets
-        """
+        # bulk creation
         for diet_data in diets:
             diet = await self.diet_repository.create(
+                uow=uow,
                 proteins=diet_data.proteins,
                 fats=diet_data.fats,
                 carbs=diet_data.carbs

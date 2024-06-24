@@ -1,7 +1,9 @@
 import uuid
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src import ExercisesOnTraining
-from src.repository.abstract_repository import AbstractRepository
+from src.repository.training_repository import TrainingRepository
 
 
 class TrainingService:
@@ -10,14 +12,12 @@ class TrainingService:
 
     Attributes:
         training_repository: repository to store Training rows
-        exercises_on_training_repository: repository to store ExercisesOnTraining rows
         superset_dict: using to store supersets
         ordering: make order for supersets
     """
 
-    def __init__(self, repositories: dict[str, AbstractRepository]):
-        self.training_repository = repositories["training_repo"]
-        self.exercises_on_training_repository = repositories["exercises_on_training_repo"]
+    def __init__(self, training_repository: TrainingRepository):
+        self.training_repository = training_repository
         self.superset_dict = {}
         self.ordering = 0
 
@@ -69,7 +69,7 @@ class TrainingService:
                 await self.training_repository.session.flush()
                 self.ordering += 1
 
-    async def provide_scheduled_trainings(self, training_ids: list, exercise_ids: list) -> dict:
+    async def provide_scheduled_trainings(self, uow: AsyncSession, training_ids: list, exercise_ids: list) -> dict:
         """
         Provides scheduled training for training plan
 
@@ -80,10 +80,10 @@ class TrainingService:
         Returns:
             all scheduled training for training plan
         """
-        exercises = await self.exercises_on_training_repository.filter({
-            "training_ids": training_ids,
-            "exercise_ids": exercise_ids
-        })
+        exercises = await self.training_repository.provide_schedule_exercises_by_training_id(
+            uow=uow,
+            training_id=training_ids,
+        )
 
         scheduled_trainings = dict()
         for exercise in exercises:
