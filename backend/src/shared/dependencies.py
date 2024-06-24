@@ -1,17 +1,11 @@
-"""
-Common dependencies for application
-"""
-
 from fastapi import Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
 from starlette import status
 
 from src.database import SessionLocal
 from src.service.library_service import LibraryService
 from src.shared.config import reuseable_oauth
 from src.utils import decode_jwt_token
-
 from src.repository.library_repository import ExerciseRepository, MuscleGroupRepository
 from src.repository.diet_repository import DietRepository
 from src.repository.training_repository import TrainingRepository
@@ -38,31 +32,17 @@ async def get_db() -> AsyncSession:
 
 
 async def provide_coach_service() -> CoachService:
-    """
-    Returns service responsible to interact with Coach domain
-    """
     coach_repository = CoachRepository()
     profile_service = CoachProfileService(coach_repository)
     selector_service = CoachSelectorService(coach_repository)
     return CoachService(profile_service=profile_service, selector_service=selector_service)
 
 
-async def provide_library_service(database: Session = Depends(get_db)) -> LibraryService:
-    """
-    Returns service to organize data in gym library
-    """
-    return LibraryService(
-        repositories={
-            "exercise": ExerciseRepository(database),
-            "muscle_group": MuscleGroupRepository(database)
-        }
-    )
+async def provide_library_service() -> LibraryService:
+    return LibraryService(exercise_repository=ExerciseRepository(), muscle_group_repository=MuscleGroupRepository())
 
 
 async def provide_training_plan_service() -> TrainingPlanService:
-    """
-    Returns service responsible to interact with TrainingPlan domain
-    """
     return TrainingPlanService(
         training_plan_repository=TrainingPlanRepository(),
         training_service=TrainingService(TrainingRepository()),
@@ -71,9 +51,6 @@ async def provide_training_plan_service() -> TrainingPlanService:
 
 
 async def provide_push_notification_service() -> NotificationService:
-    """
-    Returns service responsible to send push notification through FireBase service
-    """
     kafka_supplier = KafkaSupplier(
         topic=kafka_settings.customer_invite_topic, config={"bootstrap.servers": kafka_settings.bootstrap_servers}
     )
@@ -82,11 +59,8 @@ async def provide_push_notification_service() -> NotificationService:
 
 
 async def provide_customer_service(
-        notification_service: NotificationService = Depends(provide_push_notification_service)
+    notification_service: NotificationService = Depends(provide_push_notification_service)
 ) -> CustomerService:
-    """
-    Returns service responsible to interact with Customer domain
-    """
     customer_repository = CustomerRepository()
     return CustomerService(
         selector_service=CustomerSelectorService(customer_repository),
