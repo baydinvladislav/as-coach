@@ -1,64 +1,41 @@
-"""
-Contains services related to the Gym functionality
-"""
-
 from datetime import datetime
+
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.service.training_service import TrainingService
 from src.service.diet_service import DietService
 from src.repository.training_plan_repository import TrainingPlanRepository
+from src.schemas.training_plan_dto import TrainingPlanDtoShortSchema
 from src.presentation.schemas.customer_schema import TrainingPlanIn
 from src import TrainingPlan
 
 
 class TrainingPlanService:
-    """
-    The service to provide fitness services for customers.
-
-    Attributes:
-        training_plan_repository: repository to store TrainingPlan rows
-        training_service: the service responsible for trainings operations
-        diet_service: the service responsible for diets operations
-    """
-
     def __init__(
-            self,
-            repositories: dict[str, TrainingPlanRepository],
-            training_service: TrainingService,
-            diet_service: DietService
-    ):
-        self.training_plan_repository = repositories["training_plan"]
+        self,
+        training_plan_repository: TrainingPlanRepository,
+        training_service: TrainingService,
+        diet_service: DietService
+    ) -> None:
+        self.training_plan_repository = training_plan_repository
         self.training_service = training_service
         self.diet_service = diet_service
 
-    async def create_training_plan(self, customer_id: str, data: TrainingPlanIn) -> TrainingPlan:
-        """
-        Creates training plan for customer
-
-        Args:
-            customer_id: UUID of the customer for whom the training plan is being created
-            data: data from client for creating new training plan
-        """
+    async def create_training_plan(self, uow: AsyncSession, customer_id: str, data: TrainingPlanIn) -> TrainingPlan:
         try:
-            training_plan = await self.training_plan_repository.create(
+            training_plan = await self.training_plan_repository.create_training_plan(
+                uow=uow,
                 customer_id=customer_id,
                 start_date=datetime.strptime(data.start_date, "%Y-%m-%d").date(),
                 end_date=datetime.strptime(data.end_date, "%Y-%m-%d").date(),
                 set_rest=data.set_rest,
                 exercise_rest=data.exercise_rest,
-                notes=data.notes
+                notes=data.notes,
             )
 
-            self.training_plan_repository.session.add(training_plan)
-            await self.training_plan_repository.session.flush()
-
-            await self.diet_service.create_diets(
-                training_plan_id=str(training_plan.id),
-                diets=data.diets
-            )
+            await self.diet_service.create_diets(uow=uow, training_plan_id=str(training_plan.id), diets=data.diets)
             await self.training_service.create_trainings(
-                training_plan_id=str(training_plan.id),
-                trainings=data.trainings
+                training_plan_id=str(training_plan.id), trainings=data.trainings
             )
 
             await self.training_plan_repository.session.commit()
@@ -69,27 +46,14 @@ class TrainingPlanService:
             raise
 
         else:
-            training_plan_in_db = await self.training_plan_repository.filter(
-                filters={"id": str(training_plan.id)},
-                foreign_keys=["customer", "diets", "trainings"]
+            training_plan_in_db = await self.training_plan_repository.provide_training_plan_by_id(
+                uow=uow,
+                pk=training_plan.id,
             )
-
             return training_plan_in_db[0] if training_plan_in_db else None
 
     async def get_training_plan_by_id(self, uow: AsyncSession, pk: str) -> dict:
-        """
-        Provides training plan from database in case it is found.
-
-        Args:
-            filters: attributes and these values
-        """
-        foreign_keys, sub_queries = ["trainings"], ["exercises"]
-        training_plan = await self.training_plan_repository.filter(
-            filters=filters,
-            foreign_keys=foreign_keys,
-            sub_queries=sub_queries
-        )
-        training_plan = training_plan[0]
+        training_plan = await self.training_plan_repository.provide_training_plan_by_id(uow, pk=pk)
 
         training_ids, exercise_ids = [], []
         for training in training_plan.trainings:
@@ -98,8 +62,9 @@ class TrainingPlanService:
                 exercise_ids.append(str(exercise.id))
 
         scheduled_trainings = await self.training_service.provide_scheduled_trainings(
+            uow=uow,
             training_ids=training_ids,
-            exercise_ids=exercise_ids
+            exercise_ids=exercise_ids,
         )
 
         if training_plan:
@@ -133,12 +98,14 @@ class TrainingPlanService:
                 "notes": training_plan.notes
             }
 
-    async def get_customer_training_plans(self, uow: AsyncSession, customer_id: str) -> list:
+    async def get_customer_training_plans(
+        self,
+        uow: AsyncSession,
+        customer_id: str,
+    ) -> list[TrainingPlanDtoShortSchema]:
         training_plans = await self.training_plan_repository.provide_customer_plans_by_customer_id(
-            uow=uow,
-            customer_id=customer_id,
+            uow=uow, customer_id=customer_id,
         )
-
         return training_plans
 
     async def get_all_customer_training_plans(self, customer_id: str) -> list:
