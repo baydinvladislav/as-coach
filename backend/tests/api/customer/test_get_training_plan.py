@@ -6,11 +6,11 @@ from tests.conftest import make_test_http_request
 
 @pytest.mark.asyncio
 async def test_get_all_training_plans(
-        create_customer,
-        create_exercises,
-        create_diets,
-        create_training_plans,
-        db,
+    create_customer,
+    create_exercises,
+    create_diets,
+    create_training_plans,
+    db,
 ):
     """
     Checks that user can get all customer's training plans
@@ -32,11 +32,11 @@ async def test_get_all_training_plans(
 
 @pytest.mark.asyncio
 async def test_get_specified_training_plan(
-        create_customer,
-        create_training_exercises,
-        create_trainings,
-        create_diets,
-        db,
+    create_customer,
+    create_training_exercises,
+    create_trainings,
+    create_diets,
+    db,
 ):
     """
     Returns specified training plan

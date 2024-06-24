@@ -1,4 +1,4 @@
-from typing import Union, Any, List
+from typing import Any, List
 
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
@@ -208,7 +208,7 @@ async def create_training_plan(
         push_notification_service: service responsible to send push notification through FireBase service
         uow: db session injection
     """
-    customer = await customer_service.get_customer_by_pk(database, pk=customer_id)
+    customer = await customer_service.get_customer_by_pk(uow, pk=customer_id)
     if not customer:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -216,8 +216,9 @@ async def create_training_plan(
         )
 
     training_plan = await training_plan_service.create_training_plan(
+        uow=uow,
         customer_id=customer_id,
-        data=training_plan_data
+        data=training_plan_data,
     )
 
     if training_plan:
@@ -258,7 +259,7 @@ async def get_all_training_plans(
     customer_service: CustomerService = Depends(provide_customer_service),
     training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
     database: AsyncSession = Depends(get_db),
-) -> Union[list[dict], list[None]]:
+) -> list[TrainingPlanOut]:
     """
     Returns all training plans for specific customer
     Endpoint can be used by both the coach and the customer
@@ -272,24 +273,22 @@ async def get_all_training_plans(
     """
     customer = await customer_service.get_customer_by_pk(database, pk=customer_id)
     if customer is None:
-        raise HTTPException(
-            status_code=404,
-            detail=f"customer with id={customer_id} doesn't exist"
+        raise HTTPException(status_code=404, detail=f"customer with id={customer_id} doesn't exist")
+
+    training_plans = await training_plan_service.get_customer_training_plans(database, str(customer.id))
+
+    response = [
+        TrainingPlanOut(
+            id=str(training_plan.id),
+            start_date=training_plan.start_date.strftime("%Y-%m-%d"),
+            end_date=training_plan.end_date.strftime("%Y-%m-%d"),
+            number_of_trainings=training_plan.number_of_trainings,
+            proteins="/".join([str(diet.proteins) for diet in training_plan.diets]),
+            fats="/".join([str(diet.fats) for diet in training_plan.diets]),
+            carbs="/".join([str(diet.carbs) for diet in training_plan.diets]),
         )
-
-    training_plans = await training_plan_service.get_customer_training_plans(str(customer.id))
-
-    response = []
-    for training_plan in training_plans:
-        response.append({
-            "id": str(training_plan.id),
-            "start_date": training_plan.start_date.strftime("%Y-%m-%d"),
-            "end_date": training_plan.end_date.strftime("%Y-%m-%d"),
-            "number_of_trainings": len(training_plan.trainings),
-            "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
-            "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
-            "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets])
-        })
+        for training_plan in training_plans
+    ]
 
     return response
 

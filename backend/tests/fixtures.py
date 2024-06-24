@@ -62,7 +62,6 @@ async def create_training_exercises(create_trainings, create_exercises, db):
 async def create_diets(create_training_plans, db):
     query = (
         select(TrainingPlan.id)
-        # .options(selectinload(TrainingPlan.diets))
     )
     result = await db.execute(query)
     training_plan_id = result.fetchone()[0]
