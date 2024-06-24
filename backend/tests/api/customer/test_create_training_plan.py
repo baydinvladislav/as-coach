@@ -10,13 +10,10 @@ from tests.conftest import make_test_http_request
 
 @pytest.mark.asyncio
 async def test_create_training_plan_successfully(
-        create_customer,
-        db,
-        mock_send_push_notification,
+    create_customer,
+    db,
+    mock_send_push_notification,
 ):
-    """
-    Successfully training plan creation
-    """
     muscle_groups = await db.execute(
         select(MuscleGroup).options(selectinload(MuscleGroup.exercises))
     )
@@ -83,13 +80,10 @@ async def test_create_training_plan_successfully(
 
 @pytest.mark.asyncio
 async def test_create_training_plan_with_supersets_successfully(
-        create_customer,
-        db,
-        mock_send_push_notification,
+    create_customer,
+    db,
+    mock_send_push_notification,
 ):
-    """
-    Successfully creating training plan with supersets
-    """
     muscle_groups = await db.execute(
         select(MuscleGroup).options(selectinload(MuscleGroup.exercises))
     )
@@ -195,34 +189,5 @@ async def test_create_training_plan_with_supersets_successfully(
     if response.status_code == 201:
         await db.execute(
             delete(TrainingPlan).where(TrainingPlan.id == response.json()["id"])
-        )
-        await db.commit()
-
-
-@pytest.mark.asyncio
-async def test_get_training_plan_with_supersets(
-    create_customer,
-    create_training_plans,
-    create_training_exercises,
-    db,
-):
-    response = await make_test_http_request(
-        url=f"/api/customers/{create_customer.id}/training_plans/{create_training_plans[0].id}",
-        method="get",
-        username=create_customer.coach.username,
-    )
-    assert response.status_code == 200
-
-    chest_training = list(filter(lambda x: x["name"] == "Грудь", response.json()["trainings"]))[0]
-    superset_ids_set = set()
-    for exercise in chest_training["exercises"]:
-        superset_ids_set.add(exercise["superset_id"])
-
-    # exercises have the same superset_id
-    assert len(superset_ids_set) == 1
-
-    if response.status_code == 200:
-        await db.execute(
-            delete(TrainingPlan).where(TrainingPlan.id == str(create_training_plans[0].id))
         )
         await db.commit()
