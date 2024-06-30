@@ -66,7 +66,7 @@ async def test_create_training_plan_successfully(
     # check that we called firebase notification service with correct args
     assert create_customer.fcm_token in mock_send_push_notification.call_args.args
     excepted_push_notification_sent_data = {
-        "title": "Новый тренировочный план",
+        "title": "Создан новый тренировочный план",
         "body": f"с {training_plan_data['start_date']} до {training_plan_data['end_date']}",
     }
     assert excepted_push_notification_sent_data in mock_send_push_notification.call_args.args
@@ -146,7 +146,7 @@ async def test_create_training_plan_with_supersets_successfully(
     # check that we called firebase notification service with correct args
     assert create_customer.fcm_token in mock_send_push_notification.call_args.args
     excepted_push_notification_sent_data = {
-        "title": "Новый тренировочный план",
+        "title": "Создан новый тренировочный план",
         "body": f"с {training_plan_data['start_date']} до {training_plan_data['end_date']}",
     }
     assert excepted_push_notification_sent_data in mock_send_push_notification.call_args.args
