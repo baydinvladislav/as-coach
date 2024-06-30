@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.service.coach_service import CoachService
 from src.service.customer_service import CustomerService
-from src.service.training_plan_service import TrainingPlanService
+from src.service.training_plan_service import TrainingPlanService, TrainingPlanCreationException
 from src.presentation.schemas.customer_schema import (
     CustomerOut,
     CustomerCreateIn,
@@ -215,38 +215,32 @@ async def create_training_plan(
             detail=f"Customer with id {customer_id} not found"
         )
 
-    training_plan = await training_plan_service.create_training_plan(
-        uow=uow,
-        customer_id=customer_id,
-        data=training_plan_data,
-    )
-
-    if training_plan:
-        notification_data = {
-            "title": "Новый тренировочный план",
-            "body": f"с {training_plan.start_date} до {training_plan.end_date}",
-        }
-
-        await push_notification_service.send_push_notification(
-            customer.fcm_token,
-            notification_data
+    try:
+        training_plan = await training_plan_service.create_training_plan(
+            uow=uow,
+            customer_id=customer_id,
+            data=training_plan_data,
         )
-
-        return {
-            "id": str(training_plan.id),
-            "start_date": training_plan.start_date.strftime("%Y-%m-%d"),
-            "end_date": training_plan.end_date.strftime("%Y-%m-%d"),
-            "number_of_trainings": len(training_plan.trainings),
-            "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
-            "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
-            "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets]),
-        }
-    else:
-        # TODO: client isn't always guilty. 500 can be too
+    except TrainingPlanCreationException:
         raise HTTPException(
-            status_code=status.HTTP_400,
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Unknown error during training plan creation",
         )
+
+    push_tittle = "Создан новый тренировочный план"
+    push_body = f"с {training_plan.start_date} до {training_plan.end_date}"
+    notification_data = {"title": push_tittle, "body": push_body}
+    await push_notification_service.send_push_notification(customer.fcm_token, notification_data)
+
+    return {
+        "id": str(training_plan.id),
+        "start_date": training_plan.start_date.strftime("%Y-%m-%d"),
+        "end_date": training_plan.end_date.strftime("%Y-%m-%d"),
+        "number_of_trainings": len(training_plan.trainings),
+        "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
+        "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
+        "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets]),
+    }
 
 
 @customer_router.get(
