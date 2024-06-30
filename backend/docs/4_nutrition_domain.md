@@ -112,3 +112,4 @@ the frontend should request the `/customers/${customer_id}/nutrition` endpoint.
 ```
 
 ### Data Storage Structure
+tbd: which datastorage I should use? how do I can store the data?
