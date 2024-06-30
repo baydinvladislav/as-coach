@@ -47,10 +47,10 @@ class TrainingPlanRepository:
         training_plan = await self.provide_training_plan_by_id(uow, training_plan_id)
         return TrainingPlanDtoSchema.from_orm(training_plan)
 
-    async def provide_training_plan_by_id(self, uow: AsyncSession, pk: str) -> TrainingPlanDtoSchema | None:
+    async def provide_training_plan_by_id(self, uow: AsyncSession, pk: UUID) -> TrainingPlanDtoSchema | None:
         query = (
             select(TrainingPlan)
-            .where(TrainingPlan.id == UUID(pk))
+            .where(TrainingPlan.id == pk)
             .options(
                 selectinload(TrainingPlan.trainings).selectinload(Training.exercises),
                 selectinload(TrainingPlan.diets),

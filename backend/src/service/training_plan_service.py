@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -5,9 +6,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.service.training_service import TrainingService
 from src.service.diet_service import DietService
 from src.repository.training_plan_repository import TrainingPlanRepository
-from src.schemas.training_plan_dto import TrainingPlanDtoShortSchema
+from src.schemas.training_plan_dto import TrainingPlanDtoSchema, TrainingPlanDtoShortSchema
 from src.presentation.schemas.customer_schema import TrainingPlanIn
-from src import TrainingPlan
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+
+class TrainingPlanCreationException(Exception):
+    ...
 
 
 class TrainingPlanService:
@@ -21,7 +28,12 @@ class TrainingPlanService:
         self.training_service = training_service
         self.diet_service = diet_service
 
-    async def create_training_plan(self, uow: AsyncSession, customer_id: str, data: TrainingPlanIn) -> TrainingPlan:
+    async def create_training_plan(
+        self,
+        uow: AsyncSession,
+        customer_id: str,
+        data: TrainingPlanIn
+    ) -> TrainingPlanDtoSchema:
         try:
             training_plan = await self.training_plan_repository.create_training_plan(
                 uow=uow,
@@ -32,25 +44,26 @@ class TrainingPlanService:
                 exercise_rest=data.exercise_rest,
                 notes=data.notes,
             )
-
-            await self.diet_service.create_diets(uow=uow, training_plan_id=str(training_plan.id), diets=data.diets)
-            await self.training_service.create_trainings(
-                training_plan_id=str(training_plan.id), trainings=data.trainings
-            )
-
-            await self.training_plan_repository.session.commit()
-            await self.training_plan_repository.session.refresh(training_plan)
-
-        except Exception as e:
-            await self.training_plan_repository.session.rollback()
-            raise
-
-        else:
-            training_plan_in_db = await self.training_plan_repository.provide_training_plan_by_id(
+            await self.diet_service.create_diets(
                 uow=uow,
-                pk=training_plan.id,
+                training_plan_id=training_plan.id,
+                diets=data.diets,
             )
-            return training_plan_in_db[0] if training_plan_in_db else None
+            await self.training_service.create_trainings(
+                uow=uow,
+                training_plan_id=training_plan.id,
+                trainings=data.trainings,
+            )
+        except Exception as exc:
+            logger.warning("error.occurred.during.execution.training.plan.transaction", str(exc))
+            await uow.rollback()
+            raise TrainingPlanCreationException from exc
+        else:
+            await uow.commit()
+            training_plan_in_db = await self.training_plan_repository.provide_training_plan_by_id(
+                uow=uow, pk=training_plan.id,
+            )
+            return training_plan_in_db
 
     async def get_training_plan_by_id(self, uow: AsyncSession, pk: str) -> dict:
         training_plan = await self.training_plan_repository.provide_training_plan_by_id(uow, pk=pk)
