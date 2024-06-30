@@ -120,24 +120,19 @@ class TrainingPlan(Base, BaseModel):
 
 
 class Diet(Base, BaseModel):
-    """
-    M2M to TrainingPlan
-    """
     __tablename__ = "diet"
 
     proteins = Column("proteins", Integer, nullable=False)
     fats = Column("fats", Integer, nullable=False)
     carbs = Column("carbs", Integer, nullable=False)
-    training_plans: RelationshipProperty = relationship(
-        "TrainingPlan",
-        secondary="dietontrainingplan",
-        back_populates="diets"
-    )
+    training_plan_id = Column(UUID(as_uuid=True), ForeignKey("trainingplan.id", ondelete="CASCADE"))
+    training_plans: RelationshipProperty = relationship("TrainingPlan", back_populates="diets")
 
     def __repr__(self):
         return f"diet: {self.proteins}/{self.fats}/{self.carbs}"
 
 
+# TODO: deprecated
 class DietOnTrainingPlan(Base, BaseModel):
     """
     Link table between Diet and TrainingsPlan tables
