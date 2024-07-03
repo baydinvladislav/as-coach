@@ -28,22 +28,23 @@ class TrainingRepository:
                 for e in exercise_item.supersets:
                     self.superset_dict[str(e)] = superset_id
 
-    async def create_trainings(self, uow: AsyncSession, training_plan_id: UUID, trainings: list):
-        new_trainings = [
-            Training(name=training_item.name, training_plan_id=training_plan_id) for training_item in trainings
+    async def create_personal_trainings(self, uow: AsyncSession, training_plan_id: UUID, customer_trainings: list):
+        trainings_orm = [
+            Training(name=training_item.name, training_plan_id=training_plan_id)
+            for training_item in customer_trainings
         ]
 
-        uow.add_all(new_trainings)
+        uow.add_all(trainings_orm)
         await uow.flush()
 
         exercises_on_training = []
-        for training, training_item in zip(new_trainings, trainings):
+        for customer_training, training_item in zip(trainings_orm, customer_trainings):
             self.superset_dict = {}
             self.ordering = 0
             for exercise_item in training_item.exercises:
                 await self._update_superset_dict(exercise_item)
                 exercises_on_training.append(ExercisesOnTraining(
-                    training_id=str(training.id),
+                    training_id=str(customer_training.id),
                     exercise_id=str(exercise_item.id),
                     sets=exercise_item.sets,
                     superset_id=self.superset_dict.get(str(exercise_item.id)),
@@ -53,6 +54,7 @@ class TrainingRepository:
 
         uow.add_all(exercises_on_training)
         await uow.flush()
+        return len(trainings_orm)
 
 
 class ExercisesOnTrainingRepository(BaseRepository):

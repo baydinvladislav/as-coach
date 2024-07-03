@@ -71,13 +71,6 @@ async def test_create_training_plan_successfully(
     }
     assert excepted_push_notification_sent_data in mock_send_push_notification.call_args.args
 
-    if status_code == 201:
-        await db.execute(
-            delete(TrainingPlan).where(TrainingPlan.id == response["id"])
-        )
-        await db.commit()
-
-
 @pytest.mark.asyncio
 async def test_create_training_plan_with_supersets_successfully(
     create_customer,

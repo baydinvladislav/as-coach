@@ -70,7 +70,7 @@ class TrainingPlanRepository:
             return TrainingDtoSchema(id=training.id, name=training.name, exercises=exercises_dto)
 
         def map_diet_to_dto(diet):
-            return DietDtoSchema(id=diet.id, proteins=diet.proteins, fats=diet.proteins, carbs=diet.carbs)
+            return DietDtoSchema(id=diet.id, proteins=diet.proteins, fats=diet.fats, carbs=diet.carbs)
 
         trainings_dto = [map_training_to_dto(training) for training in training_plan.trainings]
         diets_dto = [map_diet_to_dto(diet) for diet in training_plan.diets]

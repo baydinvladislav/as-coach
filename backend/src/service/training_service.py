@@ -10,7 +10,7 @@ class TrainingService:
         self.training_repository = training_repository
 
     async def create_trainings(self, uow: AsyncSession, training_plan_id: UUID, trainings: list) -> int:
-        inserted_rows = await self.training_repository.create_trainings(uow, training_plan_id, trainings)
+        inserted_rows = await self.training_repository.create_personal_trainings(uow, training_plan_id, trainings)
         return inserted_rows
 
     async def provide_scheduled_trainings(self, uow: AsyncSession, training_ids: list) -> dict:

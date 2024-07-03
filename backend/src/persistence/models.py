@@ -99,11 +99,7 @@ class TrainingPlan(Base, BaseModel):
 
     start_date = Column("start_date", Date)
     end_date = Column("end_date", Date)
-    diets: RelationshipProperty = relationship(
-        "Diet",
-        secondary="dietontrainingplan",
-        back_populates="training_plans"
-    )
+    diets: RelationshipProperty = relationship("Diet", back_populates="training_plans")
     customer_id = Column(UUID(as_uuid=True), ForeignKey("customer.id", ondelete="CASCADE"))
     customer: RelationshipProperty = relationship("Customer", back_populates="training_plans")
     trainings: RelationshipProperty = relationship(
