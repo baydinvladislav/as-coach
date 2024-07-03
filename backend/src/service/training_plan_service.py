@@ -75,9 +75,7 @@ class TrainingPlanService:
                 exercise_ids.append(str(exercise.id))
 
         scheduled_trainings = await self.training_service.provide_scheduled_trainings(
-            uow=uow,
-            training_ids=training_ids,
-            exercise_ids=exercise_ids,
+            uow=uow, training_ids=training_ids,
         )
 
         if training_plan:
