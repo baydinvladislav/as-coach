@@ -1,20 +1,15 @@
 from uuid import UUID
 
-from pydantic import BaseModel
 from sqlalchemy import select, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import Exercise, MuscleGroup
 from src.schemas.muscle_group_dto import MuscleGroupDto
-
-
-class ExerciseSchemaDto(BaseModel):
-    id: UUID
-    name: str
+from src.schemas.exercise_dto import ExerciseDtoDto
 
 
 class ExerciseRepository:
-    async def get_coach_exercises(self, uow: AsyncSession, coach_id: str) -> list[ExerciseSchemaDto]:
+    async def get_coach_exercises(self, uow: AsyncSession, coach_id: str) -> list[ExerciseDtoDto]:
         query = (
             select(Exercise)
             .where(
@@ -23,7 +18,7 @@ class ExerciseRepository:
         )
         result = await uow.execute(query)
         exercises = result.fetchall()
-        return [ExerciseSchemaDto.from_orm(exercise) for exercise in exercises]
+        return [ExerciseDtoDto.from_orm(exercise) for exercise in exercises]
 
 
 class MuscleGroupRepository:
@@ -40,7 +35,7 @@ class MuscleGroupRepository:
         return MuscleGroupDto.from_orm(muscle_group)
 
     async def get_all_muscle_groups(self, uow: AsyncSession) -> list[MuscleGroupDto]:
-        query = select(MuscleGroup)
+        query = select(MuscleGroup.id, MuscleGroup.name)
         result = await uow.execute(query)
         muscle_groups = result.fetchall()
         return [MuscleGroupDto.from_orm(muscle_group) for muscle_group in muscle_groups]

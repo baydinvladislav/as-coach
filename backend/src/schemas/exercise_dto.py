@@ -3,7 +3,7 @@ from uuid import UUID
 from pydantic import BaseModel
 
 
-class ExerciseDtoSchema(BaseModel):
+class ExerciseDtoDto(BaseModel):
     id: UUID
     name: str
 
