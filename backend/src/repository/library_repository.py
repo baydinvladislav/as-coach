@@ -11,7 +11,7 @@ from src.schemas.exercise_dto import ExerciseDtoDto
 class ExerciseRepository:
     async def get_coach_exercises(self, uow: AsyncSession, coach_id: str) -> list[ExerciseDtoDto]:
         query = (
-            select(Exercise)
+            select(Exercise.id, Exercise.name, Exercise.coach_id)
             .where(
                 or_(Exercise.coach_id.is_(None), Exercise.coach_id == UUID(coach_id))
             )
