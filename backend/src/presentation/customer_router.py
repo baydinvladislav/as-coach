@@ -316,17 +316,11 @@ async def get_training_plan(
     """
     customer = await customer_service.get_customer_by_pk(database, pk=customer_id)
     if customer is None:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Customer with id={customer_id} doesn't exist"
-        )
+        raise HTTPException(status_code=404, detail=f"Customer with id={customer_id} doesn't exist")
 
     training_plan = await training_plan_service.get_training_plan_by_id(database, training_plan_id)
     if training_plan is None:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Training plan with id={training_plan_id} doesn't exist"
-        )
+        raise HTTPException(status_code=404, detail=f"Training plan with id={training_plan_id} doesn't exist")
 
     return {
         "id": training_plan["id"],
