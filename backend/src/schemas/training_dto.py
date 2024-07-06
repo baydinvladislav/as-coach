@@ -16,6 +16,11 @@ class TrainingDtoSchema(BaseModel):
 
 class ScheduleExercisesDtoSchema(BaseModel):
     id: UUID
-    sets: dict
-    superset_id: UUID
+    exercise_id: UUID
+    training_id: UUID
+    sets: list
+    superset_id: UUID | None
     ordering: int
+
+    class Config:
+        orm_mode = True

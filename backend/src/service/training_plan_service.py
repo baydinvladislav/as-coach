@@ -68,14 +68,13 @@ class TrainingPlanService:
     async def get_training_plan_by_id(self, uow: AsyncSession, pk: str) -> dict:
         training_plan = await self.training_plan_repository.provide_training_plan_by_id(uow, pk=pk)
 
-        training_ids, exercise_ids = [], []
-        for training in training_plan.trainings:
-            training_ids.append(str(training.id))
-            for exercise in training.exercises:
-                exercise_ids.append(str(exercise.id))
+        training_ids = [str(training.id) for training in training_plan.trainings]
+        exercise_ids = [str(exercise.id) for training in training_plan.trainings for exercise in training.exercises]
 
         scheduled_trainings = await self.training_service.provide_scheduled_trainings(
-            uow=uow, training_ids=training_ids,
+            uow=uow,
+            training_ids=training_ids,
+            exercise_ids=exercise_ids,
         )
 
         if training_plan:

@@ -13,10 +13,18 @@ class TrainingRepository:
         self.superset_dict = {}
         self.ordering = 0
 
-    async def provide_schedule_exercises_by_training_id(self, uow: AsyncSession, training_id: str):
-        query = select(Training).where(Training.id == training_id)
+    async def provide_schedule_exercises_by_training_id(
+        self,
+        uow: AsyncSession,
+        training_ids: list[str],
+        exercise_ids: list[str]
+    ) -> list[ScheduleExercisesDtoSchema]:
+        query = select(ExercisesOnTraining).where(
+            ExercisesOnTraining.training_id.in_(training_ids),
+            ExercisesOnTraining.exercise_id.in_(exercise_ids),
+        )
         result = await uow.execute(query)
-        schedule_exercises = result.scalars().first()
+        schedule_exercises = result.scalars().all()
         return [ScheduleExercisesDtoSchema.from_orm(st) for st in schedule_exercises]
 
     async def _update_superset_dict(self, exercise_item):
