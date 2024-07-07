@@ -2,13 +2,13 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from src.schemas.exercise_dto import ExerciseDtoDto
+from src.schemas.exercise_dto import ExerciseDtoSchema
 
 
 class TrainingDtoSchema(BaseModel):
     id: UUID
     name: str
-    exercises: list[ExerciseDtoDto]
+    exercises: list[ExerciseDtoSchema]
 
     class Config:
         orm_mode = True

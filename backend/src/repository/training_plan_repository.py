@@ -8,7 +8,7 @@ from sqlalchemy.dialects.postgresql import insert
 
 from src import TrainingPlan, Training
 from src.schemas.diet_dto import DietDtoSchema
-from src.schemas.exercise_dto import ExerciseDtoDto
+from src.schemas.exercise_dto import ExerciseDtoSchema
 from src.schemas.training_dto import TrainingDtoSchema
 from src.schemas.training_plan_dto import TrainingPlanDtoShortSchema, TrainingPlanDtoSchema
 
@@ -63,7 +63,7 @@ class TrainingPlanRepository:
             return None
 
         def map_exercise_to_dto(exercise):
-            return ExerciseDtoDto(id=exercise.id, name=exercise.name)
+            return ExerciseDtoSchema(id=exercise.id, name=exercise.name)
 
         def map_training_to_dto(training):
             exercises_dto = [map_exercise_to_dto(exercise) for exercise in training.exercises]

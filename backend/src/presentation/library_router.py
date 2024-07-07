@@ -36,13 +36,13 @@ async def create_exercise(
     exercise = await library_service.create_exercise(
         uow=uow,
         exercise_name=exercise_data.name,
-        coach_id=str(user.id),
+        coach_id=user.id,
         muscle_group_id=exercise_data.muscle_group_id
     )
 
     return {
         "id": str(exercise.id),
-        "muscle_group": exercise.muscle_group.name,
+        "muscle_group": exercise.muscle_group_name,
         "name": exercise.name
     }
 

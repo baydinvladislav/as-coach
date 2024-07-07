@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.repository.library_repository import ExerciseRepository, MuscleGroupRepository
@@ -21,16 +23,17 @@ class LibraryService:
         muscle_groups = await self.muscle_group_repository.get_all_muscle_groups(uow)
         return muscle_groups
 
-    async def create_exercise(self, uow: AsyncSession, exercise_name: str, coach_id: str, muscle_group_id: str):
+    async def create_exercise(self, uow: AsyncSession, exercise_name: str, coach_id: UUID, muscle_group_id: str):
         muscle_group = await self.muscle_group_repository.get_specified_muscle_group(uow, muscle_group_id)
 
         if not muscle_group:
             raise
 
-        exercise = await self.exercise_repository.create(
+        exercise = await self.exercise_repository.create_exercise(
+            uow=uow,
             name=exercise_name,
             coach_id=coach_id,
-            muscle_group=muscle_group
+            muscle_group_id=muscle_group.id
         )
 
         return exercise
