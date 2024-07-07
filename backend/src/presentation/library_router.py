@@ -75,7 +75,7 @@ async def get_exercises(
         response.append({
             "id": str(exercise.id),
             "name": exercise.name,
-            "muscle_group": exercise.muscle_group.name,
+            "muscle_group": exercise.muscle_group_name,
             "muscle_group_id": str(exercise.muscle_group.id)
         })
 
