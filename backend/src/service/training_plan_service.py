@@ -109,21 +109,9 @@ class TrainingPlanService:
             }
 
     async def get_customer_training_plans(
-        self,
-        uow: AsyncSession,
-        customer_id: str,
+        self, uow: AsyncSession, customer_id: str
     ) -> list[TrainingPlanDtoShortSchema]:
         training_plans = await self.training_plan_repository.provide_customer_plans_by_customer_id(
             uow=uow, customer_id=customer_id,
         )
-        return training_plans
-
-    async def get_all_customer_training_plans(self, customer_id: str) -> list:
-        foreign_keys, sub_queries = ["trainings"], ["exercises"]
-        training_plans = await self.training_plan_repository.filter(
-            filters={"customer_id": customer_id},
-            foreign_keys=foreign_keys,
-            sub_queries=sub_queries
-        )
-
         return training_plans

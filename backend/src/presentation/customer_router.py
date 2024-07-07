@@ -134,7 +134,7 @@ async def get_customer(
     user_service: CoachService = Depends(provide_user_service),
     customer_service: CustomerService = Depends(provide_customer_service),
     training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
-    database: Session = Depends(get_db),
+    uow: AsyncSession = Depends(get_db),
 ) -> CustomerOut:
     """
     Gets specific customer by ID.
@@ -144,7 +144,7 @@ async def get_customer(
         user_service: service for interacting with profile
         customer_service: service for interacting with customer
         training_plan_service: service for interacting with customer training plans
-        database: db session injection
+        uow: db session injection
 
     Raise:
         HTTPException: 400 when passed is not correct UUID as customer_id.
@@ -157,7 +157,7 @@ async def get_customer(
             detail="Passed customer_id is not correct UUID value"
         )
 
-    customer = await customer_service.get_customer_by_pk(database, pk=customer_id)
+    customer = await customer_service.get_customer_by_pk(uow, pk=customer_id)
 
     if str(customer.coach_id) != str(user_service.user.id):
         raise HTTPException(
@@ -171,7 +171,7 @@ async def get_customer(
             detail=f"Customer with id {customer_id} not found"
         )
 
-    training_plans = await training_plan_service.get_all_customer_training_plans(str(customer.id))
+    training_plans = await training_plan_service.get_customer_training_plans(uow, str(customer.id))
     return CustomerOut(
         id=str(customer.id),
         first_name=customer.first_name,
