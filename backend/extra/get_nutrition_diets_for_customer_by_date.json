@@ -1,0 +1,101 @@
+{
+    "actual_nutrition": {
+        "daily_total": {
+            "proteins": {
+                "consumed": integer,
+                "total": integer,
+                "calories": integer
+            },
+            "fats": {
+                "consumed": integer,
+                "total": integer,
+                "calories": integer
+            },
+            "carbs": {
+                "consumed": integer,
+                "total": integer,
+                "calories": integer
+            }
+        },
+        "breakfast": {
+            "total": {
+                "proteins": integer,
+                "fats": integer,
+                "carbs": integer,
+                "calories": integer
+            },
+            "products": [
+                {
+                    "id": internal_id,
+                    "name": string,
+                    "amount": integer,
+                    "type": enum(liquid/solid),
+                    "proteins": integer,
+                    "fats": integer,
+                    "carbs": integer,
+                    "calories": integer
+                }
+            ]
+        },
+        "lunch": {
+            "total": {
+                    "proteins": integer,
+                    "fats": integer,
+                    "carbs": integer,
+                    "calories": integer
+                },
+            "products": [
+                {
+                    "id": internal_id,
+                    "name": string,
+                    "amount": integer,
+                    "type": enum(liquid/solid),
+                    "proteins": integer,
+                    "fats": integer,
+                    "carbs": integer,
+                    "calories": integer
+                }
+            ]
+        },
+        "dinner": {
+            "total": {
+                    "proteins": integer,
+                    "fats": integer,
+                    "carbs": integer,
+                    "calories": integer
+                },
+            "products": [
+                {
+                    "id": internal_id,
+                    "name": string,
+                    "amount": integer,
+                    "type": enum(liquid/solid),
+                    "proteins": integer,
+                    "fats": integer,
+                    "carbs": integer,
+                    "calories": integer
+                }
+            ]
+        },
+        "snacks": {
+            "total": {
+                    "proteins": integer,
+                    "fats": integer,
+                    "carbs": integer,
+                    "calories": integer
+                },
+            "products": [
+                {
+                    "id": internal_id,
+                    "name": string,
+                    "amount": integer,
+                    "type": enum(liquid/solid),
+                    "proteins": integer,
+                    "fats": integer,
+                    "carbs": integer,
+                    "calories": integer
+                }
+            ]
+        }
+    }
+}
