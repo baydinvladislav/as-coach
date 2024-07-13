@@ -28,14 +28,13 @@ the frontend should request the `/customers/${customer_id}/nutrition` endpoint.
 * ```POST nutrition/products```:
     * info: to put product to AsCoach database
     * example: nutrition/products
-    * request:
-    * response:
+    * request: ./extras/post_create_product.json
+    * response: ./extras/get_receive_product.json
 
 * ```GET nutrition/products/${product_id}```:
-    * info: to get product data by product id
+    * info: to get product data by product id for product detail card
     * example: nutrition/products/d7182bb0-9a03-4e48-86ca-8b20d4a9bcba
-    * request:
-    * response:
+    * response: ./extras/get_receive_product.json
 
 
 ### Data Storage Structure

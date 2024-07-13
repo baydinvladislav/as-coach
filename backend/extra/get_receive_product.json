@@ -1,5 +1,7 @@
 {
     "id": "d9428888-122b-11e1-b85c-61cd3cbb3210",
+    "barcode": "1234567890123",
+    "vendor": "Chobani",
     "name": "Greek Yogurt",
     "amount": 100,
     "type": "solid",
