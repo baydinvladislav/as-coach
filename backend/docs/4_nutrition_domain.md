@@ -23,7 +23,7 @@ the frontend should request the `/customers/${customer_id}/nutrition` endpoint.
     * example_1: nutrition/products/молоко
     * example_2: nutrition/products/молоко-простоквашино
     * example_2: nutrition/products/простоквашино-молоко-2%
-    * response:
+    * response: ./extras/get_receive_product.json
 
 * ```POST nutrition/products```:
     * info: to put product to AsCoach database

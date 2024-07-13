@@ -1,0 +1,42 @@
+{
+  "breakfast": {
+    "total": {
+      "proteins": 30,
+      "fats": 15,
+      "carbs": 50,
+      "calories": 455
+    },
+    "products": [
+      {
+        "id": "a3bb189e-8bf9-3888-9912-ace4e6543002",
+        "name": "Oatmeal",
+        "amount": 100,
+        "type": "solid",
+        "proteins": 10,
+        "fats": 5,
+        "carbs": 30,
+        "calories": 200
+      },
+      {
+        "id": "d9428888-122b-11e1-b85c-61cd3cbb3210",
+        "name": "Greek Yogurt",
+        "amount": 150,
+        "type": "solid",
+        "proteins": 15,
+        "fats": 7,
+        "carbs": 10,
+        "calories": 150
+      },
+      {
+        "id": "e4d909c2-9a0b-4c3b-b7db-3c5a81e5f456",
+        "name": "Banana",
+        "amount": 1,
+        "type": "solid",
+        "proteins": 5,
+        "fats": 3,
+        "carbs": 10,
+        "calories": 50
+      }
+    ]
+  }
+}
