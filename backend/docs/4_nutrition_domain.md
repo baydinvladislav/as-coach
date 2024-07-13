@@ -38,4 +38,9 @@ the frontend should request these endpoints to work with nutrition domain.
 
 
 ### Data Storage Structure
-tbd: which datastorage I should use? how do I can store the data?
+Command Query Responsibility Segregation (CQRS) pattern, separating the write operations (commands) 
+from the read operations (queries).
+
+DynamoDB: Used for storing product data and handling insert/update operations.
+Amazon OpenSearch Service: Used for indexing and full-text search of product data.
+AWS Lambda: Used to synchronize data between DynamoDB and OpenSearch.
