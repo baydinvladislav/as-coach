@@ -1,6 +1,6 @@
 ## Nutrition domain (microservice)
-To get nutrition data for rendering the nutrition screen, which is the main screen on the customer side, 
-the frontend should request the `/customers/${customer_id}/nutrition` endpoint.
+Rendering the nutrition screen, which is the main screen on the customer side, 
+the frontend should request these endpoints to work with nutrition domain.
 
 ### Table of Contents
 - [API](#api)
