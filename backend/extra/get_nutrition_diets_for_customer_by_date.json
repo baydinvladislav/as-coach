@@ -2,98 +2,178 @@
     "actual_nutrition": {
         "daily_total": {
             "proteins": {
-                "consumed": integer,
-                "total": integer,
-                "calories": integer
+                "consumed": 150,
+                "total": 200,
+                "calories": 600
             },
             "fats": {
-                "consumed": integer,
-                "total": integer,
-                "calories": integer
+                "consumed": 70,
+                "total": 90,
+                "calories": 630
             },
             "carbs": {
-                "consumed": integer,
-                "total": integer,
-                "calories": integer
+                "consumed": 250,
+                "total": 300,
+                "calories": 1000
             }
         },
         "breakfast": {
             "total": {
-                "proteins": integer,
-                "fats": integer,
-                "carbs": integer,
-                "calories": integer
+                "proteins": 30,
+                "fats": 15,
+                "carbs": 50,
+                "calories": 455
             },
             "products": [
                 {
-                    "id": internal_id,
-                    "name": string,
-                    "amount": integer,
-                    "type": enum(liquid/solid),
-                    "proteins": integer,
-                    "fats": integer,
-                    "carbs": integer,
-                    "calories": integer
+                    "id": "a3bb189e-8bf9-3888-9912-ace4e6543002",
+                    "name": "Oatmeal",
+                    "amount": 100,
+                    "type": "solid",
+                    "proteins": 10,
+                    "fats": 5,
+                    "carbs": 30,
+                    "calories": 200
+                },
+                {
+                    "id": "d9428888-122b-11e1-b85c-61cd3cbb3210",
+                    "name": "Greek Yogurt",
+                    "amount": 150,
+                    "type": "solid",
+                    "proteins": 15,
+                    "fats": 7,
+                    "carbs": 10,
+                    "calories": 150
+                },
+                {
+                    "id": "e4d909c2-9a0b-4c3b-b7db-3c5a81e5f456",
+                    "name": "Banana",
+                    "amount": 1,
+                    "type": "solid",
+                    "proteins": 5,
+                    "fats": 3,
+                    "carbs": 10,
+                    "calories": 50
                 }
             ]
         },
         "lunch": {
             "total": {
-                    "proteins": integer,
-                    "fats": integer,
-                    "carbs": integer,
-                    "calories": integer
-                },
+                "proteins": 50,
+                "fats": 20,
+                "carbs": 70,
+                "calories": 660
+            },
             "products": [
                 {
-                    "id": internal_id,
-                    "name": string,
-                    "amount": integer,
-                    "type": enum(liquid/solid),
-                    "proteins": integer,
-                    "fats": integer,
-                    "carbs": integer,
-                    "calories": integer
+                    "id": "067e6162-3b6f-4ae2-a171-2470b63dff00",
+                    "name": "Grilled Chicken Breast",
+                    "amount": 200,
+                    "type": "solid",
+                    "proteins": 30,
+                    "fats": 5,
+                    "carbs": 0,
+                    "calories": 200
+                },
+                {
+                    "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                    "name": "Quinoa",
+                    "amount": 150,
+                    "type": "solid",
+                    "proteins": 10,
+                    "fats": 5,
+                    "carbs": 30,
+                    "calories": 200
+                },
+                {
+                    "id": "7d44b720-23f7-48f0-88a1-8e78c080a974",
+                    "name": "Mixed Vegetables",
+                    "amount": 200,
+                    "type": "solid",
+                    "proteins": 5,
+                    "fats": 5,
+                    "carbs": 30,
+                    "calories": 200
                 }
             ]
         },
         "dinner": {
             "total": {
-                    "proteins": integer,
-                    "fats": integer,
-                    "carbs": integer,
-                    "calories": integer
-                },
+                "proteins": 40,
+                "fats": 25,
+                "carbs": 60,
+                "calories": 625
+            },
             "products": [
                 {
-                    "id": internal_id,
-                    "name": string,
-                    "amount": integer,
-                    "type": enum(liquid/solid),
-                    "proteins": integer,
-                    "fats": integer,
-                    "carbs": integer,
-                    "calories": integer
+                    "id": "550e8400-e29b-41d4-a716-446655440000",
+                    "name": "Salmon",
+                    "amount": 150,
+                    "type": "solid",
+                    "proteins": 25,
+                    "fats": 15,
+                    "carbs": 0,
+                    "calories": 300
+                },
+                {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "name": "Brown Rice",
+                    "amount": 150,
+                    "type": "solid",
+                    "proteins": 5,
+                    "fats": 5,
+                    "carbs": 30,
+                    "calories": 200
+                },
+                {
+                    "id": "e3a1c4e4-02f4-4a0a-80bd-89f90fef4c14",
+                    "name": "Steamed Broccoli",
+                    "amount": 100,
+                    "type": "solid",
+                    "proteins": 5,
+                    "fats": 5,
+                    "carbs": 10,
+                    "calories": 50
                 }
             ]
         },
         "snacks": {
             "total": {
-                    "proteins": integer,
-                    "fats": integer,
-                    "carbs": integer,
-                    "calories": integer
-                },
+                "proteins": 30,
+                "fats": 10,
+                "carbs": 70,
+                "calories": 490
+            },
             "products": [
                 {
-                    "id": internal_id,
-                    "name": string,
-                    "amount": integer,
-                    "type": enum(liquid/solid),
-                    "proteins": integer,
-                    "fats": integer,
-                    "carbs": integer,
-                    "calories": integer
+                    "id": "f9bc37c6-cfd8-4f59-a8e6-6a6b37b8c2c2",
+                    "name": "Protein Bar",
+                    "amount": 1,
+                    "type": "solid",
+                    "proteins": 20,
+                    "fats": 5,
+                    "carbs": 30,
+                    "calories": 200
+                },
+                {
+                    "id": "936da01f-9abd-4d9d-80c7-02af85c822a8",
+                    "name": "Apple",
+                    "amount": 1,
+                    "type": "solid",
+                    "proteins": 0,
+                    "fats": 0,
+                    "carbs": 20,
+                    "calories": 80
+                },
+                {
+                    "id": "8e02b2c3-16e1-4a3d-8a57-6a1f889c8af2",
+                    "name": "Almonds",
+                    "amount": 30,
+                    "type": "solid",
+                    "proteins": 10,
+                    "fats": 5,
+                    "carbs": 20,
+                    "calories": 70
                 }
             ]
         }
