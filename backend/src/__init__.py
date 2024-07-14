@@ -6,7 +6,6 @@ from src.persistence.models import (
     Customer,
     TrainingPlan,
     Diet,
-    DietOnTrainingPlan,
     Training,
     MuscleGroup,
     Exercise,

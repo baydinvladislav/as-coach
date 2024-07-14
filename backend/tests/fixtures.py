@@ -18,7 +18,6 @@ from src import (
     Coach,
     Customer,
     Diet,
-    DietOnTrainingPlan,
 )
 from src.utils import generate_random_password, get_hashed_password
 from tests.conftest import TestingSessionLocal
@@ -60,21 +59,10 @@ async def create_training_exercises(create_trainings, create_exercises, db):
 
 @pytest_asyncio.fixture()
 async def create_diets(create_training_plans, db):
-    query = (
-        select(TrainingPlan.id)
-    )
-    result = await db.execute(query)
-    training_plan_id = result.fetchone()[0]
     diets_list = [Diet(proteins=200, fats=100, carbs=300), Diet(proteins=200, fats=100, carbs=200)]
 
     db.add_all(diets_list)
     await db.commit()
-
-    diets_on_training_plan = [
-        DietOnTrainingPlan(diet_id=diet.id, training_plan_id=training_plan_id) for diet in diets_list
-    ]
-
-    db.add_all(diets_on_training_plan)
 
     await db.commit()
 

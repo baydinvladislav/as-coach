@@ -2,7 +2,7 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src import Diet, DietOnTrainingPlan
+from src import Diet
 
 
 class DietRepository:
@@ -21,8 +21,3 @@ class DietRepository:
         await uow.flush()
 
         return len(diets)
-
-
-# TODO: deprecated
-class DietOnTrainingPlanRepository:
-    model = DietOnTrainingPlan

@@ -128,20 +128,6 @@ class Diet(Base, BaseModel):
         return f"diet: {self.proteins}/{self.fats}/{self.carbs}"
 
 
-# TODO: deprecated
-class DietOnTrainingPlan(Base, BaseModel):
-    """
-    Link table between Diet and TrainingsPlan tables
-    """
-    __tablename__ = "dietontrainingplan"
-
-    diet_id = Column(UUID(as_uuid=True), ForeignKey("diet.id", ondelete="CASCADE"))
-    training_plan_id = Column(UUID(as_uuid=True), ForeignKey("trainingplan.id", ondelete="CASCADE"))
-
-    def __repr__(self):
-        return f"diet on training plan: {self.id}"
-
-
 class Training(Base, BaseModel):
     """
     Contains training's exercises.
