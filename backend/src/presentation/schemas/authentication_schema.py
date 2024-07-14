@@ -1,7 +1,3 @@
-"""
-Schemas for auth routers
-"""
-
 from datetime import date
 from typing import Optional
 

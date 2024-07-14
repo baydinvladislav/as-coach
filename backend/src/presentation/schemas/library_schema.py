@@ -1,7 +1,3 @@
-"""
-Schemas for gym service
-"""
-
 from typing import List, Union
 
 from pydantic import BaseModel
