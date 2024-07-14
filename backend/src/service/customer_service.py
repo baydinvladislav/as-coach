@@ -120,7 +120,7 @@ class CustomerProfileService(UserService):
 
 
 class CustomerService:
-    """Contains business rules for Customer subdomain"""
+    """Contains business rules for Customer domain"""
 
     def __init__(
         self,

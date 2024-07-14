@@ -56,7 +56,7 @@ class CoachProfileService(UserService):
 
 
 class CoachService:
-    """Contains business rules for Coach subdomain"""
+    """Contains business rules for Coach domain"""
 
     def __init__(self, selector_service: CoachSelectorService, profile_service: CoachProfileService) -> None:
         self.user = None
