@@ -2,7 +2,6 @@ from typing import Any, List
 
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
-from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.service.coach_service import CoachService
@@ -39,7 +38,7 @@ async def create_customer(
     customer_data: CustomerCreateIn,
     user_service: CoachService = Depends(provide_user_service),
     customer_service: CustomerService = Depends(provide_customer_service),
-    database: Session = Depends(get_db),
+    uow: AsyncSession = Depends(get_db),
 ) -> CustomerOut:
     """
     Creates new customer for coach
@@ -48,7 +47,7 @@ async def create_customer(
         customer_data: data to create new customer
         user_service: service for interacting with profile
         customer_service: service for interacting with customer
-        database: db session injection
+        uow: db session injection
     Raises:
         400 in case if customer with the phone number already created
         400 in case if couple last name and first name already exist
@@ -59,7 +58,7 @@ async def create_customer(
     user = user_service.user
 
     customer_in_db = await customer_service.get_customer_by_username(
-        uow=database, username=customer_data.phone_number
+        uow=uow, username=customer_data.phone_number
     )
     if customer_data.phone_number and customer_in_db:
         raise HTTPException(
@@ -69,7 +68,7 @@ async def create_customer(
         )
 
     customer_in_db = await customer_service.get_customer_by_full_name_for_coach(
-        uow=database,
+        uow=uow,
         coach_id=str(user.id),
         first_name=customer_data.first_name,
         last_name=customer_data.last_name,
@@ -90,7 +89,7 @@ async def create_customer(
         last_name=customer_data.last_name,
     )
 
-    customer = await customer_service.register(database, data=customer_reg_data)
+    customer = await customer_service.register(uow, data=customer_reg_data)
 
     return CustomerOut(
         id=str(customer.id),
@@ -108,7 +107,7 @@ async def create_customer(
 async def get_customers(
     coach_service: CoachService = Depends(provide_user_service),
     customer_service: CustomerService = Depends(provide_customer_service),
-    database: Session = Depends(get_db),
+    uow: AsyncSession = Depends(get_db),
 ) -> List[dict[str, Any]]:
     """
     Gets all customer for current coach
@@ -116,12 +115,12 @@ async def get_customers(
     Args:
         coach_service: current application coach
         customer_service: service to work with customer domain
-        database: db session injection
+        uow: db session injection
     Returns:
         list of customers
     """
     coach = coach_service.user
-    customers = await customer_service.get_customers_by_coach_id(database, str(coach.id))
+    customers = await customer_service.get_customers_by_coach_id(uow, str(coach.id))
     return customers
 
 
@@ -252,7 +251,7 @@ async def get_all_training_plans(
     user_service: CoachService = Depends(provide_user_service),
     customer_service: CustomerService = Depends(provide_customer_service),
     training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
-    database: AsyncSession = Depends(get_db),
+    uow: AsyncSession = Depends(get_db),
 ) -> list[TrainingPlanOut]:
     """
     Returns all training plans for specific customer
@@ -263,13 +262,13 @@ async def get_all_training_plans(
         user_service: service for interacting with profile
         customer_service: service for interacting with customer
         training_plan_service: service responsible for training plans creation
-        database: db session injection
+        uow: db session injection
     """
-    customer = await customer_service.get_customer_by_pk(database, pk=customer_id)
+    customer = await customer_service.get_customer_by_pk(uow, pk=customer_id)
     if customer is None:
         raise HTTPException(status_code=404, detail=f"customer with id={customer_id} doesn't exist")
 
-    training_plans = await training_plan_service.get_customer_training_plans(database, str(customer.id))
+    training_plans = await training_plan_service.get_customer_training_plans(uow, str(customer.id))
 
     response = [
         TrainingPlanOut(
@@ -297,7 +296,7 @@ async def get_training_plan(
     user_service: CoachService = Depends(provide_user_service),
     training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
     customer_service: CustomerService = Depends(provide_customer_service),
-    database: AsyncSession = Depends(get_db),
+    uow: AsyncSession = Depends(get_db),
 ) -> dict:
     """
     Gets full info for specific training plan by their ID
@@ -309,16 +308,16 @@ async def get_training_plan(
         user_service: service for interacting with profile
         training_plan_service: service for interacting with customer training plans
         customer_service: service for interacting with customer
-        database: db session injection
+        uow: db session injection
 
     Raise:
         HTTPException: 404 when customer or training plan are not found
     """
-    customer = await customer_service.get_customer_by_pk(database, pk=customer_id)
+    customer = await customer_service.get_customer_by_pk(uow, pk=customer_id)
     if customer is None:
         raise HTTPException(status_code=404, detail=f"Customer with id={customer_id} doesn't exist")
 
-    training_plan = await training_plan_service.get_training_plan_by_id(database, training_plan_id)
+    training_plan = await training_plan_service.get_training_plan_by_id(uow, training_plan_id)
     if training_plan is None:
         raise HTTPException(status_code=404, detail=f"Training plan with id={training_plan_id} doesn't exist")
 

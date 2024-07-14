@@ -70,7 +70,7 @@ async def provide_customer_service(
 
 
 async def provide_user_service(
-    database: AsyncSession = Depends(get_db),
+    uow: AsyncSession = Depends(get_db),
     token: str = Depends(reuseable_oauth),
     coach_service: CoachService = Depends(provide_coach_service),
     customer_service: CustomerService = Depends(provide_customer_service),
@@ -79,7 +79,7 @@ async def provide_user_service(
     Checks that token from client request is valid
 
     Args:
-        database: db session injection
+        uow: db session injection
         token: token from client request
         coach_service: service for interacting with coach profile
         customer_service: service for interacting with customer profile
@@ -107,8 +107,8 @@ async def provide_user_service(
     else:
         username = token_data.sub
 
-        coach = await coach_service.get_coach_by_username(database, username=username)
-        customer = await customer_service.get_customer_by_username(database, username=username)
+        coach = await coach_service.get_coach_by_username(uow, username=username)
+        customer = await customer_service.get_customer_by_username(uow, username=username)
 
         if coach:
             return coach_service

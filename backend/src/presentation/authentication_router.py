@@ -11,7 +11,7 @@ from fastapi import (
     Form,
 )
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.service.coach_service import CoachService
 from src.service.customer_service import CustomerService
@@ -43,10 +43,10 @@ auth_router = APIRouter()
 async def register_coach(
     coach_data: CoachRegistrationData,
     coach_service: CoachService = Depends(provide_coach_service),
-    database: Session = Depends(get_db),
+    uow: AsyncSession = Depends(get_db),
 ) -> UserRegisterOut:
     try:
-        coach = await coach_service.register_coach(database, coach_data)
+        coach = await coach_service.register_coach(uow, coach_data)
     except UsernameIsTaken:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -67,11 +67,11 @@ async def register_coach(
     status_code=status.HTTP_200_OK,
     response_model=LoginOut)
 async def login_user(
-        form_data: OAuth2PasswordRequestForm = Depends(),
-        fcm_token: str = Form(...),
-        coach_service: CoachService = Depends(provide_coach_service),
-        customer_service: CustomerService = Depends(provide_customer_service),
-        database: Session = Depends(get_db),
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    fcm_token: str = Form(...),
+    coach_service: CoachService = Depends(provide_coach_service),
+    customer_service: CustomerService = Depends(provide_customer_service),
+    uow: AsyncSession = Depends(get_db),
 ) -> LoginOut:
     """
     Login endpoint authenticates user
@@ -81,7 +81,7 @@ async def login_user(
         fcm_token: token to send push notification on user device
         coach_service: service for interacting with coach profile
         customer_service: service for interacting with customer profile
-        database: db session injection
+        uow: db session injection
     Raises:
         400 in case if passed empty fields
         404 if specified user was not found
@@ -94,7 +94,7 @@ async def login_user(
 
     try:
         coach = await coach_service.authorize_coach(
-            uow=database,
+            uow=uow,
             form_data=form_data,
             fcm_token=fcm_token,
         )
@@ -106,7 +106,7 @@ async def login_user(
     else:
         try:
             customer = await customer_service.authorize(
-                uow=database,
+                uow=uow,
                 form_data=form_data,
                 fcm_token=fcm_token,
             )
@@ -133,7 +133,7 @@ async def login_user(
     status_code=status.HTTP_200_OK,
     summary="Get details of currently logged in user")
 async def get_me(
-        service: CoachService | CustomerService = Depends(provide_user_service),
+    service: CoachService | CustomerService = Depends(provide_user_service),
 ) -> dict:
     """
     Returns short info about current user
@@ -161,7 +161,7 @@ async def get_me(
     response_model=UserProfileOut,
     summary="Get user profile")
 async def get_profile(
-        service: CoachService | CustomerService = Depends(provide_user_service),
+    service: CoachService | CustomerService = Depends(provide_user_service),
 ) -> UserProfileOut:
     """
     Returns full info about user
@@ -194,15 +194,15 @@ async def get_profile(
     response_model=UserProfileOut,
     status_code=status.HTTP_200_OK)
 async def update_profile(
-        service: CoachService | CustomerService = Depends(provide_user_service),
-        first_name: str = Form(...),
-        username: str = Form(...),
-        last_name: str = Form(None),
-        photo: UploadFile = File(None),
-        gender: Optional[Gender] = Form(None),
-        birthday: date = Form(None),
-        email: str = Form(None),
-        database: Session = Depends(get_db),
+    service: CoachService | CustomerService = Depends(provide_user_service),
+    first_name: str = Form(...),
+    username: str = Form(...),
+    last_name: str = Form(None),
+    photo: UploadFile = File(None),
+    gender: Optional[Gender] = Form(None),
+    birthday: date = Form(None),
+    email: str = Form(None),
+    uow: AsyncSession = Depends(get_db),
 ) -> UserProfileOut:
     """
     Updated full info about user
@@ -217,7 +217,7 @@ async def update_profile(
         gender: client value from body
         birthday: client value from body
         email: client value from body
-        database: db session injection
+        uow: db session injection
 
     Returns:
         dictionary with updated full user info
@@ -225,7 +225,7 @@ async def update_profile(
     user = service.user
 
     updated_user = await service.update_profile(
-        uow=database,
+        uow=uow,
         user=user,
         password=user.password,
         fcm_token=user.fcm_token,
@@ -256,11 +256,11 @@ async def update_profile(
     summary="Delete user profile",
     status_code=status.HTTP_204_NO_CONTENT)
 async def delete_profile(
-    database: Session = Depends(get_db),
+    uow: AsyncSession = Depends(get_db),
     service: CoachService | CustomerService = Depends(provide_user_service),
 ):
     user = service.user
-    await service.delete(database, user)
+    await service.delete(uow, user)
     return None
 
 
@@ -296,12 +296,12 @@ async def confirm_password(
     status_code=status.HTTP_200_OK)
 async def change_password(
     new_password: NewUserPassword,
-    database: Session = Depends(get_db),
+    uow: AsyncSession = Depends(get_db),
     service: CoachService | CustomerService = Depends(provide_user_service),
 ) -> dict:
     user = service.user
     await service.update_profile(
-        uow=database,
+        uow=uow,
         user=user,
         password=await get_hashed_password(new_password.password)
     )

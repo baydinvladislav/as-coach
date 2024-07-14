@@ -7,7 +7,7 @@ Create Date: 2023-08-09 12:40:07.032498
 """
 
 from alembic import op
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.persistence.models import MuscleGroup, Exercise
 
@@ -141,7 +141,7 @@ def insert_exercises(session):
 
 
 def upgrade() -> None:
-    session = Session(bind=op.get_bind())
+    session = AsyncSession(bind=op.get_bind())
 
     insert_muscle_groups(session)
     insert_exercises(session)
@@ -150,7 +150,7 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    session = Session(bind=op.get_bind())
+    session = AsyncSession(bind=op.get_bind())
 
     session.query(Exercise).delete()
     session.query(MuscleGroup).delete()

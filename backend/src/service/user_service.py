@@ -4,7 +4,7 @@ from enum import Enum
 
 from PIL import Image
 from jose import jwt
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.attributes import set_attribute
 
 from src import Coach, Customer
@@ -30,15 +30,15 @@ class UserService(ABC):
     """Contains base user logic"""
 
     @abstractmethod
-    async def register_user(self, uow: Session, data: UserRegistrationData) -> USER_MODEL:
+    async def register_user(self, uow: AsyncSession, data: UserRegistrationData) -> USER_MODEL:
         raise NotImplementedError
 
     @abstractmethod
-    async def authorize_user(self, uow: Session, user: USER_MODEL, data: UserLoginData) -> bool:
+    async def authorize_user(self, uow: AsyncSession, user: USER_MODEL, data: UserLoginData) -> bool:
         raise NotImplementedError
 
     @abstractmethod
-    async def update_user_profile(self, uow: Session, user: USER_MODEL, **params) -> None:
+    async def update_user_profile(self, uow: AsyncSession, user: USER_MODEL, **params) -> None:
         raise NotImplementedError
 
     @staticmethod
