@@ -193,7 +193,7 @@ async def create_training_plan(
     training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
     push_notification_service: NotificationService = Depends(provide_push_notification_service),
     uow: AsyncSession = Depends(get_db),
-) -> dict:
+) -> TrainingPlanOut:
     """
     Creates new training plan for specified customer.
     Notifies customer that he got new training plan.
@@ -231,15 +231,15 @@ async def create_training_plan(
     notification_data = {"title": push_tittle, "body": push_body}
     await push_notification_service.send_push_notification(customer.fcm_token, notification_data)
 
-    return {
-        "id": str(training_plan.id),
-        "start_date": training_plan.start_date.strftime("%Y-%m-%d"),
-        "end_date": training_plan.end_date.strftime("%Y-%m-%d"),
-        "number_of_trainings": len(training_plan.trainings),
-        "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
-        "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
-        "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets]),
-    }
+    return TrainingPlanOut(
+        id=str(training_plan.id),
+        start_date=training_plan.start_date.strftime("%Y-%m-%d"),
+        end_date=training_plan.end_date.strftime("%Y-%m-%d"),
+        number_of_trainings=len(training_plan.trainings),
+        proteins="/".join([str(diet.proteins) for diet in training_plan.diets]),
+        fats="/".join([str(diet.fats) for diet in training_plan.diets]),
+        carbs="/".join([str(diet.carbs) for diet in training_plan.diets]),
+    )
 
 
 @customer_router.get(
@@ -297,7 +297,7 @@ async def get_training_plan(
     training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
     customer_service: CustomerService = Depends(provide_customer_service),
     uow: AsyncSession = Depends(get_db),
-) -> dict:
+) -> TrainingPlanOutFull:
     """
     Gets full info for specific training plan by their ID
     Endpoint can be used by both the coach and the customer
@@ -321,15 +321,15 @@ async def get_training_plan(
     if training_plan is None:
         raise HTTPException(status_code=404, detail=f"Training plan with id={training_plan_id} doesn't exist")
 
-    return {
-        "id": training_plan["id"],
-        "start_date": training_plan["start_date"],
-        "end_date": training_plan["end_date"],
-        "proteins": training_plan["proteins"],
-        "fats": training_plan["fats"],
-        "carbs": training_plan["carbs"],
-        "trainings": training_plan["trainings"],
-        "set_rest": training_plan["set_rest"],
-        "exercise_rest": training_plan["exercise_rest"],
-        "notes": training_plan["notes"]
-    }
+    return TrainingPlanOutFull(
+        id=training_plan["id"],
+        start_date=training_plan["start_date"],
+        end_date=training_plan["end_date"],
+        proteins=training_plan["proteins"],
+        fat=training_plan["fats"],
+        carb=training_plan["carbs"],
+        training=training_plan["trainings"],
+        set_rest=training_plan["set_rest"],
+        exercise_rest=training_plan["exercise_rest"],
+        notes=training_plan["notes"],
+    )

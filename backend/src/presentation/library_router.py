@@ -19,7 +19,7 @@ async def create_exercise(
     user_service: CoachService = Depends(provide_user_service),
     library_service: LibraryService = Depends(provide_library_service),
     uow: AsyncSession = Depends(get_db),
-) -> dict:
+) -> ExerciseCreateOut:
     """
     Creates new exercise for coach
 
@@ -39,12 +39,9 @@ async def create_exercise(
         coach_id=user.id,
         muscle_group_id=exercise_data.muscle_group_id
     )
-
-    return {
-        "id": str(exercise.id),
-        "muscle_group": exercise.muscle_group_name,
-        "name": exercise.name
-    }
+    return ExerciseCreateOut(
+        id=str(exercise.id), muscle_group=exercise.muscle_group_name, name=exercise.name,
+    )
 
 
 @gym_router.get(
