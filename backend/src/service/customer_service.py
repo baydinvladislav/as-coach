@@ -172,7 +172,7 @@ class CustomerService:
             self.user = await self.get_customer_by_username(uow, form_data.username)
 
         if self.user is None:
-            logger.warning(f"Not found any customer in database")
+            logger.info(f"neither.coach.nor.client.was.found.in.the.database", form_data.username)
             return None
 
         data = UserLoginData(received_password=form_data.password, fcm_token=fcm_token)
