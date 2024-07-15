@@ -39,7 +39,9 @@ async def provide_coach_service() -> CoachService:
 
 
 async def provide_library_service() -> LibraryService:
-    return LibraryService(exercise_repository=ExerciseRepository(), muscle_group_repository=MuscleGroupRepository())
+    return LibraryService(
+        exercise_repository=ExerciseRepository(), muscle_group_repository=MuscleGroupRepository()
+    )
 
 
 async def provide_training_plan_service() -> TrainingPlanService:
@@ -95,15 +97,10 @@ async def provide_user_service(
         token_data = await decode_jwt_token(token)
     except TokenExpired:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token expired",
-            headers={"WWW-Authenticate": "Bearer"}
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired", headers={"WWW-Authenticate": "Bearer"}
         )
     except NotValidCredentials:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Not valid credentials"
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Not valid credentials")
     else:
         username = token_data.sub
 
@@ -115,7 +112,4 @@ async def provide_user_service(
         elif customer:
             return customer_service
         else:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
