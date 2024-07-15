@@ -75,7 +75,7 @@ async def get_exercises(
             "muscle_group": exercise.muscle_group_name,
             "muscle_group_id": str(exercise.muscle_group_id)
         })
-
+    print(response)
     return response
 
 

@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.repository.library_repository import ExerciseRepository, MuscleGroupRepository
 from src.schemas.muscle_group_dto import MuscleGroupDto
+from src.schemas.exercise_dto import ExerciseDtoSchema
 
 
 class LibraryService:
@@ -15,7 +16,7 @@ class LibraryService:
         self.exercise_repository = exercise_repository
         self.muscle_group_repository = muscle_group_repository
 
-    async def get_exercise_list(self, uow: AsyncSession, coach_id: str):
+    async def get_exercise_list(self, uow: AsyncSession, coach_id: str) -> list[ExerciseDtoSchema]:
         exercises = await self.exercise_repository.get_coach_exercises(uow, coach_id)
         return exercises
 

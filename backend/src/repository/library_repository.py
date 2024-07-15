@@ -58,9 +58,18 @@ class ExerciseRepository:
 
     async def get_coach_exercises(self, uow: AsyncSession, coach_id: str) -> list[ExerciseDtoSchema]:
         query = (
-            select(Exercise.id, Exercise.name, Exercise.coach_id)
+            select(
+                Exercise.id,
+                Exercise.name,
+                Exercise.coach_id,
+                MuscleGroup.name.label('muscle_group_name'),
+            )
+            .join(MuscleGroup, Exercise.muscle_group_id == MuscleGroup.id)
             .where(
-                or_(Exercise.coach_id.is_(None), Exercise.coach_id == UUID(coach_id))
+                or_(
+                    Exercise.coach_id.is_(None),
+                    Exercise.coach_id == UUID(coach_id),
+                )
             )
         )
         result = await uow.execute(query)
