@@ -23,7 +23,7 @@ from src.service.notification_service import NotificationService
 from src.supplier.firebase_supplier import PushFirebaseNotificator
 
 
-async def get_database_unit_of_work() -> AsyncSession:
+async def provide_database_unit_of_work() -> AsyncSession:
     async with SessionLocal() as unit_of_work:
         try:
             yield unit_of_work
@@ -70,7 +70,7 @@ async def provide_customer_service(
 
 
 async def provide_user_service(
-    uow: AsyncSession = Depends(get_database_unit_of_work),
+    uow: AsyncSession = Depends(provide_database_unit_of_work),
     token: str = Depends(reuseable_oauth),
     coach_service: CoachService = Depends(provide_coach_service),
     customer_service: CustomerService = Depends(provide_customer_service),

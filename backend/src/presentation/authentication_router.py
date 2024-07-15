@@ -17,7 +17,7 @@ from src.service.coach_service import CoachService
 from src.service.customer_service import CustomerService
 from src.shared.exceptions import UsernameIsTaken, NotValidCredentials
 from src.shared.dependencies import (
-    get_database_unit_of_work,
+    provide_database_unit_of_work,
     provide_user_service,
     provide_coach_service,
     provide_customer_service,
@@ -43,7 +43,7 @@ auth_router = APIRouter()
 async def register_coach(
     coach_data: CoachRegistrationData,
     coach_service: CoachService = Depends(provide_coach_service),
-    uow: AsyncSession = Depends(get_database_unit_of_work),
+    uow: AsyncSession = Depends(provide_database_unit_of_work),
 ) -> UserRegisterOut:
     try:
         coach = await coach_service.register_coach(uow, coach_data)
@@ -71,7 +71,7 @@ async def login_user(
     fcm_token: str = Form(...),
     coach_service: CoachService = Depends(provide_coach_service),
     customer_service: CustomerService = Depends(provide_customer_service),
-    uow: AsyncSession = Depends(get_database_unit_of_work),
+    uow: AsyncSession = Depends(provide_database_unit_of_work),
 ) -> LoginOut:
     """
     Login endpoint authenticates user
@@ -202,7 +202,7 @@ async def update_profile(
     gender: Optional[Gender] = Form(None),
     birthday: date = Form(None),
     email: str = Form(None),
-    uow: AsyncSession = Depends(get_database_unit_of_work),
+    uow: AsyncSession = Depends(provide_database_unit_of_work),
 ) -> UserProfileOut:
     """
     Updated full info about user
@@ -256,7 +256,7 @@ async def update_profile(
     summary="Delete user profile",
     status_code=status.HTTP_204_NO_CONTENT)
 async def delete_profile(
-    uow: AsyncSession = Depends(get_database_unit_of_work),
+    uow: AsyncSession = Depends(provide_database_unit_of_work),
     service: CoachService | CustomerService = Depends(provide_user_service),
 ):
     user = service.user
@@ -296,7 +296,7 @@ async def confirm_password(
     status_code=status.HTTP_200_OK)
 async def change_password(
     new_password: NewUserPassword,
-    uow: AsyncSession = Depends(get_database_unit_of_work),
+    uow: AsyncSession = Depends(provide_database_unit_of_work),
     service: CoachService | CustomerService = Depends(provide_user_service),
 ) -> dict:
     user = service.user

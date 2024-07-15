@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.service.coach_service import CoachService
 from src.service.library_service import LibraryService
-from src.shared.dependencies import provide_user_service, provide_library_service, get_database_unit_of_work
+from src.shared.dependencies import provide_user_service, provide_library_service, provide_database_unit_of_work
 from src.presentation.schemas.library_schema import ExerciseCreateIn, ExerciseCreateOut
 
 gym_router = APIRouter()
@@ -18,7 +18,7 @@ async def create_exercise(
     exercise_data: ExerciseCreateIn,
     user_service: CoachService = Depends(provide_user_service),
     library_service: LibraryService = Depends(provide_library_service),
-    uow: AsyncSession = Depends(get_database_unit_of_work),
+    uow: AsyncSession = Depends(provide_database_unit_of_work),
 ) -> ExerciseCreateOut:
     """
     Creates new exercise for coach
@@ -51,7 +51,7 @@ async def create_exercise(
 async def get_exercises(
     user_service: CoachService = Depends(provide_user_service),
     library_service: LibraryService = Depends(provide_library_service),
-    uow: AsyncSession = Depends(get_database_unit_of_work),
+    uow: AsyncSession = Depends(provide_database_unit_of_work),
 ) -> list:
     """
     Returns all exercises for coach
@@ -86,7 +86,7 @@ async def get_exercises(
 async def get_muscle_groups(
     user_service: CoachService = Depends(provide_user_service),
     library_service: LibraryService = Depends(provide_library_service),
-    uow: AsyncSession = Depends(get_database_unit_of_work),
+    uow: AsyncSession = Depends(provide_database_unit_of_work),
 ) -> list:
     """
     Returns all muscle groups for coach
