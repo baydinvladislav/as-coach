@@ -8,7 +8,7 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from src.main import app
-from src.shared.dependencies import get_db
+from src.shared.dependencies import get_database_unit_of_work
 from src import (
     ExercisesOnTraining,
     Training,
@@ -197,7 +197,7 @@ async def db(db_engine):
     await connection.begin()
 
     db = TestingSessionLocal(bind=connection)
-    app.dependency_overrides[get_db] = lambda: db
+    app.dependency_overrides[get_database_unit_of_work] = lambda: db
 
     yield db
 
@@ -207,4 +207,4 @@ async def db(db_engine):
 
 @pytest_asyncio.fixture(scope="function")
 async def client(db):
-    app.dependency_overrides[get_db] = lambda: db
+    app.dependency_overrides[get_database_unit_of_work] = lambda: db

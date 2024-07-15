@@ -16,7 +16,7 @@ from src.presentation.schemas.customer_schema import (
 )
 from src.presentation.schemas.authentication_schema import CustomerRegistrationData
 from src.shared.dependencies import (
-    get_db,
+    get_database_unit_of_work,
     provide_customer_service,
     provide_user_service,
     provide_training_plan_service,
@@ -38,7 +38,7 @@ async def create_customer(
     customer_data: CustomerCreateIn,
     user_service: CoachService = Depends(provide_user_service),
     customer_service: CustomerService = Depends(provide_customer_service),
-    uow: AsyncSession = Depends(get_db),
+    uow: AsyncSession = Depends(get_database_unit_of_work),
 ) -> CustomerOut:
     """
     Creates new customer for coach
@@ -107,7 +107,7 @@ async def create_customer(
 async def get_customers(
     coach_service: CoachService = Depends(provide_user_service),
     customer_service: CustomerService = Depends(provide_customer_service),
-    uow: AsyncSession = Depends(get_db),
+    uow: AsyncSession = Depends(get_database_unit_of_work),
 ) -> List[dict[str, Any]]:
     """
     Gets all customer for current coach
@@ -133,7 +133,7 @@ async def get_customer(
     user_service: CoachService = Depends(provide_user_service),
     customer_service: CustomerService = Depends(provide_customer_service),
     training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
-    uow: AsyncSession = Depends(get_db),
+    uow: AsyncSession = Depends(get_database_unit_of_work),
 ) -> CustomerOut:
     """
     Gets specific customer by ID.
@@ -192,7 +192,7 @@ async def create_training_plan(
     user_service: CoachService = Depends(provide_user_service),
     training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
     push_notification_service: NotificationService = Depends(provide_push_notification_service),
-    uow: AsyncSession = Depends(get_db),
+    uow: AsyncSession = Depends(get_database_unit_of_work),
 ) -> TrainingPlanOut:
     """
     Creates new training plan for specified customer.
@@ -251,7 +251,7 @@ async def get_all_training_plans(
     user_service: CoachService = Depends(provide_user_service),
     customer_service: CustomerService = Depends(provide_customer_service),
     training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
-    uow: AsyncSession = Depends(get_db),
+    uow: AsyncSession = Depends(get_database_unit_of_work),
 ) -> list[TrainingPlanOut]:
     """
     Returns all training plans for specific customer
@@ -296,7 +296,7 @@ async def get_training_plan(
     user_service: CoachService = Depends(provide_user_service),
     training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),
     customer_service: CustomerService = Depends(provide_customer_service),
-    uow: AsyncSession = Depends(get_db),
+    uow: AsyncSession = Depends(get_database_unit_of_work),
 ) -> TrainingPlanOutFull:
     """
     Gets full info for specific training plan by their ID
