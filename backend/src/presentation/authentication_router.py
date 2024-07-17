@@ -29,6 +29,7 @@ from src.presentation.schemas.authentication_schema import (
     LoginOut,
     CoachRegistrationData,
     UserRegisterOut,
+    CurrentUserOut,
 )
 from src.utils import password_context, get_hashed_password
 
@@ -131,10 +132,11 @@ async def login_user(
 @auth_router.get(
     "/me",
     status_code=status.HTTP_200_OK,
+    response_model=CurrentUserOut,
     summary="Get details of currently logged in user")
 async def get_me(
     service: CoachService | CustomerService = Depends(provide_user_service),
-) -> dict:
+) -> CurrentUserOut:
     """
     Returns short info about current user
     Endpoint can be used by both a coach and a customer
@@ -146,13 +148,13 @@ async def get_me(
         dict: short info about current user
     """
     user = service.user
-
-    return {
-        "id": str(user.id),
-        "user_type": service.user_type,
-        "username": user.username,
-        "first_name": user.first_name
-    }
+    user_data = CurrentUserOut(
+        id=str(user.id),
+        user_type=service.user_type,
+        username=user.username,
+        first_name=user.first_name,
+    )
+    return user_data
 
 
 @auth_router.get(

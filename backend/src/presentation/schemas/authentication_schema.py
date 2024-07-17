@@ -64,6 +64,13 @@ class UserLoginData(BaseModel):
     fcm_token: str
 
 
+class CurrentUserOut(BaseModel):
+    id: str
+    user_type: str
+    username: str | None
+    first_name: str | None
+
+
 class LoginOut(BaseModel):
     """
     Response after successfully user login
