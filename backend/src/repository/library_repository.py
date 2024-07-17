@@ -62,6 +62,7 @@ class ExerciseRepository:
                 Exercise.id,
                 Exercise.name,
                 Exercise.coach_id,
+                MuscleGroup.id.label('muscle_group_id'),
                 MuscleGroup.name.label('muscle_group_name'),
             )
             .join(MuscleGroup, Exercise.muscle_group_id == MuscleGroup.id)

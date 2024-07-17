@@ -44,3 +44,10 @@ class ExerciseCreateOut(BaseModel):
     id: str
     name: str
     muscle_group: str
+
+
+class CoachExerciseOut(BaseModel):
+    id: str
+    name: str
+    muscle_group: str
+    muscle_group_id: str

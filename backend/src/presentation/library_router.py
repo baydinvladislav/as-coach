@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.service.coach_service import CoachService
 from src.service.library_service import LibraryService
 from src.shared.dependencies import provide_user_service, provide_library_service, provide_database_unit_of_work
-from src.presentation.schemas.library_schema import ExerciseCreateIn, ExerciseCreateOut
+from src.presentation.schemas.library_schema import ExerciseCreateIn, ExerciseCreateOut, CoachExerciseOut
 
 gym_router = APIRouter()
 
@@ -67,15 +67,15 @@ async def get_exercises(
     user = user_service.user
     exercises = await library_service.get_exercise_list(uow, str(user.id))
 
-    response = []
-    for exercise in exercises:
-        response.append({
-            "id": str(exercise.id),
-            "name": exercise.name,
-            "muscle_group": exercise.muscle_group_name,
-            "muscle_group_id": str(exercise.muscle_group_id)
-        })
-    print(response)
+    response = [
+        CoachExerciseOut(
+            id=str(exercise.id),
+            name=exercise.name,
+            muscle_group=exercise.muscle_group_name,
+            muscle_group_id=str(exercise.muscle_group_id),
+        )
+        for exercise in exercises
+    ]
     return response
 
 
