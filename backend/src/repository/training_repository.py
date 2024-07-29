@@ -28,7 +28,10 @@ class TrainingRepository:
         ).where(
             ExercisesOnTraining.training_id.in_(training_ids),
             ExercisesOnTraining.exercise_id.in_(exercise_ids),
+        ).order_by(
+            ExercisesOnTraining.ordering
         )
+
         result = await uow.execute(query)
         schedule_exercises = result.fetchall()
         res = [ScheduleExercisesDtoSchema.from_orm(st) for st in schedule_exercises]
