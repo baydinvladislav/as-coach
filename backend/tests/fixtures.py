@@ -37,17 +37,21 @@ from src.shared.config import (
 async def create_training_exercises(create_trainings, create_exercises, db):
     superset_id = uuid.uuid4()
 
-    training_exercises = [
-        ExercisesOnTraining(
-            training_id=str(training.id),
-            exercise_id=str(exercise.id),
-            sets=[10, 10, 10],
-            superset_id=superset_id if training.name == "Грудь" else None
-        )
-        for training in create_trainings
-        for exercise in create_exercises
-        if exercise.muscle_group.name == training.name
-    ]
+    training_exercises = []
+    ordering = 0
+
+    for training in create_trainings:
+        for exercise in create_exercises:
+            if exercise.muscle_group.name == training.name:
+                training_exercise = ExercisesOnTraining(
+                    training_id=str(training.id),
+                    exercise_id=str(exercise.id),
+                    sets=[10, 10, 10],
+                    superset_id=superset_id if training.name == "Грудь" else None,
+                    ordering=ordering,
+                )
+                training_exercises.append(training_exercise)
+                ordering += 1
 
     db.add_all(training_exercises)
     await db.commit()

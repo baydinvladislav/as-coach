@@ -78,6 +78,29 @@ class TrainingPlanService:
         )
 
         if training_plan:
+            trainings = []
+
+            for training in training_plan.trainings:
+                training_dict = {
+                    "id": str(training.id),
+                    "name": training.name,
+                    "number_of_exercises": len(training_plan.trainings),
+                    "exercises": []
+                }
+
+                for exercise in training.exercises:
+                    exercise_dict = {
+                        "id": str(exercise.id),
+                        "name": exercise.name,
+                        "sets": scheduled_trainings[str(exercise.id)].sets,
+                        "superset_id": str(scheduled_trainings[str(exercise.id)].superset_id),
+                        "ordering": scheduled_trainings[str(exercise.id)].ordering
+                    }
+
+                    training_dict["exercises"].append(exercise_dict)
+
+                trainings.append(training_dict)
+
             return {
                 "id": str(training_plan.id),
                 "start_date": training_plan.start_date.strftime("%Y-%m-%d"),
@@ -85,24 +108,7 @@ class TrainingPlanService:
                 "proteins": "/".join([str(diet.proteins) for diet in training_plan.diets]),
                 "fats": "/".join([str(diet.fats) for diet in training_plan.diets]),
                 "carbs": "/".join([str(diet.carbs) for diet in training_plan.diets]),
-                "trainings": [
-                    {
-                        "id": str(training.id),
-                        "name": training.name,
-                        "number_of_exercises": len(training_plan.trainings),
-                        "exercises": [
-                            {
-                                "id": str(exercise.id),
-                                "name": exercise.name,
-                                "sets": scheduled_trainings[str(exercise.id)].sets,
-                                "superset_id": str(scheduled_trainings[str(exercise.id)].superset_id),
-                                "ordering": scheduled_trainings[str(exercise.id)].ordering
-                            }
-                            for exercise in training.exercises
-                        ]
-                    }
-                    for training in training_plan.trainings
-                ],
+                "trainings": trainings,
                 "set_rest": training_plan.set_rest,
                 "exercise_rest": training_plan.exercise_rest,
                 "notes": training_plan.notes

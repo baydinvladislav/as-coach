@@ -18,7 +18,14 @@ class TrainingRepository:
         training_ids: list[str],
         exercise_ids: list[str]
     ) -> list[ScheduleExercisesDtoSchema]:
-        query = select(ExercisesOnTraining).where(
+        query = select(
+            ExercisesOnTraining.id,
+            ExercisesOnTraining.exercise_id,
+            ExercisesOnTraining.training_id,
+            ExercisesOnTraining.sets,
+            ExercisesOnTraining.superset_id,
+            ExercisesOnTraining.ordering,
+        ).where(
             ExercisesOnTraining.training_id.in_(training_ids),
             ExercisesOnTraining.exercise_id.in_(exercise_ids),
         )

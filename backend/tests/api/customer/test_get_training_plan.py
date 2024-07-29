@@ -51,7 +51,13 @@ async def test_get_specified_training_plan(
         username=create_customer.coach.username
     )
     assert response.status_code == 200
+    response_json = response.json()
     assert response.json()["id"] == training_plan_id
+
+    # check that we have correct exercise ordering
+    first_exercise = response_json["trainings"][0]["exercises"][0]
+    second_exercise = response_json["trainings"][0]["exercises"][1]
+    assert first_exercise["ordering"] < second_exercise["ordering"]
 
 
 @pytest.mark.asyncio
