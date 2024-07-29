@@ -209,10 +209,7 @@ async def create_training_plan(
     """
     customer = await customer_service.get_customer_by_pk(uow, pk=customer_id)
     if not customer:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Customer with id {customer_id} not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Customer with id {customer_id} not found")
 
     try:
         training_plan = await training_plan_service.create_training_plan(
