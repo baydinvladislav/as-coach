@@ -30,8 +30,9 @@ class TrainingRepository:
             ExercisesOnTraining.exercise_id.in_(exercise_ids),
         )
         result = await uow.execute(query)
-        schedule_exercises = result.scalars().all()
-        return [ScheduleExercisesDtoSchema.from_orm(st) for st in schedule_exercises]
+        schedule_exercises = result.fetchall()
+        res = [ScheduleExercisesDtoSchema.from_orm(st) for st in schedule_exercises]
+        return res
 
     async def _update_superset_dict(self, exercise_item):
         # TODO: check and apply it
@@ -73,7 +74,7 @@ class TrainingRepository:
                     exercise_id=str(exercise_item.id),
                     sets=exercise_item.sets,
                     superset_id=self.superset_dict.get(str(exercise_item.id)),
-                    ordering=self.ordering
+                    ordering=self.ordering,
                 ))
                 self.ordering += 1
 
