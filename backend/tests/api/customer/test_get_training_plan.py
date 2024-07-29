@@ -52,6 +52,8 @@ async def test_get_specified_training_plan(
     )
     assert response.status_code == 200
     response_json = response.json()
+
+    # we have existed training plan
     assert response.json()["id"] == training_plan_id
 
     # check that we have correct exercise ordering

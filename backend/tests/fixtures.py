@@ -36,11 +36,10 @@ from src.shared.config import (
 @pytest_asyncio.fixture()
 async def create_training_exercises(create_trainings, create_exercises, db):
     superset_id = uuid.uuid4()
-
     training_exercises = []
-    ordering = 0
 
     for training in create_trainings:
+        ordering = 0
         for exercise in create_exercises:
             if exercise.muscle_group.name == training.name:
                 training_exercise = ExercisesOnTraining(
