@@ -148,13 +148,13 @@ async def get_me(
         dict: short info about current user
     """
     user = service.user
-    user_data = CurrentUserOut(
+
+    return CurrentUserOut(
         id=str(user.id),
         user_type=service.user_type,
         username=user.username,
         first_name=user.first_name,
     )
-    return user_data
 
 
 @auth_router.get(
