@@ -38,24 +38,15 @@ class TrainingRepository:
         return res
 
     async def _update_superset_dict(self, exercise_item):
-        # TODO: check and apply it
-        # if (
-        #     exercise_item.supersets
-        #     and isinstance(exercise_item.supersets, list)
-        #     and str(exercise_item.id) not in self.superset_dict
-        # ):
-        #     superset_id = str(uuid4())
-        #     self.superset_dict[str(exercise_item.id)] = superset_id
-        #     for e in exercise_item.supersets:
-        #         self.superset_dict[str(e)] = superset_id
-
-        if isinstance(exercise_item.supersets, list) and len(exercise_item.supersets) > 0:
-            if str(exercise_item.id) not in self.superset_dict:
-                superset_id = str(uuid4())
-
-                self.superset_dict[str(exercise_item.id)] = superset_id
-                for e in exercise_item.supersets:
-                    self.superset_dict[str(e)] = superset_id
+        if (
+            exercise_item.supersets
+            and isinstance(exercise_item.supersets, list)
+            and str(exercise_item.id) not in self.superset_dict
+        ):
+            superset_id = str(uuid4())
+            self.superset_dict[str(exercise_item.id)] = superset_id
+            for e in exercise_item.supersets:
+                self.superset_dict[str(e)] = superset_id
 
     async def create_personal_trainings(self, uow: AsyncSession, training_plan_id: UUID, customer_trainings: list):
         trainings_orm = [
