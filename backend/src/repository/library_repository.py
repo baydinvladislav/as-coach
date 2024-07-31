@@ -6,11 +6,11 @@ from sqlalchemy.dialects.postgresql import insert
 
 from src import Exercise, MuscleGroup
 from src.schemas.muscle_group_dto import MuscleGroupDto
-from src.schemas.exercise_dto import ExerciseDtoSchema
+from src.schemas.exercise_dto import ExerciseFullDtoSchema
 
 
 class ExerciseRepository:
-    async def get_exercise_by_id(self, uow: AsyncSession, exercise_id: UUID) -> ExerciseDtoSchema | None:
+    async def get_exercise_by_id(self, uow: AsyncSession, exercise_id: UUID) -> ExerciseFullDtoSchema | None:
         query = (
             select(Exercise)
             .join(Exercise.muscle_group)
@@ -23,7 +23,7 @@ class ExerciseRepository:
         if exercise is None:
             return None
 
-        exercise_dto = ExerciseDtoSchema(
+        exercise_dto = ExerciseFullDtoSchema(
             id=exercise.id,
             name=exercise.name,
             coach_id=exercise.coach_id,
@@ -35,7 +35,7 @@ class ExerciseRepository:
 
     async def create_exercise(
         self, uow: AsyncSession, name: str, coach_id: UUID, muscle_group_id: UUID
-    ) -> ExerciseDtoSchema | None:
+    ) -> ExerciseFullDtoSchema | None:
         statement = (
             insert(Exercise)
             .values(
@@ -56,7 +56,7 @@ class ExerciseRepository:
         exercise = await self.get_exercise_by_id(uow, exercise_id)
         return exercise
 
-    async def get_coach_exercises(self, uow: AsyncSession, coach_id: str) -> list[ExerciseDtoSchema]:
+    async def get_coach_exercises(self, uow: AsyncSession, coach_id: str) -> list[ExerciseFullDtoSchema]:
         query = (
             select(
                 Exercise.id,
@@ -75,7 +75,7 @@ class ExerciseRepository:
         )
         result = await uow.execute(query)
         exercises = result.fetchall()
-        return [ExerciseDtoSchema.from_orm(exercise) for exercise in exercises]
+        return [ExerciseFullDtoSchema.from_orm(exercise) for exercise in exercises]
 
 
 class MuscleGroupRepository:
