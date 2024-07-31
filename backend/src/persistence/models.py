@@ -1,7 +1,3 @@
-"""
-Common models folder.
-"""
-
 import datetime
 import enum
 import uuid
