@@ -1,7 +1,3 @@
-"""
-Application entrypoint.
-"""
-
 import os
 
 from fastapi import FastAPI
