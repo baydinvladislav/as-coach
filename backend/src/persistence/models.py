@@ -112,6 +112,9 @@ class TrainingPlan(Base, BaseModel):
 
 
 class Diet(Base, BaseModel):
+    """
+    Contains nutrition data inside training plan domain
+    """
     __tablename__ = "diet"
 
     proteins = Column("proteins", Integer, nullable=False)
