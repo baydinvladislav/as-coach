@@ -15,7 +15,8 @@
         "proteins": 10,
         "fats": 5,
         "carbs": 30,
-        "calories": 200
+        "calories": 200,
+        "vendor": "Quaker"
       },
       {
         "id": "d9428888-122b-11e1-b85c-61cd3cbb3210",
@@ -25,7 +26,8 @@
         "proteins": 15,
         "fats": 7,
         "carbs": 10,
-        "calories": 150
+        "calories": 150,
+        "vendor": "Chobani"
       },
       {
         "id": "e4d909c2-9a0b-4c3b-b7db-3c5a81e5f456",
@@ -35,7 +37,8 @@
         "proteins": 5,
         "fats": 3,
         "carbs": 10,
-        "calories": 50
+        "calories": 50,
+        "vendor": "Dole"
       }
     ]
   }
