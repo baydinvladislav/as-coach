@@ -4,7 +4,7 @@
     "vendor": "Chobani",
     "name": "Greek Yogurt",
     "amount": 100,
-    "type": "solid",
+    "type": "gram",
     "proteins": 10,
     "fats": 4.67,
     "carbs": 6.67,

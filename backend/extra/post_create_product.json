@@ -3,7 +3,7 @@
   "vendor": "Chobani",
   "barcode": "1234567890123",
   "calories": 100,
-  "type": "solid",
+  "type": "gram",
   "portion_size": 150,
   "proteins": 10,
   "fats": 4.67,
