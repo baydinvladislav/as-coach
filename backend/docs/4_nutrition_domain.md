@@ -36,6 +36,16 @@ the frontend should request these endpoints to work with nutrition domain.
     * example: nutrition/products/d7182bb0-9a03-4e48-86ca-8b20d4a9bcba
     * response: ./extras/get_receive_product.json
 
+* ```DELETE nutrition/products/${product_id}```:
+  * info: to delete product by product id, user can delete only their products
+  * example: nutrition/products/d7182bb0-9a03-4e48-86ca-8b20d4a9bcba
+  * response: {"id": "d7182bb0-9a03-4e48-86ca-8b20d4a9bcba"}
+
+* ```PUT nutrition/products/${product_id}```:
+  * info: to update product data by product id, user can modify only their products
+  * request: ./extras/post_create_product.json
+  * example: nutrition/products/d7182bb0-9a03-4e48-86ca-8b20d4a9bcba
+  * response: ./extras/get_receive_product.json
 
 ### Data Storage Structure
 Command Query Responsibility Segregation (CQRS) pattern, separating the write operations (commands) 
