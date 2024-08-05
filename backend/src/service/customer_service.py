@@ -142,7 +142,7 @@ class CustomerService:
 
         if customer.telegram_username is not None:
             logger.info(f"Will be invited in application new customer: {customer.telegram_username}")
-            # pass write_uow to use outbox service
+            # TODO: pass write_uow to use outbox service
             await self.notification_service.send_telegram_customer_invite(
                 coach_name=data.coach_name,
                 customer_username=customer.telegram_username,
