@@ -27,10 +27,9 @@ from src.presentation.schemas.authentication_schema import (
     UserProfileOut,
     NewUserPassword,
     LoginOut,
-    CoachRegistrationData,
-    UserRegisterOut,
     CurrentUserOut,
 )
+from src.presentation.schemas.register import CoachRegistrationData, UserRegisterOut
 from src.utils import password_context, get_hashed_password
 
 auth_router = APIRouter()

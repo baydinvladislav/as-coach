@@ -4,7 +4,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import Customer, TrainingPlan
-from src.presentation.schemas.authentication_schema import CustomerRegistrationData
+from src.presentation.schemas.register import CustomerRegistrationData
 from src.schemas.customer_dto import CustomerDtoSchema, CustomerShortDtoSchema
 
 
