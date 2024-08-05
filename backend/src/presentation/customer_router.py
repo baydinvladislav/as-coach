@@ -14,7 +14,7 @@ from src.presentation.schemas.customer_schema import (
     TrainingPlanIn,
     TrainingPlanOutFull,
 )
-from src.presentation.schemas.register import CustomerRegistrationData
+from src.presentation.schemas.register_schema import CustomerRegistrationData
 from src.shared.dependencies import (
     provide_database_unit_of_work,
     provide_customer_service,

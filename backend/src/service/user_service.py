@@ -17,7 +17,7 @@ from src.shared.config import (
 )
 from src.utils import verify_password
 from src.presentation.schemas.login_schema import UserLoginData
-from src.presentation.schemas.register import UserRegistrationData
+from src.presentation.schemas.register_schema import UserRegistrationData
 
 USER_MODEL = Coach | Customer
 

@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import insert
 
 from src import Coach
-from src.presentation.schemas.register import CoachRegistrationData
+from src.presentation.schemas.register_schema import CoachRegistrationData
 from src.schemas.coach_dto import CoachDtoSchema
 
 

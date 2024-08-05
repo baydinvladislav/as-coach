@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src import Customer
 from src.shared.config import OTP_LENGTH
 from src.presentation.schemas.login_schema import UserLoginData
-from src.presentation.schemas.register import CustomerRegistrationData
+from src.presentation.schemas.register_schema import CustomerRegistrationData
 from src.schemas.customer_dto import CustomerDtoSchema
 from src.service.notification_service import NotificationService
 from src.shared.exceptions import NotValidCredentials

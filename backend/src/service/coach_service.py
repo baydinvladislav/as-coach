@@ -10,7 +10,7 @@ from src.repository.coach_repository import CoachRepository
 from src.shared.exceptions import UsernameIsTaken, NotValidCredentials
 from src.service.user_service import UserService, UserType
 from src.presentation.schemas.login_schema import UserLoginData
-from src.presentation.schemas.register import CoachRegistrationData
+from src.presentation.schemas.register_schema import CoachRegistrationData
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
