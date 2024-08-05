@@ -9,7 +9,7 @@ from src.utils import get_hashed_password, verify_password
 from src.repository.coach_repository import CoachRepository
 from src.shared.exceptions import UsernameIsTaken, NotValidCredentials
 from src.service.user_service import UserService, UserType
-from src.presentation.schemas.login import UserLoginData
+from src.presentation.schemas.login_schema import UserLoginData
 from src.presentation.schemas.register import CoachRegistrationData
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
