@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.service.coach_service import CoachService
 from src.service.library_service import LibraryService
 from src.shared.dependencies import provide_user_service, provide_library_service, provide_database_unit_of_work
-from src.presentation.schemas.library_schema import ExerciseCreateIn, ExerciseCreateOut, CoachExerciseOut
+from src.presentation.schemas.training_plan_schema import ExerciseCreateIn, ExerciseCreateOut, CoachExerciseOut
 
 gym_router = APIRouter()
 

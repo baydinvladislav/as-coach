@@ -2,7 +2,7 @@ from typing import Optional, List
 
 from pydantic import BaseModel
 
-from src.presentation.schemas.library_schema import Diet, Training
+from src.presentation.schemas.training_plan_schema import Diet, Training
 
 
 class CustomerCreateIn(BaseModel):
