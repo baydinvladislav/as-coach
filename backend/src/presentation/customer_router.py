@@ -1,4 +1,5 @@
 from typing import Any, List
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
@@ -286,7 +287,7 @@ async def get_all_training_plans(
     response_model=TrainingPlanOutFull,
     status_code=status.HTTP_200_OK)
 async def get_training_plan(
-    training_plan_id: str,
+    training_plan_id: UUID,
     customer_id: str,
     user_service: CoachService = Depends(provide_user_service),
     training_plan_service: TrainingPlanService = Depends(provide_training_plan_service),

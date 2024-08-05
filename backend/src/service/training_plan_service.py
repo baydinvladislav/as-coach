@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -67,11 +68,11 @@ class TrainingPlanService:
         else:
             await uow.commit()
             training_plan_in_db = await self.training_plan_repository.provide_training_plan_by_id(
-                uow=uow, id_=str(training_plan.id),
+                uow=uow, id_=training_plan.id,
             )
             return training_plan_in_db
 
-    async def get_training_plan_by_id(self, uow: AsyncSession, id_: str) -> TrainingPlanDetailDtoSchema | None:
+    async def get_training_plan_by_id(self, uow: AsyncSession, id_: UUID) -> TrainingPlanDetailDtoSchema | None:
         training_plan = await self.training_plan_repository.provide_training_plan_by_id(uow, id_=id_)
 
         training_ids = [str(training.id) for training in training_plan.trainings]
