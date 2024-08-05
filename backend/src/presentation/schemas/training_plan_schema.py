@@ -3,30 +3,13 @@ from typing import List, Union, Optional
 from pydantic import BaseModel
 
 
-class Diet(BaseModel):
+class DietIn(BaseModel):
     """
     Diet in TrainingPlanIn
     """
     proteins: int
     fats: int
     carbs: int
-
-
-class Exercise(BaseModel):
-    """
-    Exercise in TrainingPlanIn
-    """
-    id: str
-    sets: List[int]
-    supersets: Union[List[str], None]
-
-
-class Training(BaseModel):
-    """
-    Training in TrainingPlanIn
-    """
-    name: str
-    exercises: List[Exercise]
 
 
 class ExerciseCreateIn(BaseModel):
@@ -46,11 +29,43 @@ class ExerciseCreateOut(BaseModel):
     muscle_group: str
 
 
-class CoachExerciseOut(BaseModel):
+class ExerciseForCoachOut(BaseModel):
     id: str
     name: str
     muscle_group: str
     muscle_group_id: str
+
+
+class ExerciseIn(BaseModel):
+    """
+    Exercise in TrainingPlanIn
+    """
+    id: str
+    sets: List[int]
+    supersets: Union[List[str], None]
+
+
+class ExerciseOut(BaseModel):
+    id: str
+    name: str
+    sets: list
+    superset_id: Optional[str]
+    ordering: int
+
+
+class TrainingIn(BaseModel):
+    """
+    Training in TrainingPlanIn
+    """
+    name: str
+    exercises: List[ExerciseIn]
+
+
+class TrainingOut(BaseModel):
+    id: str
+    name: str
+    number_of_exercises: int
+    exercises: list[ExerciseOut]
 
 
 class TrainingPlanIn(BaseModel):
@@ -59,8 +74,8 @@ class TrainingPlanIn(BaseModel):
     """
     start_date: str
     end_date: str
-    diets: List[Diet]
-    trainings: List[Training]
+    diets: List[DietIn]
+    trainings: List[TrainingIn]
     set_rest: int
     exercise_rest: int
     notes: Optional[str]
@@ -77,21 +92,6 @@ class TrainingPlanOut(BaseModel):
     proteins: str
     fats: str
     carbs: str
-
-
-class ExerciseOut(BaseModel):
-    id: str
-    name: str
-    sets: list
-    superset_id: Optional[str]
-    ordering: int
-
-
-class TrainingOut(BaseModel):
-    id: str
-    name: str
-    number_of_exercises: int
-    exercises: list[ExerciseOut]
 
 
 class TrainingPlanOutFull(BaseModel):
