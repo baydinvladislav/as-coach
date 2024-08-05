@@ -26,9 +26,9 @@ from src.persistence.models import Gender
 from src.presentation.schemas.authentication_schema import (
     UserProfileOut,
     NewUserPassword,
-    LoginOut,
     CurrentUserOut,
 )
+from src.presentation.schemas.login import LoginOut
 from src.presentation.schemas.register import CoachRegistrationData, UserRegisterOut
 from src.utils import password_context, get_hashed_password
 

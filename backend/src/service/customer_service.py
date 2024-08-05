@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import Customer
 from src.shared.config import OTP_LENGTH
-from src.presentation.schemas.authentication_schema import UserLoginData
+from src.presentation.schemas.login import UserLoginData
 from src.presentation.schemas.register import CustomerRegistrationData
 from src.schemas.customer_dto import CustomerDtoSchema
 from src.service.notification_service import NotificationService

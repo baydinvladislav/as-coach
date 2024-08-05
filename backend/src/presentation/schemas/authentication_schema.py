@@ -22,28 +22,11 @@ class UserProfileOut(BaseModel):
     photo_link: Optional[str]
 
 
-class UserLoginData(BaseModel):
-    received_password: str
-    fcm_token: str
-
-
 class CurrentUserOut(BaseModel):
     id: str
     user_type: str
     username: str | None
     first_name: str | None
-
-
-class LoginOut(BaseModel):
-    """
-    Response after successfully user login
-    """
-    id: str
-    user_type: str
-    first_name: str
-    access_token: str
-    refresh_token: str
-    password_changed: bool
 
 
 class TokenPayload(BaseModel):
