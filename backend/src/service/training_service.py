@@ -3,7 +3,7 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.repository.training_repository import TrainingRepository
-from src.schemas.training_dto import ScheduleExercisesDtoSchema
+from src.schemas.exercise_dto import ScheduledExerciseDto
 
 
 class TrainingService:
@@ -23,7 +23,7 @@ class TrainingService:
         uow: AsyncSession,
         training_ids: list[str],
         exercise_ids: list[str]
-    ) -> dict[str, ScheduleExercisesDtoSchema]:
+    ) -> dict[str, ScheduledExerciseDto]:
         scheduled_trainings = await self.training_repository.provide_schedule_exercises_by_training_id(
             uow=uow,
             training_ids=training_ids,

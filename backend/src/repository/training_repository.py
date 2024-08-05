@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import Training, ExercisesOnTraining
-from src.schemas.training_dto import ScheduleExercisesDtoSchema
+from src.schemas.exercise_dto import ScheduledExerciseDto
 
 
 class TrainingRepository:
@@ -17,7 +17,7 @@ class TrainingRepository:
         uow: AsyncSession,
         training_ids: list[str],
         exercise_ids: list[str]
-    ) -> list[ScheduleExercisesDtoSchema]:
+    ) -> list[ScheduledExerciseDto]:
         query = select(
             ExercisesOnTraining.id,
             ExercisesOnTraining.exercise_id,
@@ -34,7 +34,7 @@ class TrainingRepository:
 
         result = await uow.execute(query)
         schedule_exercises = result.fetchall()
-        res = [ScheduleExercisesDtoSchema.from_orm(st) for st in schedule_exercises]
+        res = [ScheduledExerciseDto.from_orm(st) for st in schedule_exercises]
         return res
 
     async def _update_superset_dict(self, exercise_item):

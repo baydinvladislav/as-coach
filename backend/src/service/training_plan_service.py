@@ -102,6 +102,8 @@ class TrainingPlanService:
                     id=str(exercise.id),
                     name=exercise.name,
                     sets=scheduled_trainings[str(exercise.id)].sets,
+                    exercise_id=exercise.id,
+                    training_id=training.id,
                     superset_id=str(scheduled_trainings[str(exercise.id)].superset_id),
                     ordering=scheduled_trainings[str(exercise.id)].ordering,
                 )
