@@ -47,10 +47,10 @@ class TrainingPlanRepository:
         training_plan = await self.provide_training_plan_by_id(uow, training_plan_id)
         return TrainingPlanDtoSchema.from_orm(training_plan)
 
-    async def provide_training_plan_by_id(self, uow: AsyncSession, pk: UUID) -> TrainingPlanDtoSchema | None:
+    async def provide_training_plan_by_id(self, uow: AsyncSession, id_: str) -> TrainingPlanDtoSchema | None:
         query = (
             select(TrainingPlan)
-            .where(TrainingPlan.id == pk)
+            .where(TrainingPlan.id == UUID(id_))
             .options(
                 selectinload(TrainingPlan.trainings).selectinload(Training.exercises),
                 selectinload(TrainingPlan.diets),
@@ -67,7 +67,12 @@ class TrainingPlanRepository:
 
         def map_training_to_dto(training):
             exercises_dto = [map_exercise_to_dto(exercise) for exercise in training.exercises]
-            return TrainingDtoSchema(id=training.id, name=training.name, exercises=exercises_dto)
+            return TrainingDtoSchema(
+                id=str(training.id),
+                name=training.name,
+                exercises=exercises_dto,
+                number_of_exercises=len(training.exercises),
+            )
 
         def map_diet_to_dto(diet):
             return DietDtoSchema(id=diet.id, proteins=diet.proteins, fats=diet.fats, carbs=diet.carbs)

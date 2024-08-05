@@ -18,3 +18,11 @@ class ExerciseFullDtoSchema(ExerciseShortDtoSchema):
 
     class Config:
         orm_mode = True
+
+
+class ScheduledExerciseDto(BaseModel):
+    id: str
+    name: str
+    sets: None | list[int]
+    superset_id: None | str
+    ordering: int

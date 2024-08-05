@@ -6,9 +6,10 @@ from src.schemas.exercise_dto import ExerciseShortDtoSchema
 
 
 class TrainingDtoSchema(BaseModel):
-    id: UUID
+    id: str
     name: str
     exercises: list[ExerciseShortDtoSchema]
+    number_of_exercises: int
 
     class Config:
         orm_mode = True

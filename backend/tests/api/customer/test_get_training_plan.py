@@ -66,6 +66,7 @@ async def test_get_specified_training_plan(
 async def test_get_training_plan_with_supersets(
     create_customer,
     create_training_plans,
+    create_diets,
     create_training_exercises,
     db,
 ):

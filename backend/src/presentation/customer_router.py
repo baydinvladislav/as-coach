@@ -317,14 +317,14 @@ async def get_training_plan(
         raise HTTPException(status_code=404, detail=f"Training plan with id={training_plan_id} doesn't exist")
 
     return TrainingPlanOutFull(
-        id=training_plan["id"],
-        start_date=training_plan["start_date"],
-        end_date=training_plan["end_date"],
-        proteins=training_plan["proteins"],
-        fats=training_plan["fats"],
-        carbs=training_plan["carbs"],
-        trainings=training_plan["trainings"],
-        set_rest=training_plan["set_rest"],
-        exercise_rest=training_plan["exercise_rest"],
-        notes=training_plan["notes"],
+        id=training_plan.id,
+        start_date=training_plan.start_date,
+        end_date=training_plan.end_date,
+        proteins=training_plan.proteins,
+        fats=training_plan.fats,
+        carbs=training_plan.carbs,
+        trainings=training_plan.trainings,
+        set_rest=training_plan.set_rest,
+        exercise_rest=training_plan.exercise_rest,
+        notes=training_plan.notes,
     )

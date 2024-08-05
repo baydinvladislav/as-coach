@@ -31,3 +31,16 @@ class TrainingPlanDtoSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class TrainingPlanDetailDtoSchema(BaseModel):
+    id: str
+    start_date: str
+    end_date: str
+    proteins: str
+    fats: str
+    carbs: str
+    trainings: list[TrainingDtoSchema]
+    set_rest: int
+    exercise_rest: int
+    notes: str | None
