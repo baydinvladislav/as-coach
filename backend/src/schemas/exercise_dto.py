@@ -28,3 +28,6 @@ class ScheduledExerciseDto(BaseModel):
     sets: None | list[int]
     superset_id: None | str
     ordering: int
+
+    class Config:
+        orm_mode = True
