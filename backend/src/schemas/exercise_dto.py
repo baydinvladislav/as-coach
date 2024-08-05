@@ -21,12 +21,12 @@ class ExerciseFullDtoSchema(ExerciseShortDtoSchema):
 
 
 class ScheduledExerciseDto(BaseModel):
-    id: str
+    id: UUID
     name: str
     exercise_id: UUID
     training_id: UUID
-    sets: None | list[int]
-    superset_id: None | str
+    sets: list[int]
+    superset_id: None | UUID
     ordering: int
 
     class Config:

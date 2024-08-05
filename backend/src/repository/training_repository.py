@@ -3,7 +3,7 @@ from uuid import UUID, uuid4
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src import Training, ExercisesOnTraining
+from src import Training, ExercisesOnTraining, Exercise
 from src.schemas.exercise_dto import ScheduledExerciseDto
 
 
@@ -25,6 +25,9 @@ class TrainingRepository:
             ExercisesOnTraining.sets,
             ExercisesOnTraining.superset_id,
             ExercisesOnTraining.ordering,
+            Exercise.name,
+        ).join(
+            Exercise, ExercisesOnTraining.exercise_id == Exercise.id
         ).where(
             ExercisesOnTraining.training_id.in_(training_ids),
             ExercisesOnTraining.exercise_id.in_(exercise_ids),

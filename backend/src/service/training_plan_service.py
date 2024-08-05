@@ -98,14 +98,17 @@ class TrainingPlanService:
             )
 
             for exercise in training.exercises:
+                scheduled_exercise = scheduled_trainings[str(exercise.id)]
+                superset_id = str(scheduled_exercise.superset_id) if scheduled_exercise.superset_id else None
+
                 exercise_dto = ScheduledExerciseDto(
                     id=str(exercise.id),
                     name=exercise.name,
-                    sets=scheduled_trainings[str(exercise.id)].sets,
+                    sets=scheduled_exercise.sets,
                     exercise_id=exercise.id,
                     training_id=training.id,
-                    superset_id=str(scheduled_trainings[str(exercise.id)].superset_id),
-                    ordering=scheduled_trainings[str(exercise.id)].ordering,
+                    superset_id=superset_id,
+                    ordering=scheduled_exercise.ordering,
                 )
 
                 training_dto.exercises.append(exercise_dto)

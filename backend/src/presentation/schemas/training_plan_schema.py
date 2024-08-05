@@ -1,3 +1,4 @@
+from uuid import UUID
 from typing import List, Union, Optional
 
 from pydantic import BaseModel
@@ -46,10 +47,10 @@ class ExerciseIn(BaseModel):
 
 
 class ExerciseOut(BaseModel):
-    id: str
+    id: UUID
     name: str
     sets: list
-    superset_id: Optional[str]
+    superset_id: UUID | None
     ordering: int
 
 
