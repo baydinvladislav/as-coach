@@ -10,10 +10,8 @@ from src.service.training_plan_service import TrainingPlanService, TrainingPlanC
 from src.presentation.schemas.customer_schema import (
     CustomerOut,
     CustomerCreateIn,
-    TrainingPlanOut,
-    TrainingPlanIn,
-    TrainingPlanOutFull,
 )
+from src.presentation.schemas.training_plan_schema import TrainingPlanIn, TrainingPlanOut, TrainingPlanOutFull
 from src.presentation.schemas.register_schema import CustomerRegistrationData
 from src.shared.dependencies import (
     provide_database_unit_of_work,

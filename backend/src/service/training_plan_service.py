@@ -7,7 +7,7 @@ from src.service.training_service import TrainingService
 from src.service.diet_service import DietService
 from src.repository.training_plan_repository import TrainingPlanRepository
 from src.schemas.training_plan_dto import TrainingPlanDtoSchema, TrainingPlanDtoShortSchema
-from src.presentation.schemas.customer_schema import TrainingPlanIn
+from src.presentation.schemas.training_plan_schema import TrainingPlanIn
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
