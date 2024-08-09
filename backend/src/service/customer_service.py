@@ -110,7 +110,8 @@ class CustomerProfileService(UserService):
 
     async def update_user_profile(self, uow: AsyncSession, user: CustomerDtoSchema, **params) -> None:
         if "photo" in params:
-            await self.handle_profile_photo(user, params.pop("photo"))
+            photo_path = await self.handle_profile_photo(user, params.pop("photo"))
+            params["photo_path"] = photo_path
 
         updated_profile = await self.customer_repository.update_customer(uow, id=str(user.id), **params)
         return updated_profile

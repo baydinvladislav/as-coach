@@ -64,8 +64,8 @@ class UserService(ABC):
         return encoded_jwt
 
     @staticmethod
-    async def handle_profile_photo(user: USER_MODEL, photo) -> None:
-        logger.info(f"updating.coach.avatar.photo: {photo}")
+    async def handle_profile_photo(user: USER_MODEL, photo) -> str | None:
+        logger.info(f"creating.coach.avatar.photo.link")
 
         if photo is not None:
             saving_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
@@ -77,8 +77,9 @@ class UserService(ABC):
                 img.thumbnail((width, height))
                 img.save(photo_path, "PNG")
 
-            set_attribute(user, "photo_path", photo_path)
-            logger.info("profile.avatar.is.set")
+            logger.info(f"created.coach.avatar.photo.link: {photo_path}")
+
+            return photo_path
 
     @staticmethod
     async def confirm_password(user: USER_MODEL, password: str) -> bool:
