@@ -325,9 +325,7 @@ async def get_training_plan(
     if training_plan is None:
         raise HTTPException(status_code=404, detail=f"Training plan with id={training_plan_id} doesn't exist")
 
-    logger.info(f"TRAININGS: {training_plan.trainings}")
-
-    return TrainingPlanOutFull(
+    response = TrainingPlanOutFull(
         id=training_plan.id,
         start_date=training_plan.start_date,
         end_date=training_plan.end_date,
@@ -339,3 +337,10 @@ async def get_training_plan(
         exercise_rest=training_plan.exercise_rest,
         notes=training_plan.notes,
     )
+
+    for training in response.trainings:
+        training.exercises.sort(key=lambda x: x.ordering)
+
+    logger.info(f"TRAININGS: {response.trainings[0].exercises}")
+
+    return response
