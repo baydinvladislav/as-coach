@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 from enum import Enum
@@ -18,6 +19,9 @@ from src.shared.config import (
 from src.utils import verify_password
 from src.presentation.schemas.login_schema import UserLoginData
 from src.presentation.schemas.register_schema import UserRegistrationData
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 USER_MODEL = Coach | Customer
 
@@ -61,6 +65,8 @@ class UserService(ABC):
 
     @staticmethod
     async def handle_profile_photo(user: USER_MODEL, photo) -> None:
+        logger.info(f"updating.coach.avatar.photo: {photo}")
+
         if photo is not None:
             saving_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
             file_name = f"{user.username}_{saving_time}.jpeg"
@@ -72,6 +78,7 @@ class UserService(ABC):
                 img.save(photo_path, "PNG")
 
             set_attribute(user, "photo_path", photo_path)
+            logger.info("profile.avatar.is.set")
 
     @staticmethod
     async def confirm_password(user: USER_MODEL, password: str) -> bool:

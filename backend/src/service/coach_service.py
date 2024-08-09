@@ -45,6 +45,8 @@ class CoachProfileService(UserService):
         return False
 
     async def update_user_profile(self, uow: AsyncSession, user: Coach, **params) -> CoachDtoSchema | None:
+        logger.info("updating.coach.profile")
+
         if "photo" in params:
             await self.handle_profile_photo(user, params.pop("photo"))
 
