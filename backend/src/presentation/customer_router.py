@@ -315,10 +315,12 @@ async def get_training_plan(
     """
     customer = await customer_service.get_customer_by_pk(uow, pk=customer_id)
     if customer is None:
+        logger.info(f"customer.does.not.exist, id={customer_id}")
         raise HTTPException(status_code=404, detail=f"Customer with id={customer_id} doesn't exist")
 
     training_plan = await training_plan_service.get_training_plan_by_id(uow, training_plan_id)
     if training_plan is None:
+        logger.info(f"training.plan.does.not.exist, id={training_plan_id}")
         raise HTTPException(status_code=404, detail=f"Training plan with id={training_plan_id} doesn't exist")
 
     response = TrainingPlanOutFull(
