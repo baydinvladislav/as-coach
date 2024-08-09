@@ -1,6 +1,6 @@
 from uuid import UUID, uuid4
 
-from sqlalchemy import select
+from sqlalchemy import select, asc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import Training, ExercisesOnTraining, Exercise
@@ -32,7 +32,7 @@ class TrainingRepository:
             ExercisesOnTraining.training_id.in_(training_ids),
             ExercisesOnTraining.exercise_id.in_(exercise_ids),
         ).order_by(
-            ExercisesOnTraining.ordering
+            asc(ExercisesOnTraining.ordering)
         )
 
         result = await uow.execute(query)
