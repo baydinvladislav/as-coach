@@ -1,3 +1,4 @@
+import logging
 from typing import Any, List
 from uuid import UUID
 
@@ -24,6 +25,9 @@ from src.shared.dependencies import (
 from src.utils import validate_uuid, generate_random_password
 from src.service.notification_service import NotificationService
 from src.shared.config import OTP_LENGTH
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 customer_router = APIRouter()
 
@@ -309,14 +313,6 @@ async def get_training_plan(
     Raise:
         HTTPException: 404 when customer or training plan are not found
     """
-    import logging
-
-    # Set up logging
-    logger = logging.getLogger(__name__)
-
-    # Example of setting up logging level and format (you can adjust this as needed)
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
     customer = await customer_service.get_customer_by_pk(uow, pk=customer_id)
     if customer is None:
         raise HTTPException(status_code=404, detail=f"Customer with id={customer_id} doesn't exist")

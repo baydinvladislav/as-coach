@@ -59,7 +59,7 @@ async def test_get_specified_training_plan(
     # check that we have correct exercise ordering
     first_exercise = response_json["trainings"][0]["exercises"][0]
     second_exercise = response_json["trainings"][0]["exercises"][1]
-    # assert first_exercise["ordering"] < second_exercise["ordering"]
+    assert first_exercise["ordering"] < second_exercise["ordering"]
 
 
 @pytest.mark.asyncio

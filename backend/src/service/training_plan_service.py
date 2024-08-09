@@ -113,7 +113,6 @@ class TrainingPlanService:
 
                 training_dto.exercises.append(exercise_dto)
 
-            training_dto.exercises.sort(key=lambda x: x.ordering, reverse=True)
             trainings.append(training_dto)
 
         training_plan_dto = TrainingPlanDetailDtoSchema(
