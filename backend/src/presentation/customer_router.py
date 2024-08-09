@@ -309,6 +309,14 @@ async def get_training_plan(
     Raise:
         HTTPException: 404 when customer or training plan are not found
     """
+    import logging
+
+    # Set up logging
+    logger = logging.getLogger(__name__)
+
+    # Example of setting up logging level and format (you can adjust this as needed)
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
     customer = await customer_service.get_customer_by_pk(uow, pk=customer_id)
     if customer is None:
         raise HTTPException(status_code=404, detail=f"Customer with id={customer_id} doesn't exist")
@@ -316,6 +324,8 @@ async def get_training_plan(
     training_plan = await training_plan_service.get_training_plan_by_id(uow, training_plan_id)
     if training_plan is None:
         raise HTTPException(status_code=404, detail=f"Training plan with id={training_plan_id} doesn't exist")
+
+    logger.info(f"TRAININGS: {training_plan.trainings}")
 
     return TrainingPlanOutFull(
         id=training_plan.id,
