@@ -1,9 +1,7 @@
 from datetime import date
 from uuid import UUID
 
-from pydantic import BaseModel
-
-from src import Gender
+from pydantic import BaseModel, validator
 
 
 class CoachDtoSchema(BaseModel):
@@ -13,10 +11,16 @@ class CoachDtoSchema(BaseModel):
     fcm_token: str
     last_name: str | None
     password: str
-    gender: Gender | None
+    gender: str | None
     birthday: date | None
     email: str | None
     photo_link: str | None
 
     class Config:
         orm_mode = True
+
+    @validator("gender", pre=True, always=True)
+    def lowercase_gender(cls, value: str | None) -> str | None:
+        if value is not None:
+            return value.lower()
+        return value
