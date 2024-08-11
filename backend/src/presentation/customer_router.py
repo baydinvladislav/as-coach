@@ -336,6 +336,7 @@ async def get_training_plan(
         notes=training_plan.notes,
     )
 
+    # TODO: сделать на уровне слоя данных, поняв где нарушается сортировка
     for training in response.trainings:
         training.exercises.sort(key=lambda x: x.ordering)
 
