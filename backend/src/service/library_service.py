@@ -1,53 +1,40 @@
-from src.repository.abstract_repository import AbstractRepository
+from uuid import UUID
+
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.repository.library_repository import ExerciseRepository, MuscleGroupRepository
+from src.schemas.muscle_group_dto import MuscleGroupDto
+from src.schemas.exercise_dto import ExerciseFullDtoSchema
 
 
 class LibraryService:
-    """
-    The service to organize data in gym library
-    """
-
     def __init__(
-            self,
-            repositories: dict[str, AbstractRepository]
-    ):
-        self.exercise_repo = repositories["exercise"]
-        self.muscle_group_repo = repositories["muscle_group"]
+        self,
+        exercise_repository: ExerciseRepository,
+        muscle_group_repository: MuscleGroupRepository
+    ) -> None:
+        self.exercise_repository = exercise_repository
+        self.muscle_group_repository = muscle_group_repository
 
-    async def get_exercise_list(self, coach_id: str):
-        """
-        Provides list of default exercises plus custom coach exercises
-
-        Args:
-            coach_id: coach UUID
-        """
-        exercises = await self.exercise_repo.filter({"coach_id": coach_id})
+    async def get_exercise_list(self, uow: AsyncSession, coach_id: str) -> list[ExerciseFullDtoSchema]:
+        exercises = await self.exercise_repository.get_coach_exercises(uow, coach_id)
         return exercises
 
-    async def get_muscle_group_list(self):
-        """
-        Provides available muscle groups
-        """
-        muscle_groups = await self.muscle_group_repo.get_all()
+    async def get_muscle_group_list(self, uow: AsyncSession) -> list[MuscleGroupDto]:
+        muscle_groups = await self.muscle_group_repository.get_all_muscle_groups(uow)
         return muscle_groups
 
-    async def create_exercise(self, exercise_name: str, coach_id: str, muscle_group_id: str):
-        """
-        Provides available muscle groups
-
-        Args:
-            exercise_name: passed name of exercise
-            coach_id: coach UUID
-            muscle_group_id: muscle group UUID
-        """
-        muscle_group = await self.muscle_group_repo.get(muscle_group_id)
+    async def create_exercise(self, uow: AsyncSession, exercise_name: str, coach_id: UUID, muscle_group_id: str):
+        muscle_group = await self.muscle_group_repository.get_specified_muscle_group(uow, muscle_group_id)
 
         if not muscle_group:
             raise
 
-        exercise = await self.exercise_repo.create(
+        exercise = await self.exercise_repository.create_exercise(
+            uow=uow,
             name=exercise_name,
             coach_id=coach_id,
-            muscle_group=muscle_group
+            muscle_group_id=muscle_group.id
         )
 
         return exercise

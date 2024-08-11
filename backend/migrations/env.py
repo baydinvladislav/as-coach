@@ -29,7 +29,6 @@ from src import (
     Coach,
     Customer,
     Diet,
-    DietOnTrainingPlan,
     TrainingPlan,
     Training,
     Exercise,

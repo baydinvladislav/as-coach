@@ -1,9 +1,11 @@
+import logging
 from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
 from enum import Enum
 
 from PIL import Image
 from jose import jwt
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.attributes import set_attribute
 
 from src import Coach, Customer
@@ -15,7 +17,11 @@ from src.shared.config import (
     STATIC_DIR,
 )
 from src.utils import verify_password
-from src.schemas.authentication_schema import UserRegistrationData, UserLoginData
+from src.presentation.schemas.login_schema import UserLoginData
+from src.presentation.schemas.register_schema import UserRegistrationData
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 USER_MODEL = Coach | Customer
 
@@ -29,15 +35,15 @@ class UserService(ABC):
     """Contains base user logic"""
 
     @abstractmethod
-    async def register(self, data: UserRegistrationData) -> USER_MODEL:
+    async def register_user(self, uow: AsyncSession, data: UserRegistrationData) -> USER_MODEL:
         raise NotImplementedError
 
     @abstractmethod
-    async def authorize(self, user: USER_MODEL, data: UserLoginData) -> bool:
+    async def authorize_user(self, uow: AsyncSession, user: USER_MODEL, data: UserLoginData) -> bool:
         raise NotImplementedError
 
     @abstractmethod
-    async def update_user_profile(self, **params):
+    async def update_user_profile(self, uow: AsyncSession, user: USER_MODEL, **params) -> None:
         raise NotImplementedError
 
     @staticmethod
@@ -58,7 +64,9 @@ class UserService(ABC):
         return encoded_jwt
 
     @staticmethod
-    async def handle_profile_photo(user: USER_MODEL, photo) -> None:
+    async def handle_profile_photo(user: USER_MODEL, photo) -> str | None:
+        logger.info(f"creating.coach.avatar.photo.link")
+
         if photo is not None:
             saving_time = datetime.now().strftime("%d_%m_%Y_%H_%M_%S")
             file_name = f"{user.username}_{saving_time}.jpeg"
@@ -69,7 +77,9 @@ class UserService(ABC):
                 img.thumbnail((width, height))
                 img.save(photo_path, "PNG")
 
-            set_attribute(user, "photo_path", photo_path)
+            logger.info(f"created.coach.avatar.photo.link: {photo_path}")
+
+            return photo_path
 
     @staticmethod
     async def confirm_password(user: USER_MODEL, password: str) -> bool:
@@ -80,7 +90,6 @@ class UserService(ABC):
     @staticmethod
     async def set_fcm_token(user: USER_MODEL, fcm_token: str) -> None:
         user.fcm_token = fcm_token
-        set_attribute(user, "fcm_token", fcm_token)
 
     async def fcm_token_actualize(self, user: USER_MODEL, fcm_token: str) -> bool:
         if user.fcm_token is None or user.fcm_token != fcm_token:

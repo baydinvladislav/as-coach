@@ -13,11 +13,11 @@ TestingSessionLocal = sessionmaker(
 
 
 async def make_test_http_request(
-        url: str,
-        method: str,
-        username: str | None = None,
-        data: dict | None = None,
-        json: dict | None = None,
+    url: str,
+    method: str,
+    username: str | None = None,
+    data: dict | None = None,
+    json: dict | None = None,
 ) -> Response:
     """
     Make tests http request to server,
