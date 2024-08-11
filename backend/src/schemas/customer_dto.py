@@ -15,7 +15,7 @@ class CustomerDtoSchema(BaseModel):
     last_name: str | None
     password: str
     telegram_username: str | None
-    gender: Gender | None
+    gender: str | None
     birthday: date | None
     email: str | None
     photo_link: str | None

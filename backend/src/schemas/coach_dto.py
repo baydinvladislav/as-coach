@@ -13,7 +13,7 @@ class CoachDtoSchema(BaseModel):
     fcm_token: str
     last_name: str | None
     password: str
-    gender: Gender | None
+    gender: str | None
     birthday: date | None
     email: str | None
     photo_link: str | None
