@@ -113,3 +113,8 @@ async def provide_user_service(
             return customer_service
         else:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+
+async def provide_diet_service() -> DietService:
+    diet_repository = DietRepository()
+    return DietService(diet_repository)

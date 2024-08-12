@@ -1,8 +1,11 @@
+from datetime import date
 from uuid import UUID
 
+from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src import Diet
+from src import Diet, TrainingPlan
+from src.schemas.diet_dto import DietDtoSchema
 
 
 class DietRepository:
@@ -21,3 +24,25 @@ class DietRepository:
         await uow.flush()
 
         return len(diets)
+
+    async def get_daily_diet(self, uow: AsyncSession, customer_id: UUID, specific_day: date) -> DietDtoSchema | None:
+        query = (
+            select(
+                Diet
+            ).join(
+                TrainingPlan, Diet.training_plan_id == TrainingPlan.id
+            ).where(
+                and_(
+                    TrainingPlan.customer_id == customer_id,
+                    TrainingPlan.start_date <= specific_day,
+                    TrainingPlan.end_date >= specific_day
+                )
+            )
+        )
+        result = await uow.execute(query)
+        diet = result.scalar_one_or_none()
+
+        if diet is None:
+            return None
+
+        return DietDtoSchema.from_orm(diet)

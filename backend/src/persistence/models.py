@@ -127,6 +127,19 @@ class Diet(Base, BaseModel):
         return f"diet: {self.proteins}/{self.fats}/{self.carbs}"
 
 
+# New models defined in drawio diagram
+# class Meal(Base, BaseModel):
+#     ...
+#
+#
+# class ProductInMeal(Base, BaseModel):
+#     ...
+#
+#
+# class Product(Base, BaseModel):
+#     ...
+
+
 class Training(Base, BaseModel):
     """
     Contains training's exercises.
