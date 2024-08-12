@@ -1,3 +1,6 @@
+# TODO: пора бы уже этот файл побить по доменам
+
+
 from fastapi import Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
