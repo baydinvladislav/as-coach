@@ -1,7 +1,3 @@
-"""
-Common models folder.
-"""
-
 import datetime
 import enum
 import uuid
@@ -99,11 +95,7 @@ class TrainingPlan(Base, BaseModel):
 
     start_date = Column("start_date", Date)
     end_date = Column("end_date", Date)
-    diets: RelationshipProperty = relationship(
-        "Diet",
-        secondary="dietontrainingplan",
-        back_populates="training_plans"
-    )
+    diets: RelationshipProperty = relationship("Diet", back_populates="training_plans")
     customer_id = Column(UUID(as_uuid=True), ForeignKey("customer.id", ondelete="CASCADE"))
     customer: RelationshipProperty = relationship("Customer", back_populates="training_plans")
     trainings: RelationshipProperty = relationship(
@@ -121,34 +113,18 @@ class TrainingPlan(Base, BaseModel):
 
 class Diet(Base, BaseModel):
     """
-    M2M to TrainingPlan
+    Contains nutrition data inside training plan domain
     """
     __tablename__ = "diet"
 
     proteins = Column("proteins", Integer, nullable=False)
     fats = Column("fats", Integer, nullable=False)
     carbs = Column("carbs", Integer, nullable=False)
-    training_plans: RelationshipProperty = relationship(
-        "TrainingPlan",
-        secondary="dietontrainingplan",
-        back_populates="diets"
-    )
+    training_plan_id = Column(UUID(as_uuid=True), ForeignKey("trainingplan.id", ondelete="CASCADE"))
+    training_plans: RelationshipProperty = relationship("TrainingPlan", back_populates="diets")
 
     def __repr__(self):
         return f"diet: {self.proteins}/{self.fats}/{self.carbs}"
-
-
-class DietOnTrainingPlan(Base, BaseModel):
-    """
-    Link table between Diet and TrainingsPlan tables
-    """
-    __tablename__ = "dietontrainingplan"
-
-    diet_id = Column(UUID(as_uuid=True), ForeignKey("diet.id", ondelete="CASCADE"))
-    training_plan_id = Column(UUID(as_uuid=True), ForeignKey("trainingplan.id", ondelete="CASCADE"))
-
-    def __repr__(self):
-        return f"diet on training plan: {self.id}"
 
 
 class Training(Base, BaseModel):

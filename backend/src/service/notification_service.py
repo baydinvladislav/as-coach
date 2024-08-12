@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 class NotificationService:
 
-    def __init__(self, notificator: PushFirebaseNotificator, kafka_supplier: KafkaSupplier):
+    def __init__(self, notificator: PushFirebaseNotificator, kafka_supplier: KafkaSupplier) -> None:
         self.push_notificator = notificator
         self.kafka_supplier = kafka_supplier
 

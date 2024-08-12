@@ -28,7 +28,8 @@ async def test_update_coach_profile(create_coach):
         "first_name": create_coach.first_name,
         "username": create_coach.username,
         "last_name": prev_last_name[::-1],
-        "email": "example@yandex.ru"
+        "email": "example@yandex.ru",
+        "gender": "female",
     }
 
     response = await make_test_http_request("/api/profiles", "post", create_coach.username, data=update_user_data)
@@ -39,3 +40,4 @@ async def test_update_coach_profile(create_coach):
     assert response_data["last_name"] == update_user_data["last_name"]
     assert response_data["email"] == update_user_data["email"]
     assert response_data["user_type"] == "coach"
+    assert response_data["gender"] == "female"

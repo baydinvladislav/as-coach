@@ -8,7 +8,7 @@ from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from src.main import app
-from src.shared.dependencies import get_db
+from src.shared.dependencies import provide_database_unit_of_work
 from src import (
     ExercisesOnTraining,
     Training,
@@ -16,7 +16,8 @@ from src import (
     MuscleGroup,
     Exercise,
     Coach,
-    Customer
+    Customer,
+    Diet,
 )
 from src.utils import generate_random_password, get_hashed_password
 from tests.conftest import TestingSessionLocal
@@ -35,18 +36,21 @@ from src.shared.config import (
 @pytest_asyncio.fixture()
 async def create_training_exercises(create_trainings, create_exercises, db):
     superset_id = uuid.uuid4()
+    training_exercises = []
 
-    training_exercises = [
-        ExercisesOnTraining(
-            training_id=str(training.id),
-            exercise_id=str(exercise.id),
-            sets=[10, 10, 10],
-            superset_id=superset_id if training.name == "Грудь" else None
-        )
-        for training in create_trainings
-        for exercise in create_exercises
-        if exercise.muscle_group.name == training.name
-    ]
+    for training in create_trainings:
+        ordering = 0
+        for exercise in create_exercises:
+            if exercise.muscle_group.name == training.name:
+                training_exercise = ExercisesOnTraining(
+                    training_id=str(training.id),
+                    exercise_id=str(exercise.id),
+                    sets=[10, 10, 10],
+                    superset_id=superset_id if training.name == "Грудь" else None,
+                    ordering=ordering,
+                )
+                training_exercises.append(training_exercise)
+                ordering += 1
 
     db.add_all(training_exercises)
     await db.commit()
@@ -54,6 +58,20 @@ async def create_training_exercises(create_trainings, create_exercises, db):
     result = await db.execute(select(ExercisesOnTraining))
     training_exercises = result.scalars().all()
     return training_exercises
+
+
+@pytest_asyncio.fixture()
+async def create_diets(create_training_plans, db):
+    diets_list = [Diet(proteins=200, fats=100, carbs=300), Diet(proteins=200, fats=100, carbs=200)]
+
+    db.add_all(diets_list)
+    await db.commit()
+
+    await db.commit()
+
+    result = await db.execute(select(Diet))
+    diets = result.scalars().all()
+    return diets
 
 
 @pytest_asyncio.fixture()
@@ -182,7 +200,7 @@ async def db(db_engine):
     await connection.begin()
 
     db = TestingSessionLocal(bind=connection)
-    app.dependency_overrides[get_db] = lambda: db
+    app.dependency_overrides[provide_database_unit_of_work] = lambda: db
 
     yield db
 
@@ -192,4 +210,4 @@ async def db(db_engine):
 
 @pytest_asyncio.fixture(scope="function")
 async def client(db):
-    app.dependency_overrides[get_db] = lambda: db
+    app.dependency_overrides[provide_database_unit_of_work] = lambda: db
