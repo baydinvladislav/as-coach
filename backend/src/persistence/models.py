@@ -122,22 +122,81 @@ class Diet(Base, BaseModel):
     carbs = Column("carbs", Integer, nullable=False)
     training_plan_id = Column(UUID(as_uuid=True), ForeignKey("trainingplan.id", ondelete="CASCADE"))
     training_plans: RelationshipProperty = relationship("TrainingPlan", back_populates="diets")
+    meals: RelationshipProperty = relationship(
+        "Meal",
+        cascade="all,delete-orphan",
+        back_populates="diet"
+    )
 
     def __repr__(self):
         return f"diet: {self.proteins}/{self.fats}/{self.carbs}"
 
 
-# New models defined in drawio diagram
-# class Meal(Base, BaseModel):
-#     ...
-#
-#
-# class ProductInMeal(Base, BaseModel):
-#     ...
-#
-#
-# class Product(Base, BaseModel):
-#     ...
+class Meal(Base, BaseModel):
+    """
+    Each meal is within the customer's diet
+    """
+    __tablename__ = "meal"
+
+    name = Column("name", String(255), nullable=False)
+
+    diet_id = Column(UUID(as_uuid=True), ForeignKey("diet.id", ondelete="CASCADE"))
+
+    total_calories = Column("total_calories", Integer, nullable=False)
+    consumed_calories = Column("consumed_calories", Integer, default=0)
+
+    total_proteins = Column("total_proteins", Integer, nullable=False)
+    consumed_proteins = Column("consumed_proteins", Integer, default=0)
+
+    total_fats = Column("total_fats", Integer, default=0)
+    consumed_fats = Column("consumed_fats", Integer, nullable=False)
+
+    total_carbs = Column("total_carbs", Integer, default=0)
+    consumed_carbs = Column("consumed_carbs", Integer, nullable=False)
+
+    products: RelationshipProperty = relationship(
+        "Product",
+        secondary="productinmeal",
+        back_populates="meals"
+    )
+
+    def __repr__(self):
+        return f"Meal: {self.name} P: {self.proteins_total} / F: {self.fats_total} / C: {self.carbs_total}"
+
+
+class ProductInMeal(Base, BaseModel):
+    """
+    Model for M2M relationship Meal and Product.
+    """
+    __tablename__ = "productinmeal"
+
+    amount = Column("amount", Integer, nullable=False)
+    meal_id = Column(UUID(as_uuid=True), ForeignKey("meal.id", ondelete="CASCADE"))
+    product_id = Column(UUID(as_uuid=True), ForeignKey("product.id", ondelete="CASCADE"))
+
+
+class ProductType(enum.Enum):
+    GRAM = "GRAM"
+    MILLILITER = "MILLILITER"
+    PORTION = "PORTION"
+
+
+class Product(Base, BaseModel):
+    """
+    Nutrition product
+    """
+    __tablename__ = "product"
+
+    name = Column("name", String(255), nullable=False)
+    product_type: Column = Column("product_type", Enum(ProductType), nullable=False)
+    proteins = Column("proteins", Integer, nullable=False)
+    fats = Column("fats", Integer, nullable=False)
+    carbs = Column("carbs", Integer, nullable=False)
+    calories = Column("calories", Integer, nullable=False)
+    vendor_name = Column("vendor_name", String(255), nullable=False)
+
+    def __repr__(self):
+        return f"Product: {self.name}"
 
 
 class Training(Base, BaseModel):

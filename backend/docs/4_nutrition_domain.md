@@ -7,7 +7,7 @@ the frontend should request these endpoints to work with nutrition domain.
 - [Data Storage Structure](#data-storage-structure)
 
 ### API
-* ```GET nutrition/diets/${customer_id}/${date}```:
+* ```GET nutrition/diets/${customer_id}/${specific_day}```:
     * info: to get diet for day by date
     * example: nutrition/diets/daa19459-d64c-4372-9e3b-d4de63be7d08/2024-07-11
     * response: ./extras/get_daily_diet_for_customer_by_date.json
@@ -32,7 +32,7 @@ the frontend should request these endpoints to work with nutrition domain.
     * response: ./extras/get_receive_product.json
 
 * ```GET nutrition/products/${product_id}```:
-    * info: to get product data by product id for product detail card
+    * info: to get product data by product_id for product detail card
     * example: nutrition/products/d7182bb0-9a03-4e48-86ca-8b20d4a9bcba
     * response: ./extras/get_receive_product.json
 

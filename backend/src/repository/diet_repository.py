@@ -4,8 +4,8 @@ from uuid import UUID
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src import Diet, TrainingPlan
-from src.schemas.diet_dto import DietDtoSchema
+from src import Diet, TrainingPlan, Meal
+from src.schemas.diet_dto import DailyDietDtoSchema
 
 
 class DietRepository:
@@ -25,12 +25,15 @@ class DietRepository:
 
         return len(diets)
 
-    async def get_daily_diet(self, uow: AsyncSession, customer_id: UUID, specific_day: date) -> DietDtoSchema | None:
+    async def get_daily_diet(
+        self, uow: AsyncSession, customer_id: UUID, specific_day: date
+    ) -> DailyDietDtoSchema | None:
         query = (
             select(
                 Diet
             ).join(
-                TrainingPlan, Diet.training_plan_id == TrainingPlan.id
+                TrainingPlan, Diet.training_plan_id == TrainingPlan.id,
+                Meal, Diet.id == Meal.diet_id,
             ).where(
                 and_(
                     TrainingPlan.customer_id == customer_id,
@@ -45,4 +48,4 @@ class DietRepository:
         if diet is None:
             return None
 
-        return DietDtoSchema.from_orm(diet)
+        return DailyDietDtoSchema.from_orm(diet)

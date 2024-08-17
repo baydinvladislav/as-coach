@@ -4,7 +4,7 @@ from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.repository.diet_repository import DietRepository
-from src.schemas.diet_dto import DietDtoSchema
+from src.schemas.diet_dto import DailyDietDtoSchema
 
 
 class DietService:
@@ -21,7 +21,7 @@ class DietService:
 
     async def get_daily_customer_diet(
         self, uow: AsyncSession, customer_id: UUID, specific_day: date,
-    ) -> DietDtoSchema | None:
+    ) -> DailyDietDtoSchema | None:
         diet = await self.diet_repository.get_daily_diet(
             uow=uow,
             customer_id=customer_id,
