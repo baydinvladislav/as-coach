@@ -195,6 +195,11 @@ class Product(Base, BaseModel):
     carbs = Column("carbs", Integer, nullable=False)
     calories = Column("calories", Integer, nullable=False)
     vendor_name = Column("vendor_name", String(255), nullable=False)
+    meals: RelationshipProperty = relationship(
+        "Meal",
+        secondary="productinmeal",
+        back_populates="products"
+    )
 
     def __repr__(self):
         return f"Product: {self.name}"
