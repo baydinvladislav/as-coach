@@ -1,10 +1,12 @@
 from datetime import date
 from uuid import UUID
 
+from pydantic import BaseModel
+
 from src.schemas.diet_dto import DietDtoSchema
 
 
-class ProductOut:
+class ProductOut(BaseModel):
     id: UUID
     name: str
     amount: int
@@ -16,7 +18,7 @@ class ProductOut:
     vendor: str
 
 
-class DailyNutrientsOut:
+class DailyNutrientsOut(BaseModel):
     calories_total: int
     calories_consumed: int
 
@@ -29,12 +31,12 @@ class DailyNutrientsOut:
     carbs_consumed: int
 
 
-class DailyMealOut:
+class DailyMealOut(BaseModel):
     nutrients: list[DailyNutrientsOut]
     products: ProductOut
 
 
-class DailyDietOut:
+class DailyDietOut(BaseModel):
     daily_total: DailyNutrientsOut
     breakfast: DailyMealOut
     lunch: DailyMealOut
@@ -47,6 +49,6 @@ class DailyDietOut:
         )
 
 
-class DailyNutritionOut:
+class DailyNutritionOut(BaseModel):
     date: date
     actual_nutrition: DailyDietOut

@@ -18,7 +18,7 @@ from src.shared.dependencies import (
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-nutrition_router = APIRouter()
+nutrition_router = APIRouter(prefix="/nutrition")
 
 
 # GET nutrition/diets/${customer_id}/${specific_day}
