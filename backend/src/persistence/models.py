@@ -141,7 +141,7 @@ class Meal(Base, BaseModel):
     name = Column("name", String(255), nullable=False)
 
     diet_id = Column(UUID(as_uuid=True), ForeignKey("diet.id", ondelete="CASCADE"))
-    diet: RelationshipProperty = relationship("Diet", cascade="all,delete-orphan", back_populates="meals")
+    diet: RelationshipProperty = relationship("Diet", back_populates="meals")
 
     total_calories = Column("total_calories", Integer, nullable=False)
     consumed_calories = Column("consumed_calories", Integer, default=0)
