@@ -89,11 +89,12 @@ async def consume_product_in_diet(
 
 # GET nutrition/products/${product_word}
 @nutrition_router.get(
-    "/products",
+    "/products/lookup",
     summary="Get product by relative product word",
     # response_model=DailyDietOut,
     status_code=status.HTTP_200_OK)
 async def find_product(
+    query_word: str,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     diet_service: DietService = Depends(provide_diet_service),
     uow: AsyncSession = Depends(provide_database_unit_of_work),
@@ -102,6 +103,7 @@ async def find_product(
     Find product by relative product word
 
     Args:
+        query_word: word for looking up in db
         user_service: both user roles can access
         diet_service: service responsible for customer diets
         uow: db session injection
