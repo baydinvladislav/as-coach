@@ -91,13 +91,13 @@ async def consume_product_in_diet(
 @nutrition_router.get(
     "/products",
     summary="Get product by relative product word",
-    response_model=DailyDietOut,
+    # response_model=DailyDietOut,
     status_code=status.HTTP_200_OK)
 async def find_product(
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     diet_service: DietService = Depends(provide_diet_service),
     uow: AsyncSession = Depends(provide_database_unit_of_work),
-) -> DailyDietOut:
+) -> dict:
     """
     Find product by relative product word
 
@@ -108,7 +108,7 @@ async def find_product(
     Returns:
         response:
     """
-    ...
+    return {"test": "OK!"}
 
 
 # POST nutrition/products
