@@ -18,7 +18,24 @@ class Product(BaseModel):
         orm_mode = True
 
 
+class DietDtoSchema(BaseModel):
+    """This created by coach as template"""
+
+    id: UUID
+    proteins: int
+    fats: int
+    carbs: int
+
+    class Config:
+        orm_mode = True
+
+
 class DailyNutrients(BaseModel):
+    """
+    Nutrition plan/fact model.
+    Inherited by Meal and DailyDiet.
+    """
+
     total_calories: int
     consumed_calories: int
 
@@ -41,8 +58,13 @@ class MealDtoSchema(DailyNutrients):
 
 
 class DailyDietDtoSchema(DailyNutrients):
+    """
+    This diet fork for customer.
+    This record keeps nutrition customer results.
+    """
+
     id: UUID
-    meals: list[MealDtoSchema]
+    meals: list[MealDtoSchema] | None
 
     class Config:
         orm_mode = True
