@@ -239,6 +239,7 @@ async def create_training_plan(
         proteins="/".join([str(diet.proteins) for diet in training_plan.diets]),
         fats="/".join([str(diet.fats) for diet in training_plan.diets]),
         carbs="/".join([str(diet.carbs) for diet in training_plan.diets]),
+        calories="/".join([str(diet.calories) for diet in training_plan.diets]),
     )
 
 
@@ -279,6 +280,7 @@ async def get_all_training_plans(
             proteins="/".join([str(diet.proteins) for diet in training_plan.diets]),
             fats="/".join([str(diet.fats) for diet in training_plan.diets]),
             carbs="/".join([str(diet.carbs) for diet in training_plan.diets]),
+            calories="/".join([str(diet.calories) for diet in training_plan.diets]),
         )
         for training_plan in training_plans
     ]
@@ -330,6 +332,7 @@ async def get_training_plan(
         proteins=training_plan.proteins,
         fats=training_plan.fats,
         carbs=training_plan.carbs,
+        calories=training_plan.calories,
         trainings=training_plan.trainings,
         set_rest=training_plan.set_rest,
         exercise_rest=training_plan.exercise_rest,

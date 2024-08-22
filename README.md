@@ -11,7 +11,7 @@ alembic upgrade head
 
 
 ```bash
-alembic revision --autogenerate -m "create table
+alembic revision --autogenerate -m "create table"
 ```
 
 <h2>Local Testing</h2>

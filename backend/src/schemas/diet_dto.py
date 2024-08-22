@@ -25,6 +25,7 @@ class DietDtoSchema(BaseModel):
     proteins: int
     fats: int
     carbs: int
+    calories: int
 
     class Config:
         orm_mode = True

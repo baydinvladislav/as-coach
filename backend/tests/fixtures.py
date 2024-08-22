@@ -95,19 +95,25 @@ async def create_training_plans(create_coach, create_customer, db):
         TrainingPlan(
             start_date=date.today(),
             end_date=date.today() + timedelta(days=6),
-            customer_id=str(create_customer.id)
+            customer=create_customer,
         ),
         TrainingPlan(
             start_date=date.today() + timedelta(days=7),
             end_date=date.today() + timedelta(days=14),
-            customer_id=str(create_customer.id)
+            customer=create_customer,
         )
     ]
 
     db.add_all(training_plans_list)
     await db.commit()
 
-    result = await db.execute(select(TrainingPlan))
+    result = await db.execute(
+        select(
+            TrainingPlan
+        ).options(
+            selectinload(TrainingPlan.customer),
+        )
+    )
     training_plans = result.scalars().all()
     return training_plans
 
@@ -169,7 +175,15 @@ async def create_customer(create_coach, db) -> Customer:
     db.add(test_customer)
     await db.commit()
 
-    query = select(Customer).where(Customer.id == str(test_customer.id)).options(selectinload(Customer.coach))
+    query = select(
+        Customer
+    ).where(
+        Customer.id == str(test_customer.id)
+    ).options(
+        selectinload(Customer.coach),
+        selectinload(Customer.training_plans),
+    )
+
     result = await db.execute(query)
     return result.scalar()
 

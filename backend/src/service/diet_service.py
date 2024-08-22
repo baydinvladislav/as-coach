@@ -3,21 +3,46 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.presentation.schemas.training_plan_schema import DietIn
 from src.repository.diet_repository import DietRepository
 from src.schemas.diet_dto import DailyDietDtoSchema
+from src.service.meal_service import MealService
 
 
 class DietService:
-    def __init__(self, diet_repository: DietRepository) -> None:
+    def __init__(
+        self,
+        diet_repository: DietRepository,
+        meal_service: MealService,
+    ) -> None:
         self.diet_repository = diet_repository
+        self.meal_service = meal_service
 
-    async def create_diets(self, uow: AsyncSession, training_plan_id: UUID, diets: list) -> int:
-        inserted_row_amount = await self.diet_repository.create_diets(
+    @staticmethod
+    async def _calculate_calories(proteins: int, fats: int, carbs: int) -> int:
+        protein_coefficient = 4
+        carb_coefficient = 4
+        fat_coefficient = 9
+        result = (proteins * protein_coefficient) + (carbs * carb_coefficient) + (fats * fat_coefficient)
+        return result
+
+    async def create_diets(self, uow: AsyncSession, training_plan_id: UUID, diets: list[DietIn]) -> int:
+        for diet in diets:
+            diet.calories = await self._calculate_calories(
+                proteins=diet.proteins,
+                fats=diet.fats,
+                carbs=diet.carbs,
+            )
+
+        diet_ids = await self.diet_repository.create_diets(
             uow=uow,
             training_plan_id=training_plan_id,
             diets=diets,
         )
-        return inserted_row_amount
+
+        await self.meal_service.create_empty_meals(uow, diet_ids)
+
+        return len(diet_ids)
 
     async def get_daily_customer_diet(
         self, uow: AsyncSession, customer_id: UUID, specific_day: date,

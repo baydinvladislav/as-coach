@@ -63,6 +63,11 @@ async def test_create_training_plan_successfully(
     assert response["fats"] == str(training_plan_data["diets"][0]["fats"])
     assert response["carbs"] == str(training_plan_data["diets"][0]["carbs"])
 
+    # test that we have correct calories calculations
+    d = training_plan_data["diets"][0]
+    expected_calories = (d["proteins"] * 4) + (d["fats"] * 9) + (d["carbs"] * 4)
+    assert response["calories"] == str(expected_calories)
+
     # check that we called firebase notification service with correct args
     assert create_customer.fcm_token in mock_send_push_notification.call_args.args
     excepted_push_notification_sent_data = {

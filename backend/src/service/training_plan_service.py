@@ -122,6 +122,7 @@ class TrainingPlanService:
             proteins="/".join([str(diet.proteins) for diet in training_plan.diets]),
             fats="/".join([str(diet.fats) for diet in training_plan.diets]),
             carbs="/".join([str(diet.carbs) for diet in training_plan.diets]),
+            calories="/".join([str(diet.calories) for diet in training_plan.diets]),
             trainings=trainings,
             set_rest=training_plan.set_rest,
             exercise_rest=training_plan.exercise_rest,

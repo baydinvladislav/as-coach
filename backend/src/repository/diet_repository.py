@@ -9,12 +9,13 @@ from src.schemas.diet_dto import DailyDietDtoSchema
 
 
 class DietRepository:
-    async def create_diets(self, uow: AsyncSession, training_plan_id: UUID, diets: list) -> int:
+    async def create_diets(self, uow: AsyncSession, training_plan_id: UUID, diets: list) -> list[UUID]:
         diet_orm = [
             Diet(
                 proteins=diet.proteins,
                 fats=diet.fats,
                 carbs=diet.carbs,
+                calories=diet.calories,
                 training_plan_id=training_plan_id,
             )
             for diet in diets
@@ -23,11 +24,12 @@ class DietRepository:
         uow.add_all(diet_orm)
         await uow.flush()
 
-        return len(diets)
+        return diet_orm
 
     async def get_daily_diet(
         self, uow: AsyncSession, customer_id: UUID, specific_day: date
     ) -> DailyDietDtoSchema | None:
+        # TODO: этот подзапрос вернёт диету, теперь же нужно получить приемы диеты
         query = (
             select(
                 Diet

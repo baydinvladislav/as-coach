@@ -40,6 +40,7 @@ class TrainingPlanDetailDtoSchema(BaseModel):
     proteins: str
     fats: str
     carbs: str
+    calories: int
     trainings: list[TrainingDtoSchema]
     set_rest: int
     exercise_rest: int

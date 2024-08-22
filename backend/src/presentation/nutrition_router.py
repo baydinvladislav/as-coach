@@ -2,7 +2,7 @@ import logging
 from datetime import date
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.presentation.schemas.nutrition_schema import DailyDietOut
@@ -23,12 +23,11 @@ nutrition_router = APIRouter(prefix="/nutrition")
 
 # GET nutrition/diets/${customer_id}/${specific_day}
 @nutrition_router.get(
-    "/diets",
+    "/diets/{specific_day}",
     summary="Get customer daily diet",
     response_model=DailyDietOut,
     status_code=status.HTTP_200_OK)
 async def get_daily_diet(
-    customer_id: UUID,
     specific_day: date,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     diet_service: DietService = Depends(provide_diet_service),
@@ -38,7 +37,6 @@ async def get_daily_diet(
     Get customer daily diet
 
     Args:
-        customer_id: whose diet
         specific_day: date daily diet applying
         user_service: both user roles can access
         diet_service: service responsible for customer diets
@@ -50,9 +48,16 @@ async def get_daily_diet(
 
     daily_diet = await diet_service.get_daily_customer_diet(
         uow=uow,
-        customer_id=customer_id,
+        customer_id=user.id,
         specific_day=specific_day,
     )
+
+    if daily_diet is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Daily diet for {user.id} today is not scheduled",
+        )
+
     response = DailyDietOut().from_daily_diet_dto(daily_diet)
     return response
 

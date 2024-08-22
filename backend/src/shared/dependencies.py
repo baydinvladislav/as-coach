@@ -22,6 +22,8 @@ from src.shared.exceptions import TokenExpired, NotValidCredentials
 from src.service.training_plan_service import TrainingPlanService
 from src.service.training_service import TrainingService
 from src.service.diet_service import DietService
+from src.repository.meal_repository import MealRepository
+from src.service.meal_service import MealService
 from src.service.notification_service import NotificationService
 from src.supplier.firebase_supplier import PushFirebaseNotificator
 
@@ -48,10 +50,16 @@ async def provide_library_service() -> LibraryService:
 
 
 async def provide_training_plan_service() -> TrainingPlanService:
+    meal_service = MealService(MealRepository())
+    diet_repository = DietService(DietRepository(), meal_service)
+
+    training_plan_repository = TrainingPlanRepository()
+    training_service = TrainingService(TrainingRepository())
+
     return TrainingPlanService(
-        training_plan_repository=TrainingPlanRepository(),
-        training_service=TrainingService(TrainingRepository()),
-        diet_service=DietService(DietRepository()),
+        training_plan_repository=training_plan_repository,
+        training_service=training_service,
+        diet_service=diet_repository,
     )
 
 
@@ -120,4 +128,6 @@ async def provide_user_service(
 
 async def provide_diet_service() -> DietService:
     diet_repository = DietRepository()
-    return DietService(diet_repository)
+    meal_repository = MealRepository()
+    meal_service = MealService(meal_repository)
+    return DietService(diet_repository=diet_repository, meal_service=meal_service)

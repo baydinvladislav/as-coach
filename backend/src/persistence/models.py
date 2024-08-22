@@ -120,6 +120,7 @@ class Diet(Base, BaseModel):
     proteins = Column("proteins", Integer, nullable=False)
     fats = Column("fats", Integer, nullable=False)
     carbs = Column("carbs", Integer, nullable=False)
+    calories = Column("calories", Integer, nullable=False)
     training_plan_id = Column(UUID(as_uuid=True), ForeignKey("trainingplan.id", ondelete="CASCADE"))
     training_plans: RelationshipProperty = relationship("TrainingPlan", back_populates="diets")
     meals: RelationshipProperty = relationship(
@@ -129,7 +130,7 @@ class Diet(Base, BaseModel):
     )
 
     def __repr__(self):
-        return f"diet: {self.proteins}/{self.fats}/{self.carbs}"
+        return f"diet: {self.proteins}/{self.fats}/{self.carbs}/{self.calories}"
 
 
 class Meal(Base, BaseModel):
@@ -149,11 +150,11 @@ class Meal(Base, BaseModel):
     total_proteins = Column("total_proteins", Integer, nullable=False)
     consumed_proteins = Column("consumed_proteins", Integer, default=0)
 
-    total_fats = Column("total_fats", Integer, default=0)
-    consumed_fats = Column("consumed_fats", Integer, nullable=False)
+    total_fats = Column("total_fats", Integer, nullable=False)
+    consumed_fats = Column("consumed_fats", Integer, default=0)
 
-    total_carbs = Column("total_carbs", Integer, default=0)
-    consumed_carbs = Column("consumed_carbs", Integer, nullable=False)
+    total_carbs = Column("total_carbs", Integer, nullable=False)
+    consumed_carbs = Column("consumed_carbs", Integer, default=0)
 
     products: RelationshipProperty = relationship(
         "Product",
