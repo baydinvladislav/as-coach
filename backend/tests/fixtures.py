@@ -62,7 +62,10 @@ async def create_training_exercises(create_trainings, create_exercises, db):
 
 @pytest_asyncio.fixture()
 async def create_diets(create_training_plans, db):
-    diets_list = [Diet(proteins=200, fats=100, carbs=300), Diet(proteins=200, fats=100, carbs=200)]
+    diets_list = [
+        Diet(proteins=200, fats=100, carbs=300, calories=2900),
+        Diet(proteins=200, fats=100, carbs=200, calories=2500),
+    ]
 
     db.add_all(diets_list)
     await db.commit()
