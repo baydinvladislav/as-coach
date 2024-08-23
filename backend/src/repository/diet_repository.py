@@ -12,10 +12,10 @@ class DietRepository:
     async def create_diets(self, uow: AsyncSession, training_plan_id: UUID, diets: list) -> list[UUID]:
         diet_orm = [
             Diet(
-                proteins=diet.proteins,
-                fats=diet.fats,
-                carbs=diet.carbs,
-                calories=diet.calories,
+                total_proteins=diet.proteins,
+                total_fats=diet.fats,
+                total_carbs=diet.carbs,
+                total_calories=diet.calories,
                 training_plan_id=training_plan_id,
             )
             for diet in diets
