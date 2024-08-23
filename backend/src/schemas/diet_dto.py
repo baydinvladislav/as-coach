@@ -22,10 +22,18 @@ class DietDtoSchema(BaseModel):
     """This created by coach as template"""
 
     id: UUID
-    proteins: int
-    fats: int
-    carbs: int
-    calories: int
+
+    total_proteins: int
+    consumed_proteins: int
+
+    total_fats: int
+    consumed_fats: int
+
+    total_carbs: int
+    consumed_carbs: int
+
+    total_calories: int
+    consumed_calories: int
 
     class Config:
         orm_mode = True
