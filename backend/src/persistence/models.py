@@ -117,36 +117,6 @@ class Diet(Base, BaseModel):
     """
     __tablename__ = "diet"
 
-    proteins = Column("proteins", Integer, nullable=False)
-    fats = Column("fats", Integer, nullable=False)
-    carbs = Column("carbs", Integer, nullable=False)
-    calories = Column("calories", Integer, nullable=False)
-    training_plan_id = Column(UUID(as_uuid=True), ForeignKey("trainingplan.id", ondelete="CASCADE"))
-    training_plans: RelationshipProperty = relationship("TrainingPlan", back_populates="diets")
-    meals: RelationshipProperty = relationship(
-        "Meal",
-        cascade="all,delete-orphan",
-        back_populates="diet"
-    )
-
-    def __repr__(self):
-        return f"diet: {self.proteins}/{self.fats}/{self.carbs}/{self.calories}"
-
-
-class Meal(Base, BaseModel):
-    """
-    Each meal is within the customer's diet
-    """
-    __tablename__ = "meal"
-
-    name = Column("name", String(255), nullable=False)
-
-    diet_id = Column(UUID(as_uuid=True), ForeignKey("diet.id", ondelete="CASCADE"))
-    diet: RelationshipProperty = relationship("Diet", back_populates="meals")
-
-    total_calories = Column("total_calories", Integer, nullable=False)
-    consumed_calories = Column("consumed_calories", Integer, default=0)
-
     total_proteins = Column("total_proteins", Integer, nullable=False)
     consumed_proteins = Column("consumed_proteins", Integer, default=0)
 
@@ -156,25 +126,21 @@ class Meal(Base, BaseModel):
     total_carbs = Column("total_carbs", Integer, nullable=False)
     consumed_carbs = Column("consumed_carbs", Integer, default=0)
 
-    products: RelationshipProperty = relationship(
-        "Product",
-        secondary="productinmeal",
-        back_populates="meals"
-    )
+    total_calories = Column("total_calories", Integer, nullable=False)
+    consumed_calories = Column("consumed_calories", Integer, default=0)
+
+    breakfast = Column(JSON, default={})
+    lunch = Column(JSON, default={})
+    dinner = Column(JSON, default={})
+    snacks = Column(JSON, default={})
+
+    training_plan_id = Column(UUID(as_uuid=True), ForeignKey("trainingplan.id", ondelete="CASCADE"))
+
+    # TODO: сейчас у нас один уже план, нужно поменять атрибут на training_plan
+    training_plans: RelationshipProperty = relationship("TrainingPlan", back_populates="diets")
 
     def __repr__(self):
-        return f"Meal: {self.name} P: {self.proteins_total} / F: {self.fats_total} / C: {self.carbs_total}"
-
-
-class ProductInMeal(Base, BaseModel):
-    """
-    Model for M2M relationship Meal and Product.
-    """
-    __tablename__ = "productinmeal"
-
-    amount = Column("amount", Integer, nullable=False)
-    meal_id = Column(UUID(as_uuid=True), ForeignKey("meal.id", ondelete="CASCADE"))
-    product_id = Column(UUID(as_uuid=True), ForeignKey("product.id", ondelete="CASCADE"))
+        return f"diet: {self.total_proteins}/{self.total_fats}/{self.total_carbs}/{self.total_calories}"
 
 
 class ProductType(enum.Enum):
@@ -183,6 +149,7 @@ class ProductType(enum.Enum):
     PORTION = "PORTION"
 
 
+# TODO: реализовать в DynamoDB
 class Product(Base, BaseModel):
     """
     Nutrition product
@@ -196,11 +163,6 @@ class Product(Base, BaseModel):
     carbs = Column("carbs", Integer, nullable=False)
     calories = Column("calories", Integer, nullable=False)
     vendor_name = Column("vendor_name", String(255), nullable=False)
-    meals: RelationshipProperty = relationship(
-        "Meal",
-        secondary="productinmeal",
-        back_populates="products"
-    )
 
     def __repr__(self):
         return f"Product: {self.name}"

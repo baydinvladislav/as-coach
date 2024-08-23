@@ -5,7 +5,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.presentation.schemas.nutrition_schema import DailyDietOut
+from src.presentation.schemas.nutrition_schema import DailyMealsOut, DailyDietOut
 from src.service.coach_service import CoachService
 from src.service.customer_service import CustomerService
 from src.service.diet_service import DietService
@@ -58,8 +58,10 @@ async def get_daily_diet(
             detail=f"Daily diet for {user.id} today is not scheduled",
         )
 
-    response = DailyDietOut().from_daily_diet_dto(daily_diet)
-    return response
+    return DailyDietOut(
+        date=specific_day,
+        actual_nutrition=DailyMealsOut.from_diet_dto(daily_diet),
+    )
 
 
 # наверное тут нужно передавать идентификаторы Meals, при создании каждой диеты тренером,
@@ -68,7 +70,7 @@ async def get_daily_diet(
 @nutrition_router.post(
     "/diets",
     summary="Consume product inside diet",
-    response_model=DailyDietOut,
+    response_model=DailyMealsOut,
     status_code=status.HTTP_201_CREATED)
 async def consume_product_in_diet(
     customer_id: UUID,
@@ -76,7 +78,7 @@ async def consume_product_in_diet(
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     diet_service: DietService = Depends(provide_diet_service),
     uow: AsyncSession = Depends(provide_database_unit_of_work),
-) -> DailyDietOut:
+) -> DailyMealsOut:
     """
     Get customer daily diet
 
@@ -122,7 +124,7 @@ async def find_product(
 @nutrition_router.post(
     "/products",
     summary="Save new product to AsCoach product database",
-    response_model=DailyDietOut,
+    response_model=DailyMealsOut,
     status_code=status.HTTP_201_CREATED)
 async def put_product_in_catalog(
     customer_id: UUID,
@@ -130,7 +132,7 @@ async def put_product_in_catalog(
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     diet_service: DietService = Depends(provide_diet_service),
     uow: AsyncSession = Depends(provide_database_unit_of_work),
-) -> DailyDietOut:
+) -> DailyMealsOut:
     """
     Save new product to AsCoach product database
 
@@ -150,14 +152,14 @@ async def put_product_in_catalog(
 @nutrition_router.get(
     "/products",
     summary="Get specific product",
-    response_model=DailyDietOut,
+    response_model=DailyMealsOut,
     status_code=status.HTTP_200_OK)
 async def get_specific_product(
     product_id: UUID,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     diet_service: DietService = Depends(provide_diet_service),
     uow: AsyncSession = Depends(provide_database_unit_of_work),
-) -> DailyDietOut:
+) -> DailyMealsOut:
     """
     Get customer daily diet
 
@@ -176,14 +178,14 @@ async def get_specific_product(
 @nutrition_router.delete(
     "/products",
     summary="Get customer daily diet",
-    response_model=DailyDietOut,
+    response_model=DailyMealsOut,
     status_code=status.HTTP_200_OK)
 async def consume_product_in_diet(
     product_id: UUID,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     diet_service: DietService = Depends(provide_diet_service),
     uow: AsyncSession = Depends(provide_database_unit_of_work),
-) -> DailyDietOut:
+) -> DailyMealsOut:
     """
     Get customer daily diet
 
@@ -202,14 +204,14 @@ async def consume_product_in_diet(
 @nutrition_router.put(
     "/products",
     summary="Update product data",
-    response_model=DailyDietOut,
+    response_model=DailyMealsOut,
     status_code=status.HTTP_200_OK)
 async def consume_product_in_diet(
     product_id: UUID,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     diet_service: DietService = Depends(provide_diet_service),
     uow: AsyncSession = Depends(provide_database_unit_of_work),
-) -> DailyDietOut:
+) -> DailyMealsOut:
     """
     Get customer daily diet
 

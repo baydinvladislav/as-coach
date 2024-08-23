@@ -6,17 +6,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.presentation.schemas.training_plan_schema import DietIn
 from src.repository.diet_repository import DietRepository
 from src.schemas.diet_dto import DailyDietDtoSchema
-from src.service.meal_service import MealService
 
 
 class DietService:
     def __init__(
         self,
         diet_repository: DietRepository,
-        meal_service: MealService,
     ) -> None:
         self.diet_repository = diet_repository
-        self.meal_service = meal_service
 
     @staticmethod
     async def _calculate_calories(proteins: int, fats: int, carbs: int) -> int:
@@ -39,8 +36,6 @@ class DietService:
             training_plan_id=training_plan_id,
             diets=diets,
         )
-
-        await self.meal_service.create_empty_meals(uow, diet_ids)
 
         return len(diet_ids)
 

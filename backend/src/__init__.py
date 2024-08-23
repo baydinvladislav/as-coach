@@ -10,8 +10,6 @@ from src.persistence.models import (
     MuscleGroup,
     Exercise,
     ExercisesOnTraining,
-    Meal,
-    ProductInMeal,
     ProductType,
     Product,
 )
