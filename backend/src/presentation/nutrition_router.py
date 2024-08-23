@@ -21,7 +21,6 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 nutrition_router = APIRouter(prefix="/nutrition")
 
 
-# GET nutrition/diets/${customer_id}/${specific_day}
 @nutrition_router.get(
     "/diets/{specific_day}",
     summary="Get customer daily diet",
