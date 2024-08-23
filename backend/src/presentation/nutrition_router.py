@@ -5,7 +5,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.presentation.schemas.nutrition_schema import DailyMealsOut, DailyDietOut
+from src.presentation.schemas.nutrition_schema import DailyMealsOut, DailyDietOut, ProductOut
 from src.service.coach_service import CoachService
 from src.service.customer_service import CustomerService
 from src.service.diet_service import DietService
@@ -63,13 +63,11 @@ async def get_daily_diet(
     )
 
 
-# наверное тут нужно передавать идентификаторы Meals, при создании каждой диеты тренером,
-# мы должны создать связанные с диетой Meals, должно быть создано 4 таких записей: завтрак, обед, ужин, перекус
 # POST nutrition/diets/${diet_id}/breakfast||lunch||dinner||snacks/${product_id}
 @nutrition_router.post(
     "/diets",
     summary="Consume product inside diet",
-    response_model=DailyMealsOut,
+    response_model=DailyDietOut,
     status_code=status.HTTP_201_CREATED)
 async def consume_product_in_diet(
     customer_id: UUID,
@@ -77,9 +75,9 @@ async def consume_product_in_diet(
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     diet_service: DietService = Depends(provide_diet_service),
     uow: AsyncSession = Depends(provide_database_unit_of_work),
-) -> DailyMealsOut:
+) -> DailyDietOut:
     """
-    Get customer daily diet
+    Add product to daily customer diet
 
     Args:
         customer_id: whose diet
@@ -91,32 +89,6 @@ async def consume_product_in_diet(
         response:
     """
     ...
-
-
-# GET nutrition/products/${product_word}
-@nutrition_router.get(
-    "/products/lookup",
-    summary="Get product by relative product word",
-    # response_model=DailyDietOut,
-    status_code=status.HTTP_200_OK)
-async def find_product(
-    query_text: str,
-    user_service: CoachService | CustomerService = Depends(provide_user_service),
-    diet_service: DietService = Depends(provide_diet_service),
-    uow: AsyncSession = Depends(provide_database_unit_of_work),
-) -> dict:
-    """
-    Find product by relative product word
-
-    Args:
-        query_text: word for looking up in db
-        user_service: both user roles can access
-        diet_service: service responsible for customer diets
-        uow: db session injection
-    Returns:
-        response:
-    """
-    return {"test": "OK!"}
 
 
 # POST nutrition/products
@@ -150,7 +122,7 @@ async def put_product_in_catalog(
 # GET nutrition/products/${product_id}
 @nutrition_router.get(
     "/products",
-    summary="Get specific product",
+    summary="Get specific product from AsCoach product database by product_id",
     response_model=DailyMealsOut,
     status_code=status.HTTP_200_OK)
 async def get_specific_product(
@@ -160,7 +132,7 @@ async def get_specific_product(
     uow: AsyncSession = Depends(provide_database_unit_of_work),
 ) -> DailyMealsOut:
     """
-    Get customer daily diet
+    Get nutrition product from storage.
 
     Args:
         product_id: id for specific product
@@ -176,17 +148,17 @@ async def get_specific_product(
 # DELETE nutrition/products/${product_id}
 @nutrition_router.delete(
     "/products",
-    summary="Get customer daily diet",
-    response_model=DailyMealsOut,
+    summary="Delete product data from AsCoach product database",
+    response_model=ProductOut,
     status_code=status.HTTP_200_OK)
-async def consume_product_in_diet(
+async def delete_product_from_storage(
     product_id: UUID,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     diet_service: DietService = Depends(provide_diet_service),
     uow: AsyncSession = Depends(provide_database_unit_of_work),
 ) -> DailyMealsOut:
     """
-    Get customer daily diet
+    Delete created by current customer product application storage.
 
     Args:
         product_id: id for specific product
@@ -202,20 +174,46 @@ async def consume_product_in_diet(
 # PUT nutrition/products/${product_id}
 @nutrition_router.put(
     "/products",
-    summary="Update product data",
-    response_model=DailyMealsOut,
+    summary="Update product data in AsCoach product database",
+    response_model=ProductOut,
     status_code=status.HTTP_200_OK)
-async def consume_product_in_diet(
+async def update_product_from_storage(
     product_id: UUID,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     diet_service: DietService = Depends(provide_diet_service),
     uow: AsyncSession = Depends(provide_database_unit_of_work),
 ) -> DailyMealsOut:
     """
-    Get customer daily diet
+    Update created by current customer product application storage.
 
     Args:
-        product_id: id for specific product
+        product_id: id for updated product
+        user_service: both user roles can access
+        diet_service: service responsible for customer diets
+        uow: db session injection
+    Returns:
+        response:
+    """
+    ...
+
+
+# GET nutrition/products/${query_text}
+@nutrition_router.get(
+    "/products/lookup",
+    summary="Look up product by relative product word",
+    response_model=list[ProductOut],
+    status_code=status.HTTP_200_OK)
+async def find_product(
+    query_text: str,
+    user_service: CoachService | CustomerService = Depends(provide_user_service),
+    diet_service: DietService = Depends(provide_diet_service),
+    uow: AsyncSession = Depends(provide_database_unit_of_work),
+) -> dict:
+    """
+    Find product by relative product word in application storage.
+
+    Args:
+        query_text: word for looking up in db
         user_service: both user roles can access
         diet_service: service responsible for customer diets
         uow: db session injection
