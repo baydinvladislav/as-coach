@@ -2,10 +2,29 @@ from uuid import UUID, uuid4
 
 from src.persistence.dynamo_db_models import Product
 from src.presentation.schemas.product_schema import ProductCreateIn
+from src.schemas.product_dto import ProductDtoSchema
 
 
 class ProductRepository:
-    async def insert_product(self, user_id: UUID, product_data: ProductCreateIn, product_calories: int) -> Product:
+    async def get_product_by_id(self, _id: str) -> ProductDtoSchema | None:
+        product = Product.get(_id)
+        if product is None:
+            return None
+        return ProductDtoSchema.from_product(product)
+
+    async def get_products_by_ids(self, product_ids: list[str]) -> list[ProductDtoSchema]:
+        products = []
+        with Product.batch_get(product_ids) as batch:
+            for product in batch:
+                products.append(ProductDtoSchema.from_product(product))
+        return products
+
+    async def insert_product(
+        self,
+        user_id: UUID,
+        product_data: ProductCreateIn,
+        product_calories: int
+    ) -> ProductDtoSchema:
         new_product = Product(
             id=str(uuid4()),
             name=product_data.name,
@@ -19,4 +38,4 @@ class ProductRepository:
             user_id=str(user_id),
         )
         new_product.save()
-        return new_product
+        return ProductDtoSchema.from_product(new_product)
