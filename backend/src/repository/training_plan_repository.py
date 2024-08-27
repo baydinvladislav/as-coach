@@ -78,13 +78,9 @@ class TrainingPlanRepository:
             return DietDtoSchema(
                 id=diet.id,
                 total_proteins=diet.total_proteins,
-                consumed_proteins=diet.consumed_proteins,
                 total_fats=diet.total_fats,
-                consumed_fats=diet.consumed_fats,
                 total_carbs=diet.total_carbs,
-                consumed_carbs=diet.consumed_carbs,
                 total_calories=diet.total_calories,
-                consumed_calories=diet.consumed_calories,
             )
 
         trainings_dto = [map_training_to_dto(training) for training in training_plan.trainings]

@@ -18,6 +18,7 @@ from src import (
     Coach,
     Customer,
     Diet,
+    DietDays,
 )
 from src.utils import generate_random_password, get_hashed_password
 from tests.conftest import TestingSessionLocal
@@ -80,6 +81,44 @@ async def create_diets(create_training_plans, db):
     ]
 
     db.add_all(diets_list)
+
+    diet_days_list = [
+        DietDays(
+            date=create_training_plans[0].start_date + timedelta(days=2),
+            diet=diets_list[0],
+            breakfast={
+                "b2c8d440-d59d-44d1-8b27-70fc08b6b831": 200,
+            },
+            lunch={
+                "919b5f1e-36e0-4e15-a39a-a88481cdc938": 100,
+            },
+            dinner={
+                "098af4ff-64fa-4ffb-8ced-6d8696b3ecb9": 300,
+            },
+            snacks={
+                "24ef3147-1ec8-4e82-9020-3241c35b22b0": 200,
+            },
+        ),
+        DietDays(
+            date=create_training_plans[0].start_date + timedelta(days=4),
+            diet=diets_list[0],
+            breakfast={
+                "b2c8d440-d59d-44d1-8b27-70fc08b6b831": 200,
+            },
+            lunch={
+                "919b5f1e-36e0-4e15-a39a-a88481cdc938": 100,
+            },
+            dinner={
+                "098af4ff-64fa-4ffb-8ced-6d8696b3ecb9": 300,
+            },
+            snacks={
+                "24ef3147-1ec8-4e82-9020-3241c35b22b0": 200,
+            },
+        )
+    ]
+
+    db.add_all(diet_days_list)
+
     await db.commit()
 
     result = await db.execute(select(Diet))

@@ -113,34 +113,40 @@ class TrainingPlan(Base, BaseModel):
 
 class Diet(Base, BaseModel):
     """
-    Contains nutrition data inside training plan domain
+    Contains nutrients amount within the training plan domain.
+    The recommended diet by the coach is a subdomain of the training plan domain.
     """
     __tablename__ = "diet"
 
     total_proteins = Column("total_proteins", Integer, nullable=False)
-    consumed_proteins = Column("consumed_proteins", Integer, default=0)
-
     total_fats = Column("total_fats", Integer, nullable=False)
-    consumed_fats = Column("consumed_fats", Integer, default=0)
-
     total_carbs = Column("total_carbs", Integer, nullable=False)
-    consumed_carbs = Column("consumed_carbs", Integer, default=0)
-
     total_calories = Column("total_calories", Integer, nullable=False)
-    consumed_calories = Column("consumed_calories", Integer, default=0)
+    training_plan_id = Column(UUID(as_uuid=True), ForeignKey("trainingplan.id", ondelete="CASCADE"))
+    # TODO: сейчас у нас один уже план, нужно поменять атрибут на training_plan
+    training_plans: RelationshipProperty = relationship("TrainingPlan", back_populates="diets")
+    diet_days = relationship("DietDays", back_populates="diet", cascade="all, delete-orphan")
+
+    def __repr__(self):
+        return f"diet: {self.total_proteins}/{self.total_fats}/{self.total_carbs}/{self.total_calories}"
+
+
+class DietDays(Base, BaseModel):
+    __tablename__ = "dietday"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
+    date = Column(Date, nullable=False)
 
     breakfast = Column(JSON, default={})
     lunch = Column(JSON, default={})
     dinner = Column(JSON, default={})
     snacks = Column(JSON, default={})
 
-    training_plan_id = Column(UUID(as_uuid=True), ForeignKey("trainingplan.id", ondelete="CASCADE"))
-
-    # TODO: сейчас у нас один уже план, нужно поменять атрибут на training_plan
-    training_plans: RelationshipProperty = relationship("TrainingPlan", back_populates="diets")
+    diet_id = Column(UUID(as_uuid=True), ForeignKey("diet.id"), nullable=False)
+    diet = relationship("Diet", back_populates="diet_days")
 
     def __repr__(self):
-        return f"diet: {self.total_proteins}/{self.total_fats}/{self.total_carbs}/{self.total_calories}"
+        return f"Diet day: {self.date}"
 
 
 class ProductType(enum.Enum):

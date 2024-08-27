@@ -1,5 +1,6 @@
 from datetime import timedelta
 import pytest
+import uuid
 
 from tests.conftest import make_test_http_request
 
@@ -7,7 +8,7 @@ from tests.conftest import make_test_http_request
 @pytest.mark.asyncio
 async def test_get_customer_daily_diet(create_diets):
     customer_username = create_diets[0].training_plans.customer.username
-    specific_day = create_diets[0].training_plans.start_date + timedelta(days=3)
+    specific_day = create_diets[0].training_plans.start_date + timedelta(days=2)
 
     response = await make_test_http_request(
         url=f"api/nutrition/diets/{specific_day}",
@@ -30,10 +31,23 @@ async def test_get_customer_daily_diet(create_diets):
 
 
 @pytest.mark.asyncio
-async def test_get_product(create_customer):
+async def test_add_product_to_diet(create_diets):
+    diet_id = str(create_diets[0].id)
+    customer_username = create_diets[0].training_plans.customer.username
+
+    product_data = {
+        "diet_id": diet_id,
+        "product_id": str(uuid.uuid4()),
+        "product_amount": 150,
+        "meal_type": "breakfast",
+        "specific_day": str(create_diets[0].training_plans.start_date + timedelta(days=2)),
+    }
+
     response = await make_test_http_request(
-        url="api/nutrition/products/lookup?query_text=молоко",
-        method="get",
-        username=create_customer.username,
+        url=f"api/nutrition/diets",
+        method="post",
+        json=product_data,
+        username=customer_username,
     )
-    assert response.status_code == 200
+
+    assert response.status_code == 201

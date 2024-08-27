@@ -106,6 +106,8 @@ class CoachService:
         updated_coach = await self.profile_service.update_user_profile(uow, user, **params)
         return updated_coach
 
+    # TODO: если тренер создал продукт в БД, а потом удалил свой профиль, то нужно найти такие продукты и проставить им
+    # TODO: какой-нибудь дефолтный UUID, чтобы понимать что это продукт от удаленного тренера, можно поставить UUID со всеми нулями
     async def delete(self, uow: AsyncSession, user: Coach) -> str | None:
         deleted_id = await self.profile_service.delete(uow, user)
         if deleted_id is None:

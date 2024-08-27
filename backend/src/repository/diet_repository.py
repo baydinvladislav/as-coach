@@ -43,9 +43,9 @@ class DietRepository:
             )
         )
         result = await uow.execute(query)
-        diet = result.scalar_one_or_none()
+        recommended_diet_by_coach = result.scalar_one_or_none()
 
-        if diet is None:
+        if recommended_diet_by_coach is None:
             return None
 
-        return DailyDietDtoSchema.from_orm(diet)
+        return DailyDietDtoSchema.from_diet(recommended_diet_by_coach, specific_day)

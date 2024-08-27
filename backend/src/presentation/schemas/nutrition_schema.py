@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from datetime import date
+from enum import Enum
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -24,16 +24,9 @@ class ProductOut(BaseModel):
 
 class DailyNutrientsOut(BaseModel):
     calories_total: int
-    calories_consumed: int
-
     proteins_total: int
-    proteins_consumed: int
-
     fats_total: int
-    fats_consumed: int
-
     carbs_total: int
-    carbs_consumed: int
 
 
 class DailyMealsOut(BaseModel):
@@ -47,13 +40,9 @@ class DailyMealsOut(BaseModel):
     def from_diet_dto(cls, diet_dto: DailyDietDtoSchema) -> "DailyMealsOut":
         daily_total = DailyNutrientsOut(
             calories_total=diet_dto.total_calories,
-            calories_consumed=diet_dto.consumed_calories,
             proteins_total=diet_dto.total_proteins,
-            proteins_consumed=diet_dto.consumed_proteins,
             fats_total=diet_dto.total_fats,
-            fats_consumed=diet_dto.consumed_fats,
             carbs_total=diet_dto.total_carbs,
-            carbs_consumed=diet_dto.consumed_carbs,
         )
 
         return DailyMealsOut(
@@ -70,5 +59,20 @@ class DailyMealsOut(BaseModel):
 
 @dataclass
 class DailyDietOut:
-    date: date
+    date: str
     actual_nutrition: DailyMealsOut
+
+
+class MealType(str, Enum):
+    BREAKFAST = "breakfast"
+    LUNCH = "lunch"
+    DINNER = "dinner"
+    SNACKS = "snacks"
+
+
+class ProductToDietRequest(BaseModel):
+    diet_id: UUID
+    meal_type: MealType
+    specific_day: str
+    product_id: UUID
+    product_amount: int

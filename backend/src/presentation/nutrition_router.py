@@ -5,7 +5,12 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.presentation.schemas.nutrition_schema import DailyMealsOut, DailyDietOut, ProductOut
+from src.presentation.schemas.nutrition_schema import (
+    DailyMealsOut,
+    DailyDietOut,
+    ProductOut,
+    ProductToDietRequest,
+)
 from src.service.coach_service import CoachService
 from src.service.customer_service import CustomerService
 from src.service.diet_service import DietService
@@ -57,9 +62,11 @@ async def get_daily_diet(
             detail=f"Daily diet for {user.id} today is not scheduled",
         )
 
+    actual_nutrition = DailyMealsOut.from_diet_dto(daily_diet)
+
     return DailyDietOut(
-        date=specific_day,
-        actual_nutrition=DailyMealsOut.from_diet_dto(daily_diet),
+        date=str(specific_day),
+        actual_nutrition=actual_nutrition,
     )
 
 
