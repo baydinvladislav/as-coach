@@ -6,7 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from src.database import SessionLocal
+from src.repository.product_repository import ProductRepository
 from src.service.library_service import LibraryService
+from src.service.product_service import ProductService, CaloriesCalculatorService
 from src.shared.config import reuseable_oauth
 from src.utils import decode_jwt_token
 from src.repository.library_repository import ExerciseRepository, MuscleGroupRepository
@@ -126,3 +128,12 @@ async def provide_user_service(
 async def provide_diet_service() -> DietService:
     diet_repository = DietRepository()
     return DietService(diet_repository=diet_repository)
+
+
+async def provide_product_service() -> ProductService:
+    product_repository = ProductRepository()
+    calories_calculator_service = CaloriesCalculatorService()
+    return ProductService(
+        product_repository=product_repository,
+        calories_calculator_service=calories_calculator_service,
+    )

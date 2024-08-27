@@ -11,13 +11,16 @@ from src.presentation.schemas.nutrition_schema import (
     ProductOut,
     ProductToDietRequest,
 )
+from src.presentation.schemas.product_schema import ProductCreateIn, ProductCreateOut
 from src.service.coach_service import CoachService
 from src.service.customer_service import CustomerService
 from src.service.diet_service import DietService
+from src.service.product_service import ProductService
 from src.shared.dependencies import (
     provide_database_unit_of_work,
     provide_user_service,
     provide_diet_service,
+    provide_product_service,
 )
 
 logger = logging.getLogger(__name__)
@@ -102,28 +105,37 @@ async def consume_product_in_diet(
 @nutrition_router.post(
     "/products",
     summary="Save new product to AsCoach product database",
-    response_model=DailyMealsOut,
+    response_model=ProductCreateOut,
     status_code=status.HTTP_201_CREATED)
 async def put_product_in_catalog(
-    customer_id: UUID,
-    specific_day: date,
+    request: ProductCreateIn,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
-    diet_service: DietService = Depends(provide_diet_service),
-    uow: AsyncSession = Depends(provide_database_unit_of_work),
-) -> DailyMealsOut:
+    product_service: ProductService = Depends(provide_product_service),
+) -> ProductCreateOut:
     """
     Save new product to AsCoach product database
 
     Args:
-        customer_id: whose diet
-        specific_day: date daily diet applying
+        request: data for new product creation
         user_service: both user roles can access
-        diet_service: service responsible for customer diets
-        uow: db session injection
+        product_service: service to handle product domain
     Returns:
         response:
     """
-    ...
+    user = user_service.user
+    product = await product_service.create_product(user.id, request)
+    return ProductCreateOut(
+        id=str(product.id),
+        calories=product.calories,
+        user_id=str(product.user_id),
+        name=product.name,
+        barcode=product.barcode,
+        product_type=product.product_type,
+        proteins=product.proteins,
+        fats=product.fats,
+        carbs=product.carbs,
+        vendor_name=product.vendor_name,
+    )
 
 
 # GET nutrition/products/${product_id}
