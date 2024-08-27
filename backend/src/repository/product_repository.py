@@ -39,3 +39,12 @@ class ProductRepository:
         )
         new_product.save()
         return ProductDtoSchema.from_product(new_product)
+
+    async def delete_product(self, _id: str) -> str | None:
+        ...
+
+    async def update_product(self, _id: str) -> ProductDtoSchema | None:
+        ...
+
+    async def search_product(self, query_text: str) -> ProductDtoSchema | None:
+        ...

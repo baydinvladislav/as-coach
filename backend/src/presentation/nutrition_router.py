@@ -138,30 +138,40 @@ async def put_product_in_catalog(
     )
 
 
-# GET nutrition/products/${product_id}
 @nutrition_router.get(
     "/products",
     summary="Get specific product from AsCoach product database by product_id",
-    response_model=DailyMealsOut,
+    response_model=ProductCreateOut,
     status_code=status.HTTP_200_OK)
 async def get_specific_product(
     product_id: UUID,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
-    diet_service: DietService = Depends(provide_diet_service),
-    uow: AsyncSession = Depends(provide_database_unit_of_work),
-) -> DailyMealsOut:
+    product_service: ProductService = Depends(provide_product_service),
+) -> ProductCreateOut:
     """
     Get nutrition product from storage.
 
     Args:
         product_id: id for specific product
         user_service: both user roles can access
-        diet_service: service responsible for customer diets
-        uow: db session injection
+        product_service: service to handle product domain
     Returns:
         response:
     """
-    ...
+    user = user_service.user
+    product = await product_service.get_product_by_id(product_id)
+    return ProductCreateOut(
+        id=str(product.id),
+        calories=product.calories,
+        user_id=str(product.user_id),
+        name=product.name,
+        barcode=product.barcode,
+        product_type=product.product_type,
+        proteins=product.proteins,
+        fats=product.fats,
+        carbs=product.carbs,
+        vendor_name=product.vendor_name,
+    )
 
 
 # DELETE nutrition/products/${product_id}
