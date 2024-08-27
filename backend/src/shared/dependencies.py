@@ -8,7 +8,8 @@ from starlette import status
 from src.database import SessionLocal
 from src.repository.product_repository import ProductRepository
 from src.service.library_service import LibraryService
-from src.service.product_service import ProductService, CaloriesCalculatorService
+from src.service.product_service import ProductService
+from src.service.calories_calculator_service import CaloriesCalculatorService
 from src.shared.config import reuseable_oauth
 from src.utils import decode_jwt_token
 from src.repository.library_repository import ExerciseRepository, MuscleGroupRepository
@@ -50,7 +51,7 @@ async def provide_library_service() -> LibraryService:
 
 
 async def provide_training_plan_service() -> TrainingPlanService:
-    diet_repository = DietService(DietRepository())
+    diet_repository = DietService(DietRepository(), CaloriesCalculatorService())
 
     training_plan_repository = TrainingPlanRepository()
     training_service = TrainingService(TrainingRepository())
@@ -127,7 +128,11 @@ async def provide_user_service(
 
 async def provide_diet_service() -> DietService:
     diet_repository = DietRepository()
-    return DietService(diet_repository=diet_repository)
+    calories_calculator_service = CaloriesCalculatorService()
+    return DietService(
+        diet_repository=diet_repository,
+        calories_calculator_service=calories_calculator_service,
+    )
 
 
 async def provide_product_service() -> ProductService:
