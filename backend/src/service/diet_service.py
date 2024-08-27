@@ -3,6 +3,7 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.presentation.schemas.nutrition_schema import MealType
 from src.presentation.schemas.training_plan_schema import DietIn
 from src.repository.diet_repository import DietRepository
 from src.schemas.diet_dto import DailyDietDtoSchema
@@ -18,13 +19,26 @@ class DietService:
         self.diet_repository = diet_repository
         self.calories_calculator_service = calories_calculator_service
 
-    @staticmethod
-    async def _calculate_calories(proteins: int, fats: int, carbs: int) -> int:
-        protein_coefficient = 4
-        carb_coefficient = 4
-        fat_coefficient = 9
-        result = (proteins * protein_coefficient) + (carbs * carb_coefficient) + (fats * fat_coefficient)
-        return result
+    async def get_recommended_diet(self):
+        ...
+
+    async def put_product_to_diet_meal(
+        self,
+        uow: AsyncSession,
+        diet_id: UUID,
+        meal_type: MealType,
+        product_id: UUID,
+        product_amount: int,
+        specific_day: str,
+    ) -> DailyDietDtoSchema | None:
+        await self.diet_repository.add_product_to_customer_fact(
+            uow=uow,
+            diet_id=diet_id,
+            specific_day=specific_day,
+            meal_type=meal_type,
+            product_id=product_id,
+            product_amount=product_amount,
+        )
 
     async def create_diets(self, uow: AsyncSession, training_plan_id: UUID, diets: list[DietIn]) -> int:
         for diet in diets:

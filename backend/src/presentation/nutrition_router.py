@@ -79,9 +79,8 @@ async def get_daily_diet(
     summary="Consume product inside diet",
     response_model=DailyDietOut,
     status_code=status.HTTP_201_CREATED)
-async def consume_product_in_diet(
-    customer_id: UUID,
-    specific_day: date,
+async def add_product_to_diet(
+    request: ProductToDietRequest,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     diet_service: DietService = Depends(provide_diet_service),
     uow: AsyncSession = Depends(provide_database_unit_of_work),
@@ -90,18 +89,36 @@ async def consume_product_in_diet(
     Add product to daily customer diet
 
     Args:
-        customer_id: whose diet
-        specific_day: date daily diet applying
+        request: request body with parameters
         user_service: both user roles can access
         diet_service: service responsible for customer diets
         uow: db session injection
     Returns:
         response:
     """
-    ...
+    user = user_service.user
+
+    updated_daily_diet = await diet_service.put_product_to_diet_meal(
+        uow=uow,
+        diet_id=request.diet_id,
+        meal_type=request.meal_type,
+        product_id=request.product_id,
+        product_amount=request.product_amount,
+        specific_day=request.specific_day,
+    )
+
+    if updated_daily_diet is None:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"couldn't.update.customer.diet {user.id=} {request.diet_id=} {request.specific_day=}",
+        )
+
+    return DailyDietOut(
+        date=request.specific_day,
+        actual_nutrition=DailyMealsOut.from_diet_dto(updated_daily_diet),
+    )
 
 
-# POST nutrition/products
 @nutrition_router.post(
     "/products",
     summary="Save new product to AsCoach product database",

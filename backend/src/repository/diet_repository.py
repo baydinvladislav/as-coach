@@ -1,10 +1,11 @@
-from datetime import date
+import json
 from uuid import UUID
+from datetime import date, datetime
 
-from sqlalchemy import select, and_
+from sqlalchemy import select, update, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src import Diet, TrainingPlan
+from src import Diet, DietDays, TrainingPlan
 from src.schemas.diet_dto import DailyDietDtoSchema
 
 
@@ -49,3 +50,44 @@ class DietRepository:
             return None
 
         return DailyDietDtoSchema.from_diet(recommended_diet_by_coach, specific_day)
+
+    async def add_product_to_customer_fact(
+        self,
+        uow: AsyncSession,
+        diet_id: UUID,
+        specific_day: str,
+        meal_type: str,
+        product_id: UUID,
+        product_amount: int,
+    ):
+        query = (
+            select(DietDays)
+            .where(
+                and_(
+                    DietDays.diet_id == diet_id,
+                    DietDays.date == datetime.strptime(specific_day, "%Y-%m-%d").date(),
+                )
+            )
+        )
+
+        result = await uow.execute(query)
+        diet_day = result.scalar_one_or_none()
+
+        if diet_day is None:
+            return None
+
+        current_json = getattr(diet_day, meal_type)
+        current_json[str(product_id)] = product_amount
+
+        update_stmt = (
+            update(DietDays)
+            .where(DietDays.id == diet_day.id)
+            .values(**{meal_type: json.dumps(current_json)})
+            .returning(DietDays.id)
+        )
+
+        update_result = await uow.execute(update_stmt)
+        updated_row = update_result.fetchone()
+
+        await uow.commit()
+        return updated_row
