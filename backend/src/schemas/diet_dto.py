@@ -6,21 +6,6 @@ from pydantic import BaseModel
 from src import Diet
 
 
-class ProductDtoSchema(BaseModel):
-    id: UUID
-    name: str
-    amount: int
-    type: str
-    proteins: int
-    fats: int
-    carbs: int
-    calories: int
-    vendor_name: str
-
-    class Config:
-        orm_mode = True
-
-
 class DietDtoSchema(BaseModel):
     """This created by coach as template"""
 
@@ -106,3 +91,11 @@ class DailyDietDtoSchema(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class DietMealDtoSchema(BaseModel):
+    calories_total: int
+    proteins_total: int
+    fats_total: int
+    carbs_total: int
+    products: list[dict[str, int]]

@@ -87,32 +87,96 @@ async def create_diets(create_training_plans, db):
             date=create_training_plans[0].start_date + timedelta(days=2),
             diet=diets_list[0],
             breakfast={
-                "b2c8d440-d59d-44d1-8b27-70fc08b6b831": 200,
+                "total_calories": 300,
+                "total_proteins": 50,
+                "total_fats": 30,
+                "total_carbs": 80,
+                "products": [
+                    {
+                        "b2c8d440-d59d-44d1-8b27-70fc08b6b831": 200,
+                    }
+                ],
             },
             lunch={
-                "919b5f1e-36e0-4e15-a39a-a88481cdc938": 100,
+                "total_calories": 300,
+                "total_proteins": 50,
+                "total_fats": 30,
+                "total_carbs": 80,
+                "products": [
+                    {
+                        "919b5f1e-36e0-4e15-a39a-a88481cdc938": 100,
+                    }
+                ],
             },
             dinner={
-                "098af4ff-64fa-4ffb-8ced-6d8696b3ecb9": 300,
+                "total_calories": 300,
+                "total_proteins": 50,
+                "total_fats": 30,
+                "total_carbs": 80,
+                "products": [
+                    {
+                        "098af4ff-64fa-4ffb-8ced-6d8696b3ecb9": 300,
+                    }
+                ],
             },
             snacks={
-                "24ef3147-1ec8-4e82-9020-3241c35b22b0": 200,
+                "total_calories": 300,
+                "total_proteins": 50,
+                "total_fats": 30,
+                "total_carbs": 80,
+                "products": [
+                    {
+                        "24ef3147-1ec8-4e82-9020-3241c35b22b0": 200,
+                    }
+                ],
             },
         ),
         DietDays(
             date=create_training_plans[0].start_date + timedelta(days=4),
             diet=diets_list[0],
             breakfast={
-                "b2c8d440-d59d-44d1-8b27-70fc08b6b831": 200,
+                "total_calories": 300,
+                "total_proteins": 50,
+                "total_fats": 30,
+                "total_carbs": 80,
+                "products": [
+                    {
+                        "b2c8d440-d59d-44d1-8b27-70fc08b6b831": 200,
+                    }
+                ],
             },
             lunch={
-                "919b5f1e-36e0-4e15-a39a-a88481cdc938": 100,
+                "total_calories": 300,
+                "total_proteins": 50,
+                "total_fats": 30,
+                "total_carbs": 80,
+                "products": [
+                    {
+                         "919b5f1e-36e0-4e15-a39a-a88481cdc938": 100,
+                    }
+                ],
             },
             dinner={
-                "098af4ff-64fa-4ffb-8ced-6d8696b3ecb9": 300,
+                "total_calories": 300,
+                "total_proteins": 50,
+                "total_fats": 30,
+                "total_carbs": 80,
+                "products": [
+                    {
+                         "098af4ff-64fa-4ffb-8ced-6d8696b3ecb9": 300,
+                    }
+                ],
             },
             snacks={
-                "24ef3147-1ec8-4e82-9020-3241c35b22b0": 200,
+                "total_calories": 300,
+                "total_proteins": 50,
+                "total_fats": 30,
+                "total_carbs": 80,
+                "products": [
+                    {
+                         "24ef3147-1ec8-4e82-9020-3241c35b22b0": 200,
+                    }
+                ],
             },
         )
     ]

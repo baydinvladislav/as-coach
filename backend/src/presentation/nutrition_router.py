@@ -10,6 +10,8 @@ from src.presentation.schemas.nutrition_schema import (
     DailyDietOut,
     ProductOut,
     ProductToDietRequest,
+    DailyMealOut,
+    DailyNutrientsOut,
 )
 from src.presentation.schemas.product_schema import ProductCreateIn, ProductCreateOut
 from src.service.coach_service import CoachService
@@ -73,20 +75,19 @@ async def get_daily_diet(
     )
 
 
-# POST nutrition/diets/${diet_id}/breakfast||lunch||dinner||snacks/${product_id}
 @nutrition_router.post(
     "/diets",
     summary="Consume product inside diet",
-    response_model=DailyDietOut,
+    response_model=DailyMealOut,
     status_code=status.HTTP_201_CREATED)
-async def add_product_to_diet(
+async def add_product_to_diet_meal(
     request: ProductToDietRequest,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     diet_service: DietService = Depends(provide_diet_service),
     uow: AsyncSession = Depends(provide_database_unit_of_work),
-) -> DailyDietOut:
+) -> DailyMealOut:
     """
-    Add product to daily customer diet
+    Add product to daily customer diet meal
 
     Args:
         request: request body with parameters
@@ -98,7 +99,7 @@ async def add_product_to_diet(
     """
     user = user_service.user
 
-    updated_daily_diet = await diet_service.put_product_to_diet_meal(
+    updated_daily_meal = await diet_service.put_product_to_diet_meal(
         uow=uow,
         diet_id=request.diet_id,
         meal_type=request.meal_type,
@@ -107,15 +108,23 @@ async def add_product_to_diet(
         specific_day=request.specific_day,
     )
 
-    if updated_daily_diet is None:
+    if updated_daily_meal is None:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"couldn't.update.customer.diet {user.id=} {request.diet_id=} {request.specific_day=}",
+            detail=f"couldn't.update.customer.diet.meal {user.id=} {request.diet_id=} {request.specific_day=}",
         )
 
-    return DailyDietOut(
-        date=request.specific_day,
-        actual_nutrition=DailyMealsOut.from_diet_dto(updated_daily_diet),
+    total = DailyNutrientsOut(
+        calories_total=updated_daily_meal.calories_total,
+        proteins_total=updated_daily_meal.proteins_total,
+        fats_total=updated_daily_meal.fats_total,
+        carbs_total=updated_daily_meal.carbs_total,
+    )
+
+    return DailyMealOut(
+        total=total,
+        # из фикстуры возвращается обычный дикт ex: {product_id: 200}
+        products=updated_daily_meal.products,
     )
 
 
@@ -160,7 +169,7 @@ async def put_product_in_catalog(
     summary="Get specific product from AsCoach product database by product_id",
     response_model=ProductCreateOut,
     status_code=status.HTTP_200_OK)
-async def get_specific_product(
+async def get_specific_product_from_catalog(
     product_id: UUID,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     product_service: ProductService = Depends(provide_product_service),
@@ -197,7 +206,7 @@ async def get_specific_product(
     summary="Delete product data from AsCoach product database",
     response_model=ProductOut,
     status_code=status.HTTP_200_OK)
-async def delete_product_from_storage(
+async def delete_product_from_catalog(
     product_id: UUID,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     diet_service: DietService = Depends(provide_diet_service),
@@ -223,7 +232,7 @@ async def delete_product_from_storage(
     summary="Update product data in AsCoach product database",
     response_model=ProductOut,
     status_code=status.HTTP_200_OK)
-async def update_product_from_storage(
+async def update_product_in_catalog(
     product_id: UUID,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     diet_service: DietService = Depends(provide_diet_service),
@@ -249,7 +258,7 @@ async def update_product_from_storage(
     summary="Look up product by relative product word",
     response_model=list[ProductOut],
     status_code=status.HTTP_200_OK)
-async def find_product(
+async def find_product_in_catalog(
     query_text: str,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     diet_service: DietService = Depends(provide_diet_service),

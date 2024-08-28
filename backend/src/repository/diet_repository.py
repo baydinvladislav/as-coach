@@ -6,7 +6,7 @@ from sqlalchemy import select, update, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src import Diet, DietDays, TrainingPlan
-from src.schemas.diet_dto import DailyDietDtoSchema
+from src.schemas.diet_dto import DailyDietDtoSchema, DietMealDtoSchema
 
 
 class DietRepository:
@@ -51,6 +51,7 @@ class DietRepository:
 
         return DailyDietDtoSchema.from_diet(recommended_diet_by_coach, specific_day)
 
+    # fact_meal
     async def add_product_to_customer_fact(
         self,
         uow: AsyncSession,
@@ -59,7 +60,8 @@ class DietRepository:
         meal_type: str,
         product_id: UUID,
         product_amount: int,
-    ):
+    ) -> DietMealDtoSchema | None:
+        # TODO: make in one query
         query = (
             select(DietDays)
             .where(
@@ -81,13 +83,31 @@ class DietRepository:
 
         update_stmt = (
             update(DietDays)
-            .where(DietDays.id == diet_day.id)
+            .where(
+                and_(
+                    DietDays.diet_id == diet_id,
+                    DietDays.date == datetime.strptime(specific_day, "%Y-%m-%d").date(),
+                )
+            )
             .values(**{meal_type: json.dumps(current_json)})
-            .returning(DietDays.id)
+            .returning(
+                DietDays.id,
+                getattr(DietDays, meal_type),
+            )
         )
 
         update_result = await uow.execute(update_stmt)
+        await uow.commit()
+
         updated_row = update_result.fetchone()
 
-        await uow.commit()
-        return updated_row
+        specified_meal = json.loads(getattr(updated_row, meal_type))
+        diet_meal = DietMealDtoSchema(
+            calories_total=specified_meal["total_calories"],
+            proteins_total=specified_meal["total_proteins"],
+            fats_total=specified_meal["total_fats"],
+            carbs_total=specified_meal["total_carbs"],
+            products=specified_meal["products"],
+        )
+
+        return diet_meal

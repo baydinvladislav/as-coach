@@ -4,8 +4,6 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from src.schemas.diet_dto import DailyDietDtoSchema
-
 
 class ProductOut(BaseModel):
     id: UUID
@@ -37,7 +35,7 @@ class DailyMealsOut(BaseModel):
     snacks: dict
 
     @classmethod
-    def from_diet_dto(cls, diet_dto: DailyDietDtoSchema) -> "DailyMealsOut":
+    def from_diet_dto(cls, diet_dto: "DailyDietDtoSchema") -> "DailyMealsOut":
         daily_total = DailyNutrientsOut(
             calories_total=diet_dto.total_calories,
             proteins_total=diet_dto.total_proteins,
@@ -55,6 +53,11 @@ class DailyMealsOut(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class DailyMealOut(BaseModel):
+    total: DailyNutrientsOut
+    products: list[ProductOut]
 
 
 @dataclass
