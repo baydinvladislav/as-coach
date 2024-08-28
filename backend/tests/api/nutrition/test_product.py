@@ -6,10 +6,10 @@ from tests.conftest import make_test_http_request
 @pytest.mark.asyncio
 async def test_get_product(create_customer):
     response = await make_test_http_request(
-        url="api/nutrition/products/lookup?query_text=молоко",
-        method="get",
-        username=create_customer.username,
-    )
+            url="api/nutrition/products/406c4cec-a14f-4424-8507-3df2a7954fdd",
+            method="get",
+            username=create_customer.username,
+        )
     assert response.status_code == 200
 
 

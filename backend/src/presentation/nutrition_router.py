@@ -156,7 +156,7 @@ async def put_product_in_catalog(
 
 
 @nutrition_router.get(
-    "/products",
+    "/products/{product_id}",
     summary="Get specific product from AsCoach product database by product_id",
     response_model=ProductCreateOut,
     status_code=status.HTTP_200_OK)
