@@ -84,9 +84,3 @@ async def test_get_training_plan_with_supersets(
 
     # exercises have the same superset_id
     assert len(superset_ids_set) == 1
-
-    if response.status_code == 200:
-        await db.execute(
-            delete(TrainingPlan).where(TrainingPlan.id == str(create_training_plans[0].id))
-        )
-        await db.commit()
