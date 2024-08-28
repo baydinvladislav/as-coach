@@ -1,4 +1,3 @@
-# TODO: add to poetry
 from pynamodb.attributes import UnicodeAttribute, NumberAttribute
 from pynamodb.models import Model
 

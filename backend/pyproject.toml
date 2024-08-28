@@ -21,6 +21,7 @@ psycopg2 = "^2.9.6"
 firebase-admin = "6.3.0"
 confluent-kafka = "^2.3.0"
 pillow = "^10.3.0"
+pynamodb = "^6.0.1"
 
 
 [tool.poetry.group.dev.dependencies]
