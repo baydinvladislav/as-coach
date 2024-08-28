@@ -53,6 +53,7 @@ class Coach(Base, BaseModel):
         back_populates="coach"
     )
     fcm_token = Column("fcm_token", String(255), nullable=False)
+    products: RelationshipProperty = relationship("Product", back_populates="coach")
 
     def __repr__(self):
         return f"Coach: {self.username}"
@@ -137,10 +138,12 @@ class DietDays(Base, BaseModel):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
     date = Column(Date, nullable=False)
 
+    # TODO: чтобы продукты по порядку хранились лучше сделайть колонки массивами и добавлять в них словари продуктов
     breakfast = Column(JSON, default={})
     lunch = Column(JSON, default={})
     dinner = Column(JSON, default={})
     snacks = Column(JSON, default={})
+    # TODO: чтобы продукты по порядку хранились лучше сделайть колонки массивами и добавлять в них словари продуктов
 
     diet_id = Column(UUID(as_uuid=True), ForeignKey("diet.id"), nullable=False)
     diet = relationship("Diet", back_populates="diet_days")
@@ -169,6 +172,8 @@ class Product(Base, BaseModel):
     carbs = Column("carbs", Integer, nullable=False)
     calories = Column("calories", Integer, nullable=False)
     vendor_name = Column("vendor_name", String(255), nullable=False)
+    coach_id = Column(UUID(as_uuid=True), ForeignKey("coach.id", ondelete="SET NULL"), nullable=True)
+    coach: RelationshipProperty = relationship("Coach", back_populates="products")
 
     def __repr__(self):
         return f"Product: {self.name}"
