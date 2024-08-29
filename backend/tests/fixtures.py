@@ -87,14 +87,63 @@ async def create_diets(create_training_plans, db):
             date=create_training_plans[0].start_date + timedelta(days=2),
             diet=diets_list[0],
             breakfast={
-                "total_calories": 300,
-                "total_proteins": 50,
-                "total_fats": 30,
-                "total_carbs": 80,
+                "total_calories": 774,
+                "total_proteins": 25.72,
+                "total_fats": 25.24,
+                "total_carbs": 109.34,
                 "products": [
                     {
-                        "b2c8d440-d59d-44d1-8b27-70fc08b6b831": 200,
-                    }
+                        "id": "b2c8d440-d59d-44d1-8b27-70fc08b6b831",
+                        "name": "Изюм Светлый",
+                        "barcode": "123456788",
+                        "vendor_name": "Пятёрочка",
+                        "product_type": "gram",
+                        "creator_id": "39d4553f-d047-4c2f-aa68-6a5360f87ea9",
+                        "amount": 40,
+                        "calories": 116,
+                        "proteins": 1,
+                        "fats": 0.2,
+                        "carbs": 28,
+                    },
+                    {
+                        "id": "90cbaa5b-b322-4a4b-a5ec-17cd39b9a13a",
+                        "name": "Геркулес",
+                        "barcode": "123456789",
+                        "vendor_name": "Увелка",
+                        "product_type": "gram",
+                        "creator_id": "39d4553f-d047-4c2f-aa68-6a5360f87ea9",
+                        "amount": 100,
+                        "calories": 370,
+                        "proteins": 12,
+                        "fats": 6,
+                        "carbs": 64,
+                    },
+                    {
+                        "id": "ae1df566-1a9a-4bc8-9fd5-bd47cee7a983",
+                        "name": "Молоко 2.5%",
+                        "barcode": "123456790",
+                        "vendor_name": "Простаквашино",
+                        "product_type": "gram",
+                        "creator_id": "39d4553f-d047-4c2f-aa68-6a5360f87ea9",
+                        "amount": 300,
+                        "calories": 159,
+                        "proteins": 9,
+                        "fats": 9,
+                        "carbs": 14.1,
+                    },
+                    {
+                        "id": "1ff18cad-faca-432e-a44d-5515abb11be1",
+                        "name": "Миндаль",
+                        "barcode": "123456791",
+                        "vendor_name": "Перекрёсток",
+                        "product_type": "gram",
+                        "creator_id": "39d4553f-d047-4c2f-aa68-6a5360f87ea9",
+                        "amount": 20,
+                        "calories": 129,
+                        "proteins": 3.72,
+                        "fats": 11.54,
+                        "carbs": 3.24,
+                    },
                 ],
             },
             lunch={
@@ -104,8 +153,9 @@ async def create_diets(create_training_plans, db):
                 "total_carbs": 80,
                 "products": [
                     {
-                        "919b5f1e-36e0-4e15-a39a-a88481cdc938": 100,
-                    }
+                        "product_id": "919b5f1e-36e0-4e15-a39a-a88481cdc938",
+                        "amount": 100,
+                    },
                 ],
             },
             dinner={
@@ -115,8 +165,9 @@ async def create_diets(create_training_plans, db):
                 "total_carbs": 80,
                 "products": [
                     {
-                        "098af4ff-64fa-4ffb-8ced-6d8696b3ecb9": 300,
-                    }
+                        "product_id": "098af4ff-64fa-4ffb-8ced-6d8696b3ecb9",
+                        "amount": 300,
+                    },
                 ],
             },
             snacks={
@@ -126,8 +177,9 @@ async def create_diets(create_training_plans, db):
                 "total_carbs": 80,
                 "products": [
                     {
-                        "24ef3147-1ec8-4e82-9020-3241c35b22b0": 200,
-                    }
+                        "product_id": "24ef3147-1ec8-4e82-9020-3241c35b22b0",
+                        "amount": 200,
+                    },
                 ],
             },
         ),
@@ -141,8 +193,9 @@ async def create_diets(create_training_plans, db):
                 "total_carbs": 80,
                 "products": [
                     {
-                        "b2c8d440-d59d-44d1-8b27-70fc08b6b831": 200,
-                    }
+                        "product_id": "b2c8d440-d59d-44d1-8b27-70fc08b6b831",
+                        "amount": 200,
+                    },
                 ],
             },
             lunch={
@@ -152,8 +205,9 @@ async def create_diets(create_training_plans, db):
                 "total_carbs": 80,
                 "products": [
                     {
-                         "919b5f1e-36e0-4e15-a39a-a88481cdc938": 100,
-                    }
+                        "product_id": "919b5f1e-36e0-4e15-a39a-a88481cdc938",
+                        "amount": 100,
+                    },
                 ],
             },
             dinner={
@@ -163,8 +217,9 @@ async def create_diets(create_training_plans, db):
                 "total_carbs": 80,
                 "products": [
                     {
-                         "098af4ff-64fa-4ffb-8ced-6d8696b3ecb9": 300,
-                    }
+                        "product_id": "098af4ff-64fa-4ffb-8ced-6d8696b3ecb9",
+                        "amount": 300,
+                    },
                 ],
             },
             snacks={
@@ -174,8 +229,9 @@ async def create_diets(create_training_plans, db):
                 "total_carbs": 80,
                 "products": [
                     {
-                         "24ef3147-1ec8-4e82-9020-3241c35b22b0": 200,
-                    }
+                        "product_id": "24ef3147-1ec8-4e82-9020-3241c35b22b0",
+                        "amount": 200,
+                    },
                 ],
             },
         )

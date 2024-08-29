@@ -14,8 +14,8 @@ class ProductRepository:
 
     async def get_products_by_ids(self, product_ids: list[str]) -> list[ProductDtoSchema]:
         products = []
-        with Product.batch_get(product_ids) as batch:
-            for product in batch:
+        for product in Product.batch_get(product_ids):
+            if product:
                 products.append(ProductDtoSchema.from_product(product))
         return products
 

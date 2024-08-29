@@ -5,6 +5,7 @@ from pynamodb.models import Model
 class Product(Model):
     id = UnicodeAttribute(hash_key=True)
     name = UnicodeAttribute()
+    # TODO: unique
     barcode = UnicodeAttribute()
     product_type = UnicodeAttribute()
     proteins = NumberAttribute()
@@ -19,5 +20,6 @@ class Product(Model):
     # vendor_name_index = VendorNameIndex()
 
     class Meta:
+        # TODO: .env
         table_name = "products"
         region = "us-east-1"

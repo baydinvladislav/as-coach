@@ -3,7 +3,7 @@ from datetime import date
 
 from pydantic import BaseModel
 
-from src import Diet
+from src import Diet, DietDays
 
 
 class DietDtoSchema(BaseModel):
@@ -60,7 +60,25 @@ class DailyDietDtoSchema(BaseModel):
     snacks: dict
 
     @classmethod
-    def from_diet(cls, template_diet: Diet, specific_day: date) -> "DailyDietDtoSchema":
+    def from_daily_diet_fact(cls, daily_diet_fact: DietDays) -> "DailyDietDtoSchema":
+        return DailyDietDtoSchema(
+            # recommend amount by coach
+            total_calories=daily_diet_fact.diet.total_calories,
+            total_proteins=daily_diet_fact.diet.total_proteins,
+            total_fats=daily_diet_fact.diet.total_fats,
+            total_carbs=daily_diet_fact.diet.total_carbs,
+
+            # fact amount
+            id=daily_diet_fact.id,
+
+            breakfast=daily_diet_fact.breakfast,
+            lunch=daily_diet_fact.lunch,
+            dinner=daily_diet_fact.dinner,
+            snacks=daily_diet_fact.snacks,
+        )
+
+    @classmethod
+    def from_recommended_diet(cls, template_diet: Diet, specific_day: date) -> "DailyDietDtoSchema":
         customer_fact_days = template_diet.diet_days
 
         if customer_fact_days is None:

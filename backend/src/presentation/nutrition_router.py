@@ -103,8 +103,7 @@ async def add_product_to_diet_meal(
         uow=uow,
         diet_id=request.diet_id,
         meal_type=request.meal_type,
-        product_id=request.product_id,
-        product_amount=request.product_amount,
+        adding_products_data=request.product_data,
         specific_day=request.specific_day,
     )
 
@@ -123,7 +122,6 @@ async def add_product_to_diet_meal(
 
     return DailyMealOut(
         total=total,
-        # из фикстуры возвращается обычный дикт ex: {product_id: 200}
         products=updated_daily_meal.products,
     )
 

@@ -126,19 +126,22 @@ async def provide_user_service(
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
 
-async def provide_diet_service() -> DietService:
-    diet_repository = DietRepository()
-    calories_calculator_service = CaloriesCalculatorService()
-    return DietService(
-        diet_repository=diet_repository,
-        calories_calculator_service=calories_calculator_service,
-    )
-
-
 async def provide_product_service() -> ProductService:
     product_repository = ProductRepository()
     calories_calculator_service = CaloriesCalculatorService()
     return ProductService(
         product_repository=product_repository,
         calories_calculator_service=calories_calculator_service,
+    )
+
+
+async def provide_diet_service(
+    product_service: ProductService = Depends(provide_product_service)
+) -> DietService:
+    diet_repository = DietRepository()
+    calories_calculator_service = CaloriesCalculatorService()
+    return DietService(
+        diet_repository=diet_repository,
+        calories_calculator_service=calories_calculator_service,
+        product_service=product_service,
     )

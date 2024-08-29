@@ -73,9 +73,13 @@ class MealType(str, Enum):
     SNACKS = "snacks"
 
 
+class _ProductAddInDiet(BaseModel):
+    id: str
+    amount: int
+
+
 class ProductToDietRequest(BaseModel):
     diet_id: UUID
     meal_type: MealType
     specific_day: str
-    product_id: UUID
-    product_amount: int
+    product_data: list[_ProductAddInDiet]

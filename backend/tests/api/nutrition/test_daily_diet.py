@@ -37,8 +37,10 @@ async def test_add_product_to_diet(create_diets):
 
     product_data = {
         "diet_id": diet_id,
-        "product_id": str(uuid.uuid4()),
-        "product_amount": 150,
+        "product_data": [
+            {"id": "406c4cec-a14f-4424-8507-3df2a7954fdd", "amount": 180},
+            {"id": "0422799b-69ab-464f-8535-ef11ee575863", "amount": 220},
+        ],
         "meal_type": "breakfast",
         "specific_day": str(create_diets[0].training_plans.start_date + timedelta(days=2)),
     }
