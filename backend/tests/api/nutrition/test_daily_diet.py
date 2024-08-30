@@ -33,7 +33,7 @@ async def test_get_customer_daily_diet(create_diets):
 
 
 @pytest.mark.asyncio
-@patch("src.repository.product_repository.ProductRepository.insert_product")
+@patch("src.repository.product_repository.ProductRepository.get_products_by_ids")
 async def test_add_product_to_diet(mock_insert_product, create_diets):
     diet_id = str(create_diets[0].id)
     customer_username = create_diets[0].training_plans.customer.username
