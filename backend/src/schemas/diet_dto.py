@@ -48,6 +48,7 @@ class DailyDietDtoSchema(BaseModel):
     """
 
     id: UUID
+    date: date
 
     total_calories: int
     total_proteins: int
@@ -70,6 +71,7 @@ class DailyDietDtoSchema(BaseModel):
 
             # fact amount
             id=daily_diet_fact.id,
+            date=daily_diet_fact.date,
 
             breakfast=daily_diet_fact.breakfast,
             lunch=daily_diet_fact.lunch,
@@ -100,6 +102,7 @@ class DailyDietDtoSchema(BaseModel):
 
             # fact amount
             id=specific_day_fact.id,
+            date=specific_day_fact.date,
 
             breakfast=specific_day_fact.breakfast,
             lunch=specific_day_fact.lunch,

@@ -1,12 +1,10 @@
-from uuid import UUID
-
 from pydantic import BaseModel
 
 from src.persistence.dynamo_db_models import Product
 
 
 class ProductDtoSchema(BaseModel):
-    id: UUID
+    id: str
     name: str
     barcode: str
     product_type: str
@@ -15,7 +13,7 @@ class ProductDtoSchema(BaseModel):
     carbs: int
     calories: int
     vendor_name: str
-    user_id: UUID
+    user_id: str
 
     @classmethod
     def from_product(cls, product_db_row: Product) -> "ProductDtoSchema":

@@ -1,3 +1,4 @@
+from datetime import date
 from dataclasses import dataclass
 from enum import Enum
 from uuid import UUID
@@ -28,6 +29,7 @@ class DailyNutrientsOut(BaseModel):
 
 
 class DailyMealsOut(BaseModel):
+    date: date
     daily_total: DailyNutrientsOut
     breakfast: dict
     lunch: dict
@@ -44,6 +46,7 @@ class DailyMealsOut(BaseModel):
         )
 
         return DailyMealsOut(
+            date=diet_dto.date,
             daily_total=daily_total,
             breakfast=diet_dto.breakfast,
             lunch=diet_dto.lunch,

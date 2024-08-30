@@ -1,12 +1,12 @@
-import json
 from uuid import UUID
 from datetime import date, datetime
 
 from sqlalchemy import select, update, and_
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from src import Diet, DietDays, TrainingPlan
-from src.schemas.diet_dto import DailyDietDtoSchema, DietMealDtoSchema
+from src.schemas.diet_dto import DailyDietDtoSchema
 
 
 class DietRepository:
@@ -27,7 +27,28 @@ class DietRepository:
 
         return diet_orm
 
-    async def get_daily_diet(
+    async def get_daily_diet_by_id(
+            self, uow: AsyncSession, diet_id: UUID, specific_day: date
+    ) -> DailyDietDtoSchema | None:
+        query = (
+            select(DietDays)
+            .where(
+                and_(
+                    DietDays.diet_id == diet_id,
+                    DietDays.date == datetime.strptime(specific_day, "%Y-%m-%d").date(),
+                )
+            )
+        )
+
+        result = await uow.execute(query)
+        diet_day = result.scalar_one_or_none()
+
+        if diet_day is None:
+            return None
+
+        return DailyDietDtoSchema.from_daily_diet_fact(diet_day)
+
+    async def get_daily_diet_by_training_plan_date_range(
         self, uow: AsyncSession, customer_id: UUID, specific_day: date
     ) -> DailyDietDtoSchema | None:
         query = (
@@ -49,19 +70,14 @@ class DietRepository:
         if recommended_diet_by_coach is None:
             return None
 
-        return DailyDietDtoSchema.from_diet(recommended_diet_by_coach, specific_day)
+        return DailyDietDtoSchema.from_recommended_diet(recommended_diet_by_coach, specific_day)
 
-    # fact_meal
-    async def add_product_to_customer_fact(
+    async def get_daily_diet_by_diet_id_and_date(
         self,
         uow: AsyncSession,
         diet_id: UUID,
         specific_day: str,
-        meal_type: str,
-        product_id: UUID,
-        product_amount: int,
-    ) -> DietMealDtoSchema | None:
-        # TODO: make in one query
+    ) -> DailyDietDtoSchema | None:
         query = (
             select(DietDays)
             .where(
@@ -78,36 +94,41 @@ class DietRepository:
         if diet_day is None:
             return None
 
-        current_json = getattr(diet_day, meal_type)
-        current_json[str(product_id)] = product_amount
+        return DailyDietDtoSchema.from_daily_diet_fact(diet_day)
 
-        update_stmt = (
+    async def update_daily_diet_meal(
+        self,
+        uow: AsyncSession,
+        updated_daily_diet: DailyDietDtoSchema,
+        meal_type: str,
+        updated_meal: dict,
+    ) -> DailyDietDtoSchema | None:
+        column_to_update = getattr(DietDays, meal_type)
+
+        stmt = (
             update(DietDays)
-            .where(
-                and_(
-                    DietDays.diet_id == diet_id,
-                    DietDays.date == datetime.strptime(specific_day, "%Y-%m-%d").date(),
-                )
-            )
-            .values(**{meal_type: json.dumps(current_json)})
-            .returning(
-                DietDays.id,
-                getattr(DietDays, meal_type),
-            )
+            .where(DietDays.id == updated_daily_diet.id)
+            .values({column_to_update: updated_meal})
+            .returning(DietDays.id)
         )
 
-        update_result = await uow.execute(update_stmt)
+        result = await uow.execute(stmt)
+        updated_record_id = result.scalar_one_or_none()
         await uow.commit()
 
-        updated_row = update_result.fetchone()
+        if updated_record_id is None:
+            return None
 
-        specified_meal = json.loads(getattr(updated_row, meal_type))
-        diet_meal = DietMealDtoSchema(
-            calories_total=specified_meal["total_calories"],
-            proteins_total=specified_meal["total_proteins"],
-            fats_total=specified_meal["total_fats"],
-            carbs_total=specified_meal["total_carbs"],
-            products=specified_meal["products"],
+        query = (
+            select(DietDays)
+            .options(joinedload(DietDays.diet))
+            .where(DietDays.id == updated_record_id)
         )
 
-        return diet_meal
+        result = await uow.execute(query)
+        daily_diet_fact = result.scalar_one_or_none()
+
+        if daily_diet_fact is None:
+            return None
+
+        return DailyDietDtoSchema.from_daily_diet_fact(daily_diet_fact)

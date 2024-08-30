@@ -78,14 +78,14 @@ async def get_daily_diet(
 @nutrition_router.post(
     "/diets",
     summary="Consume product inside diet",
-    response_model=DailyMealOut,
+    response_model=DailyDietOut,
     status_code=status.HTTP_201_CREATED)
 async def add_product_to_diet_meal(
     request: ProductToDietRequest,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     diet_service: DietService = Depends(provide_diet_service),
     uow: AsyncSession = Depends(provide_database_unit_of_work),
-) -> DailyMealOut:
+) -> DailyDietOut:
     """
     Add product to daily customer diet meal
 
@@ -99,7 +99,7 @@ async def add_product_to_diet_meal(
     """
     user = user_service.user
 
-    updated_daily_meal = await diet_service.put_product_to_diet_meal(
+    updated_daily_diet = await diet_service.put_product_to_diet_meal(
         uow=uow,
         diet_id=request.diet_id,
         meal_type=request.meal_type,
@@ -107,22 +107,16 @@ async def add_product_to_diet_meal(
         specific_day=request.specific_day,
     )
 
-    if updated_daily_meal is None:
+    if updated_daily_diet is None:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"couldn't.update.customer.diet.meal {user.id=} {request.diet_id=} {request.specific_day=}",
         )
 
-    total = DailyNutrientsOut(
-        calories_total=updated_daily_meal.calories_total,
-        proteins_total=updated_daily_meal.proteins_total,
-        fats_total=updated_daily_meal.fats_total,
-        carbs_total=updated_daily_meal.carbs_total,
-    )
-
-    return DailyMealOut(
-        total=total,
-        products=updated_daily_meal.products,
+    actual_nutrition = DailyMealsOut.from_diet_dto(updated_daily_diet)
+    return DailyDietOut(
+        date=str(actual_nutrition.date),
+        actual_nutrition=actual_nutrition,
     )
 
 
