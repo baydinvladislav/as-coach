@@ -10,8 +10,6 @@ from src.presentation.schemas.nutrition_schema import (
     DailyDietOut,
     ProductOut,
     ProductToDietRequest,
-    DailyMealOut,
-    DailyNutrientsOut,
 )
 from src.presentation.schemas.product_schema import ProductCreateIn, ProductCreateOut
 from src.service.coach_service import CoachService
