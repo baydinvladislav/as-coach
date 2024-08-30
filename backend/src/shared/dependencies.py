@@ -50,19 +50,6 @@ async def provide_library_service() -> LibraryService:
     )
 
 
-async def provide_training_plan_service() -> TrainingPlanService:
-    diet_repository = DietService(DietRepository(), CaloriesCalculatorService())
-
-    training_plan_repository = TrainingPlanRepository()
-    training_service = TrainingService(TrainingRepository())
-
-    return TrainingPlanService(
-        training_plan_repository=training_plan_repository,
-        training_service=training_service,
-        diet_service=diet_repository,
-    )
-
-
 async def provide_push_notification_service() -> NotificationService:
     kafka_supplier = KafkaSupplier(
         topic=kafka_settings.customer_invite_topic, config={"bootstrap.servers": kafka_settings.bootstrap_servers}
@@ -144,4 +131,23 @@ async def provide_diet_service(
         diet_repository=diet_repository,
         calories_calculator_service=calories_calculator_service,
         product_service=product_service,
+    )
+
+
+async def provide_training_plan_service(
+    product_service: ProductService = Depends(provide_product_service)
+) -> TrainingPlanService:
+    diet_service = DietService(
+        diet_repository=DietRepository(),
+        calories_calculator_service=CaloriesCalculatorService(),
+        product_service=product_service,
+    )
+
+    training_plan_repository = TrainingPlanRepository()
+    training_service = TrainingService(TrainingRepository())
+
+    return TrainingPlanService(
+        training_plan_repository=training_plan_repository,
+        training_service=training_service,
+        diet_service=diet_service,
     )
