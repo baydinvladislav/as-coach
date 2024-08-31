@@ -3,12 +3,13 @@ from pydantic import BaseModel
 
 class ProductBase(BaseModel):
     name: str
+    vendor_name: str
     barcode: str
-    product_type: str
+    type: str
+    portion_size: int | None
     proteins: int
     fats: int
     carbs: int
-    vendor_name: str
 
 
 class ProductCreateIn(ProductBase):

@@ -142,15 +142,15 @@ async def put_product_in_catalog(
     product = await product_service.create_product(user.id, request)
     return ProductCreateOut(
         id=str(product.id),
-        calories=product.calories,
-        user_id=str(product.user_id),
         name=product.name,
         barcode=product.barcode,
-        product_type=product.product_type,
+        product_type=product.product_type,  # TODO: change name to type
+        vendor_name=product.vendor_name,
+        user_id=str(product.user_id),
         proteins=product.proteins,
         fats=product.fats,
         carbs=product.carbs,
-        vendor_name=product.vendor_name,
+        calories=product.calories,
     )
 
 
@@ -178,15 +178,15 @@ async def get_specific_product_from_catalog(
     product = await product_service.get_product_by_id(product_id)
     return ProductCreateOut(
         id=str(product.id),
-        calories=product.calories,
-        user_id=str(product.user_id),
         name=product.name,
         barcode=product.barcode,
-        product_type=product.product_type,
+        product_type=product.product_type,  # TODO: change name to type
+        vendor_name=product.vendor_name,
+        user_id=str(product.user_id),
         proteins=product.proteins,
         fats=product.fats,
         carbs=product.carbs,
-        vendor_name=product.vendor_name,
+        calories=product.calories,
     )
 
 
@@ -244,7 +244,7 @@ async def update_product_in_catalog(
 
 # GET nutrition/products/${query_text}
 @nutrition_router.get(
-    "/products/lookup",
+    "/products/lookup{query_text}",
     summary="Look up product by relative product word",
     response_model=list[ProductOut],
     status_code=status.HTTP_200_OK)
