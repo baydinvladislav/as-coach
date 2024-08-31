@@ -3,7 +3,7 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.presentation.schemas.nutrition_schema import MealType, _ProductAddInDiet
+from src.presentation.schemas.nutrition_schema import MealType, ProductAddInDiet
 from src.presentation.schemas.training_plan_schema import DietIn
 from src.repository.diet_repository import DietRepository
 from src.schemas.diet_dto import DailyDietDtoSchema
@@ -30,7 +30,7 @@ class DietService:
         self,
         updating_daily_diet: DailyDietDtoSchema,
         meal_type: MealType,
-        adding_products_data: list[_ProductAddInDiet],
+        adding_products_data: list[ProductAddInDiet],
         products_info: list[ProductDtoSchema],
     ) -> tuple[DailyDietDtoSchema, dict]:
         merged_list = [
@@ -58,7 +58,7 @@ class DietService:
         uow: AsyncSession,
         diet_id: UUID,
         meal_type: MealType,
-        adding_products_data: list[_ProductAddInDiet],
+        adding_products_data: list[ProductAddInDiet],
         specific_day: str,
     ) -> DailyDietDtoSchema | None:
         products_full_info = await self.product_service.get_products_by_ids(
