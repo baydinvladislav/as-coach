@@ -30,7 +30,7 @@
                     "fats": 5,
                     "carbs": 30,
                     "calories": 200,
-                    "vendor": "Quaker"
+                    "vendor_name": "Quaker"
                 },
                 {
                     "id": "b1dbd071-071d-4ce9-8168-3919c73ec4fd",
@@ -41,7 +41,7 @@
                     "fats": 15,
                     "carbs": 3,
                     "calories": 634,
-                    "vendor": "Chobani"
+                    "vendor_name": "Chobani"
                 },
                 {
                     "id": "d9428888-122b-11e1-b85c-61cd3cbb3210",
@@ -52,7 +52,7 @@
                     "fats": 7,
                     "carbs": 10,
                     "calories": 150,
-                    "vendor": "Chobani"
+                    "vendor_name": "Chobani"
                 },
                 {
                     "id": "e4d909c2-9a0b-4c3b-b7db-3c5a81e5f456",
@@ -63,7 +63,7 @@
                     "fats": 0.3,
                     "carbs": 22.8,
                     "calories": 89,
-                    "vendor": "Dole"
+                    "vendor_name": "Dole"
                 }
             ]
         },
@@ -86,7 +86,7 @@
                     "fats": 10,
                     "carbs": 0,
                     "calories": 400,
-                    "vendor": "Tyson"
+                    "vendor_name": "Tyson"
                 },
                 {
                     "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
@@ -97,7 +97,7 @@
                     "fats": 9,
                     "carbs": 53,
                     "calories": 222,
-                    "vendor": "Bob's Red Mill"
+                    "vendor_name": "Bob's Red Mill"
                 },
                 {
                     "id": "7d44b720-23f7-48f0-88a1-8e78c080a974",
@@ -108,7 +108,7 @@
                     "fats": 5,
                     "carbs": 30,
                     "calories": 150,
-                    "vendor": "Birds Eye"
+                    "vendor_name": "Birds Eye"
                 }
             ]
         },
@@ -131,7 +131,7 @@
                     "fats": 21,
                     "carbs": 0,
                     "calories": 350,
-                    "vendor": "Norwegian Seafoods"
+                    "vendor_name": "Norwegian Seafoods"
                 },
                 {
                     "id": "123e4567-e89b-12d3-a456-426614174000",
@@ -142,7 +142,7 @@
                     "fats": 2,
                     "carbs": 45,
                     "calories": 150,
-                    "vendor": "Lundberg"
+                    "vendor_name": "Lundberg"
                 },
                 {
                     "id": "e3a1c4e4-02f4-4a0a-80bd-89f90fef4c14",
@@ -153,7 +153,7 @@
                     "fats": 0.4,
                     "carbs": 7,
                     "calories": 35,
-                    "vendor": "Green Giant"
+                    "vendor_name": "Green Giant"
                 }
             ]
         },
@@ -176,7 +176,7 @@
                     "fats": 5,
                     "carbs": 30,
                     "calories": 200,
-                    "vendor": "Clif Bar"
+                    "vendor_name": "Clif Bar"
                 },
                 {
                     "id": "936da01f-9abd-4d9d-80c7-02af85c822a8",
@@ -187,7 +187,7 @@
                     "fats": 0,
                     "carbs": 25,
                     "calories": 52,
-                    "vendor": "Fuji"
+                    "vendor_name": "Fuji"
                 },
                 {
                     "id": "8e02b2c3-16e1-4a3d-8a57-6a1f889c8af2",
@@ -198,7 +198,7 @@
                     "fats": 14,
                     "carbs": 6,
                     "calories": 166,
-                    "vendor": "Blue Diamond"
+                    "vendor_name": "Blue Diamond"
                 }
             ]
         }

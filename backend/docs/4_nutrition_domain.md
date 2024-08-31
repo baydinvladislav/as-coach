@@ -8,44 +8,53 @@ the frontend should request these endpoints to work with nutrition domain.
 
 ### API
 * ```GET nutrition/diets/${specific_day}```:
-    * info: to get diet for day by date
-    * example: nutrition/diets/2024-07-11
-    * response: ./extras/get_daily_diet_for_customer_by_date.json
+    * endpoint_info: to get the meal fact day for the client by date
+    * example_request_uri: nutrition/diets/2024-07-11
+    * response_json: ./extras/get_daily_diet_for_customer_by_date_out.json
 
-* ```POST nutrition/diets/${diet_id}/breakfast||lunch||dinner||snacks/${product_id}```:
-    * info: to put product into diet for one of the meal
-    * example: nutrition/diets/40f15a2d-bcb3-4a20-9b37-8e89a1d4c8fd/breakfast/477fccb8-0e2b-4ab7-94e6-702618bb6b15
-    * request: {"product_id": "d9428888-122b-11e1-b85c-61cd3cbb3210", "amount": 150}
-    * response: ./extras/post_add_product_to_diet_response.json
+* ```POST nutrition/diets/```:
+    * endpoint_info: to put product into the customer meal inside diet day fact
+    * example_request_uri: nutrition/diets/40f15a2d-bcb3-4a20-9b37-8e89a1d4c8fd/breakfast/477fccb8-0e2b-4ab7-94e6-702618bb6b15
+    * request_json: ./extras/post_add_product_to_diet_in.json
+    * response_json: ./extras/post_add_product_to_diet_out.json
 
-* ```GET nutrition/products/${product_word}```:
-    * info: to get products with their info by some relative product word
-    * example_1: nutrition/products/молоко
-    * example_2: nutrition/products/молоко-простоквашино
-    * example_3: nutrition/products/простоквашино-молоко-2%
-    * response: ./extras/get_receive_product.json
+/* not implemented in first feature iteration */ 
+* ```GET nutrition/products/history```:
+    * endpoint_info: to list last consumed customer products
+    * example_request_uri: nutrition/products/history
+    * response_json: ./extras/get_products_lookup_out.json
+
+/* not implemented in first feature iteration */ 
+* ```GET nutrition/products/lookup/${query_text}```:
+    * endpoint_info: to get products with their info by some relative product word
+    * example_request_uri1: nutrition/products/lookup/молоко
+    * example_request_uri2: nutrition/products/lookup/молоко-простоквашино
+    * example_request_uri3: nutrition/products/lookup/простоквашино-молоко-2%
+    * response_json: ./extras/get_receive_products.json
 
 * ```POST nutrition/products```:
-    * info: to put product to AsCoach database
-    * example: nutrition/products
-    * request: ./extras/post_create_product.json
-    * response: ./extras/get_receive_product.json
+    * endpoint_info: to put product to AsCoach database
+    * example_request_uri: nutrition/products
+    * request_json: ./extras/post_create_product.json
+    * response_json: ./extras/get_receive_product.json
 
 * ```GET nutrition/products/${product_id}```:
-    * info: to get product data by product_id for product detail card
-    * example: nutrition/products/d7182bb0-9a03-4e48-86ca-8b20d4a9bcba
-    * response: ./extras/get_receive_product.json
+    * endpoint_info: to get product data by their id for product detail card
+    * example_request_uri: nutrition/products/d7182bb0-9a03-4e48-86ca-8b20d4a9bcba
+    * response_json: ./extras/get_receive_product.json
 
+/* not implemented in first feature iteration */ 
 * ```DELETE nutrition/products/${product_id}```:
-  * info: to delete product by product id, user can delete only their products
-  * example: nutrition/products/d7182bb0-9a03-4e48-86ca-8b20d4a9bcba
-  * response: {"id": "d7182bb0-9a03-4e48-86ca-8b20d4a9bcba"}
+    * endpoint_info: to delete product by product id, user can delete only their products
+    * example_request_uri: nutrition/products/d7182bb0-9a03-4e48-86ca-8b20d4a9bcba
+    * response_json: {"id": "d7182bb0-9a03-4e48-86ca-8b20d4a9bcba"}
 
+/* not implemented in first feature iteration */ 
 * ```PUT nutrition/products/${product_id}```:
-  * info: to update product data by product id, user can modify only their products
-  * request: ./extras/post_create_product.json
-  * example: nutrition/products/d7182bb0-9a03-4e48-86ca-8b20d4a9bcba
-  * response: ./extras/get_receive_product.json
+    * endpoint_info: to update product data by product id, user can modify only their products
+    * example_request_uri: nutrition/products/d7182bb0-9a03-4e48-86ca-8b20d4a9bcba
+    * request_json: ./extras/post_create_product.json
+    * response_json: ./extras/get_receive_product.json
 
 ### Data Storage Structure
 Command Query Responsibility Segregation (CQRS) pattern, separating the write operations (commands) 

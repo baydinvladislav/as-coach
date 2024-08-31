@@ -1,10 +1,9 @@
 {
   "name": "Greek Yogurt",
-  "vendor": "Chobani",
   "barcode": "1234567890123",
-  "calories": 100,
-  "type": "gram",
+  "type": "portion",
   "portion_size": 150,
+  "vendor_name": "Chobani",
   "proteins": 10,
   "fats": 4.67,
   "carbs": 6.67

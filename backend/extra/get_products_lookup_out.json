@@ -1,0 +1,26 @@
+[
+    {
+        "id": "d9428888-122b-11e1-b85c-61cd3cbb3210",
+        "name": "Greek Yogurt",
+        "barcode": "1234567890123",
+        "type": "portion",
+        "portion_size": 150,
+        "vendor_name": "Chobani",
+        "proteins": 10,
+        "fats": 4.67,
+        "carbs": 6.67,
+        "calories": 100
+    },
+    {
+        "id": "d9428888-122b-11e1-b85c-61cd3cbb3210",
+        "name": "Some Another Vendor Yogurt",
+        "barcode": "1234567890648",
+        "type": "portion",
+        "portion_size": 130,
+        "vendor_name": "Another Vendor",
+        "proteins": 14,
+        "fats": 2.67,
+        "carbs": 8.67,
+        "calories": 130
+    }
+]
