@@ -144,7 +144,7 @@ async def put_product_in_catalog(
         id=str(product.id),
         name=product.name,
         barcode=product.barcode,
-        product_type=product.product_type,  # TODO: change name to type
+        type=product.type,
         vendor_name=product.vendor_name,
         user_id=str(product.user_id),
         proteins=product.proteins,
@@ -180,7 +180,7 @@ async def get_specific_product_from_catalog(
         id=str(product.id),
         name=product.name,
         barcode=product.barcode,
-        product_type=product.product_type,  # TODO: change name to type
+        type=product.type,
         vendor_name=product.vendor_name,
         user_id=str(product.user_id),
         proteins=product.proteins,

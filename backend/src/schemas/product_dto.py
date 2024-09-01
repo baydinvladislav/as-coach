@@ -7,7 +7,7 @@ class ProductDtoSchema(BaseModel):
     id: str
     name: str
     barcode: str
-    product_type: str
+    type: str
     proteins: int
     fats: int
     carbs: int
@@ -21,7 +21,7 @@ class ProductDtoSchema(BaseModel):
             id=product_db_row.id,
             name=product_db_row.name,
             barcode=product_db_row.barcode,
-            product_type=product_db_row.product_type,
+            type=product_db_row.product_type,
             proteins=product_db_row.proteins,
             fats=product_db_row.fats,
             carbs=product_db_row.carbs,
