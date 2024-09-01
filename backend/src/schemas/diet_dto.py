@@ -47,7 +47,7 @@ class DailyDietDtoSchema(BaseModel):
     This record keeps nutrition customer results.
     """
 
-    id: UUID
+    id: UUID | None
     date: date
 
     total_calories: int
