@@ -23,9 +23,6 @@ class DietService:
         self.calories_calculator_service = calories_calculator_service
         self.product_service = product_service
 
-    async def get_recommended_diet(self):
-        ...
-
     async def actualize_daily_diet_fact(
         self,
         updating_daily_diet: DailyDietDtoSchema,
