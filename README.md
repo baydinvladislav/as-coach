@@ -5,7 +5,7 @@ docker-compose up --build
 ```
 
 <h2>Migrations</h2>
-```bash
+```
 alembic upgrade head
 alembic revision --autogenerate -m "create table"
 ```
