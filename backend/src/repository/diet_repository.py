@@ -27,27 +27,6 @@ class DietRepository:
 
         return diet_orm
 
-    async def get_daily_diet_by_id(
-            self, uow: AsyncSession, diet_id: UUID, specific_day: date
-    ) -> DailyDietDtoSchema | None:
-        query = (
-            select(DietDays)
-            .where(
-                and_(
-                    DietDays.diet_id == diet_id,
-                    DietDays.date == datetime.strptime(specific_day, "%Y-%m-%d").date(),
-                )
-            )
-        )
-
-        result = await uow.execute(query)
-        diet_day = result.scalar_one_or_none()
-
-        if diet_day is None:
-            return None
-
-        return DailyDietDtoSchema.from_daily_diet_fact(diet_day)
-
     async def get_daily_diet_by_training_plan_date_range(
         self, uow: AsyncSession, customer_id: UUID, specific_day: date
     ) -> DailyDietDtoSchema | None:
