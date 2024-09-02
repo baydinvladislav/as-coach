@@ -66,7 +66,7 @@ class DailyMealOut(BaseModel):
 @dataclass
 class DailyDietOut:
     date: str
-    actual_nutrition: DailyMealsOut
+    actual_nutrition: DailyMealsOut | None
 
 
 class MealType(str, Enum):
