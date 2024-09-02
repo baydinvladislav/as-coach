@@ -1,4 +1,4 @@
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from src.persistence.dynamo_db_models import Product
 from src.presentation.schemas.product_schema import ProductCreateIn

@@ -43,7 +43,8 @@ async def test_get_product(mock_get_product_by_barcode, create_customer):
 
 @pytest.mark.asyncio
 @patch("src.repository.product_repository.ProductRepository.insert_product")
-async def test_create_product(mock_insert_product, create_customer):
+@patch("src.repository.product_repository.ProductRepository.get_product_by_barcode")
+async def test_create_product(mock_get_product_by_barcode, mock_insert_product, create_customer):
     product_data = {
         "name": "Творог 5%",
         "barcode": 123456789,
@@ -59,6 +60,7 @@ async def test_create_product(mock_insert_product, create_customer):
         proteins=product_data["proteins"], fats=product_data["fats"], carbs=product_data["carbs"],
     )
 
+    mock_get_product_by_barcode.return_value = None
     mock_product_dto = ProductDtoSchema(
         name=product_data["name"],
         barcode=product_data["barcode"],
