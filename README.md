@@ -4,7 +4,7 @@
 docker-compose up --build
 ```
 
-<h2>Migrations</h2>
+<h2>Database Migrations</h2>
 
 ```
 alembic upgrade head
