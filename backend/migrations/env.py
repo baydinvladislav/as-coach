@@ -36,8 +36,6 @@ from src import (
     MuscleGroup,
     BaseModel,
     Gender,
-    ProductType,
-    Product,
     engine,
     Base,
 )

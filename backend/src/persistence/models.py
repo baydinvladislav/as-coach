@@ -53,7 +53,6 @@ class Coach(Base, BaseModel):
         back_populates="coach"
     )
     fcm_token = Column("fcm_token", String(255), nullable=False)
-    products: RelationshipProperty = relationship("Product", back_populates="coach")
 
     def __repr__(self):
         return f"Coach: {self.username}"
@@ -148,33 +147,6 @@ class DietDays(Base, BaseModel):
 
     def __repr__(self):
         return f"Diet day: {self.date}"
-
-
-class ProductType(enum.Enum):
-    GRAM = "GRAM"
-    MILLILITER = "MILLILITER"
-    PORTION = "PORTION"
-
-
-# TODO: реализовать в DynamoDB
-class Product(Base, BaseModel):
-    """
-    Nutrition product
-    """
-    __tablename__ = "product"
-
-    name = Column("name", String(255), nullable=False)
-    product_type: Column = Column("product_type", Enum(ProductType), nullable=False)
-    proteins = Column("proteins", Integer, nullable=False)
-    fats = Column("fats", Integer, nullable=False)
-    carbs = Column("carbs", Integer, nullable=False)
-    calories = Column("calories", Integer, nullable=False)
-    vendor_name = Column("vendor_name", String(255), nullable=False)
-    coach_id = Column(UUID(as_uuid=True), ForeignKey("coach.id", ondelete="SET NULL"), nullable=True)
-    coach: RelationshipProperty = relationship("Coach", back_populates="products")
-
-    def __repr__(self):
-        return f"Product: {self.name}"
 
 
 class Training(Base, BaseModel):
