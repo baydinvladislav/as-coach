@@ -7,8 +7,8 @@ docker-compose up --build
 <h2>Database Migrations</h2>
 
 ```
-alembic upgrade head
 alembic revision --autogenerate -m "create table"
+alembic upgrade head
 ```
 
 <h2>Local Testing</h2>
