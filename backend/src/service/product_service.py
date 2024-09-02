@@ -2,6 +2,7 @@ from uuid import UUID
 
 from src.presentation.schemas.product_schema import ProductCreateIn
 from src.repository.product_repository import ProductRepository
+from src.shared.exceptions import BarcodeAlreadyExistExc
 from src.schemas.product_dto import ProductDtoSchema
 from src.service.calories_calculator_service import CaloriesCalculatorService
 
@@ -15,15 +16,19 @@ class ProductService:
         self.product_repository = product_repository
         self.calories_calculator_service = calories_calculator_service
 
-    async def get_product_by_id(self, _id: UUID) -> ProductDtoSchema | None:
-        product = await self.product_repository.get_product_by_id(str(_id))
+    async def get_product_by_barcode(self, barcode: str) -> ProductDtoSchema | None:
+        product = await self.product_repository.get_product_by_barcode(barcode)
         return product
 
-    async def get_products_by_ids(self, product_ids: list[str]) -> list[ProductDtoSchema]:
-        products = await self.product_repository.get_products_by_ids(product_ids)
+    async def get_products_by_barcodes(self, barcodes: list[str]) -> list[ProductDtoSchema]:
+        products = await self.product_repository.get_products_by_barcodes(barcodes)
         return products
 
     async def create_product(self, user_id: UUID, product_data: ProductCreateIn) -> ProductDtoSchema:
+        existed_product = await self.get_product_by_barcode(product_data.barcode)
+        if existed_product is not None:
+            raise BarcodeAlreadyExistExc("The product with the same barcode already exist")
+
         product_calories = await self.calories_calculator_service.calculate_calories(
             proteins=product_data.proteins,
             fats=product_data.fats,

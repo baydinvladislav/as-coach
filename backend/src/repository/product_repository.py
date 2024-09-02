@@ -6,15 +6,16 @@ from src.schemas.product_dto import ProductDtoSchema
 
 
 class ProductRepository:
-    async def get_product_by_id(self, _id: str) -> ProductDtoSchema | None:
-        product = Product.get(_id)
-        if product is None:
+    async def get_product_by_barcode(self, barcode: str) -> ProductDtoSchema | None:
+        try:
+            product = Product.get(barcode)
+        except Product.DoesNotExist:
             return None
         return ProductDtoSchema.from_product(product)
 
-    async def get_products_by_ids(self, product_ids: list[str]) -> list[ProductDtoSchema]:
+    async def get_products_by_barcodes(self, barcodes: list[str]) -> list[ProductDtoSchema]:
         products = []
-        for product in Product.batch_get(product_ids):
+        for product in Product.batch_get(barcodes):
             if product:
                 products.append(ProductDtoSchema.from_product(product))
         return products
@@ -26,10 +27,9 @@ class ProductRepository:
         product_calories: int
     ) -> ProductDtoSchema:
         new_product = Product(
-            id=str(uuid4()),
-            name=product_data.name,
             barcode=product_data.barcode,
-            product_type=product_data.product_type,
+            name=product_data.name,
+            type=product_data.type,
             proteins=product_data.proteins,
             fats=product_data.fats,
             carbs=product_data.carbs,

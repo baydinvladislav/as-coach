@@ -58,8 +58,8 @@ class DietService:
         adding_products_data: list[ProductAddInDiet],
         specific_day: str,
     ) -> DailyDietDtoSchema | None:
-        products_full_info = await self.product_service.get_products_by_ids(
-            product_ids=[item.id for item in adding_products_data],
+        products_full_info = await self.product_service.get_products_by_barcodes(
+            barcodes=[item.barcode for item in adding_products_data],
         )
         updating_daily_diet = await self.diet_repository.get_daily_diet_by_diet_id_and_date(
             uow=uow,

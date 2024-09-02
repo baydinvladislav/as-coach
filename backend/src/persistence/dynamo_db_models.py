@@ -1,13 +1,13 @@
 from pynamodb.attributes import UnicodeAttribute, NumberAttribute
 from pynamodb.models import Model
 
+from src.shared.config import DYNAMO_DB_PRODUCTS_TABLE_NAME, DYNAMO_DB_PRODUCTS_TABLE_REGION
+
 
 class Product(Model):
-    id = UnicodeAttribute(hash_key=True)
+    barcode = UnicodeAttribute(hash_key=True)
     name = UnicodeAttribute()
-    # TODO: unique
-    barcode = UnicodeAttribute()
-    product_type = UnicodeAttribute()
+    type = UnicodeAttribute()
     proteins = NumberAttribute()
     fats = NumberAttribute()
     carbs = NumberAttribute()
@@ -15,11 +15,6 @@ class Product(Model):
     vendor_name = UnicodeAttribute()
     user_id = UnicodeAttribute()
 
-    # TODO: table indexes
-    # name_index = NameIndex()
-    # vendor_name_index = VendorNameIndex()
-
     class Meta:
-        # TODO: .env
-        table_name = "products"
-        region = "us-east-1"
+        table_name = DYNAMO_DB_PRODUCTS_TABLE_NAME
+        region = DYNAMO_DB_PRODUCTS_TABLE_REGION

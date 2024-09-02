@@ -12,6 +12,7 @@ from src.presentation.schemas.nutrition_schema import (
     ProductToDietRequest,
 )
 from src.presentation.schemas.product_schema import ProductCreateIn, ProductCreateOut
+from src.shared.exceptions import BarcodeAlreadyExistExc
 from src.service.coach_service import CoachService
 from src.service.customer_service import CustomerService
 from src.service.diet_service import DietService
@@ -139,9 +140,15 @@ async def put_product_in_catalog(
         response:
     """
     user = user_service.user
-    product = await product_service.create_product(user.id, request)
+    try:
+        product = await product_service.create_product(user.id, request)
+    except BarcodeAlreadyExistExc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"The product barcode already exists",
+        )
+
     return ProductCreateOut(
-        id=str(product.id),
         name=product.name,
         barcode=product.barcode,
         type=product.type,
@@ -155,12 +162,12 @@ async def put_product_in_catalog(
 
 
 @nutrition_router.get(
-    "/products/{product_id}",
+    "/products/{barcode}",
     summary="Get specific product from AsCoach product database by product_id",
     response_model=ProductCreateOut,
     status_code=status.HTTP_200_OK)
 async def get_specific_product_from_catalog(
-    product_id: UUID,
+    barcode: str,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     product_service: ProductService = Depends(provide_product_service),
 ) -> ProductCreateOut:
@@ -168,16 +175,15 @@ async def get_specific_product_from_catalog(
     Get nutrition product from storage.
 
     Args:
-        product_id: id for specific product
+        barcode: the product barcode
         user_service: both user roles can access
         product_service: service to handle product domain
     Returns:
         response:
     """
     user = user_service.user
-    product = await product_service.get_product_by_id(product_id)
+    product = await product_service.get_product_by_barcode(barcode)
     return ProductCreateOut(
-        id=str(product.id),
         name=product.name,
         barcode=product.barcode,
         type=product.type,

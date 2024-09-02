@@ -77,7 +77,7 @@ class MealType(str, Enum):
 
 
 class ProductAddInDiet(BaseModel):
-    id: str
+    barcode: str
     amount: int
 
 

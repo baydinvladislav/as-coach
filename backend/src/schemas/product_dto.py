@@ -4,9 +4,8 @@ from src.persistence.dynamo_db_models import Product
 
 
 class ProductDtoSchema(BaseModel):
-    id: str
-    name: str
     barcode: str
+    name: str
     type: str
     proteins: int
     fats: int
@@ -18,10 +17,9 @@ class ProductDtoSchema(BaseModel):
     @classmethod
     def from_product(cls, product_db_row: Product) -> "ProductDtoSchema":
         return cls(
-            id=product_db_row.id,
-            name=product_db_row.name,
             barcode=product_db_row.barcode,
-            type=product_db_row.product_type,
+            name=product_db_row.name,
+            type=product_db_row.type,
             proteins=product_db_row.proteins,
             fats=product_db_row.fats,
             carbs=product_db_row.carbs,

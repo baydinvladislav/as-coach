@@ -17,6 +17,5 @@ class ProductCreateIn(ProductBase):
 
 
 class ProductCreateOut(ProductBase):
-    id: str
     calories: int
     user_id: str
