@@ -24,6 +24,7 @@
                 {
                     "id": "a3bb189e-8bf9-3888-9912-ace4e6543002",
                     "name": "Oatmeal",
+                    "barcode": "123456000",
                     "amount": 100,
                     "type": "gram",
                     "proteins": 10,
@@ -35,6 +36,7 @@
                 {
                     "id": "b1dbd071-071d-4ce9-8168-3919c73ec4fd",
                     "name": "Milk %5 Parmalat",
+                    "barcode": "123456001",
                     "amount": 300,
                     "type": "milliliter",
                     "proteins": 6,
@@ -46,6 +48,7 @@
                 {
                     "id": "d9428888-122b-11e1-b85c-61cd3cbb3210",
                     "name": "Greek Yogurt",
+                    "barcode": "123456002",
                     "amount": 150,
                     "type": "gram",
                     "proteins": 15,
@@ -57,6 +60,7 @@
                 {
                     "id": "e4d909c2-9a0b-4c3b-b7db-3c5a81e5f456",
                     "name": "Banana",
+                    "barcode": "123456003",
                     "amount": 100,
                     "type": "gram",
                     "proteins": 1,
@@ -80,6 +84,7 @@
                 {
                     "id": "067e6162-3b6f-4ae2-a171-2470b63dff00",
                     "name": "Grilled Chicken Breast",
+                    "barcode": "123456004",
                     "amount": 200,
                     "type": "gram",
                     "proteins": 60,
@@ -91,6 +96,7 @@
                 {
                     "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
                     "name": "Quinoa",
+                    "barcode": "123456005",
                     "amount": 150,
                     "type": "gram",
                     "proteins": 12,
@@ -102,6 +108,7 @@
                 {
                     "id": "7d44b720-23f7-48f0-88a1-8e78c080a974",
                     "name": "Mixed Vegetables",
+                    "barcode": "123456006",
                     "amount": 200,
                     "type": "gram",
                     "proteins": 3,
@@ -125,6 +132,7 @@
                 {
                     "id": "550e8400-e29b-41d4-a716-446655440000",
                     "name": "Salmon",
+                    "barcode": "123456007",
                     "amount": 150,
                     "type": "gram",
                     "proteins": 34,
@@ -136,6 +144,7 @@
                 {
                     "id": "123e4567-e89b-12d3-a456-426614174000",
                     "name": "Brown Rice",
+                    "barcode": "123456008",
                     "amount": 150,
                     "type": "gram",
                     "proteins": 5,
@@ -147,6 +156,7 @@
                 {
                     "id": "e3a1c4e4-02f4-4a0a-80bd-89f90fef4c14",
                     "name": "Steamed Broccoli",
+                    "barcode": "123456009",
                     "amount": 100,
                     "type": "gram",
                     "proteins": 3,
@@ -170,6 +180,7 @@
                 {
                     "id": "f9bc37c6-cfd8-4f59-a8e6-6a6b37b8c2c2",
                     "name": "Protein Bar",
+                    "barcode": "123456009",
                     "amount": 1,
                     "type": "portion",
                     "proteins": 20,
@@ -181,6 +192,7 @@
                 {
                     "id": "936da01f-9abd-4d9d-80c7-02af85c822a8",
                     "name": "Apple",
+                    "barcode": "123456010",
                     "amount": 100,
                     "type": "gram",
                     "proteins": 0,
@@ -192,6 +204,7 @@
                 {
                     "id": "8e02b2c3-16e1-4a3d-8a57-6a1f889c8af2",
                     "name": "Almonds",
+                    "barcode": "123456011",
                     "amount": 30,
                     "type": "gram",
                     "proteins": 6,
