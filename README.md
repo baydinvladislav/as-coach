@@ -5,12 +5,14 @@ docker-compose up --build
 ```
 
 <h2>Migrations</h2>
+
 ```
 alembic upgrade head
 alembic revision --autogenerate -m "create table"
 ```
 
 <h2>Local Testing</h2>
+
 ```bash
 export TEST_ENV=active
 cd backend
