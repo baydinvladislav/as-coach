@@ -49,7 +49,6 @@ async def test_add_product_to_diet(mock_insert_product, create_diets):
     }
 
     full_product_info_1 = ProductDtoSchema(
-        id="406c4cec-a14f-4424-8507-3df2a7954fdd",
         name="Молоко",
         barcode="123456789",
         type="milliliter",
@@ -61,7 +60,6 @@ async def test_add_product_to_diet(mock_insert_product, create_diets):
         user_id=str(create_diets[0].training_plans.customer.id),
     )
     full_product_info_2 = ProductDtoSchema(
-        id="0422799b-69ab-464f-8535-ef11ee575863",
         name="Геркулес",
         barcode="987654321",
         type="gram",
