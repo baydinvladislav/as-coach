@@ -15,6 +15,9 @@ class DietDtoSchema(BaseModel):
     total_carbs: int
     total_calories: int
 
+    class Config:
+        orm_mode = True
+
 
 class DailyNutrients(BaseModel):
     """
