@@ -27,6 +27,11 @@ class DailyNutrientsOut(BaseModel):
     fats_total: int
     carbs_total: int
 
+    consumed_calories: int
+    consumed_proteins: int
+    consumed_fats: int
+    consumed_carbs: int
+
 
 class DailyMealsOut(BaseModel):
     date: date
@@ -43,6 +48,10 @@ class DailyMealsOut(BaseModel):
             proteins_total=diet_dto.total_proteins,
             fats_total=diet_dto.total_fats,
             carbs_total=diet_dto.total_carbs,
+            consumed_calories=diet_dto.consumed_calories,
+            consumed_proteins=diet_dto.consumed_proteins,
+            consumed_fats=diet_dto.consumed_fats,
+            consumed_carbs=diet_dto.consumed_carbs,
         )
 
         return DailyMealsOut(

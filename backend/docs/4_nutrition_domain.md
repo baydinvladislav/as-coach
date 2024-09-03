@@ -12,7 +12,7 @@ the frontend should request these endpoints to work with nutrition domain.
     * example_request_uri: nutrition/diets/2024-07-11
     * response_json: ./extras/get_daily_diet_for_customer_by_date_out.json
 
-* ```POST nutrition/diets/```:
+* ```POST nutrition/diets```:
     * endpoint_info: to put product into the customer meal inside diet day fact
     * example_request_uri: nutrition/diets
     * request_json: ./extras/post_add_product_to_diet_in.json

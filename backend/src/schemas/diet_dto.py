@@ -55,6 +55,11 @@ class DailyDietDtoSchema(BaseModel):
     total_fats: int
     total_carbs: int
 
+    consumed_calories: int
+    consumed_proteins: int
+    consumed_fats: int
+    consumed_carbs: int
+
     breakfast: dict
     lunch: dict
     dinner: dict
@@ -62,6 +67,10 @@ class DailyDietDtoSchema(BaseModel):
 
     @classmethod
     def from_daily_diet_fact(cls, daily_diet_fact: DietDays) -> "DailyDietDtoSchema":
+        meals = [
+            daily_diet_fact.breakfast, daily_diet_fact.lunch, daily_diet_fact.dinner, daily_diet_fact.snacks
+        ]
+
         return DailyDietDtoSchema(
             # recommend amount by coach
             total_calories=daily_diet_fact.diet.total_calories,
@@ -72,6 +81,11 @@ class DailyDietDtoSchema(BaseModel):
             # fact amount
             id=daily_diet_fact.id,
             date=daily_diet_fact.date,
+
+            consumed_calories=sum(meal["total_calories"] for meal in meals),
+            consumed_proteins=sum(meal["total_proteins"] for meal in meals),
+            consumed_fats=sum(meal["total_fats"] for meal in meals),
+            consumed_carbs=sum(meal["total_carbs"] for meal in meals),
 
             breakfast=daily_diet_fact.breakfast,
             lunch=daily_diet_fact.lunch,
@@ -91,6 +105,11 @@ class DailyDietDtoSchema(BaseModel):
             # fact amount
             id=None,
             date=specific_day,
+
+            consumed_calories=0,
+            consumed_proteins=0,
+            consumed_fats=0,
+            consumed_carbs=0,
 
             breakfast={},
             lunch={},
@@ -112,6 +131,10 @@ class DailyDietDtoSchema(BaseModel):
             # the customer hasn't logged the requested day
             return cls.create_empty_diet(template_diet, specific_day)
 
+        meals = [
+            specific_day_fact.breakfast, specific_day_fact.lunch, specific_day_fact.dinner, specific_day_fact.snacks
+        ]
+
         return DailyDietDtoSchema(
             # recommend amount by coach
             total_calories=template_diet.total_calories,
@@ -122,6 +145,11 @@ class DailyDietDtoSchema(BaseModel):
             # fact amount
             id=specific_day_fact.id,
             date=specific_day_fact.date,
+
+            consumed_calories=sum(meal["total_calories"] for meal in meals),
+            consumed_proteins=sum(meal["total_proteins"] for meal in meals),
+            consumed_fats=sum(meal["total_fats"] for meal in meals),
+            consumed_carbs=sum(meal["total_carbs"] for meal in meals),
 
             breakfast=specific_day_fact.breakfast,
             lunch=specific_day_fact.lunch,
