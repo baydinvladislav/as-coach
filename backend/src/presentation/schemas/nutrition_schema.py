@@ -17,9 +17,6 @@ class ProductOut(BaseModel):
     calories: int
     vendor: str
 
-    class Config:
-        orm_mode = True
-
 
 class DailyNutrientsOut(BaseModel):
     total_calories: int
@@ -62,9 +59,6 @@ class DailyMealsOut(BaseModel):
             dinner=diet_dto.dinner,
             snacks=diet_dto.snacks,
         )
-
-    class Config:
-        orm_mode = True
 
 
 class DailyMealOut(BaseModel):

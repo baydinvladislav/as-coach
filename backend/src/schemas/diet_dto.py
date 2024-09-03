@@ -15,9 +15,6 @@ class DietDtoSchema(BaseModel):
     total_carbs: int
     total_calories: int
 
-    class Config:
-        orm_mode = True
-
 
 class DailyNutrients(BaseModel):
     """
@@ -36,9 +33,6 @@ class DailyNutrients(BaseModel):
 
     total_carbs: int
     consumed_carbs: int
-
-    class Config:
-        orm_mode = True
 
 
 class DailyDietDtoSchema(BaseModel):
@@ -156,6 +150,3 @@ class DailyDietDtoSchema(BaseModel):
             dinner=specific_day_fact.dinner,
             snacks=specific_day_fact.snacks,
         )
-
-    class Config:
-        orm_mode = True
