@@ -22,10 +22,10 @@ class ProductOut(BaseModel):
 
 
 class DailyNutrientsOut(BaseModel):
-    calories_total: int
-    proteins_total: int
-    fats_total: int
-    carbs_total: int
+    total_calories: int
+    total_proteins: int
+    total_fats: int
+    total_carbs: int
 
     consumed_calories: int
     consumed_proteins: int
@@ -44,10 +44,10 @@ class DailyMealsOut(BaseModel):
     @classmethod
     def from_diet_dto(cls, diet_dto: "DailyDietDtoSchema") -> "DailyMealsOut":
         daily_total = DailyNutrientsOut(
-            calories_total=diet_dto.total_calories,
-            proteins_total=diet_dto.total_proteins,
-            fats_total=diet_dto.total_fats,
-            carbs_total=diet_dto.total_carbs,
+            total_calories=diet_dto.total_calories,
+            total_proteins=diet_dto.total_proteins,
+            total_fats=diet_dto.total_fats,
+            total_carbs=diet_dto.total_carbs,
             consumed_calories=diet_dto.consumed_calories,
             consumed_proteins=diet_dto.consumed_proteins,
             consumed_fats=diet_dto.consumed_fats,

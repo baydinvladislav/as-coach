@@ -2,24 +2,24 @@
     "date": "12-08-2024",
     "actual_nutrition": {
         "daily_total": {
-            "calories_total": 2800,
-            "calories_consumed": 2800,
-            "proteins_total": 200,
-            "fats_total": 100,
-            "carbs_total": 300,
-            "proteins_consumed": 200,
-            "fats_consumed": 100,
-            "carbs_consumed": 300
+            "total_calories": 2800,
+            "total_proteins": 200,
+            "total_fats": 100,
+            "total_carbs": 300,
+            "consumed_calories": 2800,
+            "consumed_proteins": 200,
+            "consumed_fats": 100,
+            "consumed_carbs": 300
         },
         "breakfast": {
-            "calories_total": 800,
-            "calories_consumed": 800,
-            "proteins_total": 50,
-            "fats_total": 30,
-            "carbs_total": 100,
-            "proteins_consumed": 50,
-            "fats_consumed": 30,
-            "carbs_consumed": 100,
+            "total_calories": 800,
+            "total_proteins": 50,
+            "total_fats": 30,
+            "total_carbs": 100,
+            "consumed_calories": 800,
+            "consumed_proteins": 50,
+            "consumed_fats": 30,
+            "consumed_carbs": 100,
             "products": [
                 {
                     "id": "a3bb189e-8bf9-3888-9912-ace4e6543002",
@@ -76,14 +76,14 @@
             ]
         },
         "lunch": {
-            "calories_total": 1000,
-            "calories_consumed": 1000,
-            "proteins_total": 75,
-            "fats_total": 35,
-            "carbs_total": 120,
-            "proteins_consumed": 75,
-            "fats_consumed": 35,
-            "carbs_consumed": 120,
+            "total_calories": 1000,
+            "total_proteins": 75,
+            "total_fats": 35,
+            "total_carbs": 120,
+            "consumed_calories": 1000,
+            "consumed_proteins": 75,
+            "consumed_fats": 35,
+            "consumed_carbs": 120,
             "products": [
                 {
                     "id": "067e6162-3b6f-4ae2-a171-2470b63dff00",
@@ -127,14 +127,14 @@
             ]
         },
         "dinner": {
-            "calories_total": 600,
-            "calories_consumed": 600,
-            "proteins_total": 45,
-            "fats_total": 25,
-            "carbs_total": 30,
-            "proteins_consumed": 45,
-            "fats_consumed": 25,
-            "carbs_consumed": 30,
+            "total_calories": 600,
+            "total_proteins": 45,
+            "total_fats": 25,
+            "total_carbs": 30,
+            "consumed_calories": 600,
+            "consumed_proteins": 45,
+            "consumed_fats": 25,
+            "consumed_carbs": 30,
             "products": [
                 {
                     "id": "550e8400-e29b-41d4-a716-446655440000",
@@ -178,14 +178,14 @@
             ]
         },
         "snacks": {
-            "calories_total": 400,
-            "calories_consumed": 400,
-            "proteins_total": 30,
-            "fats_total": 10,
-            "carbs_total": 50,
-            "proteins_consumed": 30,
-            "fats_consumed": 10,
-            "carbs_consumed": 50,
+            "total_calories": 400,
+            "total_proteins": 30,
+            "total_fats": 10,
+            "total_carbs": 50,
+            "consumed_calories": 400,
+            "consumed_proteins": 30,
+            "consumed_fats": 10,
+            "consumed_carbs": 50,
             "products": [
                 {
                     "id": "f9bc37c6-cfd8-4f59-a8e6-6a6b37b8c2c2",

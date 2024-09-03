@@ -159,11 +159,3 @@ class DailyDietDtoSchema(BaseModel):
 
     class Config:
         orm_mode = True
-
-
-class DietMealDtoSchema(BaseModel):
-    calories_total: int
-    proteins_total: int
-    fats_total: int
-    carbs_total: int
-    products: list[dict[str, int]]
