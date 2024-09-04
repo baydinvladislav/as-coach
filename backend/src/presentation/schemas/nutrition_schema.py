@@ -66,8 +66,7 @@ class DailyMealOut(BaseModel):
     products: list[ProductOut]
 
 
-@dataclass
-class DailyDietOut:
+class DailyDietOut(BaseModel):
     date: str
     actual_nutrition: DailyMealsOut | None
 
