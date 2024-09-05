@@ -77,7 +77,9 @@ class CoachService:
         coach = await self.profile_service.register_user(uow, data)
         if coach:
             self.user = coach
+            await uow.commit()
             return coach
+
         return None
 
     async def authorize_coach(
