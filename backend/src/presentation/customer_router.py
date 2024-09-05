@@ -343,6 +343,4 @@ async def get_training_plan(
     for training in response.trainings:
         training.exercises.sort(key=lambda x: x.ordering)
 
-    logger.info(f"TRAININGS: {response.trainings[0].exercises}")
-
     return response
