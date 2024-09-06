@@ -1,5 +1,7 @@
 from uuid import UUID
 
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.presentation.schemas.product_schema import ProductCreateIn
 from src.repository.product_repository import ProductRepository
 from src.shared.exceptions import BarcodeAlreadyExistExc
@@ -24,7 +26,7 @@ class ProductService:
         products = await self.product_repository.get_products_by_barcodes(barcodes)
         return products
 
-    async def create_product(self, user_id: UUID, product_data: ProductCreateIn) -> ProductDtoSchema:
+    async def create_product(self, uow: AsyncSession, user_id: UUID, product_data: ProductCreateIn) -> ProductDtoSchema:
         existed_product = await self.get_product_by_barcode(product_data.barcode)
         if existed_product is not None:
             raise BarcodeAlreadyExistExc("The product with the same barcode already exist")
@@ -39,4 +41,5 @@ class ProductService:
             product_data,
             product_calories,
         )
+        await uow.commit()
         return new_product

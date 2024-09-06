@@ -78,6 +78,7 @@ class DietService:
             meal_type=meal_type,
             updated_meal=updated_meal,
         )
+        await uow.commit()
         return result
 
     async def create_diets(self, uow: AsyncSession, training_plan_id: UUID, diets: list[DietIn]) -> int:
@@ -93,7 +94,7 @@ class DietService:
             training_plan_id=training_plan_id,
             diets=diets,
         )
-
+        await uow.commit()
         return len(diet_ids)
 
     async def get_daily_customer_diet(

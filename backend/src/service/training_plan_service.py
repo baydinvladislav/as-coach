@@ -66,10 +66,10 @@ class TrainingPlanService:
             await uow.rollback()
             raise TrainingPlanCreationException from exc
         else:
-            await uow.commit()
             training_plan_in_db = await self.training_plan_repository.provide_training_plan_by_id(
                 uow=uow, id_=training_plan.id,
             )
+            await uow.commit()
             return training_plan_in_db
 
     async def get_training_plan_by_id(self, uow: AsyncSession, id_: UUID) -> TrainingPlanDetailDtoSchema | None:

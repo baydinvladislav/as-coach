@@ -16,6 +16,7 @@ class TrainingService:
             training_plan_id=training_plan_id,
             customer_trainings=trainings,
         )
+        await uow.commit()
         return inserted_rows
 
     async def provide_scheduled_trainings(

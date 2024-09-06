@@ -37,4 +37,5 @@ class LibraryService:
             muscle_group_id=muscle_group.id
         )
 
+        await uow.commit()
         return exercise

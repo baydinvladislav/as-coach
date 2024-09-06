@@ -120,6 +120,7 @@ async def put_product_in_catalog(
     request: ProductCreateIn,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     product_service: ProductService = Depends(provide_product_service),
+    uow: AsyncSession = Depends(provide_database_unit_of_work),
 ) -> ProductCreateOut:
     """
     Save new product to AsCoach product database
@@ -128,12 +129,17 @@ async def put_product_in_catalog(
         request: data for new product creation
         user_service: both user roles can access
         product_service: service to handle product domain
+        uow: db session injection
     Returns:
         response:
     """
     user = user_service.user
     try:
-        product = await product_service.create_product(user.id, request)
+        product = await product_service.create_product(
+            uow=uow,
+            user_id=user.id,
+            product_data=request,
+        )
     except BarcodeAlreadyExistExc:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

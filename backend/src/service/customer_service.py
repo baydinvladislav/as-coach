@@ -139,7 +139,6 @@ class CustomerService:
     async def register(self, uow: AsyncSession, data: CustomerRegistrationData) -> CustomerDtoSchema:
         customer = await self.profile_service.register_user(uow, data)
         logger.info(f"Customer registered successfully: {customer.first_name} {customer.last_name}")
-        await uow.commit()
 
         if customer.telegram_username is not None:
             logger.info(f"Will be invited in application new customer: {customer.telegram_username}")
@@ -151,6 +150,7 @@ class CustomerService:
             )
             logger.info(f"Customer {customer.telegram_username} successfully invited through Telegram account")
 
+        await uow.commit()
         return customer
 
     async def authorize(
@@ -181,6 +181,7 @@ class CustomerService:
         if await self.profile_service.authorize_user(uow, self.user, data) is True:
             if self.user.username is None:
                 await self.update_profile(uow, self.user, username=form_data.username)
+                await uow.commit()
             logger.info(f"Customer successfully {self.user.last_name} {self.user.first_name} login")
             return self.user
         raise NotValidCredentials("Not correct customer password")
@@ -192,6 +193,7 @@ class CustomerService:
 
     async def update_profile(self, uow: AsyncSession, user: CustomerDtoSchema, **params) -> None:
         updated_customer = await self.profile_service.update_user_profile(uow, user, **params)
+        await uow.commit()
         return updated_customer
 
     async def delete(self, uow: AsyncSession, user: Customer) -> None:
@@ -199,6 +201,8 @@ class CustomerService:
         if deleted_id is None:
             logger.info(f"Couldn't delete customer {user.username}")
             return
+
+        await uow.commit()
         logger.info(f"Customer {user.username} successfully deleted")
 
     async def get_customer_by_pk(self, uow: AsyncSession, pk: str) -> CustomerDtoSchema | None:
