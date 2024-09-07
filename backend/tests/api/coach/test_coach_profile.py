@@ -12,9 +12,11 @@ async def test_get_coach_profile(create_coach):
 
     assert response.status_code == 200
     assert "id" in response.json()
-    assert response.json()["username"] == create_coach.username
-    assert response.json()["first_name"] == create_coach.first_name
-    assert response.json()["user_type"] == "coach"
+
+    response = response.json()
+    assert response["username"] == create_coach.username
+    assert response["first_name"] == create_coach.first_name
+    assert response["user_type"] == "coach"
 
 
 @pytest.mark.asyncio
