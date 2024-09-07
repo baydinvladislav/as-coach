@@ -179,7 +179,7 @@ async def get_profile(
         id=str(user.id),
         first_name=user.first_name,
         last_name=user.last_name,
-        gender=user.gender.value,
+        gender=user.gender.value if user.gender else None,
         user_type=service.user_type,
         birthday=user.birthday,
         email=user.email,
