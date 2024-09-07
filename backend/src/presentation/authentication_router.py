@@ -243,7 +243,7 @@ async def update_profile(
         first_name=updated_user.first_name,
         last_name=updated_user.last_name,
         user_type=service.user_type,
-        gender=updated_user.gender,
+        gender=updated_user.gender.value if updated_user.gender is not None else None,
         birthday=updated_user.birthday,
         email=updated_user.email,
         username=updated_user.username,

@@ -22,28 +22,29 @@ class CoachRepository:
         )
 
         result = await uow.execute(statement)
-        coach = result.fetchone()
+        coach = result.scalars().first()
 
         if coach is None:
             return None
 
-        return CoachDtoSchema.from_orm(coach)
+        return CoachDtoSchema.from_coach_dto(coach)
 
     async def update_coach(self, uow: AsyncSession, **kwargs) -> CoachDtoSchema | None:
         statement = (
             update(Coach)
             .where(Coach.id == kwargs["id"])
             .values(**kwargs)
-            .returning(literal_column("*"))
         )
+        await uow.execute(statement)
 
-        result = await uow.execute(statement)
-        coach = result.fetchone()
+        query = select(Coach).where(Coach.id == kwargs["id"])
+        result = await uow.execute(query)
+        coach = result.scalars().first()
 
         if coach is None:
             return None
 
-        return CoachDtoSchema.from_orm(coach)
+        return CoachDtoSchema.from_coach_dto(coach)
 
     async def delete_coach(self, uow: AsyncSession, pk: str) -> str | None:
         stmt = delete(Coach).where(Coach.id == pk)
@@ -63,4 +64,4 @@ class CoachRepository:
         if coach is None:
             return None
 
-        return CoachDtoSchema.from_orm(coach)
+        return CoachDtoSchema.from_coach_dto(coach)
