@@ -13,13 +13,13 @@ class UserProfileOut(BaseModel):
     """
     id: str
     first_name: str
-    last_name: Optional[str]
-    gender: Optional[Gender]
+    last_name: str | None
+    gender: str | None
     user_type: str
-    birthday: Optional[date]
-    email: Optional[str]
+    birthday: date | None
+    email: str | None
     username: str
-    photo_link: Optional[str]
+    photo_link: str | None
 
 
 class CurrentUserOut(BaseModel):
