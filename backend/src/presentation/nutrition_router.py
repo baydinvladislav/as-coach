@@ -53,16 +53,10 @@ async def get_daily_diet(
         response: daily customer diet
     """
     user = user_service.user
-
     daily_diet = await diet_service.get_daily_customer_diet(
         uow=uow, customer_id=user.id, specific_day=specific_day,
     )
-
-    if daily_diet is None:
-        return DailyDietOut(date=str(specific_day), actual_nutrition=None)
-
     actual_nutrition = DailyMealsOut.from_diet_dto(daily_diet)
-
     return DailyDietOut(date=str(specific_day), actual_nutrition=actual_nutrition)
 
 

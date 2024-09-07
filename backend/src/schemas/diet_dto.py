@@ -91,13 +91,13 @@ class DailyDietDtoSchema(BaseModel):
         )
 
     @classmethod
-    def create_empty_diet(cls, template_diet: Diet, specific_day: date) -> "DailyDietDtoSchema":
+    def create_empty_diet(cls, template_diet: Diet | None, specific_day: date) -> "DailyDietDtoSchema":
         return DailyDietDtoSchema(
             # recommend amount by coach
-            total_calories=template_diet.total_calories,
-            total_proteins=template_diet.total_proteins,
-            total_fats=template_diet.total_fats,
-            total_carbs=template_diet.total_carbs,
+            total_calories=0 if template_diet is None else template_diet.total_calories,
+            total_proteins=0 if template_diet is None else template_diet.total_proteins,
+            total_fats=0 if template_diet is None else template_diet.total_fats,
+            total_carbs=0 if template_diet is None else template_diet.total_carbs,
 
             # fact amount
             id=None,
@@ -115,9 +115,12 @@ class DailyDietDtoSchema(BaseModel):
         )
 
     @classmethod
-    def from_recommended_diet(cls, template_diet: Diet, specific_day: date) -> "DailyDietDtoSchema":
-        customer_fact_days = template_diet.diet_days
+    def from_recommended_diet(cls, template_diet: Diet | None, specific_day: date) -> "DailyDietDtoSchema":
+        if template_diet is None:
+            # the customer doesn't have any diet from coach for the date
+            return cls.create_empty_diet(None, specific_day)
 
+        customer_fact_days = template_diet.diet_days
         if customer_fact_days is None:
             # the customer hasn't logged any days from the diet
             return cls.create_empty_diet(template_diet, specific_day)

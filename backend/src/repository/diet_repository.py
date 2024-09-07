@@ -45,10 +45,6 @@ class DietRepository:
         )
         result = await uow.execute(query)
         recommended_diet_by_coach = result.scalar_one_or_none()
-
-        if recommended_diet_by_coach is None:
-            return None
-
         return DailyDietDtoSchema.from_recommended_diet(recommended_diet_by_coach, specific_day)
 
     async def get_daily_diet_by_diet_id_and_date(
