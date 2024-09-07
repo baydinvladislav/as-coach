@@ -107,7 +107,8 @@ class CoachService:
         return False
 
     async def update_profile(self, uow: AsyncSession, user: Coach, **params) -> CoachDtoSchema | None:
-        updated_coach = await self.profile_service.update_user_profile(uow, user, **params)
+        await self.profile_service.update_user_profile(uow, user, **params)
+        updated_coach = await self.selector_service.select_coach_by_username(uow, params["username"])
         await uow.commit()
         return updated_coach
 
