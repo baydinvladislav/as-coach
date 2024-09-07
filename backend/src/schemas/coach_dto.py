@@ -3,6 +3,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, validator
 
+from src import Gender
+
 
 class CoachDtoSchema(BaseModel):
     id: UUID
@@ -20,7 +22,7 @@ class CoachDtoSchema(BaseModel):
         orm_mode = True
 
     @validator("gender", pre=True, always=True)
-    def lowercase_gender(cls, value: str | None) -> str | None:
-        if value is not None:
-            return value.lower()
-        return value
+    def lowercase_gender(cls, gender_enum: Gender | None) -> str | None:
+        if gender_enum is not None:
+            return gender_enum.value.lower()
+        return None
