@@ -20,8 +20,10 @@ class CoachRepository:
             .on_conflict_do_nothing()
             .returning(literal_column("*"))
         )
+        await uow.execute(statement)
 
-        result = await uow.execute(statement)
+        query = select(Coach).where(Coach.username == data.username)
+        result = await uow.execute(query)
         coach = result.scalars().first()
 
         if coach is None:
