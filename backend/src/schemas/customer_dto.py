@@ -23,6 +23,7 @@ class CustomerDtoSchema(BaseModel):
     class Config:
         orm_mode = True
 
+    @classmethod
     @validator("gender", pre=True, always=True)
     def lowercase_gender(cls, gender_enum: Gender | None) -> str | None:
         if gender_enum is not None:
