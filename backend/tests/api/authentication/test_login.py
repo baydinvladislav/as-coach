@@ -1,6 +1,5 @@
 import pytest
 
-from src.shared.config import TEST_COACH_USERNAME, TEST_COACH_PASSWORD
 from tests.conftest import make_test_http_request
 
 
