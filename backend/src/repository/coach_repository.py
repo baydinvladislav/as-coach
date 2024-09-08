@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from sqlalchemy import select, update, delete, literal_column
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import insert
@@ -34,12 +36,11 @@ class CoachRepository:
     async def update_coach(self, uow: AsyncSession, **kwargs) -> CoachDtoSchema | None:
         statement = (
             update(Coach)
-            .where(Coach.id == kwargs["id"])
+            .where(Coach.id == UUID(kwargs["id"]))
             .values(**kwargs)
         )
         await uow.execute(statement)
-
-        query = select(Coach).where(Coach.id == kwargs["id"])
+        query = select(Coach).where(Coach.id == UUID(kwargs["id"]))
         result = await uow.execute(query)
         coach = result.scalars().first()
 
