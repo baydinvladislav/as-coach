@@ -36,7 +36,7 @@ async def test_update_coach_profile(create_coach):
     assert response.status_code == 200
 
     response_data = response.json()
-
+    print(response_data)
     assert response_data["last_name"] == update_user_data["last_name"]
     assert response_data["email"] == update_user_data["email"]
     assert response_data["user_type"] == "coach"
