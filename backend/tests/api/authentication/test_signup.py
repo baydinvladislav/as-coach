@@ -99,7 +99,7 @@ async def test_signup_failed_username_already_registered(create_coach):
     """
     signup_data = {
         "username": create_coach.username,
-        "password": "",
+        "password": "qwerty123456",
         "first_name": "Ivan",
         "fcm_token": "test token value",
     }
