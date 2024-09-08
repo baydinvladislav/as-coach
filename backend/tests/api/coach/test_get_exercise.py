@@ -8,9 +8,7 @@ from tests.conftest import make_test_http_request
 
 @pytest.mark.asyncio
 async def test_get_all_exercises(create_coach, db):
-    """
-    Check list of all exercises
-    """
+    """Check list of all exercises"""
     response = await make_test_http_request(f"/api/exercises", "get", create_coach.username)
     assert response.status_code == 200
 
