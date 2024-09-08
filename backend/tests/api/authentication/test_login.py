@@ -20,7 +20,8 @@ async def test_coach_login_successfully(create_coach, db):
     response_json = response.json()
     assert response_json.get("access_token") is not None
     assert response_json.get("refresh_token") is not None
-    assert response_json.get("username") == login_data.get("username")
+    assert response_json.get("first_name") is not None
+    assert response_json.get("user_type") == "coach"
 
 
 @pytest.mark.asyncio
