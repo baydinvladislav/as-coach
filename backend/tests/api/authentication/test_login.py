@@ -4,7 +4,7 @@ from tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
-async def test_coach_login_successfully(create_coach, db):
+async def test_coach_login_successfully(create_coach):
     """Tests success user login on /api/login"""
 
     login_data = {
