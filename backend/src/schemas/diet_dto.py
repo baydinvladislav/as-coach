@@ -121,7 +121,7 @@ class DailyDietDtoSchema(BaseModel):
             return cls.create_empty_diet(None, specific_day)
 
         customer_fact_days = template_diet.diet_days
-        if customer_fact_days is None:
+        if not customer_fact_days:
             # the customer hasn't logged any days from the diet
             return cls.create_empty_diet(template_diet, specific_day)
 

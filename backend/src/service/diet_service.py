@@ -35,12 +35,18 @@ class DietService:
             for product, amount in zip(products_info, adding_products_data)
         ]
 
-        updating_meal = getattr(updating_daily_diet, meal_type)
+        updating_meal = getattr(updating_daily_diet, meal_type.value)
+
+        updating_meal["total_calories"] = updating_meal.get("total_calories", 0)
+        updating_meal["total_proteins"] = updating_meal.get("total_proteins", 0)
+        updating_meal["total_fats"] = updating_meal.get("total_fats", 0)
+        updating_meal["total_carbs"] = updating_meal.get("total_carbs", 0)
+        updating_meal["products"] = updating_meal.get("products", [])
         for item in merged_list:
-            updating_daily_diet.total_calories += item["calories"]
-            updating_daily_diet.total_proteins += item["proteins"]
-            updating_daily_diet.total_fats += item["fats"]
-            updating_daily_diet.total_carbs += item["carbs"]
+            updating_daily_diet.consumed_calories += item["calories"]
+            updating_daily_diet.consumed_proteins += item["proteins"]
+            updating_daily_diet.consumed_fats += item["fats"]
+            updating_daily_diet.consumed_carbs += item["carbs"]
 
             updating_meal["total_calories"] += item["calories"]
             updating_meal["total_proteins"] += item["proteins"]

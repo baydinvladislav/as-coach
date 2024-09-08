@@ -39,7 +39,7 @@ class DietRepository:
                 and_(
                     TrainingPlan.customer_id == customer_id,
                     TrainingPlan.start_date <= specific_day,
-                    TrainingPlan.end_date >= specific_day
+                    TrainingPlan.end_date >= specific_day,
                 )
             )
         )

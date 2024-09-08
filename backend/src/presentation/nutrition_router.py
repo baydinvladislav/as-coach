@@ -54,15 +54,20 @@ async def get_daily_diet(
     """
     user = user_service.user
     daily_diet = await diet_service.get_daily_customer_diet(
-        uow=uow, customer_id=user.id, specific_day=specific_day,
+        uow=uow,
+        customer_id=user.id,
+        specific_day=specific_day,
     )
     actual_nutrition = DailyMealsOut.from_diet_dto(daily_diet)
-    return DailyDietOut(date=str(specific_day), actual_nutrition=actual_nutrition)
+    return DailyDietOut(
+        date=str(specific_day),
+        actual_nutrition=actual_nutrition,
+    )
 
 
 @nutrition_router.post(
     "/diets",
-    summary="Consume product inside diet",
+    summary="Consume products inside diet",
     response_model=DailyDietOut,
     status_code=status.HTTP_201_CREATED)
 async def add_product_to_diet_meal(
