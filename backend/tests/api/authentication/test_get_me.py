@@ -28,6 +28,6 @@ async def test_customer_get_me(create_customer):
     response_json = response.json()
 
     assert response_json.get("id") is not None
-    assert response_json["user_type"] == "customer"
+    assert response_json.get("user_type") == "customer"
     assert response_json.get("username") == create_customer.username
     assert response_json.get("first_name") == create_customer.first_name
