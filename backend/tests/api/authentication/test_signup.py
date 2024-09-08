@@ -1,30 +1,13 @@
 import pytest
 
-from sqlalchemy import select, delete
-
-from src import Coach
-from backend.tests.conftest import (
-    make_test_http_request
-)
-from src.shared.config import TEST_COACH_FIRST_NAME, TEST_COACH_USERNAME, TEST_COACH_PASSWORD
+from backend.tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
-async def test_signup_successfully(db):
+async def test_signup_successfully():
     """
     Success registration
     """
-    user = await db.execute(
-        select(Coach).where(Coach.username == TEST_COACH_USERNAME)
-    )
-
-    user_instance = user.scalar()
-    if user_instance:
-        await db.execute(
-            delete(Coach).where(Coach.username == TEST_COACH_USERNAME)
-        )
-        await db.commit()
-
     signup_data = {
         "username": "+79031234567",
         "password": "qwerty123",
@@ -37,21 +20,10 @@ async def test_signup_successfully(db):
 
 
 @pytest.mark.asyncio
-async def test_signup_validation_error(db):
+async def test_signup_validation_error():
     """
     Failed registration because of validation error
     """
-    user = await db.execute(
-        select(Coach).where(Coach.username == TEST_COACH_USERNAME)
-    )
-
-    user_instance = user.scalar()
-    if user_instance:
-        await db.execute(
-            delete(Coach).where(Coach.username == TEST_COACH_USERNAME)
-        )
-        await db.commit()
-
     not_valid_signup_data = {
         # without "+"
         "username": "79850002233",
@@ -65,21 +37,10 @@ async def test_signup_validation_error(db):
 
 
 @pytest.mark.asyncio
-async def test_signup_too_short_password(db):
+async def test_signup_too_short_password():
     """
     Failed registration because of validation error
     """
-    user = await db.execute(
-        select(Coach).where(Coach.username == TEST_COACH_USERNAME)
-    )
-
-    user_instance = user.scalar()
-    if user_instance:
-        await db.execute(
-            delete(Coach).where(Coach.username == TEST_COACH_USERNAME)
-        )
-        await db.commit()
-
     not_valid_signup_data = {
         "username": "79850002233",
         # password is less 8 symbols
