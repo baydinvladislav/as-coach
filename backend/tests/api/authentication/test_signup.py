@@ -4,7 +4,7 @@ from backend.tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
-async def test_signup_successfully():
+async def test_signup_successfully(db):
     """
     Success registration
     """
@@ -20,13 +20,12 @@ async def test_signup_successfully():
 
 
 @pytest.mark.asyncio
-async def test_signup_validation_error():
+async def test_signup_validation_error(db):
     """
     Failed registration because of validation error
     """
     not_valid_signup_data = {
-        # without "+"
-        "username": "79850002233",
+        "username": "79850002233",  # without "+"
         "password": "qwerty123",
         "first_name": "Ivan",
         "fcm_token": "test token value",
@@ -37,14 +36,13 @@ async def test_signup_validation_error():
 
 
 @pytest.mark.asyncio
-async def test_signup_too_short_password():
+async def test_signup_too_short_password(db):
     """
     Failed registration because of validation error
     """
     not_valid_signup_data = {
         "username": "79850002233",
-        # password is less 8 symbols
-        "password": "1234567",
+        "password": "1234567",  # password is less 8 symbols
         "first_name": "Ivan",
         "fcm_token": "test token value",
     }
