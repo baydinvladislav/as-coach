@@ -525,10 +525,10 @@ async def create_customer(create_coach, db) -> Customer:
 @pytest_asyncio.fixture()
 async def create_coach(db) -> Coach:
     test_coach = Coach(
-        username=TEST_COACH_USERNAME,
-        first_name=TEST_COACH_FIRST_NAME,
-        last_name=TEST_COACH_LAST_NAME,
-        password=await get_hashed_password(TEST_COACH_PASSWORD),
+        username="+79054445566",
+        first_name="Ivan",
+        last_name="Petrov",
+        password="qwerty123456",
         fcm_token="test token value",
     )
     db.add(test_coach)
