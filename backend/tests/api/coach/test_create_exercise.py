@@ -9,6 +9,7 @@ from tests.conftest import make_test_http_request
 @pytest.mark.asyncio
 async def test_create_exercise_successfully(create_coach, create_customer, create_exercises, db):
     """Successfully exercise creation"""
+
     muscle_groups = await db.execute(select(MuscleGroup))
     muscle_groups = muscle_groups.scalars().first()
     exercise_data = {
