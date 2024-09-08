@@ -40,7 +40,9 @@ async def create_exercise(
         muscle_group_id=exercise_data.muscle_group_id
     )
     return ExerciseCreateOut(
-        id=str(exercise.id), muscle_group=exercise.muscle_group_name, name=exercise.name,
+        id=str(exercise.id),
+        muscle_group=exercise.muscle_group_name,
+        name=exercise.name,
     )
 
 

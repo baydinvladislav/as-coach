@@ -1,16 +1,14 @@
 import pytest
 
-from sqlalchemy import select, delete
+from sqlalchemy import select
 
-from src import MuscleGroup, Exercise
+from src import MuscleGroup
 from tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
 async def test_create_exercise_successfully(create_coach, create_customer, create_exercises, db):
-    """
-    Successfully exercise creation
-    """
+    """Successfully exercise creation"""
     muscle_groups = await db.execute(select(MuscleGroup))
     muscle_groups = muscle_groups.scalars().first()
     exercise_data = {
@@ -21,8 +19,7 @@ async def test_create_exercise_successfully(create_coach, create_customer, creat
     response = await make_test_http_request(f"/api/exercises", "post", create_coach.username, json=exercise_data)
     assert response.status_code == 201
 
-    if response.status_code == 201:
-        await db.execute(
-            delete(Exercise).where(Exercise.id == response.json()["id"])
-        )
-        await db.commit()
+    response_json = response.json()
+
+    assert response_json.get("id") is not None
+    assert response_json.get("name") == exercise_data.get("name")
