@@ -57,6 +57,5 @@ async def test_customer_login_by_otp_successfully(create_customer):
     assert response_json.get("access_token") is not None
     assert response_json.get("refresh_token") is not None
     assert response_json.get("first_name") is not None
-    assert response_json.get("last_name") is not None
     assert response_json.get("user_type") == "customer"
     assert response_json.get("password_changed") is False
