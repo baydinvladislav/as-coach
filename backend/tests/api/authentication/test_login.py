@@ -17,9 +17,10 @@ async def test_coach_login_successfully(create_coach, db):
     response = await make_test_http_request("/api/login", "post", data=login_data)
     assert response.status_code == 200
 
-    response_data = response.json()
-    assert "access_token" in response_data
-    assert "refresh_token" in response_data
+    response_json = response.json()
+    assert response_json.get("access_token") is not None
+    assert response_json.get("refresh_token") is not None
+    assert response_json.get("username") == login_data.get("username")
 
 
 @pytest.mark.asyncio
@@ -42,7 +43,7 @@ async def test_customer_login_by_otp_successfully(create_customer):
 
     login_data = {
         "username": create_customer.username,
-        "password": create_customer.password,
+        "password": create_customer.password,  # otp code
         "fcm_token": "test token value",
     }
 

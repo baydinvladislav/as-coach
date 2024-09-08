@@ -5,7 +5,8 @@ from backend.tests.conftest import make_test_http_request
 
 @pytest.mark.asyncio
 async def test_signup_successfully(db):
-    """ Success registration """
+    """Success registration"""
+
     signup_data = {
         "username": "+79031234567",
         "password": "qwerty123",
@@ -26,7 +27,8 @@ async def test_signup_successfully(db):
 
 @pytest.mark.asyncio
 async def test_signup_validation_error(db):
-    """ Failed registration because of validation error """
+    """Failed registration because of validation error"""
+
     not_valid_signup_data = {
         "username": "79850002233",  # without "+"
         "password": "qwerty123",
@@ -40,7 +42,8 @@ async def test_signup_validation_error(db):
 
 @pytest.mark.asyncio
 async def test_signup_too_short_password(db):
-    """ Failed registration because of validation error """
+    """Failed registration because of validation error"""
+
     not_valid_signup_data = {
         "username": "79850002233",
         "password": "1234567",  # password is less 8 symbols
@@ -54,7 +57,8 @@ async def test_signup_too_short_password(db):
 
 @pytest.mark.asyncio
 async def test_signup_failed_username_already_registered(create_coach):
-    """ Failed because username already registered """
+    """Failed because username already registered"""
+
     signup_data = {
         "username": create_coach.username,
         "password": "qwerty123456",
