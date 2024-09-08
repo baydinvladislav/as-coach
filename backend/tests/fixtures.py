@@ -528,7 +528,7 @@ async def create_coach(db) -> Coach:
         username="+79054445566",
         first_name="Ivan",
         last_name="Petrov",
-        password="qwerty123456",
+        password=await get_hashed_password("qwerty123456"),
         fcm_token="test token value",
     )
     db.add(test_coach)

@@ -26,9 +26,9 @@ async def test_signup_successfully(db):
         await db.commit()
 
     signup_data = {
-        "username": TEST_COACH_USERNAME,
-        "password": TEST_COACH_PASSWORD,
-        "first_name": TEST_COACH_FIRST_NAME,
+        "username": "+79031234567",
+        "password": "qwerty123",
+        "first_name": "Ivan",
         "fcm_token": "test fcm token value",
     }
 
@@ -55,8 +55,8 @@ async def test_signup_validation_error(db):
     not_valid_signup_data = {
         # without "+"
         "username": "79850002233",
-        "password": TEST_COACH_PASSWORD,
-        "first_name": TEST_COACH_FIRST_NAME,
+        "password": "qwerty123",
+        "first_name": "Ivan",
         "fcm_token": "test token value",
     }
 
@@ -81,10 +81,10 @@ async def test_signup_too_short_password(db):
         await db.commit()
 
     not_valid_signup_data = {
-        "username": TEST_COACH_USERNAME,
+        "username": "79850002233",
         # password is less 8 symbols
         "password": "1234567",
-        "first_name": TEST_COACH_FIRST_NAME,
+        "first_name": "Ivan",
         "fcm_token": "test token value",
     }
 
@@ -98,9 +98,9 @@ async def test_signup_failed_username_already_registered(create_coach):
     Failed because username already registered
     """
     signup_data = {
-        "username": TEST_COACH_USERNAME,
-        "password": TEST_COACH_PASSWORD,
-        "first_name": TEST_COACH_FIRST_NAME,
+        "username": create_coach.username,
+        "password": "",
+        "first_name": "Ivan",
         "fcm_token": "test token value",
     }
 

@@ -9,8 +9,8 @@ async def test_coach_login_successfully(create_coach, db):
     """Tests success user login on /api/login"""
 
     login_data = {
-        "username": TEST_COACH_USERNAME,
-        "password": TEST_COACH_PASSWORD,
+        "username": create_coach.username,
+        "password": "qwerty123456",
         "fcm_token": "test fcm_token value",
     }
 

@@ -303,6 +303,6 @@ async def change_password(
     await service.update_profile(
         uow=uow,
         user=user,
-        password=await get_hashed_password(new_password.password)
+        password=await get_hashed_password(new_password.password),
     )
     return {"user_id": str(user.id), "changed_password": True}
