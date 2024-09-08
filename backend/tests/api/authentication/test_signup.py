@@ -16,6 +16,13 @@ async def test_signup_successfully(db):
     response = await make_test_http_request("/api/signup", "post", json=signup_data)
     assert response.status_code == 201
 
+    response_json = response.json()
+
+    assert response_json.get("access_token") is not None
+    assert response_json.get("refresh_token") is not None
+    assert response_json.get("username") == signup_data.get("username")
+    assert response_json.get("first_name") == signup_data.get("first_name")
+
 
 @pytest.mark.asyncio
 async def test_signup_validation_error(db):
