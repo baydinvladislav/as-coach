@@ -58,7 +58,7 @@ the frontend should request these endpoints to work with nutrition domain.
     * response_json: ./extras/get_receive_product.json
 
 ### Getting Daily Diet Endpoint Flow
-![get_daily_diet_flow_diagram](get_daily_diet_flow_diagram.drawio.svg)
+![get_daily_diet_flow_diagram](4_get_daily_diet_flow_diagram.drawio.svg)
 
 ### Data Storage Structure
 Command Query Responsibility Segregation (CQRS) pattern, separating the write operations (commands) 
