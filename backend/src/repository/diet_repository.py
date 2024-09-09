@@ -132,7 +132,7 @@ class DietRepository:
 
         stmt = (
             update(DietDays)
-            .where(DietDays.id == updated_daily_diet.id)
+            .where(DietDays.id == updated_daily_diet.diet_day_id)
             .values({column_to_update: updated_meal})
             .returning(DietDays.id)
         )
