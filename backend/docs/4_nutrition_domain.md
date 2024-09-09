@@ -5,6 +5,7 @@ the frontend should request these endpoints to work with nutrition domain.
 ### Table of Contents
 - [API](#api)
 - [Data Storage Structure](#data-storage-structure)
+- [Getting Daily Diet Endpoint Flow](#getting-daily-diet-endpoint-flow)
 
 ### API
 * ```GET nutrition/diets/${specific_day}```:
@@ -56,6 +57,9 @@ the frontend should request these endpoints to work with nutrition domain.
     * request_json: ./extras/post_create_product.json
     * response_json: ./extras/get_receive_product.json
 
+### Getting Daily Diet Endpoint Flow
+![get_daily_diet_flow_diagram](get_daily_diet_flow_diagram.drawio.svg)
+
 ### Data Storage Structure
 Command Query Responsibility Segregation (CQRS) pattern, separating the write operations (commands) 
 from the read operations (queries).
@@ -63,3 +67,4 @@ from the read operations (queries).
 * AWS DynamoDB: Used for storing product data and handling insert/update operations.
 * AWS OpenSearch Service: Used for indexing and full-text search of product data.
 * AWS Lambda: Used to synchronize data between DynamoDB and OpenSearch.
+
