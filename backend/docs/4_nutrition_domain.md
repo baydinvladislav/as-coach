@@ -4,8 +4,8 @@ the frontend should request these endpoints to work with nutrition domain.
 
 ### Table of Contents
 - [API](#api)
-- [Data Storage Structure](#data-storage-structure)
 - [Getting Daily Diet Endpoint Flow](#getting-daily-diet-endpoint-flow)
+- [Data Storage Structure](#data-storage-structure)
 
 ### API
 * ```GET nutrition/diets/${specific_day}```:
