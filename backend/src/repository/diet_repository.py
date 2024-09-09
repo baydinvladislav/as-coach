@@ -3,7 +3,7 @@ from datetime import date, datetime
 
 from sqlalchemy import select, update, and_
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import joinedload, selectinload
 
 from src import Diet, DietDays, TrainingPlan
 from src.schemas.diet_dto import DailyDietDtoSchema
@@ -27,15 +27,65 @@ class DietRepository:
 
         return diet_orm
 
+    async def create_daily_diet(
+        self,
+        uow: AsyncSession,
+        template_diet_id: UUID,
+        specific_day: date,
+    ) -> DailyDietDtoSchema | None:
+        query = await uow.execute(
+            select(Diet).filter(Diet.id == template_diet_id)
+        )
+        template_diet = query.scalars().first()
+
+        daily_diet = DietDays(
+            date=specific_day,
+            diet=template_diet,
+            diet_id=template_diet.id,
+            breakfast={
+                "total_calories": 0,
+                "total_proteins": 0,
+                "total_fats": 0,
+                "total_carbs": 0,
+                "products": [],
+            },
+            lunch={
+                "total_calories": 0,
+                "total_proteins": 0,
+                "total_fats": 0,
+                "total_carbs": 0,
+                "products": [],
+            },
+            dinner={
+                "total_calories": 0,
+                "total_proteins": 0,
+                "total_fats": 0,
+                "total_carbs": 0,
+                "products": [],
+            },
+            snacks={
+                "total_calories": 0,
+                "total_proteins": 0,
+                "total_fats": 0,
+                "total_carbs": 0,
+                "products": [],
+            },
+
+        )
+
+        uow.add(daily_diet)
+        await uow.flush()
+
+        return DailyDietDtoSchema.from_daily_diet_fact(daily_diet)
+
     async def get_daily_diet_by_training_plan_date_range(
         self, uow: AsyncSession, customer_id: UUID, specific_day: date
     ) -> DailyDietDtoSchema | None:
         query = (
-            select(
-                Diet
-            ).join(
-                TrainingPlan, Diet.training_plan_id == TrainingPlan.id,
-            ).where(
+            select(Diet)
+            .join(TrainingPlan, Diet.training_plan_id == TrainingPlan.id)
+            .options(selectinload(Diet.diet_days))
+            .where(
                 and_(
                     TrainingPlan.customer_id == customer_id,
                     TrainingPlan.start_date <= specific_day,

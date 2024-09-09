@@ -43,15 +43,15 @@ class DailyDietDtoSchema(BaseModel):
     This diet fork for customer.
     This record keeps nutrition customer results.
     """
-
-    id: UUID | None
     date: date
 
+    template_diet_id: UUID
     total_calories: int
     total_proteins: int
     total_fats: int
     total_carbs: int
 
+    diet_day_id: UUID | None
     consumed_calories: int
     consumed_proteins: int
     consumed_fats: int
@@ -65,18 +65,19 @@ class DailyDietDtoSchema(BaseModel):
     @classmethod
     def from_daily_diet_fact(cls, daily_diet_fact: DietDays) -> "DailyDietDtoSchema":
         meals = [
-            daily_diet_fact.breakfast, daily_diet_fact.lunch, daily_diet_fact.dinner, daily_diet_fact.snacks
+            daily_diet_fact.breakfast, daily_diet_fact.lunch, daily_diet_fact.dinner, daily_diet_fact.snacks,
         ]
 
         return DailyDietDtoSchema(
             # recommend amount by coach
+            template_diet_id=daily_diet_fact.diet_id,
             total_calories=daily_diet_fact.diet.total_calories,
             total_proteins=daily_diet_fact.diet.total_proteins,
             total_fats=daily_diet_fact.diet.total_fats,
             total_carbs=daily_diet_fact.diet.total_carbs,
 
             # fact amount
-            id=daily_diet_fact.id,
+            diet_day_id=daily_diet_fact.id,
             date=daily_diet_fact.date,
 
             consumed_calories=sum(meal["total_calories"] for meal in meals),
@@ -94,13 +95,14 @@ class DailyDietDtoSchema(BaseModel):
     def create_empty_diet(cls, template_diet: Diet | None, specific_day: date) -> "DailyDietDtoSchema":
         return DailyDietDtoSchema(
             # recommend amount by coach
+            template_diet_id=None if template_diet is None else template_diet.id,
             total_calories=0 if template_diet is None else template_diet.total_calories,
             total_proteins=0 if template_diet is None else template_diet.total_proteins,
             total_fats=0 if template_diet is None else template_diet.total_fats,
             total_carbs=0 if template_diet is None else template_diet.total_carbs,
 
             # fact amount
-            id=None,
+            diet_day_id=None,
             date=specific_day,
 
             consumed_calories=0,
@@ -137,13 +139,14 @@ class DailyDietDtoSchema(BaseModel):
 
         return DailyDietDtoSchema(
             # recommend amount by coach
+            template_diet_id=template_diet.id,
             total_calories=template_diet.total_calories,
             total_proteins=template_diet.total_proteins,
             total_fats=template_diet.total_fats,
             total_carbs=template_diet.total_carbs,
 
             # fact amount
-            id=specific_day_fact.id,
+            diet_day_id=specific_day_fact.id,
             date=specific_day_fact.date,
 
             consumed_calories=sum(meal["total_calories"] for meal in meals),

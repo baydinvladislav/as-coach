@@ -1,5 +1,4 @@
 from datetime import date
-from dataclasses import dataclass
 from enum import Enum
 from uuid import UUID
 
@@ -67,6 +66,7 @@ class DailyMealOut(BaseModel):
 
 
 class DailyDietOut(BaseModel):
+    id: UUID
     date: str
     actual_nutrition: DailyMealsOut | None
 

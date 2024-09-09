@@ -111,4 +111,13 @@ class DietService:
             customer_id=customer_id,
             specific_day=specific_day,
         )
+
+        if diet.diet_day_id is None:
+            diet = await self.diet_repository.create_daily_diet(
+                uow=uow,
+                template_diet_id=diet.template_diet_id,
+                specific_day=specific_day,
+            )
+            await uow.commit()
+
         return diet

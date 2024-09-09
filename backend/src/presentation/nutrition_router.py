@@ -60,6 +60,7 @@ async def get_daily_diet(
     )
     actual_nutrition = DailyMealsOut.from_diet_dto(daily_diet)
     return DailyDietOut(
+        id=daily_diet.diet_day_id,
         date=str(specific_day),
         actual_nutrition=actual_nutrition,
     )
