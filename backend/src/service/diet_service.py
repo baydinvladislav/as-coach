@@ -37,6 +37,11 @@ class DietService:
 
         updating_meal = getattr(updating_daily_diet, meal_type.value)
         for item in merged_list:
+            item["calories"] *= item["amount"] / 100
+            item["proteins"] *= item["amount"] / 100
+            item["fats"] *= item["amount"] / 100
+            item["carbs"] *= item["amount"] / 100
+
             updating_daily_diet.consumed_calories += item["calories"]
             updating_daily_diet.consumed_proteins += item["proteins"]
             updating_daily_diet.consumed_fats += item["fats"]
@@ -46,6 +51,7 @@ class DietService:
             updating_meal["total_proteins"] += item["proteins"]
             updating_meal["total_fats"] += item["fats"]
             updating_meal["total_carbs"] += item["carbs"]
+
             updating_meal["products"].append(item)
 
         return updating_daily_diet, updating_meal
