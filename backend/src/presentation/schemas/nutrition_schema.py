@@ -84,7 +84,6 @@ class ProductAddInDiet(BaseModel):
 
 
 class ProductToDietRequest(BaseModel):
-    diet_id: UUID
+    daily_diet_id: UUID
     meal_type: MealType
-    specific_day: str
     product_data: list[ProductAddInDiet]

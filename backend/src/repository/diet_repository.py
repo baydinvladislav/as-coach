@@ -97,20 +97,15 @@ class DietRepository:
         recommended_diet_by_coach = result.scalar_one_or_none()
         return DailyDietDtoSchema.from_recommended_diet(recommended_diet_by_coach, specific_day)
 
-    async def get_daily_diet_by_diet_id_and_date(
+    async def get_daily_diet_by_id(
         self,
         uow: AsyncSession,
-        diet_id: UUID,
-        specific_day: str,
+        daily_diet_id: UUID,
     ) -> DailyDietDtoSchema | None:
         query = (
             select(DietDays)
-            .where(
-                and_(
-                    DietDays.diet_id == diet_id,
-                    DietDays.date == datetime.strptime(specific_day, "%Y-%m-%d").date(),
-                )
-            )
+            .options(selectinload(DietDays.diet))
+            .where(DietDays.id == daily_diet_id)
         )
 
         result = await uow.execute(query)

@@ -92,20 +92,20 @@ async def add_product_to_diet_meal(
 
     updated_daily_diet = await diet_service.put_product_to_diet_meal(
         uow=uow,
-        diet_id=request.diet_id,
+        daily_diet_id=request.daily_diet_id,
         meal_type=request.meal_type,
         adding_products_data=request.product_data,
-        specific_day=request.specific_day,
     )
 
     if updated_daily_diet is None:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"couldn't.update.customer.diet.meal {user.id=} {request.diet_id=} {request.specific_day=}",
+            detail=f"couldn't.update.customer.diet.meal {user.id=} {request.daily_diet_id=}",
         )
 
     actual_nutrition = DailyMealsOut.from_diet_dto(updated_daily_diet)
     return DailyDietOut(
+        id=updated_daily_diet.diet_day_id,
         date=str(actual_nutrition.date),
         actual_nutrition=actual_nutrition,
     )

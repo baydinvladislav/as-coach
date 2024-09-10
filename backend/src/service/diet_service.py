@@ -36,12 +36,6 @@ class DietService:
         ]
 
         updating_meal = getattr(updating_daily_diet, meal_type.value)
-
-        updating_meal["total_calories"] = updating_meal.get("total_calories", 0)
-        updating_meal["total_proteins"] = updating_meal.get("total_proteins", 0)
-        updating_meal["total_fats"] = updating_meal.get("total_fats", 0)
-        updating_meal["total_carbs"] = updating_meal.get("total_carbs", 0)
-        updating_meal["products"] = updating_meal.get("products", [])
         for item in merged_list:
             updating_daily_diet.consumed_calories += item["calories"]
             updating_daily_diet.consumed_proteins += item["proteins"]
@@ -59,18 +53,16 @@ class DietService:
     async def put_product_to_diet_meal(
         self,
         uow: AsyncSession,
-        diet_id: UUID,
+        daily_diet_id: UUID,
         meal_type: MealType,
         adding_products_data: list[ProductAddInDiet],
-        specific_day: str,
     ) -> DailyDietDtoSchema | None:
         products_full_info = await self.product_service.get_products_by_barcodes(
             barcodes=[item.barcode for item in adding_products_data],
         )
-        updating_daily_diet = await self.diet_repository.get_daily_diet_by_diet_id_and_date(
+        updating_daily_diet = await self.diet_repository.get_daily_diet_by_id(
             uow=uow,
-            diet_id=diet_id,
-            specific_day=specific_day,
+            daily_diet_id=daily_diet_id,
         )
         updated_daily_diet, updated_meal = await self.actualize_daily_diet_fact(
             updating_daily_diet=updating_daily_diet,
