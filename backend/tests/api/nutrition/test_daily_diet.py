@@ -35,11 +35,11 @@ async def test_get_customer_daily_diet(create_diets):
 @pytest.mark.asyncio
 @patch("src.repository.product_repository.ProductRepository.get_products_by_barcodes")
 async def test_add_product_to_diet(mock_insert_product, create_diets):
-    diet_id = str(create_diets[0].id)
+    daily_diet_id = str(create_diets[1].diet_days[0].id)
     customer_username = create_diets[0].training_plans.customer.username
 
     product_data = {
-        "daily_diet_id": diet_id,
+        "daily_diet_id": daily_diet_id,
         "meal_type": "breakfast",
         "product_data": [
             {"barcode": "123456789", "amount": 300},

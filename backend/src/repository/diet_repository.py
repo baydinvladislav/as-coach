@@ -1,5 +1,5 @@
 from uuid import UUID
-from datetime import date, datetime
+from datetime import date
 
 from sqlalchemy import select, update, and_
 from sqlalchemy.ext.asyncio import AsyncSession
