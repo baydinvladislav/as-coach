@@ -10,7 +10,7 @@ from src.schemas.diet_dto import DailyDietDtoSchema
 
 
 class DietRepository:
-    async def create_diets(self, uow: AsyncSession, training_plan_id: UUID, diets: list) -> list[UUID]:
+    async def insert_diet_templates(self, uow: AsyncSession, training_plan_id: UUID, diets: list) -> list[UUID]:
         diet_orm = [
             Diet(
                 total_proteins=diet.proteins,

@@ -51,7 +51,7 @@ class TrainingPlanService:
                 exercise_rest=data.exercise_rest,
                 notes=data.notes,
             )
-            await self.diet_service.create_diets(
+            await self.diet_service.create_diet_templates(
                 uow=uow,
                 training_plan_id=training_plan.id,
                 diets=data.diets,

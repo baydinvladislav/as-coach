@@ -23,10 +23,6 @@ from src import (
 from src.utils import generate_random_password, get_hashed_password
 from tests.conftest import TestingSessionLocal
 from src.shared.config import (
-    TEST_COACH_FIRST_NAME,
-    TEST_COACH_LAST_NAME,
-    TEST_COACH_USERNAME,
-    TEST_COACH_PASSWORD,
     TEST_CUSTOMER_FIRST_NAME,
     TEST_CUSTOMER_LAST_NAME,
     TEST_CUSTOMER_USERNAME,
@@ -403,7 +399,7 @@ async def create_diets(create_training_plans, db):
 
     await db.commit()
 
-    result = await db.execute(select(Diet))
+    result = await db.execute(select(Diet).options(selectinload(Diet.diet_days)))
     diets = result.scalars().all()
     return diets
 

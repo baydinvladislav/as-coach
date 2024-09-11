@@ -23,7 +23,7 @@ class DietService:
         self.calories_calculator_service = calories_calculator_service
         self.product_service = product_service
 
-    async def actualize_daily_diet_fact(
+    async def _actualize_daily_diet_fact(
         self,
         updating_daily_diet: DailyDietDtoSchema,
         meal_type: MealType,
@@ -70,7 +70,7 @@ class DietService:
             uow=uow,
             daily_diet_id=daily_diet_id,
         )
-        updated_daily_diet, updated_meal = await self.actualize_daily_diet_fact(
+        updated_daily_diet, updated_meal = await self._actualize_daily_diet_fact(
             updating_daily_diet=updating_daily_diet,
             meal_type=meal_type,
             adding_products_data=adding_products_data,
@@ -85,7 +85,7 @@ class DietService:
         await uow.commit()
         return result
 
-    async def create_diets(self, uow: AsyncSession, training_plan_id: UUID, diets: list[DietIn]) -> int:
+    async def create_diet_templates(self, uow: AsyncSession, training_plan_id: UUID, diets: list[DietIn]) -> int:
         for diet in diets:
             diet.calories = await self.calories_calculator_service.calculate_calories(
                 proteins=diet.proteins,
@@ -93,7 +93,7 @@ class DietService:
                 carbs=diet.carbs,
             )
 
-        diet_ids = await self.diet_repository.create_diets(
+        diet_ids = await self.diet_repository.insert_diet_templates(
             uow=uow,
             training_plan_id=training_plan_id,
             diets=diets,
