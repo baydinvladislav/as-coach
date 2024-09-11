@@ -39,13 +39,12 @@ async def test_add_product_to_diet(mock_insert_product, create_diets):
     customer_username = create_diets[0].training_plans.customer.username
 
     product_data = {
-        "diet_id": diet_id,
+        "daily_diet_id": diet_id,
+        "meal_type": "breakfast",
         "product_data": [
             {"barcode": "123456789", "amount": 300},
             {"barcode": "987654321", "amount": 100},
         ],
-        "meal_type": "breakfast",
-        "specific_day": str(create_diets[0].training_plans.start_date + timedelta(days=2)),
     }
 
     full_product_info_1 = ProductDtoSchema(
