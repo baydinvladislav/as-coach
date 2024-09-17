@@ -181,6 +181,10 @@ async def get_specific_product_from_catalog(
     """
     user = user_service.user
     product = await product_service.get_product_by_barcode(barcode)
+
+    if product is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
+
     return ProductCreateOut(
         name=product.name,
         barcode=product.barcode,
