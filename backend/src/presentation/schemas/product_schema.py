@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 
 class ProductBase(BaseModel):
@@ -13,9 +13,18 @@ class ProductBase(BaseModel):
 
 
 class ProductCreateIn(ProductBase):
-    pass
+
+    @classmethod
+    @validator("name", "vendor_name", pre=True)
+    def check_lowercase(cls, v: str) -> str:
+        return v.lower()
 
 
 class ProductCreateOut(ProductBase):
     calories: int
     user_id: str
+
+    @classmethod
+    @validator("name", "vendor_name", pre=True)
+    def check_lowercase(cls, v: str) -> str:
+        return v.capitalize()
