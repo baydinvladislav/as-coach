@@ -7,7 +7,6 @@ from src.presentation.schemas.nutrition_schema import MealType, ProductAddInDiet
 from src.presentation.schemas.training_plan_schema import DietIn
 from src.repository.diet_repository import DietRepository
 from src.schemas.diet_dto import DailyDietDtoSchema
-from src.schemas.product_dto import ProductDtoSchema
 from src.service.calories_calculator_service import CaloriesCalculatorService
 from src.service.product_service import ProductService
 
@@ -27,16 +26,10 @@ class DietService:
         self,
         updating_daily_diet: DailyDietDtoSchema,
         meal_type: MealType,
-        adding_products_data: list[ProductAddInDiet],
-        products_info: list[ProductDtoSchema],
+        product_list: list[dict],
     ) -> tuple[DailyDietDtoSchema, dict]:
-        merged_list = [
-            {**product.dict(), **amount.dict()}
-            for product, amount in zip(products_info, adding_products_data)
-        ]
-
         updating_meal = getattr(updating_daily_diet, meal_type.value)
-        for item in merged_list:
+        for item in product_list:
             item["calories"] *= item["amount"] / 100
             item["proteins"] *= item["amount"] / 100
             item["fats"] *= item["amount"] / 100
@@ -70,11 +63,14 @@ class DietService:
             uow=uow,
             daily_diet_id=daily_diet_id,
         )
+        merged_product_list = [
+            {**product.dict(), **amount.dict()}
+            for product, amount in zip(products_full_info, adding_products_data)
+        ]
         updated_daily_diet, updated_meal = await self._actualize_daily_diet_fact(
             updating_daily_diet=updating_daily_diet,
             meal_type=meal_type,
-            adding_products_data=adding_products_data,
-            products_info=products_full_info,
+            product_list=merged_product_list,
         )
         result = await self.diet_repository.update_daily_diet_meal(
             uow=uow,
@@ -82,6 +78,7 @@ class DietService:
             meal_type=meal_type,
             updated_meal=updated_meal,
         )
+        await self.product_service.save_product_to_history(uow, merged_product_list)
         await uow.commit()
         return result
 

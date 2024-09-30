@@ -11,4 +11,5 @@ from src.persistence.models import (
     MuscleGroup,
     Exercise,
     ExercisesOnTraining,
+    CustomerHistoryProducts,
 )

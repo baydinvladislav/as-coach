@@ -1,8 +1,12 @@
 from uuid import UUID
 
+from sqlalchemy import select, desc
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src import CustomerHistoryProducts
 from src.persistence.dynamo_db_models import Product
 from src.presentation.schemas.product_schema import ProductCreateIn
-from src.schemas.product_dto import ProductDtoSchema
+from src.schemas.product_dto import ProductDtoSchema, HistoryProductDtoSchema
 
 
 class ProductRepository:
@@ -39,6 +43,57 @@ class ProductRepository:
         )
         new_product.save()
         return ProductDtoSchema.from_product(new_product)
+
+    async def insert_products_to_history(
+        self,
+        uow: AsyncSession,
+        product_list: list[dict],
+    ) -> None:
+        products_history_orm = [
+            CustomerHistoryProducts(
+                name=product["name"],
+                type=product["type"],
+                proteins=product["proteins"],
+                fats=product["fats"],
+                carbs=product["carbs"],
+                calories=product["calories"],
+                vendor_name=product["vendor_name"],
+                customer_id=product["user_id"],
+                barcode=product["barcode"],
+                amount=product["amount"],
+            ) for product in product_list
+        ]
+        uow.add_all(products_history_orm)
+
+    async def fetch_product_history(self, uow: AsyncSession, customer_id: UUID) -> list[HistoryProductDtoSchema]:
+        query = (
+            select(
+                CustomerHistoryProducts
+            )
+            .where(CustomerHistoryProducts.customer_id == customer_id)
+            .order_by(desc(CustomerHistoryProducts.created))
+            .limit(20)
+        )
+
+        result = await uow.execute(query)
+        product_history = result.scalars().all()
+
+        product_history_dto = [
+            HistoryProductDtoSchema(
+                name=ph.name,
+                type=ph.type,
+                proteins=ph.proteins,
+                fats=ph.fats,
+                carbs=ph.carbs,
+                calories=ph.calories,
+                vendor_name=ph.vendor_name,
+                customer_id=ph.customer_id,
+                barcode=ph.barcode,
+                amount=ph.amount,
+            )
+            for ph in product_history
+        ]
+        return product_history_dto
 
     async def delete_product(self, _id: str) -> str | None:
         ...

@@ -27,3 +27,16 @@ class ProductDtoSchema(BaseModel):
             vendor_name=product_db_row.vendor_name,
             user_id=product_db_row.user_id,
         )
+
+
+class HistoryProductDtoSchema(BaseModel):
+    name: str
+    type: str
+    proteins: float
+    fats: float
+    carbs: float
+    calories: float
+    vendor_name: str
+    customer_id: str
+    barcode: str
+    amount: float

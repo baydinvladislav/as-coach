@@ -17,6 +17,19 @@ class ProductOut(BaseModel):
     vendor: str
 
 
+class HistoryProductOut(BaseModel):
+    name: str
+    type: str
+    proteins: float
+    fats: float
+    carbs: float
+    calories: float
+    vendor_name: str
+    customer_id: str
+    barcode: str
+    amount: float
+
+
 class DailyNutrientsOut(BaseModel):
     total_calories: int
     total_proteins: int

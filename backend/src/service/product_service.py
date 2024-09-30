@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.presentation.schemas.product_schema import ProductCreateIn
 from src.repository.product_repository import ProductRepository
 from src.shared.exceptions import BarcodeAlreadyExistExc
-from src.schemas.product_dto import ProductDtoSchema
+from src.schemas.product_dto import ProductDtoSchema, HistoryProductDtoSchema
 from src.service.calories_calculator_service import CaloriesCalculatorService
 
 
@@ -43,3 +43,9 @@ class ProductService:
         )
         await uow.commit()
         return new_product
+
+    async def save_product_to_history(self, uow: AsyncSession, product_list: list[dict]) -> None:
+        await self.product_repository.insert_products_to_history(uow, product_list)
+
+    async def get_product_history(self, uow: AsyncSession, customer_id: UUID) -> list[HistoryProductDtoSchema]:
+        return await self.product_repository.fetch_product_history(uow, customer_id)

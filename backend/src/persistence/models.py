@@ -2,7 +2,9 @@ import datetime
 import enum
 import uuid
 
-from sqlalchemy import Column, DateTime, String, Enum, Date, ForeignKey, Text, Integer, JSON
+from sqlalchemy import (
+    Column, DateTime, String, Enum, Date, ForeignKey, Text, Integer, JSON, Float
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import RelationshipProperty, relationship
 
@@ -78,6 +80,11 @@ class Customer(Base, BaseModel):
         cascade="all,delete-orphan",
         back_populates="customer"
     )
+    history_products: RelationshipProperty = relationship(
+        "CustomerHistoryProducts",
+        cascade="all,delete-orphan",
+        back_populates="customer"
+    )
     birthday = Column("birthday", Date, nullable=True)
     photo_path = Column("photo_path", String(255), nullable=True)
     email = Column("email", String(100), nullable=True)
@@ -85,6 +92,29 @@ class Customer(Base, BaseModel):
 
     def __repr__(self):
         return f"Customer: {self.last_name} {self.first_name}"
+
+
+class CustomerHistoryProducts(Base, BaseModel):
+    """
+    Customer consumed products history.
+    """
+    __tablename__ = "product_history"
+    __table_args__ = {'extend_existing': True}
+
+    name = Column("name", String(255), nullable=False)
+    type = Column("type", String(50), nullable=False)   # TODO: make enum
+    proteins = Column("proteins", Float, nullable=False)
+    fats = Column("fats", Float, nullable=False)
+    carbs = Column("carbs", Float, nullable=False)
+    calories = Column("calories", Float, nullable=False)
+    vendor_name = Column("vendor_name", String(255), nullable=False)
+    customer_id = Column(UUID(as_uuid=True), ForeignKey("customer.id", ondelete="CASCADE"), nullable=False)
+    customer: RelationshipProperty = relationship("Customer", back_populates="history_products")
+    barcode = Column("barcode", String(50), nullable=False)
+    amount = Column("amount", Float, nullable=False)
+
+    def __repr__(self):
+        return f"Product history: {self.customer_id} {self.product_barcode} {self.product_amount}"
 
 
 class TrainingPlan(Base, BaseModel):

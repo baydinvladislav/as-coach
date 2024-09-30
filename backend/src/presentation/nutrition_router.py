@@ -10,6 +10,7 @@ from src.presentation.schemas.nutrition_schema import (
     DailyDietOut,
     ProductOut,
     ProductToDietRequest,
+    HistoryProductOut,
 )
 from src.presentation.schemas.product_schema import ProductCreateIn, ProductCreateOut
 from src.shared.exceptions import BarcodeAlreadyExistExc
@@ -252,7 +253,7 @@ async def update_product_in_catalog(
 
 # GET nutrition/products/${query_text}
 @nutrition_router.get(
-    "/products/lookup{query_text}",
+    "/products/lookup/{query_text}",
     summary="Look up product by relative product word",
     response_model=list[ProductOut],
     status_code=status.HTTP_200_OK)
@@ -274,3 +275,44 @@ async def find_product_in_catalog(
         response:
     """
     ...
+
+
+@nutrition_router.get(
+    "/products/history",
+    summary="User consumed products history",
+    response_model=list[ProductCreateOut],
+    status_code=status.HTTP_200_OK)
+async def get_user_products_history(
+    user_service: CoachService | CustomerService = Depends(provide_user_service),
+    product_service: ProductService = Depends(provide_product_service),
+    uow: AsyncSession = Depends(provide_database_unit_of_work),
+) -> list:
+    """
+    Find consumed products in customer history.
+
+    Args:
+        user_service: both user roles can access
+        product_service: service responsible for nutrition product logic
+        uow: db session injection
+    Returns:
+        response:
+    """
+    user = user_service.user
+    product_history = await product_service.get_product_history(uow, user.id)
+    products = [
+        HistoryProductOut(
+            name=ph.name,
+            type=ph.type,
+            proteins=ph.proteins,
+            fats=ph.fats,
+            carbs=ph.carbs,
+            calories=ph.calories,
+            vendor_name=ph.vendor_name,
+            customer_id=ph.customer_id,
+            barcode=ph.barcode,
+            amount=ph.amount,
+        )
+        for ph
+        in product_history
+    ]
+    return products
