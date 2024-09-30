@@ -251,7 +251,6 @@ async def update_product_in_catalog(
     ...
 
 
-# GET nutrition/products/${query_text}
 @nutrition_router.get(
     "/products/lookup/{query_text}",
     summary="Look up product by relative product word",
@@ -260,21 +259,35 @@ async def update_product_in_catalog(
 async def find_product_in_catalog(
     query_text: str,
     user_service: CoachService | CustomerService = Depends(provide_user_service),
-    diet_service: DietService = Depends(provide_diet_service),
+    product_service: ProductService = Depends(provide_product_service),
     uow: AsyncSession = Depends(provide_database_unit_of_work),
-) -> dict:
+) -> list[ProductOut]:
     """
     Find product by relative product word in application storage.
 
     Args:
         query_text: word for looking up in db
         user_service: both user roles can access
-        diet_service: service responsible for customer diets
+        product_service: service responsible for nutrition product logic
         uow: db session injection
     Returns:
-        response:
+        response: list of suitable products
     """
-    ...
+    user = user_service.user
+    products_dto = await product_service.search_products(query_text)
+    products_response = [
+        ProductOut(
+            barcode=p.barcode,
+            name=p.name,
+            type=p.type,
+            proteins=p.proteins,
+            fats=p.fats,
+            carbs=p.carbs,
+            calories=p.calories,
+            vendor_name=p.vendor_name,
+        ) for p in products_dto
+    ]
+    return products_response
 
 
 @nutrition_router.get(
@@ -295,7 +308,7 @@ async def get_user_products_history(
         product_service: service responsible for nutrition product logic
         uow: db session injection
     Returns:
-        response:
+        response: recently consumed products by user
     """
     user = user_service.user
     product_history = await product_service.get_product_history(uow, user.id)

@@ -31,16 +31,6 @@ async def test_get_product(mock_get_product_by_barcode, create_customer):
     assert response.status_code == 200
 
 
-# @pytest.mark.asyncio
-# async def test_search_product(create_customer):
-#     response = await make_test_http_request(
-#         url="api/nutrition/products/lookup?query_text=молоко",
-#         method="get",
-#         username=create_customer.username,
-#     )
-#     assert response.status_code == 200
-
-
 @pytest.mark.asyncio
 @patch("src.repository.product_repository.ProductRepository.insert_product")
 @patch("src.repository.product_repository.ProductRepository.get_product_by_barcode")
@@ -86,3 +76,24 @@ async def test_create_product(mock_get_product_by_barcode, mock_insert_product, 
     response_json = response.json()
     assert response_json.get("barcode") is not None
     assert response_json.get("name") is not None
+
+
+@pytest.mark.asyncio
+async def test_search_product(create_customer):
+    query_text = "Яйца"
+    response = await make_test_http_request(
+        url=f"api/nutrition/products/lookup/{query_text}",
+        method="get",
+        username=create_customer.username,
+    )
+
+    assert response.status_code == 200
+    response_json = response.json()
+
+    for product in response_json:
+        assert query_text in product["name"] or query_text in product["vendor_name"]
+
+    fields = ("barcode", "name", "proteins", "fats", "carbs", "calories", "vendor_name")
+    for item in response_json:
+        for field in fields:
+            assert field in item

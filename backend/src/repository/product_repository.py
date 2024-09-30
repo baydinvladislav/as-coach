@@ -95,11 +95,17 @@ class ProductRepository:
         ]
         return product_history_dto
 
+    async def lookup_products(self, query_text: str) -> list[ProductDtoSchema]:
+        condition = (Product.name.contains(query_text)) | (Product.vendor_name.contains(query_text))
+        scan_results = Product.scan(condition)
+        products = [
+            ProductDtoSchema.from_product(product)
+            for product in scan_results
+        ]
+        return products
+
     async def delete_product(self, _id: str) -> str | None:
         ...
 
     async def update_product(self, _id: str) -> ProductDtoSchema | None:
-        ...
-
-    async def search_product(self, query_text: str) -> ProductDtoSchema | None:
         ...

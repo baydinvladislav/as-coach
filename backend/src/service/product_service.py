@@ -49,3 +49,7 @@ class ProductService:
 
     async def get_product_history(self, uow: AsyncSession, customer_id: UUID) -> list[HistoryProductDtoSchema]:
         return await self.product_repository.fetch_product_history(uow, customer_id)
+
+    async def search_products(self, query_string: str) -> list[ProductDtoSchema]:
+        expected_products = await self.product_repository.lookup_products(query_string)
+        return expected_products

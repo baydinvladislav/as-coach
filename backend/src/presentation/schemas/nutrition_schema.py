@@ -6,15 +6,14 @@ from pydantic import BaseModel
 
 
 class ProductOut(BaseModel):
-    id: UUID
+    barcode: str
     name: str
-    amount: int
     type: str
     proteins: int
     fats: int
     carbs: int
     calories: int
-    vendor: str
+    vendor_name: str
 
 
 class HistoryProductOut(BaseModel):
