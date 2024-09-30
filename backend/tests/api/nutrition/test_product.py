@@ -79,7 +79,35 @@ async def test_create_product(mock_get_product_by_barcode, mock_insert_product, 
 
 
 @pytest.mark.asyncio
-async def test_search_product(create_customer):
+@patch("src.repository.product_repository.ProductRepository.lookup_products")
+async def test_search_product(mock_lookup_products, create_customer):
+    mock_product_list_dto = [
+            ProductDtoSchema(
+            name="Яйца",
+            barcode="123456789",
+            type="food",
+            proteins=12.6,
+            fats=10.6,
+            carbs=0.6,
+            calories=155,
+            vendor_name="Окское",
+            user_id=str(create_customer.id),
+        ),
+        ProductDtoSchema(
+            name="Яйца",
+            barcode="123456789",
+            type="food",
+            proteins=11.6,
+            fats=11.6,
+            carbs=0.9,
+            calories=154.4,
+            vendor_name="Троекурово",
+            user_id=str(create_customer.id),
+        ),
+    ]
+
+    mock_lookup_products.return_value = mock_product_list_dto
+
     query_text = "Яйца"
     response = await make_test_http_request(
         url=f"api/nutrition/products/lookup/{query_text}",
