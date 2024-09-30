@@ -274,7 +274,7 @@ async def find_product_in_catalog(
         response: list of suitable products
     """
     user = user_service.user
-    products_dto = await product_service.search_products(query_text)
+    products_dto = await product_service.search_products(query_text.lower())
     products_response = [
         ProductOut(
             barcode=p.barcode,
