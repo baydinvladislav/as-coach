@@ -280,13 +280,13 @@ async def find_product_in_catalog(
 @nutrition_router.get(
     "/products/history/all",
     summary="User consumed products history",
-    response_model=list[ProductCreateOut],
+    response_model=list[HistoryProductOut],
     status_code=status.HTTP_200_OK)
 async def get_user_products_history(
     user_service: CoachService | CustomerService = Depends(provide_user_service),
     product_service: ProductService = Depends(provide_product_service),
     uow: AsyncSession = Depends(provide_database_unit_of_work),
-) -> list:
+) -> list[HistoryProductOut]:
     """
     Find consumed products in customer history.
 
