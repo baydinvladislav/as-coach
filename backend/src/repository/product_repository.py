@@ -87,7 +87,7 @@ class ProductRepository:
                 carbs=ph.carbs,
                 calories=ph.calories,
                 vendor_name=ph.vendor_name,
-                customer_id=ph.customer_id,
+                customer_id=str(ph.customer_id),
                 barcode=ph.barcode,
                 amount=ph.amount,
             )
