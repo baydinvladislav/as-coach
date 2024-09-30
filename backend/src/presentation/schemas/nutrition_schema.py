@@ -2,7 +2,7 @@ from datetime import date
 from enum import Enum
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 
 
 class ProductOut(BaseModel):
@@ -14,6 +14,11 @@ class ProductOut(BaseModel):
     carbs: int
     calories: int
     vendor_name: str
+
+    @classmethod
+    @validator("name", "vendor_name", pre=True)
+    def check_lowercase(cls, v: str) -> str:
+        return v.capitalize()
 
 
 class HistoryProductOut(BaseModel):
