@@ -278,7 +278,7 @@ async def find_product_in_catalog(
 
 
 @nutrition_router.get(
-    "products/history/all",
+    "/products/history/all",
     summary="User consumed products history",
     response_model=list[ProductCreateOut],
     status_code=status.HTTP_200_OK)
