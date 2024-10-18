@@ -37,6 +37,7 @@ from src import (
     BaseModel,
     Gender,
     engine,
+    CustomerHistoryProducts,
     Base,
 )
 

@@ -15,6 +15,8 @@ load_dotenv()
 # infrastructure
 DATABASE_URL = os.environ.get("DATABASE_URL")
 STATIC_DIR = os.path.join(os.getcwd(), "static")
+DYNAMO_DB_PRODUCTS_TABLE_NAME = os.getenv("DYNAMO_DB_PRODUCTS_TABLE_NAME")
+DYNAMO_DB_PRODUCTS_TABLE_REGION = os.getenv("DYNAMO_DB_PRODUCTS_TABLE_REGION")
 
 # testing
 TEST_ENV = os.environ.get("TEST_ENV", 0)

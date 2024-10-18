@@ -1,0 +1,10 @@
+{
+  "name": "Greek Yogurt",
+  "barcode": "1234567890123",
+  "type": "portion",
+  "portion_size": 150,
+  "vendor_name": "Chobani",
+  "proteins": 10,
+  "fats": 4.67,
+  "carbs": 6.67
+}

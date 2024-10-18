@@ -175,12 +175,11 @@ async def get_profile(
         dict: full info about current user
     """
     user = service.user
-
     return UserProfileOut(
         id=str(user.id),
         first_name=user.first_name,
         last_name=user.last_name,
-        gender=user.gender,
+        gender=user.gender.value if user.gender else None,
         user_type=service.user_type,
         birthday=user.birthday,
         email=user.email,
@@ -244,7 +243,7 @@ async def update_profile(
         first_name=updated_user.first_name,
         last_name=updated_user.last_name,
         user_type=service.user_type,
-        gender=updated_user.gender,
+        gender=updated_user.gender.value if updated_user.gender is not None else None,
         birthday=updated_user.birthday,
         email=updated_user.email,
         username=updated_user.username,
@@ -304,6 +303,6 @@ async def change_password(
     await service.update_profile(
         uow=uow,
         user=user,
-        password=await get_hashed_password(new_password.password)
+        password=await get_hashed_password(new_password.password),
     )
     return {"user_id": str(user.id), "changed_password": True}

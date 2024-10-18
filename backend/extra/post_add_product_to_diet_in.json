@@ -1,0 +1,19 @@
+{
+  "diet_id": "ec3b1023-c3b9-444e-8227-21a5113b46e3",
+  "meal_type": "breakfast",
+  "specific_day": "2024-04-25",
+  "product_data": [
+    {
+      "id": "bc26eb96-f5f0-468d-9ded-5040e8738e06",
+      "amount": 100
+    },
+    {
+      "id": "8f40d708-a7f8-4bc7-ae42-f812a9695ef0",
+      "amount": 50
+    },
+    {
+      "id": "cf698c05-36ec-4da9-b902-db669e67c46c",
+      "amount": 130
+    }
+  ]
+}

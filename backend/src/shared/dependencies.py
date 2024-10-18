@@ -1,9 +1,15 @@
+# TODO: пора бы уже этот файл побить по доменам
+
+
 from fastapi import Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from src.database import SessionLocal
+from src.repository.product_repository import ProductRepository
 from src.service.library_service import LibraryService
+from src.service.product_service import ProductService
+from src.service.calories_calculator_service import CaloriesCalculatorService
 from src.shared.config import reuseable_oauth
 from src.utils import decode_jwt_token
 from src.repository.library_repository import ExerciseRepository, MuscleGroupRepository
@@ -41,14 +47,6 @@ async def provide_coach_service() -> CoachService:
 async def provide_library_service() -> LibraryService:
     return LibraryService(
         exercise_repository=ExerciseRepository(), muscle_group_repository=MuscleGroupRepository()
-    )
-
-
-async def provide_training_plan_service() -> TrainingPlanService:
-    return TrainingPlanService(
-        training_plan_repository=TrainingPlanRepository(),
-        training_service=TrainingService(TrainingRepository()),
-        diet_service=DietService(DietRepository()),
     )
 
 
@@ -113,3 +111,43 @@ async def provide_user_service(
             return customer_service
         else:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+
+async def provide_product_service() -> ProductService:
+    product_repository = ProductRepository()
+    calories_calculator_service = CaloriesCalculatorService()
+    return ProductService(
+        product_repository=product_repository,
+        calories_calculator_service=calories_calculator_service,
+    )
+
+
+async def provide_diet_service(
+    product_service: ProductService = Depends(provide_product_service)
+) -> DietService:
+    diet_repository = DietRepository()
+    calories_calculator_service = CaloriesCalculatorService()
+    return DietService(
+        diet_repository=diet_repository,
+        calories_calculator_service=calories_calculator_service,
+        product_service=product_service,
+    )
+
+
+async def provide_training_plan_service(
+    product_service: ProductService = Depends(provide_product_service)
+) -> TrainingPlanService:
+    diet_service = DietService(
+        diet_repository=DietRepository(),
+        calories_calculator_service=CaloriesCalculatorService(),
+        product_service=product_service,
+    )
+
+    training_plan_repository = TrainingPlanRepository()
+    training_service = TrainingService(TrainingRepository())
+
+    return TrainingPlanService(
+        training_plan_repository=training_plan_repository,
+        training_service=training_service,
+        diet_service=diet_service,
+    )

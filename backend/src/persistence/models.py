@@ -2,7 +2,9 @@ import datetime
 import enum
 import uuid
 
-from sqlalchemy import Column, DateTime, String, Enum, Date, ForeignKey, Text, Integer, JSON
+from sqlalchemy import (
+    Column, DateTime, String, Enum, Date, ForeignKey, Text, Integer, JSON, Float
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import RelationshipProperty, relationship
 
@@ -78,6 +80,11 @@ class Customer(Base, BaseModel):
         cascade="all,delete-orphan",
         back_populates="customer"
     )
+    history_products: RelationshipProperty = relationship(
+        "CustomerHistoryProducts",
+        cascade="all,delete-orphan",
+        back_populates="customer"
+    )
     birthday = Column("birthday", Date, nullable=True)
     photo_path = Column("photo_path", String(255), nullable=True)
     email = Column("email", String(100), nullable=True)
@@ -85,6 +92,29 @@ class Customer(Base, BaseModel):
 
     def __repr__(self):
         return f"Customer: {self.last_name} {self.first_name}"
+
+
+class CustomerHistoryProducts(Base, BaseModel):
+    """
+    Customer consumed products history.
+    """
+    __tablename__ = "product_history"
+    __table_args__ = {'extend_existing': True}
+
+    name = Column("name", String(255), nullable=False)
+    type = Column("type", String(50), nullable=False)   # TODO: make enum
+    proteins = Column("proteins", Float, nullable=False)
+    fats = Column("fats", Float, nullable=False)
+    carbs = Column("carbs", Float, nullable=False)
+    calories = Column("calories", Float, nullable=False)
+    vendor_name = Column("vendor_name", String(255), nullable=False)
+    customer_id = Column(UUID(as_uuid=True), ForeignKey("customer.id", ondelete="CASCADE"), nullable=False)
+    customer: RelationshipProperty = relationship("Customer", back_populates="history_products")
+    barcode = Column("barcode", String(50), nullable=False)
+    amount = Column("amount", Float, nullable=False)
+
+    def __repr__(self):
+        return f"Product history: {self.customer_id} {self.product_barcode} {self.product_amount}"
 
 
 class TrainingPlan(Base, BaseModel):
@@ -113,18 +143,40 @@ class TrainingPlan(Base, BaseModel):
 
 class Diet(Base, BaseModel):
     """
-    Contains nutrition data inside training plan domain
+    Contains nutrients amount within the training plan domain.
+    The recommended diet by the coach is a subdomain of the training plan domain.
     """
     __tablename__ = "diet"
 
-    proteins = Column("proteins", Integer, nullable=False)
-    fats = Column("fats", Integer, nullable=False)
-    carbs = Column("carbs", Integer, nullable=False)
+    total_proteins = Column("total_proteins", Integer, nullable=False)
+    total_fats = Column("total_fats", Integer, nullable=False)
+    total_carbs = Column("total_carbs", Integer, nullable=False)
+    total_calories = Column("total_calories", Integer, nullable=False)
     training_plan_id = Column(UUID(as_uuid=True), ForeignKey("trainingplan.id", ondelete="CASCADE"))
+    # TODO: сейчас у нас один уже план, нужно поменять атрибут на training_plan
     training_plans: RelationshipProperty = relationship("TrainingPlan", back_populates="diets")
+    diet_days = relationship("DietDays", back_populates="diet", cascade="all, delete-orphan")
 
     def __repr__(self):
-        return f"diet: {self.proteins}/{self.fats}/{self.carbs}"
+        return f"diet: {self.total_proteins}/{self.total_fats}/{self.total_carbs}/{self.total_calories}"
+
+
+class DietDays(Base, BaseModel):
+    __tablename__ = "dietday"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, nullable=False)
+    date = Column(Date, nullable=False)
+
+    breakfast = Column(JSON, default={})
+    lunch = Column(JSON, default={})
+    dinner = Column(JSON, default={})
+    snacks = Column(JSON, default={})
+
+    diet_id = Column(UUID(as_uuid=True), ForeignKey("diet.id"), nullable=False)
+    diet = relationship("Diet", back_populates="diet_days")
+
+    def __repr__(self):
+        return f"Diet day: {self.date}"
 
 
 class Training(Base, BaseModel):

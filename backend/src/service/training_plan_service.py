@@ -51,7 +51,7 @@ class TrainingPlanService:
                 exercise_rest=data.exercise_rest,
                 notes=data.notes,
             )
-            await self.diet_service.create_diets(
+            await self.diet_service.create_diet_templates(
                 uow=uow,
                 training_plan_id=training_plan.id,
                 diets=data.diets,
@@ -66,10 +66,10 @@ class TrainingPlanService:
             await uow.rollback()
             raise TrainingPlanCreationException from exc
         else:
-            await uow.commit()
             training_plan_in_db = await self.training_plan_repository.provide_training_plan_by_id(
                 uow=uow, id_=training_plan.id,
             )
+            await uow.commit()
             return training_plan_in_db
 
     async def get_training_plan_by_id(self, uow: AsyncSession, id_: UUID) -> TrainingPlanDetailDtoSchema | None:
@@ -119,9 +119,10 @@ class TrainingPlanService:
             id=str(training_plan.id),
             start_date=training_plan.start_date.strftime("%Y-%m-%d"),
             end_date=training_plan.end_date.strftime("%Y-%m-%d"),
-            proteins="/".join([str(diet.proteins) for diet in training_plan.diets]),
-            fats="/".join([str(diet.fats) for diet in training_plan.diets]),
-            carbs="/".join([str(diet.carbs) for diet in training_plan.diets]),
+            proteins="/".join([str(diet.total_proteins) for diet in training_plan.diets]),
+            fats="/".join([str(diet.total_fats) for diet in training_plan.diets]),
+            carbs="/".join([str(diet.total_carbs) for diet in training_plan.diets]),
+            calories="/".join([str(diet.total_calories) for diet in training_plan.diets]),
             trainings=trainings,
             set_rest=training_plan.set_rest,
             exercise_rest=training_plan.exercise_rest,

@@ -1,25 +1,28 @@
 import pytest
 
-from src.shared.config import TEST_COACH_USERNAME, TEST_COACH_PASSWORD
 from tests.conftest import make_test_http_request
 
 
 @pytest.mark.asyncio
-async def test_coach_login_successfully(create_coach, db):
+async def test_coach_login_successfully(create_coach):
     """Tests success user login on /api/login"""
 
     login_data = {
-        "username": TEST_COACH_USERNAME,
-        "password": TEST_COACH_PASSWORD,
+        "username": create_coach.username,
+        "password": "qwerty123456",
         "fcm_token": "test fcm_token value",
     }
 
     response = await make_test_http_request("/api/login", "post", data=login_data)
     assert response.status_code == 200
 
-    response_data = response.json()
-    assert "access_token" in response_data
-    assert "refresh_token" in response_data
+    response_json = response.json()
+
+    assert response_json.get("access_token") is not None
+    assert response_json.get("refresh_token") is not None
+    assert response_json.get("first_name") is not None
+    assert response_json.get("user_type") == "coach"
+    assert response_json.get("password_changed") is True
 
 
 @pytest.mark.asyncio
@@ -42,9 +45,17 @@ async def test_customer_login_by_otp_successfully(create_customer):
 
     login_data = {
         "username": create_customer.username,
-        "password": create_customer.password,
+        "password": create_customer.password,  # otp code
         "fcm_token": "test token value",
     }
 
     response = await make_test_http_request("/api/login", "post", create_customer.username, data=login_data)
     assert response.status_code == 200
+
+    response_json = response.json()
+
+    assert response_json.get("access_token") is not None
+    assert response_json.get("refresh_token") is not None
+    assert response_json.get("first_name") is not None
+    assert response_json.get("user_type") == "customer"
+    assert response_json.get("password_changed") is False

@@ -1,0 +1,232 @@
+{
+    "date": "12-08-2024",
+    "actual_nutrition": {
+        "daily_total": {
+            "total_calories": 2800,
+            "total_proteins": 200,
+            "total_fats": 100,
+            "total_carbs": 300,
+            "consumed_calories": 2800,
+            "consumed_proteins": 200,
+            "consumed_fats": 100,
+            "consumed_carbs": 300
+        },
+        "breakfast": {
+            "total_calories": 800,
+            "total_proteins": 50,
+            "total_fats": 30,
+            "total_carbs": 100,
+            "consumed_calories": 800,
+            "consumed_proteins": 50,
+            "consumed_fats": 30,
+            "consumed_carbs": 100,
+            "products": [
+                {
+                    "id": "a3bb189e-8bf9-3888-9912-ace4e6543002",
+                    "name": "Oatmeal",
+                    "barcode": "123456000",
+                    "portion_size": null,
+                    "amount": 100,
+                    "type": "gram",
+                    "proteins": 10,
+                    "fats": 5,
+                    "carbs": 30,
+                    "calories": 200,
+                    "vendor_name": "Quaker"
+                },
+                {
+                    "id": "b1dbd071-071d-4ce9-8168-3919c73ec4fd",
+                    "name": "Milk %5 Parmalat",
+                    "barcode": "123456001",
+                    "portion_size": null,
+                    "amount": 300,
+                    "type": "milliliter",
+                    "proteins": 6,
+                    "fats": 15,
+                    "carbs": 3,
+                    "calories": 634,
+                    "vendor_name": "Chobani"
+                },
+                {
+                    "id": "d9428888-122b-11e1-b85c-61cd3cbb3210",
+                    "name": "Greek Yogurt",
+                    "barcode": "123456002",
+                    "amount": 150,
+                    "portion_size": 150,
+                    "type": "gram",
+                    "proteins": 15,
+                    "fats": 7,
+                    "carbs": 10,
+                    "calories": 150,
+                    "vendor_name": "Chobani"
+                },
+                {
+                    "id": "e4d909c2-9a0b-4c3b-b7db-3c5a81e5f456",
+                    "name": "Banana",
+                    "barcode": "123456003",
+                    "amount": 100,
+                    "portion_size": null,
+                    "type": "gram",
+                    "proteins": 1,
+                    "fats": 0.3,
+                    "carbs": 22.8,
+                    "calories": 89,
+                    "vendor_name": "Dole"
+                }
+            ]
+        },
+        "lunch": {
+            "total_calories": 1000,
+            "total_proteins": 75,
+            "total_fats": 35,
+            "total_carbs": 120,
+            "consumed_calories": 1000,
+            "consumed_proteins": 75,
+            "consumed_fats": 35,
+            "consumed_carbs": 120,
+            "products": [
+                {
+                    "id": "067e6162-3b6f-4ae2-a171-2470b63dff00",
+                    "name": "Grilled Chicken Breast",
+                    "barcode": "123456004",
+                    "portion_size": null,
+                    "amount": 200,
+                    "type": "gram",
+                    "proteins": 60,
+                    "fats": 10,
+                    "carbs": 0,
+                    "calories": 400,
+                    "vendor_name": "Tyson"
+                },
+                {
+                    "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+                    "name": "Quinoa",
+                    "barcode": "123456005",
+                    "portion_size": null,
+                    "amount": 150,
+                    "type": "gram",
+                    "proteins": 12,
+                    "fats": 9,
+                    "carbs": 53,
+                    "calories": 222,
+                    "vendor_name": "Bob's Red Mill"
+                },
+                {
+                    "id": "7d44b720-23f7-48f0-88a1-8e78c080a974",
+                    "name": "Mixed Vegetables",
+                    "barcode": "123456006",
+                    "portion_size": null,
+                    "amount": 200,
+                    "type": "gram",
+                    "proteins": 3,
+                    "fats": 5,
+                    "carbs": 30,
+                    "calories": 150,
+                    "vendor_name": "Birds Eye"
+                }
+            ]
+        },
+        "dinner": {
+            "total_calories": 600,
+            "total_proteins": 45,
+            "total_fats": 25,
+            "total_carbs": 30,
+            "consumed_calories": 600,
+            "consumed_proteins": 45,
+            "consumed_fats": 25,
+            "consumed_carbs": 30,
+            "products": [
+                {
+                    "id": "550e8400-e29b-41d4-a716-446655440000",
+                    "name": "Salmon",
+                    "barcode": "123456007",
+                    "portion_size": null,
+                    "amount": 150,
+                    "type": "gram",
+                    "proteins": 34,
+                    "fats": 21,
+                    "carbs": 0,
+                    "calories": 350,
+                    "vendor_name": "Norwegian Seafoods"
+                },
+                {
+                    "id": "123e4567-e89b-12d3-a456-426614174000",
+                    "name": "Brown Rice",
+                    "barcode": "123456008",
+                    "portion_size": null,
+                    "amount": 150,
+                    "type": "gram",
+                    "proteins": 5,
+                    "fats": 2,
+                    "carbs": 45,
+                    "calories": 150,
+                    "vendor_name": "Lundberg"
+                },
+                {
+                    "id": "e3a1c4e4-02f4-4a0a-80bd-89f90fef4c14",
+                    "name": "Steamed Broccoli",
+                    "barcode": "123456009",
+                    "portion_size": null,
+                    "amount": 100,
+                    "type": "gram",
+                    "proteins": 3,
+                    "fats": 0.4,
+                    "carbs": 7,
+                    "calories": 35,
+                    "vendor_name": "Green Giant"
+                }
+            ]
+        },
+        "snacks": {
+            "total_calories": 400,
+            "total_proteins": 30,
+            "total_fats": 10,
+            "total_carbs": 50,
+            "consumed_calories": 400,
+            "consumed_proteins": 30,
+            "consumed_fats": 10,
+            "consumed_carbs": 50,
+            "products": [
+                {
+                    "id": "f9bc37c6-cfd8-4f59-a8e6-6a6b37b8c2c2",
+                    "name": "Protein Bar",
+                    "barcode": "123456009",
+                    "portion_size": 60,
+                    "amount": 60,
+                    "type": "gram",
+                    "proteins": 20,
+                    "fats": 5,
+                    "carbs": 30,
+                    "calories": 200,
+                    "vendor_name": "Clif Bar"
+                },
+                {
+                    "id": "936da01f-9abd-4d9d-80c7-02af85c822a8",
+                    "name": "Apple",
+                    "barcode": "123456010",
+                    "portion_size": null,
+                    "amount": 100,
+                    "type": "gram",
+                    "proteins": 0,
+                    "fats": 0,
+                    "carbs": 25,
+                    "calories": 52,
+                    "vendor_name": "Fuji"
+                },
+                {
+                    "id": "8e02b2c3-16e1-4a3d-8a57-6a1f889c8af2",
+                    "name": "Almonds",
+                    "barcode": "123456011",
+                    "portion_size": null,
+                    "amount": 30,
+                    "type": "gram",
+                    "proteins": 6,
+                    "fats": 14,
+                    "carbs": 6,
+                    "calories": 166,
+                    "vendor_name": "Blue Diamond"
+                }
+            ]
+        }
+    }
+}

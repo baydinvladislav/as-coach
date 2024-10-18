@@ -12,3 +12,7 @@ class UsernameIsTaken(Exception):
 
 class TokenExpired(Exception):
     pass
+
+
+class BarcodeAlreadyExistExc(Exception):
+    ...

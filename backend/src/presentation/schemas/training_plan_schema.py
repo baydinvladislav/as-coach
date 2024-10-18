@@ -11,6 +11,7 @@ class DietIn(BaseModel):
     proteins: int
     fats: int
     carbs: int
+    calories: None | int
 
 
 class ExerciseCreateIn(BaseModel):
@@ -93,6 +94,7 @@ class TrainingPlanOut(BaseModel):
     proteins: str
     fats: str
     carbs: str
+    calories: str
 
 
 class TrainingPlanOutFull(BaseModel):

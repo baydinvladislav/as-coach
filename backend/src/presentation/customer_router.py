@@ -236,9 +236,10 @@ async def create_training_plan(
         start_date=training_plan.start_date.strftime("%Y-%m-%d"),
         end_date=training_plan.end_date.strftime("%Y-%m-%d"),
         number_of_trainings=len(training_plan.trainings),
-        proteins="/".join([str(diet.proteins) for diet in training_plan.diets]),
-        fats="/".join([str(diet.fats) for diet in training_plan.diets]),
-        carbs="/".join([str(diet.carbs) for diet in training_plan.diets]),
+        proteins="/".join([str(diet.total_proteins) for diet in training_plan.diets]),
+        fats="/".join([str(diet.total_fats) for diet in training_plan.diets]),
+        carbs="/".join([str(diet.total_carbs) for diet in training_plan.diets]),
+        calories="/".join([str(diet.total_calories) for diet in training_plan.diets]),
     )
 
 
@@ -276,9 +277,10 @@ async def get_all_training_plans(
             start_date=training_plan.start_date.strftime("%Y-%m-%d"),
             end_date=training_plan.end_date.strftime("%Y-%m-%d"),
             number_of_trainings=training_plan.number_of_trainings,
-            proteins="/".join([str(diet.proteins) for diet in training_plan.diets]),
-            fats="/".join([str(diet.fats) for diet in training_plan.diets]),
-            carbs="/".join([str(diet.carbs) for diet in training_plan.diets]),
+            proteins="/".join([str(diet.total_proteins) for diet in training_plan.diets]),
+            fats="/".join([str(diet.total_fats) for diet in training_plan.diets]),
+            carbs="/".join([str(diet.total_carbs) for diet in training_plan.diets]),
+            calories="/".join([str(diet.total_calories) for diet in training_plan.diets]),
         )
         for training_plan in training_plans
     ]
@@ -330,6 +332,7 @@ async def get_training_plan(
         proteins=training_plan.proteins,
         fats=training_plan.fats,
         carbs=training_plan.carbs,
+        calories=training_plan.calories,
         trainings=training_plan.trainings,
         set_rest=training_plan.set_rest,
         exercise_rest=training_plan.exercise_rest,
@@ -339,7 +342,5 @@ async def get_training_plan(
     # TODO: сделать на уровне слоя данных, поняв где нарушается сортировка
     for training in response.trainings:
         training.exercises.sort(key=lambda x: x.ordering)
-
-    logger.info(f"TRAININGS: {response.trainings[0].exercises}")
 
     return response

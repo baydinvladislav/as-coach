@@ -8,6 +8,7 @@ from src.shared.config import STATIC_DIR
 from src.presentation.authentication_router import auth_router
 from src.presentation.customer_router import customer_router
 from src.presentation.library_router import gym_router
+from src.presentation.nutrition_router import nutrition_router
 
 
 def get_application() -> FastAPI:
@@ -36,7 +37,8 @@ def get_application() -> FastAPI:
     app_routers = (
         auth_router,
         customer_router,
-        gym_router
+        gym_router,
+        nutrition_router,
     )
 
     for router in app_routers:

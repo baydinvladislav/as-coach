@@ -77,7 +77,9 @@ class CoachService:
         coach = await self.profile_service.register_user(uow, data)
         if coach:
             self.user = coach
+            await uow.commit()
             return coach
+
         return None
 
     async def authorize_coach(
@@ -94,7 +96,9 @@ class CoachService:
         data = UserLoginData(received_password=form_data.password, fcm_token=fcm_token)
         if await self.profile_service.authorize_user(uow, existed_coach, data) is True:
             logger.info(f"Coach with username {existed_coach.username} successfully login")
+            await uow.commit()
             return existed_coach
+
         raise NotValidCredentials("Not correct coach password")
 
     async def confirm_coach_password(self, user: Coach, current_password: str) -> bool:
@@ -104,6 +108,7 @@ class CoachService:
 
     async def update_profile(self, uow: AsyncSession, user: Coach, **params) -> CoachDtoSchema | None:
         updated_coach = await self.profile_service.update_user_profile(uow, user, **params)
+        await uow.commit()
         return updated_coach
 
     async def delete(self, uow: AsyncSession, user: Coach) -> str | None:
@@ -111,6 +116,7 @@ class CoachService:
         if deleted_id is None:
             logger.info(f"Couldn't delete coach {user.username}")
             return
+        await uow.commit()
         logger.info(f"Coach {user.username} successfully deleted")
 
     async def get_coach_by_username(self, uow: AsyncSession, username: str) -> CoachDtoSchema | None:
