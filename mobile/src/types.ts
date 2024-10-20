@@ -137,15 +137,16 @@ type Meal = {
 };
 
 type ActualNutrition = {
+  date: string;
   daily_total: {
     calories_total: number;
     calories_consumed: number;
-    proteins_total: number;
-    fats_total: number;
-    carbs_total: number;
-    proteins_consumed: number;
-    fats_consumed: number;
-    carbs_consumed: number;
+    total_proteins: number;
+    total_fats: number;
+    total_carbs: number;
+    consumed_proteins: number;
+    consumed_fats: number;
+    consumed_carbs: number;
   };
   breakfast: Meal;
   lunch: Meal;
