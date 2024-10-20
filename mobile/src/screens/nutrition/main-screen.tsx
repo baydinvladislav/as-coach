@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Clipboard,
   Image,
   ScrollView,
   StyleSheet,
@@ -216,30 +215,34 @@ const MainScreen: React.FC = () => {
                     <Text style={[styles.nutritionFact, { marginLeft: 0 }]}>
                       🍖{' '}
                       {parseFloat(
-                        data?.actual_nutrition?.[meal]?.total_proteins ?? 0,
+                        String(
+                          data?.actual_nutrition?.[meal]?.total_proteins ?? 0,
+                        ),
                       ).toFixed(2) || 0}
                     </Text>
                     <Text style={styles.nutritionFact}>
                       🌰{' '}
                       {parseFloat(
-                        data?.actual_nutrition?.[meal]?.total_fats ?? 0,
+                        String(data?.actual_nutrition?.[meal]?.total_fats ?? 0),
                       ).toFixed(2) || 0}
                     </Text>
                     <Text style={styles.nutritionFact}>
                       🌾{' '}
                       {parseFloat(
-                        data?.actual_nutrition?.[meal]?.total_carbs ?? 0,
+                        String(
+                          data?.actual_nutrition?.[meal]?.total_carbs ?? 0,
+                        ),
                       ).toFixed(2) || 0}
                     </Text>
                   </View>
                   <Text style={styles.caloriesText}>
                     🍽️ Calories:{' '}
-                    {data?.actual_nutrition?.[meal]?.total_calories || 0}
+                    {data?.actual_nutrition?.[meal]?.calories_total || 0}
                   </Text>
                 </View>
 
                 <View style={{ marginTop: '5%' }}>
-                  {data?.actual_nutrition?.[meal]?.products?.map(
+                  {data?.actual_nutrition?.[meal].products?.map(
                     (product, index) => (
                       <TouchableOpacity
                         key={product.barcode || index}

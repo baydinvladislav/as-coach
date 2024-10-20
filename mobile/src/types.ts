@@ -110,3 +110,51 @@ export type TFormProps = {
   setValues: React.Dispatch<React.SetStateAction<TPlan>>;
   isLoading: boolean;
 };
+
+export type NutritionProduct = {
+  id: string;
+  name: string;
+  amount: number;
+  type: string;
+  proteins: number;
+  fats: number;
+  carbs: number;
+  calories: number;
+  vendor: string;
+  barcode: string;
+};
+
+type Meal = {
+  calories_total: number;
+  calories_consumed: number;
+  proteins_total: number;
+  fats_total: number;
+  carbs_total: number;
+  proteins_consumed: number;
+  fats_consumed: number;
+  carbs_consumed: number;
+  products: NutritionProduct[];
+};
+
+type ActualNutrition = {
+  daily_total: {
+    calories_total: number;
+    calories_consumed: number;
+    proteins_total: number;
+    fats_total: number;
+    carbs_total: number;
+    proteins_consumed: number;
+    fats_consumed: number;
+    carbs_consumed: number;
+  };
+  breakfast: Meal;
+  lunch: Meal;
+  dinner: Meal;
+  snacks: Meal;
+};
+
+export type NutritionData = {
+  date: string;
+  actual_nutrition: ActualNutrition;
+  id: string;
+};
