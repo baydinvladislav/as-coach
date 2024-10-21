@@ -308,7 +308,6 @@ const MainScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
   },
   header: {
     flexDirection: 'row',
@@ -330,7 +329,6 @@ const styles = StyleSheet.create({
   statsContainer: {
     marginVertical: 20,
     backgroundColor: '#2E2D55',
-    marginHorizontal: 10,
     borderRadius: 10,
     paddingVertical: 10,
   },
@@ -399,7 +397,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   addButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#B8FF5F',
     height: 30,
     width: 30,
     borderRadius: 15,
@@ -407,7 +405,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   plusText: {
-    color: '#fff',
+    color: '#2E2D55',
     fontSize: 18,
   },
   expandedMealContainer: {
@@ -422,7 +420,7 @@ const styles = StyleSheet.create({
   nutritionFacts: {
     flexDirection: 'row',
     alignItems: 'center',
-    // marginVertical: 15,
+    marginVertical: 15,
   },
   nutritionFact: {
     color: '#fff',
