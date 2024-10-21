@@ -73,7 +73,7 @@ const MainScreen: React.FC = () => {
 
   const meals = Object.keys(data.actual_nutrition || {}).filter(
     item => item !== 'daily_total' && item !== 'date',
-  ) || ['breakfast', 'lunch', 'dinner', 'snacks']; // Default to basic meals if no data
+  ) || ['breakfast', 'lunch', 'dinner', 'snacks'];
 
   return (
     <View style={styles.container}>
