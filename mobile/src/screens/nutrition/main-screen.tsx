@@ -8,6 +8,8 @@ import {
   View,
 } from 'react-native';
 
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { getDietDetails } from '@api';
 import { Screens, useNavigation } from '@navigation';
 import { useIsFocused } from '@react-navigation/native';
@@ -20,6 +22,7 @@ const MainScreen: React.FC = () => {
   const [data, setData] = useState<NutritionData | null>(null);
   const [loading, setLoading] = useState(false);
   const focused = useIsFocused();
+  const { top } = useSafeAreaInsets();
   useEffect(() => {
     setDataApi();
   }, [focused]);
@@ -34,6 +37,10 @@ const MainScreen: React.FC = () => {
       const fromateDate = getFormattedDate();
       const fetchedData = await getDietDetails('2024-09-23');
       setData(fetchedData);
+      console.log(
+        'Products: ',
+        fetchedData?.actual_nutrition?.['breakfast']?.products,
+      );
     } catch (error) {
       console.error('Error fetching data:', error);
       setData(null);
@@ -184,7 +191,8 @@ const MainScreen: React.FC = () => {
             <View style={styles.mealContainer}>
               <View style={styles.mealHeader}>
                 <Text style={styles.mealText}>
-                  {meal.charAt(0).toUpperCase() + meal.slice(1)}
+                  {meal.charAt(0).toUpperCase() + meal.slice(1)} (
+                  {data?.actual_nutrition?.[meal]?.products?.length || 0})
                 </Text>
                 {exListIndex === index && (
                   <Image
