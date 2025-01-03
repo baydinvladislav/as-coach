@@ -19,6 +19,10 @@ export enum Screens {
   DetailClient = 'DetailClient',
   PlanScreen = 'PlanScreen',
   DetailPlanScreen = 'DetailPlanScreen',
+  BottomTab = 'BottomTab',
+  MainScreen = 'MainScreen',
+  FoodDetailsScreen = 'FoodDetailsScreen',
+  FoodSelectionScreen = 'FoodSelectionScreen',
 }
 
 type Routes = Screens;
